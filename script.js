@@ -9,9 +9,6 @@ const sidebarOverlay = document.getElementById('sidebarOverlay');
 // --- 1. MENÜ GEÇİŞ SİSTEMİ ---
 navItems.forEach(item => {
     item.addEventListener('click', () => {
-        // Eğer "Uygulamayı İndir" butonuna tıklandıysa sayfa geçişi yapma
-        if(item.id === 'installPwaBtn') return;
-
         navItems.forEach(nav => nav.classList.remove('active'));
         item.classList.add('active');
 
@@ -189,7 +186,7 @@ function cancelToast() {
     pendingUrl = null;
 }
 
-if(toastCancelBtn) toastCancelBtn.addEventListener('click', cancelToast);
+toastCancelBtn.addEventListener('click', cancelToast);
 
 function showRedirectToast(appName, url, logoSrc) {
     if (toastTimer) clearTimeout(toastTimer);
@@ -262,7 +259,7 @@ document.querySelectorAll('.category-card').forEach(catCard => {
             const p = document.createElement('div');
             p.className = 'splash-particle';
             const size = Math.random() * 6 + 3;
-            p.style.cssText =[
+            p.style.cssText = [
                 'width:' + size + 'px',
                 'height:' + size + 'px',
                 'left:' + Math.random() * 100 + '%',
@@ -276,7 +273,7 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     const bar = document.getElementById('splashProgressBar');
     const label = document.getElementById('splashProgressLabel');
     const splash = document.getElementById('splash-screen');
-    const labels =['Yükleniyor...', 'Hazırlanıyor...', 'Neredeyse hazır...', 'Hoş geldiniz!'];
+    const labels = ['Yükleniyor...', 'Hazırlanıyor...', 'Neredeyse hazır...', 'Hoş geldiniz!'];
     let progress = 0;
     let labelIdx = 0;
 
@@ -362,7 +359,7 @@ document.querySelectorAll('.category-card').forEach(catCard => {
 })();
 
 // --- 10. BİLDİRİM SİSTEMİ ---
-const NOTIFICATIONS =[
+const NOTIFICATIONS = [
     { id: 'n1', icon: '🚀', title: 'MuGöl PORTAL v16 Yayında!', body: 'Bildirim paneli, gelişmiş iletişim formu ve yeni kısayollar eklendi.', time: 'Az önce' },
     { id: 'n2', icon: '🔍', title: 'Hızlı Arama', body: 'Ctrl+K ile istediğiniz uygulamayı anında bulun.', time: '2 gün önce' },
     { id: 'n3', icon: '🎨', title: 'Renk Teması', body: 'Ayarlar sayfasından portal rengini kişiselleştirebilirsiniz.', time: '3 gün önce' },
@@ -376,10 +373,10 @@ function renderNotifications() {
     if (!list) return;
 
     const unread = NOTIFICATIONS.filter(n => !readNotifs.includes(n.id));
-    if(dot) dot.style.display = unread.length > 0 ? 'block' : 'none';
+    dot.style.display = unread.length > 0 ? 'block' : 'none';
 
     if (NOTIFICATIONS.length === 0) {
-        list.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);font-weight:700;font-size:0.9rem;">Bildirim yok</div>';
+        list.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);font-weight:600;font-size:0.9rem;">Bildirim yok</div>';
         return;
     }
 
@@ -395,17 +392,17 @@ function renderNotifications() {
             <div style="font-size:1.4rem; flex-shrink:0; line-height:1;">${n.icon}</div>
             <div style="flex:1; min-width:0;">
                 <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:3px;">
-                    <span style="font-weight:${isRead ? 700 : 800}; font-size:0.88rem; color:var(--text-main);">${n.title}</span>
+                    <span style="font-weight:${isRead ? 600 : 800}; font-size:0.88rem; color:var(--text-main);">${n.title}</span>
                     ${!isRead ? '<span style="width:8px;height:8px;background:var(--primary-color);border-radius:50%;flex-shrink:0;"></span>' : ''}
                 </div>
-                <div style="font-size:0.78rem; color:var(--text-muted); line-height:1.5; font-weight:600;">${n.body}</div>
-                <div style="font-size:0.72rem; color:var(--text-muted); margin-top:4px; font-weight:700;">${n.time}</div>
+                <div style="font-size:0.78rem; color:var(--text-muted); line-height:1.5;">${n.body}</div>
+                <div style="font-size:0.72rem; color:var(--text-muted); margin-top:4px; font-weight:600;">${n.time}</div>
             </div>
         </div>`;
     }).join('');
 }
 
-window.markNotifRead = function(id) {
+function markNotifRead(id) {
     if (!readNotifs.includes(id)) {
         readNotifs.push(id);
         localStorage.setItem('mugol-read-notifs', JSON.stringify(readNotifs));
@@ -416,38 +413,33 @@ window.markNotifRead = function(id) {
 const notifBtn = document.getElementById('notifBtn');
 const notifPanel = document.getElementById('notifPanel');
 
-if(notifBtn && notifPanel) {
-    notifBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isOpen = notifPanel.style.display !== 'none';
-        notifPanel.style.display = isOpen ? 'none' : 'block';
-        if (!isOpen) renderNotifications();
-    });
+notifBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = notifPanel.style.display !== 'none';
+    notifPanel.style.display = isOpen ? 'none' : 'block';
+    if (!isOpen) renderNotifications();
+});
 
-    const markAllBtn = document.getElementById('notifMarkAll');
-    if(markAllBtn) {
-        markAllBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            NOTIFICATIONS.forEach(n => { if (!readNotifs.includes(n.id)) readNotifs.push(n.id); });
-            localStorage.setItem('mugol-read-notifs', JSON.stringify(readNotifs));
-            renderNotifications();
-        });
-    }
-
-    document.addEventListener('click', (e) => {
-        if (!notifPanel.contains(e.target) && e.target !== notifBtn) {
-            notifPanel.style.display = 'none';
-        }
-    });
-
+document.getElementById('notifMarkAll').addEventListener('click', (e) => {
+    e.stopPropagation();
+    NOTIFICATIONS.forEach(n => { if (!readNotifs.includes(n.id)) readNotifs.push(n.id); });
+    localStorage.setItem('mugol-read-notifs', JSON.stringify(readNotifs));
     renderNotifications();
-}
+});
+
+document.addEventListener('click', (e) => {
+    if (!notifPanel.contains(e.target) && e.target !== notifBtn) {
+        notifPanel.style.display = 'none';
+    }
+});
+
+renderNotifications();
 
 // --- 11. GLOBAL ARAMA ---
 const searchModal = document.getElementById('searchModal');
 const searchInput = document.getElementById('searchInput');
 
-const searchIndex =[];
+const searchIndex = [];
 document.querySelectorAll('.page-section .app-card[href]').forEach(card => {
     const page = card.closest('.page-section');
     const menuItem = page ? document.querySelector('.nav-item[data-target="' + page.id + '"]') : null;
@@ -461,34 +453,29 @@ document.querySelectorAll('.page-section .app-card[href]').forEach(card => {
     });
 });
 
-const searchBtn = document.getElementById('searchBtn');
-if(searchBtn) searchBtn.addEventListener('click', openSearch);
+document.getElementById('searchBtn').addEventListener('click', openSearch);
 
 function openSearch() {
-    if(searchModal && searchInput) {
-        searchModal.style.display = 'flex';
-        searchInput.value = '';
-        renderSearchResults('');
-        setTimeout(() => searchInput.focus(), 50);
-    }
+    searchModal.style.display = 'flex';
+    searchInput.value = '';
+    renderSearchResults('');
+    setTimeout(() => searchInput.focus(), 50);
 }
 
-window.closeSearch = function() {
-    if(searchModal) searchModal.style.display = 'none';
+function closeSearch() {
+    searchModal.style.display = 'none';
 }
 
-if(searchModal) {
-    searchModal.addEventListener('click', function (e) {
-        if (e.target === searchModal) closeSearch();
-    });
-}
+searchModal.addEventListener('click', function (e) {
+    if (e.target === searchModal) closeSearch();
+});
 
 document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closeSearch();
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
     if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
         e.preventDefault();
-        if(hamburgerBtn) hamburgerBtn.click();
+        hamburgerBtn.click();
     }
     if ((e.ctrlKey || e.metaKey) && e.key === 'h') {
         e.preventDefault();
@@ -497,16 +484,12 @@ document.addEventListener('keydown', function (e) {
     }
 });
 
-if(searchInput) {
-    searchInput.addEventListener('input', function () {
-        renderSearchResults(this.value.trim().toLowerCase());
-    });
-}
+searchInput.addEventListener('input', function () {
+    renderSearchResults(this.value.trim().toLowerCase());
+});
 
 function renderSearchResults(query) {
     const container = document.getElementById('searchResults');
-    if(!container) return;
-    
     const results = query === '' ? searchIndex.slice(0, 8) : searchIndex.filter(item =>
         item.name.toLowerCase().includes(query) ||
         item.desc.toLowerCase().includes(query) ||
@@ -514,7 +497,7 @@ function renderSearchResults(query) {
     );
 
     if (results.length === 0) {
-        container.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted);font-weight:700;">Sonuç bulunamadı</div>';
+        container.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted);font-weight:600;">Sonuç bulunamadı</div>';
         return;
     }
 
@@ -522,10 +505,10 @@ function renderSearchResults(query) {
         <div class="search-result-item" data-url="${item.url}" data-name="${item.name}" data-img="${item.img}"
             style="display:flex;align-items:center;gap:14px;padding:11px 10px;border-radius:12px;cursor:pointer;transition:background 0.2s ease;">
             <img src="${item.img}" style="width:42px;height:42px;border-radius:10px;object-fit:cover;background:var(--bg-body);flex-shrink:0;"
-                onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(item.name)}&background=4318ff&color=fff'">
+                onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(item.name)}&background=4318ff&color=fff&rounded=true&bold=true'">
             <div style="flex:1;min-width:0;">
                 <div style="font-weight:800;font-size:0.95rem;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</div>
-                <div style="font-size:0.78rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;">${item.desc}</div>
+                <div style="font-size:0.78rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.desc}</div>
             </div>
             <span style="font-size:0.68rem;font-weight:800;color:var(--text-muted);background:var(--bg-body);padding:3px 10px;border-radius:20px;border:1px solid var(--border-color);flex-shrink:0;">${item.category || item.tag}</span>
         </div>
@@ -614,41 +597,12 @@ if (aboutMenuItem) {
 // --- 15. SERVICE WORKER KAYDI (PWA) ---
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js', { scope: './' })
+        navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
             .then((registration) => {
                 console.log('✅ Service Worker kayıt başarılı:', registration);
             })
             .catch((err) => {
                 console.log('❌ Service Worker kayıt hatası:', err);
             });
-    });
-}
-
-// --- 16. PWA UYGULAMA İNDİR (INSTALL PROMPT) ---
-let deferredPrompt;
-const installBtn = document.getElementById('installPwaBtn');
-
-window.addEventListener('beforeinstallprompt', (e) => {
-    // Tarayıcının varsayılan "Ana ekrana ekle" çubuğunu otomatik göstermesini engelle
-    e.preventDefault();
-    // Prompt'u daha sonra "İndir" butonuna tıklanınca göstermek üzere değişkene kaydet
-    deferredPrompt = e;
-});
-
-if (installBtn) {
-    installBtn.addEventListener('click', async () => {
-        if (deferredPrompt) {
-            // Kullanıcıya yükleme popup'ını (prompt) göster
-            deferredPrompt.prompt();
-            // Kullanıcının kabul edip etmediğini bekle ve sonucu al
-            const { outcome } = await deferredPrompt.userChoice;
-            console.log(`PWA Kurulum sonucu: ${outcome}`);
-            
-            // Prompt sadece bir kez gösterilebilir, işlemi sıfırla
-            deferredPrompt = null;
-        } else {
-            // Eğer deferredPrompt yoksa (PWA zaten kuruluysa, desteklenmiyorsa veya iOS ise)
-            alert('Tarayıcınız otomatik indirmeyi desteklemiyor veya uygulama zaten cihazınıza yüklü.\n\n(Eğer iPhone/Safari kullanıyorsanız: Alt kısımdaki "Paylaş" ikonuna tıklayıp "Ana Ekrana Ekle" seçeneğini seçerek yükleyebilirsiniz.)');
-        }
     });
 }
