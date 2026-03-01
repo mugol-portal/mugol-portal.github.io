@@ -8,13 +8,21 @@ const sidebarOverlay = document.getElementById('sidebarOverlay');
 
 // --- 1. MENÜ GEÇİŞ SİSTEMİ ---
 navItems.forEach(item => {
+    // "Uygulamayı İndir" butonuna basıldığında sayfa değişmemesi için kontrol
+    if (item.id === 'installAppBtn') return;
+
     item.addEventListener('click', () => {
-        navItems.forEach(nav => nav.classList.remove('active'));
+        // Aktif sınıfı güncelle
+        navItems.forEach(nav => {
+            if (nav.id !== 'installAppBtn') nav.classList.remove('active');
+        });
         item.classList.add('active');
 
+        // Başlığı güncelle
         const title = item.getAttribute('data-title');
-        sectionTitle.textContent = title;
+        if(sectionTitle) sectionTitle.textContent = title;
 
+        // Sayfa geçişini ayarla
         const targetId = item.getAttribute('data-target');
         pages.forEach(page => {
             if (page.id === targetId) {
@@ -24,6 +32,7 @@ navItems.forEach(item => {
             }
         });
 
+        // Mobildeyse menüyü tıklandıktan sonra kapat
         if (window.innerWidth <= 992) {
             sidebar.classList.remove('mobile-open');
             sidebarOverlay.classList.remove('active');
@@ -55,16 +64,18 @@ window.addEventListener('resize', () => {
 
 // --- 3. AYARLAR: TEMA VE YAZI BOYUTU ---
 const themeSwitch = document.getElementById('themeSwitch');
-
 const savedTheme = localStorage.getItem('mugol-theme') || 'light';
-document.documentElement.setAttribute('data-theme', savedTheme);
-themeSwitch.checked = savedTheme === 'dark';
 
-themeSwitch.addEventListener('change', (e) => {
-    const theme = e.target.checked ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('mugol-theme', theme);
-});
+document.documentElement.setAttribute('data-theme', savedTheme);
+if(themeSwitch) themeSwitch.checked = savedTheme === 'dark';
+
+if(themeSwitch) {
+    themeSwitch.addEventListener('change', (e) => {
+        const theme = e.target.checked ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('mugol-theme', theme);
+    });
+}
 
 const fontBtns = document.querySelectorAll('.font-btn');
 fontBtns.forEach(btn => {
@@ -100,7 +111,7 @@ if (msgTextarea && charCountEl) {
     msgTextarea.addEventListener('input', function () {
         const len = this.value.length;
         charCountEl.textContent = len + ' / 500';
-        charCountEl.style.color = len > 450 ? '#FF5630' : len > 350 ? '#FFAB00' : 'var(--text-muted)';
+        charCountEl.style.color = len > 450 ? '#FF5630' : len > 350 ? '#FFC107' : 'var(--text-muted)';
     });
 }
 
@@ -186,7 +197,7 @@ function cancelToast() {
     pendingUrl = null;
 }
 
-toastCancelBtn.addEventListener('click', cancelToast);
+if(toastCancelBtn) toastCancelBtn.addEventListener('click', cancelToast);
 
 function showRedirectToast(appName, url, logoSrc) {
     if (toastTimer) clearTimeout(toastTimer);
@@ -197,12 +208,14 @@ function showRedirectToast(appName, url, logoSrc) {
     const toastLogo = document.getElementById('toast-app-logo');
     if (toastLogo) { toastLogo.src = logoSrc || ''; }
     toastCountEl.textContent = '3';
+    
     if (toastRing) {
         toastRing.style.strokeDashoffset = 0;
         toastRing.style.transition = 'none';
     }
     toast.classList.add('show');
 
+    // Animasyon başlatma
     requestAnimationFrame(() => {
         if (toastRing) {
             toastRing.style.transition = 'stroke-dashoffset 3s linear';
@@ -224,7 +237,7 @@ function showRedirectToast(appName, url, logoSrc) {
     }, 3000);
 }
 
-// Tüm app-card'lara tıklamayı yakala
+// Tüm uygulama kartlarına tıklama olayı
 document.querySelectorAll('.app-card').forEach(card => {
     card.addEventListener('click', function (e) {
         e.preventDefault();
@@ -249,7 +262,7 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     if (sessionStorage.getItem('skipSplash')) {
         sessionStorage.removeItem('skipSplash');
         const splash = document.getElementById('splash-screen');
-        if (splash) { splash.style.display = 'none'; }
+        if (splash) splash.style.display = 'none';
         return;
     }
 
@@ -259,7 +272,7 @@ document.querySelectorAll('.category-card').forEach(catCard => {
             const p = document.createElement('div');
             p.className = 'splash-particle';
             const size = Math.random() * 6 + 3;
-            p.style.cssText = [
+            p.style.cssText =[
                 'width:' + size + 'px',
                 'height:' + size + 'px',
                 'left:' + Math.random() * 100 + '%',
@@ -273,7 +286,7 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     const bar = document.getElementById('splashProgressBar');
     const label = document.getElementById('splashProgressLabel');
     const splash = document.getElementById('splash-screen');
-    const labels = ['Yükleniyor...', 'Hazırlanıyor...', 'Neredeyse hazır...', 'Hoş geldiniz!'];
+    const labels =['Yükleniyor...', 'Hazırlanıyor...', 'Neredeyse hazır...', 'Hoş geldiniz!'];
     let progress = 0;
     let labelIdx = 0;
 
@@ -281,6 +294,7 @@ document.querySelectorAll('.category-card').forEach(catCard => {
         progress += Math.random() * 4 + 1.5;
         if (progress > 100) progress = 100;
         if (bar) bar.style.width = progress + '%';
+        
         const newLabelIdx = Math.min(Math.floor(progress / 33), labels.length - 1);
         if (newLabelIdx !== labelIdx) {
             labelIdx = newLabelIdx;
@@ -359,8 +373,8 @@ document.querySelectorAll('.category-card').forEach(catCard => {
 })();
 
 // --- 10. BİLDİRİM SİSTEMİ ---
-const NOTIFICATIONS = [
-    { id: 'n1', icon: '🚀', title: 'MuGöl PORTAL v16 Yayında!', body: 'Bildirim paneli, gelişmiş iletişim formu ve yeni kısayollar eklendi.', time: 'Az önce' },
+const NOTIFICATIONS =[
+    { id: 'n1', icon: '🚀', title: 'MuGöl PORTAL v1.0 Yayında!', body: 'Bildirim paneli, gelişmiş iletişim formu ve yeni kısayollar eklendi.', time: 'Az önce' },
     { id: 'n2', icon: '🔍', title: 'Hızlı Arama', body: 'Ctrl+K ile istediğiniz uygulamayı anında bulun.', time: '2 gün önce' },
     { id: 'n3', icon: '🎨', title: 'Renk Teması', body: 'Ayarlar sayfasından portal rengini kişiselleştirebilirsiniz.', time: '3 gün önce' },
 ];
@@ -376,7 +390,7 @@ function renderNotifications() {
     dot.style.display = unread.length > 0 ? 'block' : 'none';
 
     if (NOTIFICATIONS.length === 0) {
-        list.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);font-weight:600;font-size:0.9rem;">Bildirim yok</div>';
+        list.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);font-weight:800;font-size:1rem;">Bildirim yok</div>';
         return;
     }
 
@@ -392,11 +406,11 @@ function renderNotifications() {
             <div style="font-size:1.4rem; flex-shrink:0; line-height:1;">${n.icon}</div>
             <div style="flex:1; min-width:0;">
                 <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:3px;">
-                    <span style="font-weight:${isRead ? 600 : 800}; font-size:0.88rem; color:var(--text-main);">${n.title}</span>
+                    <span style="font-weight:${isRead ? 700 : 900}; font-size:1rem; color:var(--text-main);">${n.title}</span>
                     ${!isRead ? '<span style="width:8px;height:8px;background:var(--primary-color);border-radius:50%;flex-shrink:0;"></span>' : ''}
                 </div>
-                <div style="font-size:0.78rem; color:var(--text-muted); line-height:1.5;">${n.body}</div>
-                <div style="font-size:0.72rem; color:var(--text-muted); margin-top:4px; font-weight:600;">${n.time}</div>
+                <div style="font-size:0.9rem; color:var(--text-muted); font-weight:600; line-height:1.5;">${n.body}</div>
+                <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px; font-weight:800;">${n.time}</div>
             </div>
         </div>`;
     }).join('');
@@ -413,25 +427,27 @@ function markNotifRead(id) {
 const notifBtn = document.getElementById('notifBtn');
 const notifPanel = document.getElementById('notifPanel');
 
-notifBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const isOpen = notifPanel.style.display !== 'none';
-    notifPanel.style.display = isOpen ? 'none' : 'block';
-    if (!isOpen) renderNotifications();
-});
+if(notifBtn && notifPanel) {
+    notifBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = notifPanel.style.display !== 'none';
+        notifPanel.style.display = isOpen ? 'none' : 'block';
+        if (!isOpen) renderNotifications();
+    });
 
-document.getElementById('notifMarkAll').addEventListener('click', (e) => {
-    e.stopPropagation();
-    NOTIFICATIONS.forEach(n => { if (!readNotifs.includes(n.id)) readNotifs.push(n.id); });
-    localStorage.setItem('mugol-read-notifs', JSON.stringify(readNotifs));
-    renderNotifications();
-});
+    document.getElementById('notifMarkAll').addEventListener('click', (e) => {
+        e.stopPropagation();
+        NOTIFICATIONS.forEach(n => { if (!readNotifs.includes(n.id)) readNotifs.push(n.id); });
+        localStorage.setItem('mugol-read-notifs', JSON.stringify(readNotifs));
+        renderNotifications();
+    });
 
-document.addEventListener('click', (e) => {
-    if (!notifPanel.contains(e.target) && e.target !== notifBtn) {
-        notifPanel.style.display = 'none';
-    }
-});
+    document.addEventListener('click', (e) => {
+        if (!notifPanel.contains(e.target) && e.target !== notifBtn) {
+            notifPanel.style.display = 'none';
+        }
+    });
+}
 
 renderNotifications();
 
@@ -453,26 +469,35 @@ document.querySelectorAll('.page-section .app-card[href]').forEach(card => {
     });
 });
 
-document.getElementById('searchBtn').addEventListener('click', openSearch);
+if(document.getElementById('searchBtn')) {
+    document.getElementById('searchBtn').addEventListener('click', openSearch);
+}
 
 function openSearch() {
     searchModal.style.display = 'flex';
     searchInput.value = '';
     renderSearchResults('');
-    setTimeout(() => searchInput.focus(), 50);
+    setTimeout(() => searchInput.focus(), 100);
 }
 
 function closeSearch() {
     searchModal.style.display = 'none';
 }
 
-searchModal.addEventListener('click', function (e) {
-    if (e.target === searchModal) closeSearch();
-});
+if(searchModal) {
+    searchModal.addEventListener('click', function (e) {
+        if (e.target === searchModal) closeSearch();
+    });
+}
 
 document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeSearch();
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
+    if (searchModal && searchModal.style.display === 'flex' && e.key === 'Escape') {
+        closeSearch();
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') { 
+        e.preventDefault(); 
+        openSearch(); 
+    }
     if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
         e.preventDefault();
         hamburgerBtn.click();
@@ -484,12 +509,16 @@ document.addEventListener('keydown', function (e) {
     }
 });
 
-searchInput.addEventListener('input', function () {
-    renderSearchResults(this.value.trim().toLowerCase());
-});
+if(searchInput) {
+    searchInput.addEventListener('input', function () {
+        renderSearchResults(this.value.trim().toLowerCase());
+    });
+}
 
 function renderSearchResults(query) {
     const container = document.getElementById('searchResults');
+    if(!container) return;
+
     const results = query === '' ? searchIndex.slice(0, 8) : searchIndex.filter(item =>
         item.name.toLowerCase().includes(query) ||
         item.desc.toLowerCase().includes(query) ||
@@ -497,20 +526,20 @@ function renderSearchResults(query) {
     );
 
     if (results.length === 0) {
-        container.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted);font-weight:600;">Sonuç bulunamadı</div>';
+        container.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted);font-weight:800;font-size:1.05rem;">Sonuç bulunamadı</div>';
         return;
     }
 
     container.innerHTML = results.map(item => `
         <div class="search-result-item" data-url="${item.url}" data-name="${item.name}" data-img="${item.img}"
-            style="display:flex;align-items:center;gap:14px;padding:11px 10px;border-radius:12px;cursor:pointer;transition:background 0.2s ease;">
-            <img src="${item.img}" style="width:42px;height:42px;border-radius:10px;object-fit:cover;background:var(--bg-body);flex-shrink:0;"
+            style="display:flex;align-items:center;gap:14px;padding:12px 10px;border-radius:12px;cursor:pointer;transition:background 0.2s ease;">
+            <img src="${item.img}" style="width:46px;height:46px;border-radius:10px;object-fit:cover;background:var(--bg-body);flex-shrink:0;"
                 onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(item.name)}&background=4318ff&color=fff&rounded=true&bold=true'">
             <div style="flex:1;min-width:0;">
-                <div style="font-weight:800;font-size:0.95rem;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</div>
-                <div style="font-size:0.78rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.desc}</div>
+                <div style="font-weight:900;font-size:1.05rem;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</div>
+                <div style="font-size:0.9rem;font-weight:700;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.desc}</div>
             </div>
-            <span style="font-size:0.68rem;font-weight:800;color:var(--text-muted);background:var(--bg-body);padding:3px 10px;border-radius:20px;border:1px solid var(--border-color);flex-shrink:0;">${item.category || item.tag}</span>
+            <span style="font-size:0.8rem;font-weight:900;color:var(--text-muted);background:var(--bg-body);padding:4px 12px;border-radius:20px;border:1px solid var(--border-color);flex-shrink:0;">${item.category || item.tag}</span>
         </div>
     `).join('');
 
@@ -583,7 +612,7 @@ if (aboutMenuItem) {
         if (countUpDone) return;
         setTimeout(() => {
             const statEls = document.querySelectorAll('.stat-item strong');
-            const targets = [14, 3, 2025];
+            const targets =[14, 3, 2025];
             const suffixes = ['', '', ''];
             statEls.forEach((el, i) => {
                 const t = parseInt(el.textContent) || targets[i];
@@ -594,7 +623,61 @@ if (aboutMenuItem) {
     });
 }
 
-// --- 15. SERVICE WORKER KAYDI (PWA) ---
+// --- 15. SERVICE WORKER & PWA UYGULAMA İNDİRME SİSTEMİ ---
+let deferredPrompt;
+const installAppBtn = document.getElementById('installAppBtn');
+
+// Tarayıcı PWA yükleme gereksinimlerini karşıladığında tetiklenir
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Tarayıcının varsayılan "Ana ekrana ekle" bildirimini engelle
+    e.preventDefault();
+    // Olayı daha sonra tetiklemek üzere kaydet
+    deferredPrompt = e;
+    
+    // Uygulama yüklenebilir durumda, menüdeki butonu görünür yap
+    if (installAppBtn) {
+        installAppBtn.style.display = 'flex';
+    }
+});
+
+// İndir butonuna tıklama olayı
+if (installAppBtn) {
+    installAppBtn.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        
+        // Tarayıcının yükleme penceresini göster
+        deferredPrompt.prompt();
+        
+        // Kullanıcının tercihini bekle (Kabul et/Reddet)
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`PWA Yükleme Sonucu: ${outcome}`);
+        
+        // Promp bir kere kullanıldıktan sonra sıfırlanmalıdır
+        deferredPrompt = null;
+        
+        // Yükleme penceresi açıldıktan sonra butonu gizle
+        installAppBtn.style.display = 'none';
+        
+        // Menüyü mobilde kapatma
+        if (window.innerWidth <= 992 && sidebar && sidebarOverlay) {
+            sidebar.classList.remove('mobile-open');
+            sidebarOverlay.classList.remove('active');
+        }
+    });
+}
+
+// Uygulama başarıyla yüklendiğinde tetiklenir
+window.addEventListener('appinstalled', () => {
+    // Referansı temizle
+    deferredPrompt = null;
+    console.log('PWA başarıyla yüklendi!');
+    // Yüklendiyse butonu tamamen gizle
+    if (installAppBtn) {
+        installAppBtn.style.display = 'none';
+    }
+});
+
+// Service Worker Kaydı
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
