@@ -2,7 +2,6 @@
 <html lang="tr" data-theme="light">
 <head>
     <script>
-        // Tema flaşını önle: sayfa render olmadan önce temayı uygula
         (function() {
             var t = localStorage.getItem('mugol-theme');
             if (t) document.documentElement.setAttribute('data-theme', t);
@@ -40,80 +39,32 @@
     <meta name="twitter:description" content="Takvim, hava durumu, ekonomi, eğitim, sağlık ve daha fazlası. Tüm dijital araçlarınıza tek yerden ulaşın.">
     <meta name="twitter:image" content="https://mugol-portal.github.io/icon-512.png">
 
-    <!-- ===== GOOGLE JSON-LD YAPISAL VERİ ===== -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "MuGöl PORTAL",
-      "url": "https://mugol-portal.github.io/",
-      "description": "Takvim, hava durumu, ekonomi, eğitim, sağlık, deprem takibi ve daha fazlası. Tüm dijital uygulamalarınız tek platformda.",
-      "inLanguage": "tr",
-      "author": { "@type": "Person", "name": "Muhammet Gölpınar" },
-      "publisher": {
-        "@type": "Organization",
-        "name": "MuGöl PORTAL",
-        "logo": { "@type": "ImageObject", "url": "https://mugol-portal.github.io/icon-512.png" }
-      },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": { "@type": "EntryPoint", "urlTemplate": "https://mugol-portal.github.io/?q={search_term_string}" },
-        "query-input": "required name=search_term_string"
-      }
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "MuGöl PORTAL",
-      "url": "https://mugol-portal.github.io/",
-      "logo": "https://mugol-portal.github.io/icon-512.png",
-      "sameAs":["https://www.instagram.com/mugol_portal"],
-      "founder": { "@type": "Person", "name": "Muhammet Gölpınar" },
-      "foundingDate": "2025-10-02",
-      "description": "MuGöl PORTAL, dijital araçları tek çatı altında toplayarak günlük yaşamı kolaylaştırmayı hedefleyen bir platform projesidir."
-    }
-    </script>
-
-    <!-- ===== PWA Meta Etiketleri ===== -->
+    <!-- PWA Meta Etiketleri -->
     <meta name="theme-color" content="#4318ff">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="MuGöl">
 
-    <!-- PWA Manifest -->
     <link rel="manifest" href="./manifest.json">
-
-    <!-- iOS Icons -->
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="apple-touch-icon" sizes="152x152" href="icon-192.png">
     <link rel="apple-touch-icon" sizes="180x180" href="icon-192.png">
     <link rel="apple-touch-icon" sizes="167x167" href="icon-192.png">
 
-    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon.ico">
     <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 
-    <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1880946354382681" crossorigin="anonymous"></script>
-
-    <!-- AMP Otomatik Reklamlar -->
     <script async custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js"></script>
 
-    <!-- Google Fonts: Nunito -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- FontAwesome İkonları -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Dış CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- AŞAĞI ÇEKME YENİLE -->
     <div id="ptr-indicator">
         <div class="ptr-content">
             <div class="ptr-icon"><i class="fas fa-arrow-down"></i></div>
@@ -121,16 +72,13 @@
         </div>
     </div>
 
-    <!-- AMP Otomatik Reklamlar -->
     <amp-auto-ads type="adsense" data-ad-client="ca-pub-1880946354382681"></amp-auto-ads>
 
-    <!-- AÇILIŞ ANİMASYONU -->
     <div id="splash-screen">
         <div class="splash-particles" id="splashParticles"></div>
         <div class="splash-logo-wrap">
             <div class="splash-icon-ring">
-                <img src="logo.png" alt="MuGöl"
-                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <img src="logo.png" alt="MuGöl" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
                 <span class="splash-icon-fallback" style="display:none;">MG</span>
             </div>
             <div class="splash-title">
@@ -146,32 +94,22 @@
         </div>
     </div>
 
-    <!-- ÜST ÇUBUK (HEADER) -->
     <header class="header">
         <div class="header-left">
-            <button class="hamburger-btn" id="hamburgerBtn" title="Menüyü Aç/Kapat">
-                <i class="fas fa-bars"></i>
-            </button>
+            <button class="hamburger-btn" id="hamburgerBtn" title="Menüyü Aç/Kapat"><i class="fas fa-bars"></i></button>
             <div class="logo-area">
                 <img src="logo.png" alt="Logo" style="height: 40px; border-radius: 8px; object-fit: contain;">
                 <span>MuGöl<span style="color:var(--primary-color)">PORTAL</span></span>
             </div>
         </div>
         <div class="header-right" style="margin-left:auto; display:flex; align-items:center; gap:10px; position:relative;">
-            <button class="hamburger-btn" id="searchBtn" title="Uygulama Ara (Ctrl+K)">
-                <i class="fas fa-search"></i>
-            </button>
+            <button class="hamburger-btn" id="searchBtn" title="Uygulama Ara (Ctrl+K)"><i class="fas fa-search"></i></button>
             <button class="hamburger-btn" id="notifBtn" title="Bildirimler" style="position:relative;">
                 <i class="fas fa-bell"></i>
                 <span id="notifDot" style="display:none; position:absolute; top:7px; right:7px; width:8px; height:8px; background:#FF5630; border-radius:50%; border:2px solid var(--bg-header);"></span>
             </button>
 
-            <!-- BİLDİRİM PANELİ -->
-            <div id="notifPanel" style="
-                display:none; position:absolute; top:calc(100% + 12px); right:0;
-                width:340px; background:var(--bg-card); border-radius:16px;
-                box-shadow:0 20px 50px rgba(0,0,0,0.2); border:1px solid var(--border-color);
-                z-index:500; overflow:hidden; animation:fadeIn 0.2s ease;">
+            <div id="notifPanel" style="display:none; position:absolute; top:calc(100% + 12px); right:0; width:340px; background:var(--bg-card); border-radius:16px; box-shadow:0 20px 50px rgba(0,0,0,0.2); border:1px solid var(--border-color); z-index:500; overflow:hidden; animation:fadeIn 0.2s ease;">
                 <div style="padding:16px 18px; border-bottom:1px solid var(--border-color); display:flex; align-items:center; justify-content:space-between;">
                     <span style="font-weight:800; font-size:1rem; color:var(--text-main);">Bildirimler</span>
                     <button id="notifMarkAll" style="background:none;border:none;cursor:pointer;font-size:0.8rem;color:var(--primary-color);font-weight:700;font-family:Nunito,sans-serif;">Tümünü Okundu İşaretle</button>
@@ -181,13 +119,11 @@
         </div>
     </header>
 
-    <!-- ARAMA MODALI -->
     <div id="searchModal" style="display:none; position:fixed; inset:0; z-index:99990; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px); align-items:flex-start; justify-content:center; padding-top:80px;">
         <div style="background:var(--bg-card); border-radius:20px; width:min(560px,95vw); box-shadow:0 30px 60px rgba(0,0,0,0.4); overflow:hidden; animation:fadeIn 0.25s ease;">
             <div style="padding:20px 20px 0; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--border-color); padding-bottom:16px;">
                 <i class="fas fa-search" style="color:var(--primary-color); font-size:1.2rem;"></i>
-                <input id="searchInput" type="text" placeholder="Uygulama ara..." autocomplete="off"
-                    style="flex:1; border:none; outline:none; background:transparent; font-size:1.1rem; color:var(--text-main); font-family:Nunito,sans-serif; font-weight:700;">
+                <input id="searchInput" type="text" placeholder="Uygulama ara..." autocomplete="off" style="flex:1; border:none; outline:none; background:transparent; font-size:1.1rem; color:var(--text-main); font-family:Nunito,sans-serif; font-weight:700;">
                 <button onclick="closeSearch()" style="background:none;border:none;color:var(--text-muted);font-size:1.2rem;cursor:pointer;"><i class="fas fa-times"></i></button>
             </div>
             <div id="searchResults" style="max-height:400px; overflow-y:auto; padding:12px;"></div>
@@ -197,7 +133,6 @@
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <div class="layout">
-        <!-- SOL MENÜ -->
         <aside class="sidebar" id="sidebar">
             <div class="menu-title">MENÜ</div>
             <ul class="nav-menu" id="categoryMenu">
@@ -210,8 +145,12 @@
                 <li class="nav-item" data-target="page-egitim" data-title="Eğitim">
                     <i class="fas fa-graduation-cap"></i> <span class="nav-text">Eğitim</span>
                 </li>
-                <li class="nav-item" data-target="page-arac-eglence" data-title="Araç & Eğlence">
-                    <i class="fas fa-shapes"></i> <span class="nav-text">Araç & Eğlence</span>
+                <!-- KATEGORİLER AYRILDI -->
+                <li class="nav-item" data-target="page-araclar" data-title="Araçlar">
+                    <i class="fas fa-toolbox"></i> <span class="nav-text">Araçlar</span>
+                </li>
+                <li class="nav-item" data-target="page-eglence" data-title="Eğlence">
+                    <i class="fas fa-gamepad"></i> <span class="nav-text">Eğlence</span>
                 </li>
                 <li class="nav-item" data-target="page-ayarlar" data-title="Sistem Ayarları">
                     <i class="fas fa-cog"></i> <span class="nav-text">Ayarlar</span>
@@ -226,13 +165,11 @@
                     <i class="fas fa-shield-alt"></i> <span class="nav-text">Gizlilik</span>
                 </li>
                 
-                <!-- UYGULAMAYI İNDİR BUTONU -->
                 <li class="nav-item install-app-btn" id="installAppBtn" style="display: none; margin-top: 15px;">
                     <i class="fas fa-download"></i> <span class="nav-text">Uygulamayı İndir</span>
                 </li>
             </ul>
 
-            <!-- Sidebar Alt Profil -->
             <div class="sidebar-profile">
                 <div class="sidebar-profile-avatar">MG</div>
                 <div class="sidebar-profile-info">
@@ -242,12 +179,9 @@
             </div>
         </aside>
 
-        <!-- YUKARI KAYDIR BUTONU -->
         <button id="scrollTopBtn" title="Yukarı Çık"><i class="fas fa-arrow-up"></i></button>
 
-        <!-- ANA İÇERİK -->
         <main class="main-content">
-
             <div class="section-header">
                 <h2 class="section-title" id="sectionTitle">Ana Sayfa</h2>
             </div>
@@ -272,9 +206,9 @@
                         </div>
                         <div class="cat-info">
                             <h3>Günlük</h3>
-                            <p>Takvim, hava, ekonomi ve daha fazlası</p>
+                            <p>Takvim, hava, haber ve daha fazlası</p>
                         </div>
-                        <span class="cat-count">12 Uygulama</span>
+                        <span class="cat-count">7 Uygulama</span>
                         <i class="fas fa-chevron-right cat-arrow"></i>
                     </div>
 
@@ -290,21 +224,33 @@
                         <i class="fas fa-chevron-right cat-arrow"></i>
                     </div>
 
-                    <div class="category-card" data-target="page-arac-eglence">
-                        <div class="cat-icon-wrap" style="background: linear-gradient(135deg, #FF5630, #FF8B00);">
-                            <i class="fas fa-shapes"></i>
+                    <div class="category-card" data-target="page-araclar">
+                        <div class="cat-icon-wrap" style="background: linear-gradient(135deg, #00B8D9, #0052CC);">
+                            <i class="fas fa-toolbox"></i>
                         </div>
                         <div class="cat-info">
-                            <h3>Araç & Eğlence</h3>
-                            <p>Oyunlar ve eğlenceli dijital araçlar</p>
+                            <h3>Araçlar</h3>
+                            <p>İşinizi kolaylaştıran dijital araçlar</p>
                         </div>
-                        <span class="cat-count">1 Uygulama</span>
+                        <span class="cat-count">4 Uygulama</span>
+                        <i class="fas fa-chevron-right cat-arrow"></i>
+                    </div>
+
+                    <div class="category-card" data-target="page-eglence">
+                        <div class="cat-icon-wrap" style="background: linear-gradient(135deg, #FF5630, #FF8B00);">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <div class="cat-info">
+                            <h3>Eğlence</h3>
+                            <p>Oyunlar, medya ve TV yayınları</p>
+                        </div>
+                        <span class="cat-count">3 Uygulama</span>
                         <i class="fas fa-chevron-right cat-arrow"></i>
                     </div>
                 </div>
             </div>
 
-            <!-- SAYFA: GÜNLÜK -->
+            <!-- SAYFA: GÜNLÜK (Kalan 7 Uygulama) -->
             <div id="page-gunluk" class="page-section">
                 <div class="app-grid">
 
@@ -320,19 +266,7 @@
                         </div>
                     </a>
 
-                    <a href="https://mugol-portal.github.io/mugol.ekonomi/" class="app-card" style="animation-delay: 0.1s;">
-                        <div class="app-card-header">
-                            <img src="images/ekonomi.png" alt="Ekonomi" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Eko&background=00B8D9&color=fff&rounded=true&bold=true'">
-                            <div class="app-info"><h3>MuGöl Ekonomi</h3></div>
-                        </div>
-                        <p class="app-desc">Güncel döviz kurları ve piyasa ekonomi verileri.</p>
-                        <div class="app-card-footer">
-                            <span class="app-tag" data-cat="Araç">Araç</span>
-                            <div class="launch-btn"><span class="btn-label">Aç</span><i class="fas fa-arrow-right"></i></div>
-                        </div>
-                    </a>
-
-                    <a href="https://mugol-portal.github.io/mugol.havadurumu/" class="app-card" style="animation-delay: 0.2s;">
+                    <a href="https://mugol-portal.github.io/mugol.havadurumu/" class="app-card" style="animation-delay: 0.1s;">
                         <div class="app-card-header">
                             <img src="images/hava.png" alt="Hava Durumu" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Hava&background=FFAB00&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl Hava Durumu</h3></div>
@@ -344,7 +278,7 @@
                         </div>
                     </a>
 
-                    <a href="https://mugol-portal.github.io/mugol.imsak-vakti/" class="app-card" style="animation-delay: 0.3s;">
+                    <a href="https://mugol-portal.github.io/mugol.imsak-vakti/" class="app-card" style="animation-delay: 0.2s;">
                         <div class="app-card-header">
                             <img src="images/imsak.png" alt="İmsak Vakti" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=İmsak&background=36B37E&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl İmsak Vakti</h3></div>
@@ -356,7 +290,7 @@
                         </div>
                     </a>
 
-                    <a href="https://mugol-portal.github.io/mugol.haber/" class="app-card" style="animation-delay: 0.4s;">
+                    <a href="https://mugol-portal.github.io/mugol.haber/" class="app-card" style="animation-delay: 0.3s;">
                         <div class="app-card-header">
                             <img src="images/haber.png" alt="Haber" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Haber&background=FF5630&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl Haber</h3></div>
@@ -368,31 +302,7 @@
                         </div>
                     </a>
 
-                    <a href="https://mugol-portal.github.io/hesapmakinesi/" class="app-card" style="animation-delay: 0.5s;">
-                        <div class="app-card-header">
-                            <img src="images/hesap.png" alt="Hesap" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Hesap&background=6554C0&color=fff&rounded=true&bold=true'">
-                            <div class="app-info"><h3>MuGöl Hesap</h3></div>
-                        </div>
-                        <p class="app-desc">Hızlı, pratik ve fonksiyonel dijital hesap makinesi.</p>
-                        <div class="app-card-footer">
-                            <span class="app-tag" data-cat="Araç">Araç</span>
-                            <div class="launch-btn"><span class="btn-label">Aç</span><i class="fas fa-arrow-right"></i></div>
-                        </div>
-                    </a>
-
-                    <a href="https://mugol-portal.github.io/mugol.notdefteri/" class="app-card" style="animation-delay: 0.6s;">
-                        <div class="app-card-header">
-                            <img src="images/notdefteri.png" alt="Not Defterim" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Not&background=FFAB00&color=fff&rounded=true&bold=true'">
-                            <div class="app-info"><h3>MuGöl Not Defterim</h3></div>
-                        </div>
-                        <p class="app-desc">Önemli notlarınızı hızlıca yazın ve güvenle saklayın.</p>
-                        <div class="app-card-footer">
-                            <span class="app-tag" data-cat="Araç">Araç</span>
-                            <div class="launch-btn"><span class="btn-label">Aç</span><i class="fas fa-arrow-right"></i></div>
-                        </div>
-                    </a>
-
-                    <a href="https://mugol-portal.github.io/mugol.saglik/" class="app-card" style="animation-delay: 0.7s;">
+                    <a href="https://mugol-portal.github.io/mugol.saglik/" class="app-card" style="animation-delay: 0.4s;">
                         <div class="app-card-header">
                             <img src="images/saglik.png" alt="Sağlık" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Sağlık&background=36B37E&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl Sağlık</h3></div>
@@ -404,7 +314,7 @@
                         </div>
                     </a>
 
-                    <a href="https://mugol-portal.github.io/deprem/" class="app-card" style="animation-delay: 0.8s;">
+                    <a href="https://mugol-portal.github.io/deprem/" class="app-card" style="animation-delay: 0.5s;">
                         <div class="app-card-header">
                             <img src="images/deprem-logo.png" alt="Sismik Radar" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Sismik&background=E31A1A&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl Sismik Radar</h3></div>
@@ -416,7 +326,7 @@
                         </div>
                     </a>
 
-                    <a href="https://mugol-portal.github.io/alisverislistesi/" class="app-card" style="animation-delay: 0.9s;">
+                    <a href="https://mugol-portal.github.io/alisverislistesi/" class="app-card" style="animation-delay: 0.6s;">
                         <div class="app-card-header">
                             <img src="images/shopping.png" alt="Alışveriş Listem" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Liste&background=00B8D9&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>Alışveriş Listem</h3></div>
@@ -427,39 +337,13 @@
                             <div class="launch-btn"><span class="btn-label">Aç</span><i class="fas fa-arrow-right"></i></div>
                         </div>
                     </a>
-                    
-                    <a href="https://mugol-portal.github.io/radyo-mugol/" class="app-card" style="animation-delay: 1.0s;">
-                        <div class="app-card-header">
-                            <img src="images/radyo.png" alt="MuGöl Radyo" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Radyo&background=FF5630&color=fff&rounded=true&bold=true'">
-                            <div class="app-info"><h3>MuGöl Radyo</h3></div>
-                        </div>
-                        <p class="app-desc">Canlı radyo dinleyin ve favori frekanslarınızı keşfedin.</p>
-                        <div class="app-card-footer">
-                            <span class="app-tag" data-cat="Eğlence">Eğlence</span>
-                            <div class="launch-btn"><span class="btn-label">Aç</span><i class="fas fa-arrow-right"></i></div>
-                        </div>
-                    </a>
-
-                    <!-- YENİ EKLENEN UYGULAMA: MuGöl TV -->
-                    <a href="https://mugol-portal.github.io/mugol-tv/" class="app-card" style="animation-delay: 1.1s;">
-                        <div class="app-card-header">
-                            <img src="images/tv.png" alt="MuGöl TV" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=TV&background=E31A1A&color=fff&rounded=true&bold=true'">
-                            <div class="app-info"><h3>MuGöl TV</h3></div>
-                        </div>
-                        <p class="app-desc">Canlı televizyon kanallarını kesintisiz ve tek platformdan izleyin.</p>
-                        <div class="app-card-footer">
-                            <span class="app-tag" data-cat="Eğlence">Eğlence</span>
-                            <div class="launch-btn"><span class="btn-label">Aç</span><i class="fas fa-arrow-right"></i></div>
-                        </div>
-                    </a>
 
                 </div>
             </div>
 
-            <!-- SAYFA: EĞİTİM -->
+            <!-- SAYFA: EĞİTİM (Aynı Kaldı) -->
             <div id="page-egitim" class="page-section">
                 <div class="app-grid">
-
                     <a href="https://mugol-portal.github.io/duygularin.sokagi/" class="app-card" style="animation-delay: 0s;">
                         <div class="app-card-header">
                             <img src="images/sokak.png" alt="Duyguların Sokağı" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Duygu&background=FF8B00&color=fff&rounded=true&bold=true'">
@@ -495,14 +379,65 @@
                             <div class="launch-btn"><span class="btn-label">Aç</span><i class="fas fa-arrow-right"></i></div>
                         </div>
                     </a>
-
                 </div>
             </div>
 
-            <!-- SAYFA: ARAÇ & EĞLENCE -->
-            <div id="page-arac-eglence" class="page-section">
+            <!-- SAYFA: ARAÇLAR (Yeni Kategori) -->
+            <div id="page-araclar" class="page-section">
                 <div class="app-grid">
+                    <a href="https://mugol-portal.github.io/mugol.ekonomi/" class="app-card" style="animation-delay: 0s;">
+                        <div class="app-card-header">
+                            <img src="images/ekonomi.png" alt="Ekonomi" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Eko&background=00B8D9&color=fff&rounded=true&bold=true'">
+                            <div class="app-info"><h3>MuGöl Ekonomi</h3></div>
+                        </div>
+                        <p class="app-desc">Güncel döviz kurları ve piyasa ekonomi verileri.</p>
+                        <div class="app-card-footer">
+                            <span class="app-tag" data-cat="Araç">Araç</span>
+                            <div class="launch-btn"><span class="btn-label">Aç</span><i class="fas fa-arrow-right"></i></div>
+                        </div>
+                    </a>
 
+                    <a href="https://mugol-portal.github.io/hesapmakinesi/" class="app-card" style="animation-delay: 0.1s;">
+                        <div class="app-card-header">
+                            <img src="images/hesap.png" alt="Hesap" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Hesap&background=6554C0&color=fff&rounded=true&bold=true'">
+                            <div class="app-info"><h3>MuGöl Hesap</h3></div>
+                        </div>
+                        <p class="app-desc">Hızlı, pratik ve fonksiyonel dijital hesap makinesi.</p>
+                        <div class="app-card-footer">
+                            <span class="app-tag" data-cat="Araç">Araç</span>
+                            <div class="launch-btn"><span class="btn-label">Aç</span><i class="fas fa-arrow-right"></i></div>
+                        </div>
+                    </a>
+
+                    <a href="https://mugol-portal.github.io/mugol.notdefteri/" class="app-card" style="animation-delay: 0.2s;">
+                        <div class="app-card-header">
+                            <img src="images/notdefteri.png" alt="Not Defterim" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Not&background=FFAB00&color=fff&rounded=true&bold=true'">
+                            <div class="app-info"><h3>MuGöl Not Defterim</h3></div>
+                        </div>
+                        <p class="app-desc">Önemli notlarınızı hızlıca yazın ve güvenle saklayın.</p>
+                        <div class="app-card-footer">
+                            <span class="app-tag" data-cat="Araç">Araç</span>
+                            <div class="launch-btn"><span class="btn-label">Aç</span><i class="fas fa-arrow-right"></i></div>
+                        </div>
+                    </a>
+
+                    <a href="https://mugol-portal.github.io/ozgecmis/" class="app-card" style="animation-delay: 0.3s;">
+                        <div class="app-card-header">
+                            <img src="images/ozgecmis.png" alt="Özgeçmiş" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Özgeçmiş&background=00B8D9&color=fff&rounded=true&bold=true'">
+                            <div class="app-info"><h3>MuGöl Özgeçmiş</h3></div>
+                        </div>
+                        <p class="app-desc">Profesyonel özgeçmiş oluşturma ve düzenleme aracı.</p>
+                        <div class="app-card-footer">
+                            <span class="app-tag" data-cat="Araç">Araç</span>
+                            <div class="launch-btn"><span class="btn-label">Aç</span><i class="fas fa-arrow-right"></i></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- SAYFA: EĞLENCE (Yeni Kategori) -->
+            <div id="page-eglence" class="page-section">
+                <div class="app-grid">
                     <a href="https://mugol-portal.github.io/Mugol.games/" class="app-card" style="animation-delay: 0s;">
                         <div class="app-card-header">
                             <img src="images/games.png" alt="MuGöl Games" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Oyun&background=FF5630&color=fff&rounded=true&bold=true'">
@@ -515,6 +450,29 @@
                         </div>
                     </a>
 
+                    <a href="https://mugol-portal.github.io/radyo-mugol/" class="app-card" style="animation-delay: 0.1s;">
+                        <div class="app-card-header">
+                            <img src="images/radyo.png" alt="MuGöl Radyo" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Radyo&background=FF5630&color=fff&rounded=true&bold=true'">
+                            <div class="app-info"><h3>MuGöl Radyo</h3></div>
+                        </div>
+                        <p class="app-desc">Canlı radyo dinleyin ve favori frekanslarınızı keşfedin.</p>
+                        <div class="app-card-footer">
+                            <span class="app-tag" data-cat="Eğlence">Eğlence</span>
+                            <div class="launch-btn"><span class="btn-label">Aç</span><i class="fas fa-arrow-right"></i></div>
+                        </div>
+                    </a>
+
+                    <a href="https://mugol-portal.github.io/mugol-tv/" class="app-card" style="animation-delay: 0.2s;">
+                        <div class="app-card-header">
+                            <img src="images/tv.png" alt="MuGöl TV" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=TV&background=E31A1A&color=fff&rounded=true&bold=true'">
+                            <div class="app-info"><h3>MuGöl TV</h3></div>
+                        </div>
+                        <p class="app-desc">Canlı televizyon kanallarını kesintisiz ve tek platformdan izleyin.</p>
+                        <div class="app-card-footer">
+                            <span class="app-tag" data-cat="Eğlence">Eğlence</span>
+                            <div class="launch-btn"><span class="btn-label">Aç</span><i class="fas fa-arrow-right"></i></div>
+                        </div>
+                    </a>
                 </div>
             </div>
 
@@ -612,7 +570,6 @@
             <div id="page-iletisim" class="page-section">
                 <div class="content-card">
                     <div class="contact-container">
-                        <!-- Sol bilgi paneli -->
                         <div class="contact-info">
                             <h3>Bize Ulaşın</h3>
                             <p>Soru, öneri ve destek talepleriniz için formu doldurabilir veya doğrudan e-posta adresimize yazabilirsiniz.</p>
@@ -651,7 +608,6 @@
                             </div>
                         </div>
 
-                        <!-- Sağ form paneli -->
                         <div class="form-wrapper">
                             <div id="formSuccess" style="
                                 display:none; text-align:center; padding:2.5rem 1.5rem;
@@ -710,10 +666,8 @@
 
             <!-- SAYFA: HAKKINDA -->
             <div id="page-hakkinda" class="page-section">
-                <!-- Premium görünüm için ekstra "premium-card" sınıfı eklendi (CSS'te işlenecek) -->
                 <div class="content-card premium-card">
                     <div class="about-container">
-                        <!-- Hakkında kartı: İçeriğin merkeze hizalanması için HTML aynı, sihir CSS'te -->
                         <div class="about-founder-card">
                             <div class="founder-photo-wrap">
                                 <img id="founderPhoto" src="kurucu.png" alt="Kurucu Fotoğrafı" class="founder-photo" onerror="this.style.display='none'; document.getElementById('founderInitials').style.display='flex';">
@@ -731,11 +685,12 @@
                         <div class="about-stats">
                             <div class="stat-item">
                                 <i class="fas fa-rocket"></i>
-                                <div><strong>16</strong><span>Uygulama</span></div>
+                                <!-- Değer JS içinden countUp ile tetiklendiği için başlangıç sayılarını da buraya yazdık -->
+                                <div><strong>17</strong><span>Uygulama</span></div>
                             </div>
                             <div class="stat-item">
                                 <i class="fas fa-layer-group"></i>
-                                <div><strong>3</strong><span>Kategori</span></div>
+                                <div><strong>4</strong><span>Kategori</span></div>
                             </div>
                             <div class="stat-item">
                                 <i class="fas fa-calendar-check"></i>
@@ -781,7 +736,6 @@
         </div>
     </div>
 
-    <!-- Dış JavaScript -->
     <script src="script.js"></script>
 </body>
 </html>

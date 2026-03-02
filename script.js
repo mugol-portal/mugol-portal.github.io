@@ -8,21 +8,17 @@ const sidebarOverlay = document.getElementById('sidebarOverlay');
 
 // --- 1. MENÜ GEÇİŞ SİSTEMİ ---
 navItems.forEach(item => {
-    // "Uygulamayı İndir" butonuna basıldığında sayfa değişmemesi için kontrol
     if (item.id === 'installAppBtn') return;
 
     item.addEventListener('click', () => {
-        // Aktif sınıfı güncelle
         navItems.forEach(nav => {
             if (nav.id !== 'installAppBtn') nav.classList.remove('active');
         });
         item.classList.add('active');
 
-        // Başlığı güncelle
         const title = item.getAttribute('data-title');
         if(sectionTitle) sectionTitle.textContent = title;
 
-        // Sayfa geçişini ayarla
         const targetId = item.getAttribute('data-target');
         pages.forEach(page => {
             if (page.id === targetId) {
@@ -32,7 +28,6 @@ navItems.forEach(item => {
             }
         });
 
-        // Mobildeyse menüyü tıklandıktan sonra kapat
         if (window.innerWidth <= 992) {
             sidebar.classList.remove('mobile-open');
             sidebarOverlay.classList.remove('active');
@@ -215,7 +210,6 @@ function showRedirectToast(appName, url, logoSrc) {
     }
     toast.classList.add('show');
 
-    // Animasyon başlatma
     requestAnimationFrame(() => {
         if (toastRing) {
             toastRing.style.transition = 'stroke-dashoffset 3s linear';
@@ -237,7 +231,6 @@ function showRedirectToast(appName, url, logoSrc) {
     }, 3000);
 }
 
-// Tüm uygulama kartlarına tıklama olayı
 document.querySelectorAll('.app-card').forEach(card => {
     card.addEventListener('click', function (e) {
         e.preventDefault();
@@ -612,7 +605,8 @@ if (aboutMenuItem) {
         if (countUpDone) return;
         setTimeout(() => {
             const statEls = document.querySelectorAll('.stat-item strong');
-            const targets =[15, 3, 2025]; // <--- Güncellendi (14 yerine 15 oldu)
+            // GÜNCELLEME: 17 Uygulama, 4 Kategori, 2025 Kuruluş
+            const targets =[17, 4, 2025]; 
             const suffixes = ['', '', ''];
             statEls.forEach((el, i) => {
                 const t = parseInt(el.textContent) || targets[i];
@@ -627,38 +621,23 @@ if (aboutMenuItem) {
 let deferredPrompt;
 const installAppBtn = document.getElementById('installAppBtn');
 
-// Tarayıcı PWA yükleme gereksinimlerini karşıladığında tetiklenir
 window.addEventListener('beforeinstallprompt', (e) => {
-    // Tarayıcının varsayılan "Ana ekrana ekle" bildirimini engelle
     e.preventDefault();
-    // Olayı daha sonra tetiklemek üzere kaydet
     deferredPrompt = e;
-    
-    // Uygulama yüklenebilir durumda, menüdeki butonu görünür yap
     if (installAppBtn) {
         installAppBtn.style.display = 'flex';
     }
 });
 
-// İndir butonuna tıklama olayı
 if (installAppBtn) {
     installAppBtn.addEventListener('click', async () => {
         if (!deferredPrompt) return;
-        
-        // Tarayıcının yükleme penceresini göster
         deferredPrompt.prompt();
-        
-        // Kullanıcının tercihini bekle (Kabul et/Reddet)
         const { outcome } = await deferredPrompt.userChoice;
         console.log(`PWA Yükleme Sonucu: ${outcome}`);
-        
-        // Promp bir kere kullanıldıktan sonra sıfırlanmalıdır
         deferredPrompt = null;
-        
-        // Yükleme penceresi açıldıktan sonra butonu gizle
         installAppBtn.style.display = 'none';
         
-        // Menüyü mobilde kapatma
         if (window.innerWidth <= 992 && sidebar && sidebarOverlay) {
             sidebar.classList.remove('mobile-open');
             sidebarOverlay.classList.remove('active');
@@ -666,26 +645,18 @@ if (installAppBtn) {
     });
 }
 
-// Uygulama başarıyla yüklendiğinde tetiklenir
 window.addEventListener('appinstalled', () => {
-    // Referansı temizle
     deferredPrompt = null;
     console.log('PWA başarıyla yüklendi!');
-    // Yüklendiyse butonu tamamen gizle
     if (installAppBtn) {
         installAppBtn.style.display = 'none';
     }
 });
 
-// Service Worker Kaydı
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
-            .then((registration) => {
-                console.log('✅ Service Worker kayıt başarılı:', registration);
-            })
-            .catch((err) => {
-                console.log('❌ Service Worker kayıt hatası:', err);
-            });
+            .then((registration) => console.log('✅ Service Worker kayıt başarılı:', registration))
+            .catch((err) => console.log('❌ Service Worker kayıt hatası:', err));
     });
 }
