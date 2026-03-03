@@ -573,100 +573,84 @@
                 </div>
             </div>
 
-            <!-- SAYFA: İLETİŞİM -->
+            <!-- SAYFA: İLETİŞİM (YENİ SPLIT TASARIM) -->
             <div id="page-iletisim" class="page-section" role="region" aria-label="İletişim Bilgileri">
-                <div class="content-card">
-                    <div class="contact-container">
-                        <div class="contact-info">
-                            <h3>Bize Ulaşın</h3>
-                            <p>Soru, öneri ve destek talepleriniz için formu doldurabilir veya doğrudan e-posta adresimize yazabilirsiniz.</p>
-
-                            <div class="contact-method">
-                                <i class="fas fa-envelope" aria-hidden="true"></i>
-                                <div style="flex:1; min-width:0;">
-                                    <strong>E-Posta Adresi</strong>
-                                    <span style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                                        <span id="emailAddrText" style="word-break:break-all;">mugol.education.help@gmail.com</span>
-                                        <button id="copyEmailBtn" aria-label="E-posta adresini kopyala" onclick="copyEmail()" style="
-                                            background:rgba(67,24,255,0.08); border:1px solid rgba(67,24,255,0.2);
-                                            color:var(--primary-color); border-radius:8px; padding:4px 12px;
-                                            font-size:0.8rem; font-weight:800; cursor:pointer;
-                                            font-family:inherit; transition:all 0.2s ease; white-space:nowrap;">
-                                            <i class="fas fa-copy" aria-hidden="true"></i> Kopyala
-                                        </button>
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div class="contact-method">
-                                <i class="fab fa-instagram" aria-hidden="true" style="background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;"></i>
-                                <div>
-                                    <strong>Instagram</strong>
-                                    <span><a href="https://www.instagram.com/mugol_portal?igsh=MXFqNWFmbnE1aGZsaw==" aria-label="Instagram profilimizi ziyaret edin" target="_blank" style="color:var(--primary-color); text-decoration:none; font-weight:800;">@mugol_portal</a></span>
-                                </div>
-                            </div>
-
-                            <div class="contact-method">
-                                <i class="fas fa-clock" aria-hidden="true"></i>
-                                <div>
-                                    <strong>Yanıt Süresi</strong>
-                                    <span>Genellikle 24–48 saat içinde yanıt verilir.</span>
+                <div class="content-card premium-card" style="padding: 0; overflow: hidden; border: none;">
+                    <div class="contact-split-layout">
+                        
+                        <!-- SOL TARAF: Görsel ve Mesaj Alanı -->
+                        <div class="contact-left">
+                            <div class="contact-decor-1"></div>
+                            <div class="contact-decor-2"></div>
+                            <div class="contact-left-content">
+                                <i class="fas fa-paper-plane contact-hero-icon" aria-hidden="true"></i>
+                                <h3>Bize Ulaşın</h3>
+                                <p>Fikirleriniz, önerileriniz veya destek talepleriniz bizim için çok değerli. Formu doldurarak doğrudan ekibimize mesaj gönderebilirsiniz.</p>
+                                
+                                <div class="contact-pill-links">
+                                    <a href="mailto:mugol.education.help@gmail.com" class="contact-pill">
+                                        <i class="fas fa-envelope" aria-hidden="true"></i> E-Posta
+                                    </a>
+                                    <a href="https://www.instagram.com/mugol_portal?igsh=MXFqNWFmbnE1aGZsaw==" target="_blank" class="contact-pill" aria-label="Instagram Sayfamız">
+                                        <i class="fab fa-instagram" aria-hidden="true"></i> Instagram
+                                    </a>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-wrapper">
-                            <div id="formSuccess" aria-live="polite" style="
-                                display:none; text-align:center; padding:2.5rem 1.5rem;
-                                background:linear-gradient(135deg,rgba(67,24,255,0.06),rgba(0,210,255,0.06));
-                                border:1px solid rgba(67,24,255,0.15); border-radius:16px; margin-bottom:1rem;">
-                                <div style="font-size:2.5rem; margin-bottom:12px;" aria-hidden="true">✅</div>
-                                <h4 style="font-size:1.2rem; font-weight:800; margin-bottom:6px; color:var(--text-main);">E-posta uygulaması açıldı!</h4>
-                                <p style="color:var(--text-muted); font-size:1rem; font-weight:600;">Mesajınızı e-posta uygulamanızdan gönderin.<br>Teşekkürler!</p>
-                                <button onclick="resetContactForm()" aria-label="Yeni mesaj gönder" style="
-                                    margin-top:16px; background:var(--primary-color); color:#fff;
-                                    border:none; border-radius:10px; padding:10px 24px;
-                                    font-size:0.95rem; font-weight:800; cursor:pointer;
-                                    font-family:inherit;">Yeni Mesaj Gönder</button>
+                        <!-- SAĞ TARAF: Form Alanı -->
+                        <div class="contact-right">
+                            <div class="form-wrapper">
+                                <!-- Başarı Mesajı -->
+                                <div id="formSuccess" aria-live="polite" style="
+                                    display:none; text-align:center; padding:2rem 1.5rem;
+                                    background:rgba(16, 185, 129, 0.1);
+                                    border:1px solid rgba(16, 185, 129, 0.2); border-radius:16px; margin-bottom:1rem;">
+                                    <div style="font-size:3rem; margin-bottom:12px;" aria-hidden="true">✨</div>
+                                    <h4 style="font-size:1.2rem; font-weight:800; margin-bottom:6px; color:var(--text-main);">E-posta uygulaması açıldı!</h4>
+                                    <p style="color:var(--text-muted); font-size:0.95rem; font-weight:600;">Mesajınızı e-posta uygulamanızdan güvenle gönderebilirsiniz.<br>İlginiz için teşekkürler!</p>
+                                    <button onclick="resetContactForm()" aria-label="Yeni mesaj gönder" style="
+                                        margin-top:16px; background:#10b981; color:#fff;
+                                        border:none; border-radius:10px; padding:10px 24px;
+                                        font-size:0.95rem; font-weight:800; cursor:pointer;
+                                        font-family:inherit; transition:transform 0.2s ease;">Yeni Mesaj Gönder</button>
+                                </div>
+
+                                <!-- İletişim Formu -->
+                                <form class="contact-form" id="contactForm">
+                                    <div class="form-group">
+                                        <label for="contact-name">Adınız Soyadınız</label>
+                                        <input type="text" id="contact-name" class="form-control" placeholder="Örn: Ad Soyad" required minlength="2">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="contact-email">E-Posta Adresiniz</label>
+                                        <input type="email" id="contact-email" class="form-control" placeholder="ornek@email.com" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="contact-category">Mesaj Kategorisi</label>
+                                        <select id="contact-category" class="form-control" required style="cursor:pointer;">
+                                            <option value="" disabled selected>Kategori seçin...</option>
+                                            <option value="💡 Öneri">💡 Öneri</option>
+                                            <option value="🐛 Hata Bildirimi">🐛 Hata Bildirimi</option>
+                                            <option value="🆘 Destek Talebi">🆘 Destek Talebi</option>
+                                            <option value="🤝 İş Birliği">🤝 İş Birliği</option>
+                                            <option value="💬 Diğer">💬 Diğer</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="contact-message" style="display:flex; justify-content:space-between;">
+                                            <span>Mesajınız</span>
+                                            <span id="charCount" aria-live="polite" style="font-weight:700; color:var(--text-muted); font-size:0.85rem;">0 / 500</span>
+                                        </label>
+                                        <textarea id="contact-message" class="form-control" placeholder="Lütfen mesajınızı buraya yazın..." required minlength="10" maxlength="500"></textarea>
+                                    </div>
+                                    <button type="submit" class="submit-btn" id="contactSubmitBtn">
+                                        <i class="fas fa-paper-plane" aria-hidden="true"></i> E-Posta Gönder
+                                    </button>
+                                </form>
                             </div>
-
-                            <form class="contact-form" id="contactForm">
-                                <div class="form-group">
-                                    <label for="contact-name">Adınız Soyadınız</label>
-                                    <input type="text" id="contact-name" class="form-control" placeholder="Örn: Ad Soyad" required minlength="2">
-                                </div>
-                                <div class="form-group">
-                                    <label for="contact-email">E-Posta Adresiniz</label>
-                                    <input type="email" id="contact-email" class="form-control" placeholder="ornek@email.com" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="contact-category">Mesaj Kategorisi</label>
-                                    <select id="contact-category" class="form-control" required style="cursor:pointer;">
-                                        <option value="" disabled selected>Kategori seçin...</option>
-                                        <option value="💡 Öneri">💡 Öneri</option>
-                                        <option value="🐛 Hata Bildirimi">🐛 Hata Bildirimi</option>
-                                        <option value="🆘 Destek Talebi">🆘 Destek Talebi</option>
-                                        <option value="🤝 İş Birliği">🤝 İş Birliği</option>
-                                        <option value="💬 Diğer">💬 Diğer</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="contact-message" style="display:flex; justify-content:space-between;">
-                                        <span>Mesajınız</span>
-                                        <span id="charCount" aria-live="polite" style="font-weight:700; color:var(--text-muted); font-size:0.85rem;">0 / 500</span>
-                                    </label>
-                                    <textarea id="contact-message" class="form-control" placeholder="Lütfen mesajınızı buraya yazın..." required minlength="10" maxlength="500"></textarea>
-                                </div>
-                                <button type="submit" class="submit-btn" id="contactSubmitBtn">
-                                    <i class="fas fa-paper-plane" aria-hidden="true"></i> E-Posta Gönder
-                                </button>
-                            </form>
-
-                            <div class="social-divider" aria-hidden="true"><span>Veya sosyal medyadan ulaşın</span></div>
-                            <a href="https://www.instagram.com/mugol_portal?igsh=MXFqNWFmbnE1aGZsaw==" target="_blank" class="instagram-link" aria-label="Instagram Sayfamız (Yeni sekmede açılır)">
-                                <i class="fab fa-instagram" aria-hidden="true" style="font-size: 1.4rem;"></i> Instagram Sayfamız
-                            </a>
                         </div>
+
                     </div>
                 </div>
             </div>
