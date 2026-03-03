@@ -6,54 +6,72 @@ const hamburgerBtn = document.getElementById('hamburgerBtn');
 const sidebar = document.getElementById('sidebar');
 const sidebarOverlay = document.getElementById('sidebarOverlay');
 
-// --- 1. MENÜ GEÇİŞ SİSTEMİ ---
-navItems.forEach(item => {
+// --- 1. MENÜ GEÇİŞ SİSTEMİ (Tıklama ve Klavye Desteği) ---
+function activateMenu(item) {
     if (item.id === 'installAppBtn') return;
 
-    item.addEventListener('click', () => {
-        navItems.forEach(nav => {
-            if (nav.id !== 'installAppBtn') nav.classList.remove('active');
-        });
-        item.classList.add('active');
+    navItems.forEach(nav => {
+        if (nav.id !== 'installAppBtn') nav.classList.remove('active');
+    });
+    item.classList.add('active');
 
-        const title = item.getAttribute('data-title');
-        if(sectionTitle) sectionTitle.textContent = title;
+    const title = item.getAttribute('data-title');
+    if (sectionTitle) sectionTitle.textContent = title;
 
-        const targetId = item.getAttribute('data-target');
-        pages.forEach(page => {
-            if (page.id === targetId) {
-                page.classList.add('active');
-            } else {
-                page.classList.remove('active');
-            }
-        });
+    const targetId = item.getAttribute('data-target');
+    pages.forEach(page => {
+        if (page.id === targetId) {
+            page.classList.add('active');
+        } else {
+            page.classList.remove('active');
+        }
+    });
 
-        if (window.innerWidth <= 992) {
-            sidebar.classList.remove('mobile-open');
-            sidebarOverlay.classList.remove('active');
+    if (window.innerWidth <= 992 && sidebar && sidebarOverlay) {
+        sidebar.classList.remove('mobile-open');
+        sidebarOverlay.classList.remove('active');
+        hamburgerBtn.setAttribute('aria-expanded', 'false');
+    }
+}
+
+navItems.forEach(item => {
+    // Mouse tıklaması
+    item.addEventListener('click', () => activateMenu(item));
+    // Klavye erişilebilirliği (Enter veya Space)
+    item.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            activateMenu(item);
         }
     });
 });
 
 // --- 2. SİDEBAR KONTROLLERİ ---
-hamburgerBtn.addEventListener('click', () => {
+function toggleSidebar() {
     if (window.innerWidth > 992) {
         sidebar.classList.toggle('collapsed');
     } else {
-        sidebar.classList.toggle('mobile-open');
+        const isOpen = sidebar.classList.toggle('mobile-open');
         sidebarOverlay.classList.toggle('active');
+        if (hamburgerBtn) hamburgerBtn.setAttribute('aria-expanded', isOpen);
     }
-});
+}
 
-sidebarOverlay.addEventListener('click', () => {
-    sidebar.classList.remove('mobile-open');
-    sidebarOverlay.classList.remove('active');
-});
+if (hamburgerBtn) hamburgerBtn.addEventListener('click', toggleSidebar);
 
-window.addEventListener('resize', () => {
-    if (window.innerWidth > 992) {
+if (sidebarOverlay) {
+    sidebarOverlay.addEventListener('click', () => {
         sidebar.classList.remove('mobile-open');
         sidebarOverlay.classList.remove('active');
+        if (hamburgerBtn) hamburgerBtn.setAttribute('aria-expanded', 'false');
+    });
+}
+
+window.addEventListener('resize', () => {
+    if (window.innerWidth > 992 && sidebar && sidebarOverlay) {
+        sidebar.classList.remove('mobile-open');
+        sidebarOverlay.classList.remove('active');
+        if (hamburgerBtn) hamburgerBtn.setAttribute('aria-expanded', 'false');
     }
 });
 
@@ -62,9 +80,9 @@ const themeSwitch = document.getElementById('themeSwitch');
 const savedTheme = localStorage.getItem('mugol-theme') || 'light';
 
 document.documentElement.setAttribute('data-theme', savedTheme);
-if(themeSwitch) themeSwitch.checked = savedTheme === 'dark';
+if (themeSwitch) themeSwitch.checked = savedTheme === 'dark';
 
-if(themeSwitch) {
+if (themeSwitch) {
     themeSwitch.addEventListener('change', (e) => {
         const theme = e.target.checked ? 'dark' : 'light';
         document.documentElement.setAttribute('data-theme', theme);
@@ -74,11 +92,18 @@ if(themeSwitch) {
 
 const fontBtns = document.querySelectorAll('.font-btn');
 fontBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
+    const applyFont = () => {
         fontBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         const newSize = btn.getAttribute('data-size');
         document.documentElement.style.setProperty('--base-font-size', newSize);
+    };
+    btn.addEventListener('click', applyFont);
+    btn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            applyFont();
+        }
     });
 });
 
@@ -87,12 +112,12 @@ function updateDateTime() {
     const now = new Date();
     const timeString = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
     const timeEl = document.getElementById('timeDisplay');
-    if (timeEl) timeEl.textContent = timeString;
+    if (timeEl && timeEl.textContent !== timeString) timeEl.textContent = timeString;
 
     const options = { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' };
     const dateString = now.toLocaleDateString('tr-TR', options);
     const dateEl = document.getElementById('dateDisplay');
-    if (dateEl) dateEl.textContent = dateString;
+    if (dateEl && dateEl.textContent !== dateString) dateEl.textContent = dateString;
 }
 setInterval(updateDateTime, 1000);
 updateDateTime();
@@ -142,7 +167,10 @@ function resetContactForm() {
     if (contactForm) {
         contactForm.reset();
         contactForm.style.display = 'flex';
-        if (charCountEl) charCountEl.textContent = '0 / 500';
+        if (charCountEl) {
+            charCountEl.textContent = '0 / 500';
+            charCountEl.style.color = 'var(--text-muted)';
+        }
     }
 }
 
@@ -152,7 +180,7 @@ function copyEmail() {
         const btn = document.getElementById('copyEmailBtn');
         if (btn) {
             const orig = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-check"></i> Kopyalandı!';
+            btn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i> Kopyalandı!';
             btn.style.background = 'rgba(0,135,90,0.1)';
             btn.style.borderColor = 'rgba(0,135,90,0.3)';
             btn.style.color = '#00875A';
@@ -188,27 +216,26 @@ const CIRCUMFERENCE = 2 * Math.PI * 14;
 function cancelToast() {
     if (toastTimer) clearTimeout(toastTimer);
     if (toastCountdown) clearInterval(toastCountdown);
-    toast.classList.remove('show');
+    if (toast) toast.classList.remove('show');
     pendingUrl = null;
 }
 
-if(toastCancelBtn) toastCancelBtn.addEventListener('click', cancelToast);
+if (toastCancelBtn) toastCancelBtn.addEventListener('click', cancelToast);
 
 function showRedirectToast(appName, url, logoSrc) {
-    if (toastTimer) clearTimeout(toastTimer);
-    if (toastCountdown) clearInterval(toastCountdown);
+    cancelToast(); // Önceki toast varsa temizle
     pendingUrl = url;
 
-    toastAppName.textContent = appName;
+    if (toastAppName) toastAppName.textContent = appName;
     const toastLogo = document.getElementById('toast-app-logo');
-    if (toastLogo) { toastLogo.src = logoSrc || ''; }
-    toastCountEl.textContent = '3';
+    if (toastLogo) toastLogo.src = logoSrc || '';
+    if (toastCountEl) toastCountEl.textContent = '3';
     
     if (toastRing) {
         toastRing.style.strokeDashoffset = 0;
         toastRing.style.transition = 'none';
     }
-    toast.classList.add('show');
+    if (toast) toast.classList.add('show');
 
     requestAnimationFrame(() => {
         if (toastRing) {
@@ -225,7 +252,7 @@ function showRedirectToast(appName, url, logoSrc) {
     }, 1000);
 
     toastTimer = setTimeout(() => {
-        toast.classList.remove('show');
+        if (toast) toast.classList.remove('show');
         if (pendingUrl) window.open(pendingUrl, '_blank');
         pendingUrl = null;
     }, 3000);
@@ -243,10 +270,17 @@ document.querySelectorAll('.app-card').forEach(card => {
 
 // --- 7. ANA SAYFA KATEGORİ KARTLARI ---
 document.querySelectorAll('.category-card').forEach(catCard => {
-    catCard.addEventListener('click', function () {
-        const targetId = this.getAttribute('data-target');
+    const triggerCat = () => {
+        const targetId = catCard.getAttribute('data-target');
         const menuItem = document.querySelector('.nav-item[data-target="' + targetId + '"]');
         if (menuItem) menuItem.click();
+    };
+    catCard.addEventListener('click', triggerCat);
+    catCard.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            triggerCat();
+        }
     });
 });
 
@@ -265,13 +299,12 @@ document.querySelectorAll('.category-card').forEach(catCard => {
             const p = document.createElement('div');
             p.className = 'splash-particle';
             const size = Math.random() * 6 + 3;
-            p.style.cssText =[
-                'width:' + size + 'px',
-                'height:' + size + 'px',
-                'left:' + Math.random() * 100 + '%',
-                'animation-duration:' + (Math.random() * 6 + 5) + 's',
-                'animation-delay:' + (Math.random() * 4) + 's',
-            ].join(';');
+            p.style.cssText = `
+                width:${size}px; height:${size}px;
+                left:${Math.random() * 100}%;
+                animation-duration:${Math.random() * 6 + 5}s;
+                animation-delay:${Math.random() * 4}s;
+            `;
             particlesContainer.appendChild(p);
         }
     }
@@ -279,14 +312,18 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     const bar = document.getElementById('splashProgressBar');
     const label = document.getElementById('splashProgressLabel');
     const splash = document.getElementById('splash-screen');
-    const labels =['Yükleniyor...', 'Hazırlanıyor...', 'Neredeyse hazır...', 'Hoş geldiniz!'];
+    const labels = ['Yükleniyor...', 'Hazırlanıyor...', 'Neredeyse hazır...', 'Hoş geldiniz!'];
     let progress = 0;
     let labelIdx = 0;
 
     const interval = setInterval(() => {
         progress += Math.random() * 4 + 1.5;
         if (progress > 100) progress = 100;
-        if (bar) bar.style.width = progress + '%';
+        
+        if (bar) {
+            bar.style.width = progress + '%';
+            bar.setAttribute('aria-valuenow', Math.round(progress));
+        }
         
         const newLabelIdx = Math.min(Math.floor(progress / 33), labels.length - 1);
         if (newLabelIdx !== labelIdx) {
@@ -333,10 +370,8 @@ document.querySelectorAll('.category-card').forEach(catCard => {
         ptrIndicator.classList.toggle('visible', diff > 20);
         ptrIndicator.classList.toggle('ready', diff >= THRESHOLD);
 
-        if (diff >= THRESHOLD) {
-            ptrLabel.textContent = 'Bırakın, yenilensin';
-        } else {
-            ptrLabel.textContent = 'Yenilemek için çekin';
+        if (ptrLabel) {
+            ptrLabel.textContent = diff >= THRESHOLD ? 'Bırakın, yenilensin' : 'Yenilemek için çekin';
         }
     }, { passive: true });
 
@@ -349,7 +384,7 @@ document.querySelectorAll('.category-card').forEach(catCard => {
             refreshing = true;
             ptrIndicator.classList.add('refreshing');
             ptrIndicator.classList.remove('ready');
-            ptrLabel.textContent = 'Yenileniyor...';
+            if (ptrLabel) ptrLabel.textContent = 'Yenileniyor...';
             ptrIndicator.style.height = '65px';
 
             setTimeout(() => {
@@ -380,7 +415,7 @@ function renderNotifications() {
     if (!list) return;
 
     const unread = NOTIFICATIONS.filter(n => !readNotifs.includes(n.id));
-    dot.style.display = unread.length > 0 ? 'block' : 'none';
+    if (dot) dot.style.display = unread.length > 0 ? 'block' : 'none';
 
     if (NOTIFICATIONS.length === 0) {
         list.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);font-weight:800;font-size:1rem;">Bildirim yok</div>';
@@ -389,18 +424,18 @@ function renderNotifications() {
 
     list.innerHTML = NOTIFICATIONS.map(n => {
         const isRead = readNotifs.includes(n.id);
-        return `<div data-notif-id="${n.id}" onclick="markNotifRead('${n.id}')" style="
+        return `<div data-notif-id="${n.id}" onclick="markNotifRead('${n.id}')" role="listitem" tabindex="0" style="
             padding:14px 18px; border-bottom:1px solid var(--border-color);
             cursor:pointer; transition:background 0.15s ease;
             background:${isRead ? 'transparent' : 'rgba(67,24,255,0.04)'};
             display:flex; gap:12px; align-items:flex-start;"
             onmouseenter="this.style.background='rgba(67,24,255,0.06)'"
             onmouseleave="this.style.background='${isRead ? 'transparent' : 'rgba(67,24,255,0.04)'}'">
-            <div style="font-size:1.4rem; flex-shrink:0; line-height:1;">${n.icon}</div>
+            <div style="font-size:1.4rem; flex-shrink:0; line-height:1;" aria-hidden="true">${n.icon}</div>
             <div style="flex:1; min-width:0;">
                 <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:3px;">
                     <span style="font-weight:${isRead ? 700 : 900}; font-size:1rem; color:var(--text-main);">${n.title}</span>
-                    ${!isRead ? '<span style="width:8px;height:8px;background:var(--primary-color);border-radius:50%;flex-shrink:0;"></span>' : ''}
+                    ${!isRead ? '<span style="width:8px;height:8px;background:var(--primary-color);border-radius:50%;flex-shrink:0;" aria-label="Okunmadı"></span>' : ''}
                 </div>
                 <div style="font-size:0.9rem; color:var(--text-muted); font-weight:600; line-height:1.5;">${n.body}</div>
                 <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px; font-weight:800;">${n.time}</div>
@@ -409,46 +444,51 @@ function renderNotifications() {
     }).join('');
 }
 
-function markNotifRead(id) {
+window.markNotifRead = function(id) {
     if (!readNotifs.includes(id)) {
         readNotifs.push(id);
         localStorage.setItem('mugol-read-notifs', JSON.stringify(readNotifs));
         renderNotifications();
     }
-}
+};
 
 const notifBtn = document.getElementById('notifBtn');
 const notifPanel = document.getElementById('notifPanel');
 
-if(notifBtn && notifPanel) {
+if (notifBtn && notifPanel) {
     notifBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         const isOpen = notifPanel.style.display !== 'none';
         notifPanel.style.display = isOpen ? 'none' : 'block';
+        notifBtn.setAttribute('aria-expanded', !isOpen);
         if (!isOpen) renderNotifications();
     });
 
-    document.getElementById('notifMarkAll').addEventListener('click', (e) => {
-        e.stopPropagation();
-        NOTIFICATIONS.forEach(n => { if (!readNotifs.includes(n.id)) readNotifs.push(n.id); });
-        localStorage.setItem('mugol-read-notifs', JSON.stringify(readNotifs));
-        renderNotifications();
-    });
+    const notifMarkAll = document.getElementById('notifMarkAll');
+    if (notifMarkAll) {
+        notifMarkAll.addEventListener('click', (e) => {
+            e.stopPropagation();
+            NOTIFICATIONS.forEach(n => { if (!readNotifs.includes(n.id)) readNotifs.push(n.id); });
+            localStorage.setItem('mugol-read-notifs', JSON.stringify(readNotifs));
+            renderNotifications();
+        });
+    }
 
     document.addEventListener('click', (e) => {
         if (!notifPanel.contains(e.target) && e.target !== notifBtn) {
             notifPanel.style.display = 'none';
+            notifBtn.setAttribute('aria-expanded', 'false');
         }
     });
 }
 
 renderNotifications();
 
-// --- 11. GLOBAL ARAMA ---
+// --- 11. GLOBAL ARAMA (Debounce Desteği ile) ---
 const searchModal = document.getElementById('searchModal');
 const searchInput = document.getElementById('searchInput');
+const searchIndex = [];
 
-const searchIndex =[];
 document.querySelectorAll('.page-section .app-card[href]').forEach(card => {
     const page = card.closest('.page-section');
     const menuItem = page ? document.querySelector('.nav-item[data-target="' + page.id + '"]') : null;
@@ -462,22 +502,24 @@ document.querySelectorAll('.page-section .app-card[href]').forEach(card => {
     });
 });
 
-if(document.getElementById('searchBtn')) {
+if (document.getElementById('searchBtn')) {
     document.getElementById('searchBtn').addEventListener('click', openSearch);
 }
 
 function openSearch() {
-    searchModal.style.display = 'flex';
-    searchInput.value = '';
-    renderSearchResults('');
-    setTimeout(() => searchInput.focus(), 100);
+    if (searchModal) {
+        searchModal.style.display = 'flex';
+        searchInput.value = '';
+        renderSearchResults('');
+        setTimeout(() => searchInput.focus(), 100);
+    }
 }
 
-function closeSearch() {
-    searchModal.style.display = 'none';
-}
+window.closeSearch = function() {
+    if (searchModal) searchModal.style.display = 'none';
+};
 
-if(searchModal) {
+if (searchModal) {
     searchModal.addEventListener('click', function (e) {
         if (e.target === searchModal) closeSearch();
     });
@@ -493,7 +535,7 @@ document.addEventListener('keydown', function (e) {
     }
     if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
         e.preventDefault();
-        hamburgerBtn.click();
+        if (hamburgerBtn) hamburgerBtn.click();
     }
     if ((e.ctrlKey || e.metaKey) && e.key === 'h') {
         e.preventDefault();
@@ -502,15 +544,24 @@ document.addEventListener('keydown', function (e) {
     }
 });
 
-if(searchInput) {
-    searchInput.addEventListener('input', function () {
+// Performans için Debounce (Gecikmeli tetikleme) fonksiyonu
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
+if (searchInput) {
+    searchInput.addEventListener('input', debounce(function () {
         renderSearchResults(this.value.trim().toLowerCase());
-    });
+    }, 250)); // Kullanıcı yazmayı bıraktıktan 250ms sonra arar
 }
 
 function renderSearchResults(query) {
     const container = document.getElementById('searchResults');
-    if(!container) return;
+    if (!container) return;
 
     const results = query === '' ? searchIndex.slice(0, 8) : searchIndex.filter(item =>
         item.name.toLowerCase().includes(query) ||
@@ -524,9 +575,9 @@ function renderSearchResults(query) {
     }
 
     container.innerHTML = results.map(item => `
-        <div class="search-result-item" data-url="${item.url}" data-name="${item.name}" data-img="${item.img}"
+        <div class="search-result-item" role="option" tabindex="0" data-url="${item.url}" data-name="${item.name}" data-img="${item.img}"
             style="display:flex;align-items:center;gap:14px;padding:12px 10px;border-radius:12px;cursor:pointer;transition:background 0.2s ease;">
-            <img src="${item.img}" style="width:46px;height:46px;border-radius:10px;object-fit:cover;background:var(--bg-body);flex-shrink:0;"
+            <img src="${item.img}" alt="" style="width:46px;height:46px;border-radius:10px;object-fit:cover;background:var(--bg-body);flex-shrink:0;"
                 onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(item.name)}&background=4318ff&color=fff&rounded=true&bold=true'">
             <div style="flex:1;min-width:0;">
                 <div style="font-weight:900;font-size:1.05rem;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</div>
@@ -537,11 +588,18 @@ function renderSearchResults(query) {
     `).join('');
 
     container.querySelectorAll('.search-result-item').forEach(el => {
-        el.addEventListener('mouseenter', () => el.style.background = 'rgba(67,24,255,0.06)');
-        el.addEventListener('mouseleave', () => el.style.background = 'transparent');
-        el.addEventListener('click', () => {
+        const triggerItem = () => {
             closeSearch();
             showRedirectToast(el.dataset.name, el.dataset.url, el.dataset.img);
+        };
+        el.addEventListener('mouseenter', () => el.style.background = 'rgba(67,24,255,0.06)');
+        el.addEventListener('mouseleave', () => el.style.background = 'transparent');
+        el.addEventListener('click', triggerItem);
+        el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                triggerItem();
+            }
         });
     });
 }
@@ -559,12 +617,19 @@ if (savedColor) {
 }
 
 document.querySelectorAll('.color-swatch').forEach(swatch => {
-    swatch.addEventListener('click', () => {
+    const applyColor = () => {
         const color = swatch.getAttribute('data-color');
         document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
         swatch.classList.add('active');
         document.documentElement.style.setProperty('--primary-color', color);
         localStorage.setItem('mugol-primary-color', color);
+    };
+    swatch.addEventListener('click', applyColor);
+    swatch.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            applyColor();
+        }
     });
 });
 
@@ -580,7 +645,7 @@ if (mainContent && scrollTopBtn) {
     });
 }
 
-// --- 14. COUNT-UP ANİMASYONU (Hakkında sayfası) ---
+// --- 14. COUNT-UP ANİMASYONU ---
 function animateCountUp(el, target, suffix) {
     let start = 0;
     const duration = 1200;
@@ -593,6 +658,7 @@ function animateCountUp(el, target, suffix) {
             clearInterval(timer);
         }
         el.textContent = Math.floor(start) + (suffix || '');
+        el.setAttribute('aria-label', Math.floor(start));
         el.classList.add('counting');
         setTimeout(() => el.classList.remove('counting'), 400);
     }, step);
@@ -605,8 +671,7 @@ if (aboutMenuItem) {
         if (countUpDone) return;
         setTimeout(() => {
             const statEls = document.querySelectorAll('.stat-item strong');
-            // GÜNCELLEME: 17 Uygulama, 4 Kategori, 2025 Kuruluş
-            const targets =[17, 4, 2025]; 
+            const targets = [17, 4, 2025]; 
             const suffixes = ['', '', ''];
             statEls.forEach((el, i) => {
                 const t = parseInt(el.textContent) || targets[i];
@@ -630,7 +695,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
 });
 
 if (installAppBtn) {
-    installAppBtn.addEventListener('click', async () => {
+    const triggerInstall = async () => {
         if (!deferredPrompt) return;
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
@@ -641,6 +706,15 @@ if (installAppBtn) {
         if (window.innerWidth <= 992 && sidebar && sidebarOverlay) {
             sidebar.classList.remove('mobile-open');
             sidebarOverlay.classList.remove('active');
+            if (hamburgerBtn) hamburgerBtn.setAttribute('aria-expanded', 'false');
+        }
+    };
+    
+    installAppBtn.addEventListener('click', triggerInstall);
+    installAppBtn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            triggerInstall();
         }
     });
 }
