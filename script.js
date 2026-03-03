@@ -253,7 +253,11 @@ function showRedirectToast(appName, url, logoSrc) {
 
     toastTimer = setTimeout(() => {
         if (toast) toast.classList.remove('show');
-        if (pendingUrl) window.open(pendingUrl, '_blank');
+        if (pendingUrl) {
+            // POP-UP ENGELLEYİCİYE TAKILMAMASI İÇİN DÜZELTİLEN KISIM
+            // window.open yerine doğrudan güvenli yönlendirme yapıyoruz:
+            window.location.href = pendingUrl;
+        }
         pendingUrl = null;
     }, 3000);
 }
