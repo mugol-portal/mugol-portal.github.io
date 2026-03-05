@@ -35,9 +35,7 @@ function activateMenu(item) {
 }
 
 navItems.forEach(item => {
-    // Mouse tıklaması
     item.addEventListener('click', () => activateMenu(item));
-    // Klavye erişilebilirliği (Enter veya Space)
     item.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
@@ -223,7 +221,7 @@ function cancelToast() {
 if (toastCancelBtn) toastCancelBtn.addEventListener('click', cancelToast);
 
 function showRedirectToast(appName, url, logoSrc) {
-    cancelToast(); // Önceki toast varsa temizle
+    cancelToast();
     pendingUrl = url;
 
     if (toastAppName) toastAppName.textContent = appName;
@@ -254,7 +252,6 @@ function showRedirectToast(appName, url, logoSrc) {
     toastTimer = setTimeout(() => {
         if (toast) toast.classList.remove('show');
         if (pendingUrl) {
-            // POP-UP Engelleyici hatasını çözen kısım (window.open iptal, location.href kullanıldı)
             window.location.href = pendingUrl;
         }
         pendingUrl = null;
@@ -374,7 +371,10 @@ document.querySelectorAll('.category-card').forEach(catCard => {
         ptrIndicator.classList.toggle('ready', diff >= THRESHOLD);
 
         if (ptrLabel) {
-            ptrLabel.textContent = diff >= THRESHOLD ? 'Bırakın, yenilensin' : 'Yenilemek için çekin';
+            const isEng = localStorage.getItem('mugol-lang') === 'en';
+            ptrLabel.textContent = diff >= THRESHOLD 
+                ? (isEng ? 'Release to refresh' : 'Bırakın, yenilensin') 
+                : (isEng ? 'Pull to refresh' : 'Yenilemek için çekin');
         }
     }, { passive: true });
 
@@ -387,7 +387,8 @@ document.querySelectorAll('.category-card').forEach(catCard => {
             refreshing = true;
             ptrIndicator.classList.add('refreshing');
             ptrIndicator.classList.remove('ready');
-            if (ptrLabel) ptrLabel.textContent = 'Yenileniyor...';
+            const isEng = localStorage.getItem('mugol-lang') === 'en';
+            if (ptrLabel) ptrLabel.textContent = isEng ? 'Refreshing...' : 'Yenileniyor...';
             ptrIndicator.style.height = '65px';
 
             setTimeout(() => {
@@ -421,7 +422,8 @@ function renderNotifications() {
     if (dot) dot.style.display = unread.length > 0 ? 'block' : 'none';
 
     if (NOTIFICATIONS.length === 0) {
-        list.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);font-weight:800;font-size:1rem;">Bildirim yok</div>';
+        const isEng = localStorage.getItem('mugol-lang') === 'en';
+        list.innerHTML = `<div style="padding:2rem;text-align:center;color:var(--text-muted);font-weight:800;font-size:1rem;">${isEng ? 'No notifications' : 'Bildirim yok'}</div>`;
         return;
     }
 
@@ -547,7 +549,6 @@ document.addEventListener('keydown', function (e) {
     }
 });
 
-// Performans için Debounce (Gecikmeli tetikleme) fonksiyonu
 function debounce(func, wait) {
     let timeout;
     return function(...args) {
@@ -559,7 +560,7 @@ function debounce(func, wait) {
 if (searchInput) {
     searchInput.addEventListener('input', debounce(function () {
         renderSearchResults(this.value.trim().toLowerCase());
-    }, 250)); // Kullanıcı yazmayı bıraktıktan 250ms sonra arar
+    }, 250));
 }
 
 function renderSearchResults(query) {
@@ -573,7 +574,8 @@ function renderSearchResults(query) {
     );
 
     if (results.length === 0) {
-        container.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted);font-weight:800;font-size:1.05rem;">Sonuç bulunamadı</div>';
+        const isEng = localStorage.getItem('mugol-lang') === 'en';
+        container.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--text-muted);font-weight:800;font-size:1.05rem;">${isEng ? 'No results found' : 'Sonuç bulunamadı'}</div>`;
         return;
     }
 
@@ -606,9 +608,6 @@ function renderSearchResults(query) {
         });
     });
 }
-
-const isMac = navigator.platform.toLowerCase().includes('mac');
-if (searchInput) searchInput.placeholder = 'Uygulama ara... (' + (isMac ? '⌘' : 'Ctrl') + '+K)';
 
 // --- 12. RENK TEMASI ---
 const savedColor = localStorage.getItem('mugol-primary-color');
@@ -675,7 +674,7 @@ if (aboutMenuItem) {
         setTimeout(() => {
             const statEls = document.querySelectorAll('.stat-item strong');
             const targets =[17, 4, 2025]; 
-            const suffixes = ['', '', ''];
+            const suffixes =['', '', ''];
             statEls.forEach((el, i) => {
                 const t = parseInt(el.textContent) || targets[i];
                 animateCountUp(el, t, suffixes[i]);
@@ -737,3 +736,156 @@ if ('serviceWorker' in navigator) {
             .catch((err) => console.log('❌ Service Worker kayıt hatası:', err));
     });
 }
+
+// =========================================================
+// 16. ÇOKLU DİL MOTORU (TR / EN DESTEĞİ)
+// =========================================================
+
+const translations = {
+    tr: {
+        menu:["Ana Sayfa", "Günlük", "Eğitim", "Araçlar", "Eğlence", "Ayarlar", "İletişim", "Hakkında", "Gizlilik"],
+        installBtn: "Uygulamayı İndir",
+        welcomeTitle: "Hoş Geldiniz! 👋",
+        welcomeDesc: "MuGöl PORTAL sistemine giriş yaptınız.",
+        searchPlaceholder: "Uygulama ara...",
+        openBtn: "Aç",
+        contactTitle: "Bize Ulaşın",
+        contactDesc: "Fikirleriniz, önerileriniz veya destek talepleriniz bizim için çok değerli. Formu doldurarak doğrudan ekibimize mesaj gönderebilirsiniz.",
+        email: "E-Posta",
+        settings: {
+            lang: { title: "Sistem Dili", desc: "Platformun varsayılan dilini seçin." },
+            theme: { title: "Karanlık Mod", desc: "Göz yorgunluğunu azaltmak için arayüzü koyu renklerle kullanın." },
+            font: { title: "Yazı Boyutu", desc: "Tüm platformdaki metin boyutlarını ihtiyacınıza göre ayarlayın." },
+            color: { title: "Renk Teması", desc: "Portal'ın vurgu rengini kişiselleştirin." },
+            version: { title: "Sistem Sürümü", desc: "MuGöl PORTAL'ın mevcut lisanslı ve güncel sürüm bilgisi." },
+            shortcut: { title: "Klavye Kısayolları", desc: "Portali daha hızlı kullanmak için kısayolları öğrenin." }
+        },
+        pullToRefresh: "Yenilemek için çekin"
+    },
+    en: {
+        menu:["Home", "Daily", "Education", "Tools", "Entertainment", "Settings", "Contact", "About", "Privacy"],
+        installBtn: "Download App",
+        welcomeTitle: "Welcome! 👋",
+        welcomeDesc: "You have successfully logged into MuGöl PORTAL.",
+        searchPlaceholder: "Search app...",
+        openBtn: "Open",
+        contactTitle: "Contact Us",
+        contactDesc: "Your ideas, suggestions, or support requests are very valuable to us. You can send a direct message to our team by filling out the form.",
+        email: "Email",
+        settings: {
+            lang: { title: "System Language", desc: "Choose the default language for the platform." },
+            theme: { title: "Dark Mode", desc: "Use a dark interface to reduce eye strain." },
+            font: { title: "Font Size", desc: "Adjust text sizes across the platform to your needs." },
+            color: { title: "Color Theme", desc: "Personalize the portal's accent color." },
+            version: { title: "System Version", desc: "Current licensed and updated version of MuGöl PORTAL." },
+            shortcut: { title: "Keyboard Shortcuts", desc: "Learn the shortcuts to use the portal faster." }
+        },
+        pullToRefresh: "Pull to refresh"
+    }
+};
+
+function applyLanguage(lang) {
+    const t = translations[lang];
+
+    // 1. Sol Menü ve Sayfa Üst Başlığını Değiştirme
+    const navItems = document.querySelectorAll('.nav-menu .nav-item:not(#installAppBtn)');
+    navItems.forEach((item, index) => {
+        const textEl = item.querySelector('.nav-text');
+        if (textEl && t.menu[index]) {
+            textEl.textContent = t.menu[index];
+            item.setAttribute('data-title', t.menu[index]);
+            
+            // Eğer aktif menüyse sayfa başlığını da hemen güncelle
+            if (item.classList.contains('active')) {
+                const secTitle = document.getElementById('sectionTitle');
+                if (secTitle) secTitle.textContent = t.menu[index];
+            }
+        }
+    });
+
+    // Uygulamayı İndir Butonu
+    const installText = document.querySelector('#installAppBtn .nav-text');
+    if (installText) installText.textContent = t.installBtn;
+
+    // 2. Ana Sayfa Karşılama Alanı
+    const welcomeH1 = document.querySelector('.welcome-text h1');
+    if (welcomeH1) welcomeH1.textContent = t.welcomeTitle;
+    const welcomeP = document.querySelector('.welcome-text p');
+    if (welcomeP) welcomeP.textContent = t.welcomeDesc;
+
+    // 3. İletişim Formu Sayfası
+    const contactH3 = document.querySelector('.contact-left h3');
+    if (contactH3) contactH3.textContent = t.contactTitle;
+    const contactP = document.querySelector('.contact-left p');
+    if (contactP) contactP.textContent = t.contactDesc;
+    const emailPill = document.querySelector('.lang-email');
+    if (emailPill) emailPill.textContent = t.email;
+
+    // 4. Ayarlar Sayfası Metinleri
+    const langT = document.getElementById('langTitle');
+    const langD = document.getElementById('langDesc');
+    if (langT) langT.textContent = t.settings.lang.title;
+    if (langD) langD.textContent = t.settings.lang.desc;
+
+    // Ayarlardaki diğer elemanları ikonları üzerinden hatasız bulup çeviriyoruz
+    const updateSetting = (iconClass, key) => {
+        const icon = document.querySelector(`.setting-item i.${iconClass}`);
+        if (icon && icon.nextElementSibling) {
+            const h4 = icon.nextElementSibling.querySelector('h4');
+            const p = icon.nextElementSibling.querySelector('p');
+            if (h4) h4.textContent = t.settings[key].title;
+            if (p) p.textContent = t.settings[key].desc;
+        }
+    };
+    updateSetting('fa-moon', 'theme');
+    updateSetting('fa-text-height', 'font');
+    updateSetting('fa-palette', 'color');
+    updateSetting('fa-code-branch', 'version');
+    updateSetting('fa-keyboard', 'shortcut');
+
+    // 5. Arama Kutusu Placeholder
+    const searchInp = document.getElementById('searchInput');
+    if (searchInp) {
+        const isMac = navigator.platform.toLowerCase().includes('mac');
+        searchInp.placeholder = t.searchPlaceholder + ' (' + (isMac ? '⌘' : 'Ctrl') + '+K)';
+    }
+
+    // 6. Kartlardaki "Aç" Butonları
+    document.querySelectorAll('.launch-btn .btn-label').forEach(el => el.textContent = t.openBtn);
+
+    // 7. Aşağı Çekerek Yenile
+    const ptrLabel = document.getElementById('ptr-label');
+    if (ptrLabel && ptrLabel.textContent !== 'Yenileniyor...' && ptrLabel.textContent !== 'Refreshing...' && ptrLabel.textContent !== 'Bırakın, yenilensin' && ptrLabel.textContent !== 'Release to refresh') {
+        ptrLabel.textContent = t.pullToRefresh;
+    }
+}
+
+// ==========================================
+// DİL SEÇİCİ BAŞLATMA VE HAFIZA SİSTEMİ
+// ==========================================
+const savedLang = localStorage.getItem('mugol-lang') || 'tr';
+const langBtns = document.querySelectorAll('.lang-btn');
+
+function updateLangButtons(activeLang) {
+    langBtns.forEach(btn => {
+        if (btn.getAttribute('data-lang') === activeLang) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+}
+
+// Butonlara tıklandığında dili değiştir ve LocalStorage'a kaydet
+langBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const selectedLang = btn.getAttribute('data-lang');
+        localStorage.setItem('mugol-lang', selectedLang); 
+        updateLangButtons(selectedLang);
+        applyLanguage(selectedLang);
+    });
+});
+
+// Sayfa yüklendiğinde hafızadaki dili otomatik uygula
+updateLangButtons(savedLang);
+applyLanguage(savedLang);
