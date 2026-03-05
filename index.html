@@ -486,6 +486,22 @@
             <!-- SAYFA: AYARLAR -->
             <div id="page-ayarlar" class="page-section" role="region" aria-label="Sistem Ayarları">
                 <div class="content-card">
+
+                    <!-- DİL SEÇİMİ EKLENDİ -->
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <i class="fas fa-language" aria-hidden="true"></i>
+                            <div>
+                                <h4 id="langTitle">Sistem Dili</h4>
+                                <p id="langDesc">Platformun varsayılan dilini seçin.</p>
+                            </div>
+                        </div>
+                        <div class="font-controls" role="group" aria-label="Dil seçimi">
+                            <button class="lang-btn active" data-lang="tr" aria-label="Türkçe">TR</button>
+                            <button class="lang-btn" data-lang="en" aria-label="English">EN</button>
+                        </div>
+                    </div>
+
                     <div class="setting-item">
                         <div class="setting-info">
                             <i class="fas fa-moon" aria-hidden="true"></i>
@@ -573,12 +589,11 @@
                 </div>
             </div>
 
-            <!-- SAYFA: İLETİŞİM (YENİ SPLIT TASARIM) -->
+            <!-- SAYFA: İLETİŞİM -->
             <div id="page-iletisim" class="page-section" role="region" aria-label="İletişim Bilgileri">
                 <div class="content-card premium-card" style="padding: 0; overflow: hidden; border: none;">
                     <div class="contact-split-layout">
                         
-                        <!-- SOL TARAF: Görsel ve Mesaj Alanı -->
                         <div class="contact-left">
                             <div class="contact-decor-1"></div>
                             <div class="contact-decor-2"></div>
@@ -589,34 +604,31 @@
                                 
                                 <div class="contact-pill-links">
                                     <a href="mailto:mugol.education.help@gmail.com" class="contact-pill">
-                                        <i class="fas fa-envelope" aria-hidden="true"></i> E-Posta
+                                        <i class="fas fa-envelope" aria-hidden="true"></i> <span class="lang-email">E-Posta</span>
                                     </a>
                                     <a href="https://www.instagram.com/mugol_portal?igsh=MXFqNWFmbnE1aGZsaw==" target="_blank" class="contact-pill" aria-label="Instagram Sayfamız">
                                         <i class="fab fa-instagram" aria-hidden="true"></i> Instagram
+                                    </a>
+                                    <!-- FACEBOOK VE YOUTUBE EKLENDİ -->
+                                    <a href="https://www.facebook.com/share/183xXabGca/" target="_blank" class="contact-pill facebook-pill" aria-label="Facebook Sayfamız">
+                                        <i class="fab fa-facebook-f" aria-hidden="true"></i> Facebook
+                                    </a>
+                                    <a href="https://youtube.com/@mugolportal?si=LRsj-aAcU3G4eKHj" target="_blank" class="contact-pill youtube-pill" aria-label="YouTube Kanalımız">
+                                        <i class="fab fa-youtube" aria-hidden="true"></i> YouTube
                                     </a>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- SAĞ TARAF: Form Alanı -->
                         <div class="contact-right">
                             <div class="form-wrapper">
-                                <!-- Başarı Mesajı -->
-                                <div id="formSuccess" aria-live="polite" style="
-                                    display:none; text-align:center; padding:2rem 1.5rem;
-                                    background:rgba(16, 185, 129, 0.1);
-                                    border:1px solid rgba(16, 185, 129, 0.2); border-radius:16px; margin-bottom:1rem;">
+                                <div id="formSuccess" aria-live="polite" style="display:none; text-align:center; padding:2rem 1.5rem; background:rgba(16, 185, 129, 0.1); border:1px solid rgba(16, 185, 129, 0.2); border-radius:16px; margin-bottom:1rem;">
                                     <div style="font-size:3rem; margin-bottom:12px;" aria-hidden="true">✨</div>
                                     <h4 style="font-size:1.2rem; font-weight:800; margin-bottom:6px; color:var(--text-main);">E-posta uygulaması açıldı!</h4>
                                     <p style="color:var(--text-muted); font-size:0.95rem; font-weight:600;">Mesajınızı e-posta uygulamanızdan güvenle gönderebilirsiniz.<br>İlginiz için teşekkürler!</p>
-                                    <button onclick="resetContactForm()" aria-label="Yeni mesaj gönder" style="
-                                        margin-top:16px; background:#10b981; color:#fff;
-                                        border:none; border-radius:10px; padding:10px 24px;
-                                        font-size:0.95rem; font-weight:800; cursor:pointer;
-                                        font-family:inherit; transition:transform 0.2s ease;">Yeni Mesaj Gönder</button>
+                                    <button onclick="resetContactForm()" aria-label="Yeni mesaj gönder" style="margin-top:16px; background:#10b981; color:#fff; border:none; border-radius:10px; padding:10px 24px; font-size:0.95rem; font-weight:800; cursor:pointer; font-family:inherit; transition:transform 0.2s ease;">Yeni Mesaj Gönder</button>
                                 </div>
 
-                                <!-- İletişim Formu -->
                                 <form class="contact-form" id="contactForm">
                                     <div class="form-group">
                                         <label for="contact-name">Adınız Soyadınız</label>

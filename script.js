@@ -1,4 +1,6 @@
-// --- DEĞİŞKENLER VE DOM ELEMENTLERİ ---
+// =========================================================
+// DEĞİŞKENLER VE DOM ELEMENTLERİ
+// =========================================================
 const navItems = document.querySelectorAll('.nav-item');
 const pages = document.querySelectorAll('.page-section');
 const sectionTitle = document.getElementById('sectionTitle');
@@ -6,7 +8,9 @@ const hamburgerBtn = document.getElementById('hamburgerBtn');
 const sidebar = document.getElementById('sidebar');
 const sidebarOverlay = document.getElementById('sidebarOverlay');
 
-// --- 1. MENÜ GEÇİŞ SİSTEMİ (Tıklama ve Klavye Desteği) ---
+// =========================================================
+// 1. MENÜ GEÇİŞ SİSTEMİ (Tıklama ve Klavye Desteği)
+// =========================================================
 function activateMenu(item) {
     if (item.id === 'installAppBtn') return;
 
@@ -44,7 +48,9 @@ navItems.forEach(item => {
     });
 });
 
-// --- 2. SİDEBAR KONTROLLERİ ---
+// =========================================================
+// 2. SİDEBAR KONTROLLERİ (Mobil & Masaüstü)
+// =========================================================
 function toggleSidebar() {
     if (window.innerWidth > 992) {
         sidebar.classList.toggle('collapsed');
@@ -73,7 +79,9 @@ window.addEventListener('resize', () => {
     }
 });
 
-// --- 3. AYARLAR: TEMA VE YAZI BOYUTU ---
+// =========================================================
+// 3. AYARLAR: TEMA VE YAZI BOYUTU
+// =========================================================
 const themeSwitch = document.getElementById('themeSwitch');
 const savedTheme = localStorage.getItem('mugol-theme') || 'light';
 
@@ -105,7 +113,9 @@ fontBtns.forEach(btn => {
     });
 });
 
-// --- 4. TARİH VE SAAT FONKSİYONU ---
+// =========================================================
+// 4. TARİH VE SAAT FONKSİYONU
+// =========================================================
 function updateDateTime() {
     const now = new Date();
     const timeString = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
@@ -120,7 +130,9 @@ function updateDateTime() {
 setInterval(updateDateTime, 1000);
 updateDateTime();
 
-// --- 5. GELİŞMİŞ İLETİŞİM FORMU ---
+// =========================================================
+// 5. GELİŞMİŞ İLETİŞİM FORMU
+// =========================================================
 const contactForm = document.getElementById('contactForm');
 const charCountEl = document.getElementById('charCount');
 const msgTextarea = document.getElementById('contact-message');
@@ -172,34 +184,9 @@ window.resetContactForm = function() {
     }
 }
 
-window.copyEmail = function() {
-    const email = 'mugol.education.help@gmail.com';
-    navigator.clipboard.writeText(email).then(() => {
-        const btn = document.getElementById('copyEmailBtn');
-        if (btn) {
-            const orig = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i> Kopyalandı!';
-            btn.style.background = 'rgba(16, 185, 129, 0.1)';
-            btn.style.borderColor = 'rgba(16, 185, 129, 0.3)';
-            btn.style.color = '#10b981';
-            setTimeout(() => {
-                btn.innerHTML = orig;
-                btn.style.background = '';
-                btn.style.borderColor = '';
-                btn.style.color = '';
-            }, 2000);
-        }
-    }).catch(() => {
-        const el = document.createElement('textarea');
-        el.value = email;
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand('copy');
-        document.body.removeChild(el);
-    });
-}
-
-// --- 6. YÖNLENDİRME TOAST (POP-UP ENGELLEYİCİ ÇÖZÜMLÜ) ---
+// =========================================================
+// 6. YÖNLENDİRME TOAST (POP-UP ENGELLEYİCİ ÇÖZÜMLÜ)
+// =========================================================
 let toastTimer = null;
 let toastCountdown = null;
 let pendingUrl = null;
@@ -252,7 +239,7 @@ function showRedirectToast(appName, url, logoSrc) {
     toastTimer = setTimeout(() => {
         if (toast) toast.classList.remove('show');
         if (pendingUrl) {
-            window.location.href = pendingUrl;
+            window.location.href = pendingUrl; // Pop-up engeline takılmaz
         }
         pendingUrl = null;
     }, 3000);
@@ -268,7 +255,9 @@ document.querySelectorAll('.app-card').forEach(card => {
     });
 });
 
-// --- 7. ANA SAYFA KATEGORİ KARTLARI ---
+// =========================================================
+// 7. ANA SAYFA KATEGORİ KARTLARI YÖNLENDİRMESİ
+// =========================================================
 document.querySelectorAll('.category-card').forEach(catCard => {
     const triggerCat = () => {
         const targetId = catCard.getAttribute('data-target');
@@ -284,7 +273,9 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     });
 });
 
-// --- 8. AÇILIŞ ANİMASYONU (SPLASH SCREEN) ---
+// =========================================================
+// 8. AÇILIŞ ANİMASYONU (SPLASH SCREEN)
+// =========================================================
 (function () {
     if (sessionStorage.getItem('skipSplash')) {
         sessionStorage.removeItem('skipSplash');
@@ -328,7 +319,11 @@ document.querySelectorAll('.category-card').forEach(catCard => {
         const newLabelIdx = Math.min(Math.floor(progress / 33), labels.length - 1);
         if (newLabelIdx !== labelIdx) {
             labelIdx = newLabelIdx;
-            if (label) label.textContent = labels[labelIdx];
+            if (label) {
+                const isEng = localStorage.getItem('mugol-lang') === 'en';
+                const labelsEn = ['Loading...', 'Preparing...', 'Almost ready...', 'Welcome!'];
+                label.textContent = isEng ? labelsEn[labelIdx] : labels[labelIdx];
+            }
         }
         if (progress >= 100) {
             clearInterval(interval);
@@ -339,7 +334,9 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     }, 180);
 })();
 
-// --- 9. AŞAĞI ÇEKME YENİLE (PULL TO REFRESH) ---
+// =========================================================
+// 9. AŞAĞI ÇEKME YENİLE (PULL TO REFRESH)
+// =========================================================
 (function () {
     const mainContent = document.querySelector('.main-content');
     const ptrIndicator = document.getElementById('ptr-indicator');
@@ -404,7 +401,9 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     }, { passive: true });
 })();
 
-// --- 10. BİLDİRİM SİSTEMİ ---
+// =========================================================
+// 10. BİLDİRİM SİSTEMİ
+// =========================================================
 const NOTIFICATIONS =[
     { id: 'n1', icon: '🚀', title: 'MuGöl PORTAL v1.0 Yayında!', body: 'Bildirim paneli, gelişmiş iletişim formu ve yeni kısayollar eklendi.', time: 'Az önce' },
     { id: 'n2', icon: '🔍', title: 'Hızlı Arama', body: 'Ctrl+K ile istediğiniz uygulamayı anında bulun.', time: '2 gün önce' },
@@ -489,7 +488,9 @@ if (notifBtn && notifPanel) {
 
 renderNotifications();
 
-// --- 11. GLOBAL ARAMA (Debounce Desteği ile) ---
+// =========================================================
+// 11. GLOBAL ARAMA (Debounce Desteği ile)
+// =========================================================
 const searchModal = document.getElementById('searchModal');
 const searchInput = document.getElementById('searchInput');
 const searchIndex =[];
@@ -609,7 +610,9 @@ function renderSearchResults(query) {
     });
 }
 
-// --- 12. RENK TEMASI ---
+// =========================================================
+// 12. RENK TEMASI
+// =========================================================
 const savedColor = localStorage.getItem('mugol-primary-color');
 if (savedColor) {
     document.documentElement.style.setProperty('--primary-color', savedColor);
@@ -635,7 +638,9 @@ document.querySelectorAll('.color-swatch').forEach(swatch => {
     });
 });
 
-// --- 13. YUKARI KAYDIR BUTONU ---
+// =========================================================
+// 13. YUKARI KAYDIR BUTONU
+// =========================================================
 const scrollTopBtn = document.getElementById('scrollTopBtn');
 const mainContent = document.querySelector('.main-content');
 if (mainContent && scrollTopBtn) {
@@ -647,7 +652,9 @@ if (mainContent && scrollTopBtn) {
     });
 }
 
-// --- 14. COUNT-UP ANİMASYONU ---
+// =========================================================
+// 14. COUNT-UP ANİMASYONU (Hakkında Sayfası)
+// =========================================================
 function animateCountUp(el, target, suffix) {
     let start = 0;
     const duration = 1200;
@@ -684,7 +691,9 @@ if (aboutMenuItem) {
     });
 }
 
-// --- 15. SERVICE WORKER & PWA UYGULAMA İNDİRME SİSTEMİ ---
+// =========================================================
+// 15. SERVICE WORKER & PWA UYGULAMA İNDİRME SİSTEMİ
+// =========================================================
 let deferredPrompt;
 const installAppBtn = document.getElementById('installAppBtn');
 
@@ -740,7 +749,6 @@ if ('serviceWorker' in navigator) {
 // =========================================================
 // 16. ÇOKLU DİL MOTORU (TR / EN DESTEĞİ)
 // =========================================================
-
 const translations = {
     tr: {
         menu:["Ana Sayfa", "Günlük", "Eğitim", "Araçlar", "Eğlence", "Ayarlar", "İletişim", "Hakkında", "Gizlilik"],
@@ -788,8 +796,8 @@ function applyLanguage(lang) {
     const t = translations[lang];
 
     // 1. Sol Menü ve Sayfa Üst Başlığını Değiştirme
-    const navItems = document.querySelectorAll('.nav-menu .nav-item:not(#installAppBtn)');
-    navItems.forEach((item, index) => {
+    const navItemsList = document.querySelectorAll('.nav-menu .nav-item:not(#installAppBtn)');
+    navItemsList.forEach((item, index) => {
         const textEl = item.querySelector('.nav-text');
         if (textEl && t.menu[index]) {
             textEl.textContent = t.menu[index];
@@ -853,16 +861,16 @@ function applyLanguage(lang) {
     // 6. Kartlardaki "Aç" Butonları
     document.querySelectorAll('.launch-btn .btn-label').forEach(el => el.textContent = t.openBtn);
 
-    // 7. Aşağı Çekerek Yenile
+    // 7. Aşağı Çekerek Yenile Metni (O an yenilenmiyorsa değiştir)
     const ptrLabel = document.getElementById('ptr-label');
     if (ptrLabel && ptrLabel.textContent !== 'Yenileniyor...' && ptrLabel.textContent !== 'Refreshing...' && ptrLabel.textContent !== 'Bırakın, yenilensin' && ptrLabel.textContent !== 'Release to refresh') {
         ptrLabel.textContent = t.pullToRefresh;
     }
 }
 
-// ==========================================
+// =========================================================
 // DİL SEÇİCİ BAŞLATMA VE HAFIZA SİSTEMİ
-// ==========================================
+// =========================================================
 const savedLang = localStorage.getItem('mugol-lang') || 'tr';
 const langBtns = document.querySelectorAll('.lang-btn');
 
