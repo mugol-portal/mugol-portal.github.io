@@ -141,7 +141,7 @@ if (msgTextarea && charCountEl) {
     msgTextarea.addEventListener('input', function () {
         const len = this.value.length;
         charCountEl.textContent = len + ' / 500';
-        charCountEl.style.color = len > 450 ? '#FF5630' : len > 350 ? '#FFC107' : 'var(--text-muted)';
+        charCountEl.style.color = len > 450 ? '#ef4444' : len > 350 ? '#f59e0b' : 'var(--text-muted)';
     });
 }
 
@@ -286,15 +286,15 @@ document.querySelectorAll('.category-card').forEach(catCard => {
 
     const particlesContainer = document.getElementById('splashParticles');
     if (particlesContainer) {
-        for (let i = 0; i < 18; i++) {
+        for (let i = 0; i < 20; i++) {
             const p = document.createElement('div');
             p.className = 'splash-particle';
-            const size = Math.random() * 6 + 3;
+            const size = Math.random() * 6 + 4;
             p.style.cssText = `
                 width:${size}px; height:${size}px;
                 left:${Math.random() * 100}%;
-                animation-duration:${Math.random() * 6 + 5}s;
-                animation-delay:${Math.random() * 4}s;
+                animation-duration:${Math.random() * 5 + 4}s;
+                animation-delay:${Math.random() * 3}s;
             `;
             particlesContainer.appendChild(p);
         }
@@ -303,12 +303,12 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     const bar = document.getElementById('splashProgressBar');
     const label = document.getElementById('splashProgressLabel');
     const splash = document.getElementById('splash-screen');
-    const labels =['Yükleniyor...', 'Hazırlanıyor...', 'Neredeyse hazır...', 'Hoş geldiniz!'];
+    const labels =['Sistem Başlatılıyor...', 'Uygulamalar Hazırlanıyor...', 'Son Ayarlar...', 'Hoş Geldiniz!'];
     let progress = 0;
     let labelIdx = 0;
 
     const interval = setInterval(() => {
-        progress += Math.random() * 4 + 1.5;
+        progress += Math.random() * 4 + 2;
         if (progress > 100) progress = 100;
         
         if (bar) {
@@ -321,7 +321,7 @@ document.querySelectorAll('.category-card').forEach(catCard => {
             labelIdx = newLabelIdx;
             if (label) {
                 const isEng = localStorage.getItem('mugol-lang') === 'en';
-                const labelsEn = ['Loading...', 'Preparing...', 'Almost ready...', 'Welcome!'];
+                const labelsEn =['Starting System...', 'Preparing Apps...', 'Finalizing...', 'Welcome!'];
                 label.textContent = isEng ? labelsEn[labelIdx] : labels[labelIdx];
             }
         }
@@ -331,7 +331,7 @@ document.querySelectorAll('.category-card').forEach(catCard => {
                 if (splash) splash.classList.add('hidden');
             }, 600);
         }
-    }, 180);
+    }, 150);
 })();
 
 // =========================================================
@@ -348,7 +348,7 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     let pulling = false;
     let refreshing = false;
     const THRESHOLD = 80;
-    const MAX_PULL = 120;
+    const MAX_PULL = 130;
 
     mainContent.addEventListener('touchstart', (e) => {
         if (mainContent.scrollTop > 0) return;
@@ -362,7 +362,7 @@ document.querySelectorAll('.category-card').forEach(catCard => {
         const diff = Math.min(currentY - startY, MAX_PULL);
         if (diff <= 0) return;
 
-        const height = Math.min(diff * 0.6, 70);
+        const height = Math.min(diff * 0.6, 75);
         ptrIndicator.style.height = height + 'px';
         ptrIndicator.classList.toggle('visible', diff > 20);
         ptrIndicator.classList.toggle('ready', diff >= THRESHOLD);
@@ -386,7 +386,7 @@ document.querySelectorAll('.category-card').forEach(catCard => {
             ptrIndicator.classList.remove('ready');
             const isEng = localStorage.getItem('mugol-lang') === 'en';
             if (ptrLabel) ptrLabel.textContent = isEng ? 'Refreshing...' : 'Yenileniyor...';
-            ptrIndicator.style.height = '65px';
+            ptrIndicator.style.height = '70px';
 
             setTimeout(() => {
                 sessionStorage.setItem('skipSplash', '1');
@@ -422,27 +422,27 @@ function renderNotifications() {
 
     if (NOTIFICATIONS.length === 0) {
         const isEng = localStorage.getItem('mugol-lang') === 'en';
-        list.innerHTML = `<div style="padding:2rem;text-align:center;color:var(--text-muted);font-weight:800;font-size:1rem;">${isEng ? 'No notifications' : 'Bildirim yok'}</div>`;
+        list.innerHTML = `<div style="padding:2.5rem;text-align:center;color:var(--text-muted);font-weight:800;font-size:1.05rem;">${isEng ? 'No notifications' : 'Bildirim yok'}</div>`;
         return;
     }
 
     list.innerHTML = NOTIFICATIONS.map(n => {
         const isRead = readNotifs.includes(n.id);
         return `<div data-notif-id="${n.id}" onclick="markNotifRead('${n.id}')" role="listitem" tabindex="0" style="
-            padding:14px 18px; border-bottom:1px solid var(--border-color);
-            cursor:pointer; transition:background 0.15s ease;
-            background:${isRead ? 'transparent' : 'rgba(67,24,255,0.04)'};
-            display:flex; gap:12px; align-items:flex-start;"
+            padding:16px 20px; border-bottom:1px solid var(--border-color);
+            cursor:pointer; transition:all 0.2s ease;
+            background:${isRead ? 'transparent' : 'rgba(67,24,255,0.03)'};
+            display:flex; gap:14px; align-items:flex-start;"
             onmouseenter="this.style.background='rgba(67,24,255,0.06)'"
-            onmouseleave="this.style.background='${isRead ? 'transparent' : 'rgba(67,24,255,0.04)'}'">
-            <div style="font-size:1.4rem; flex-shrink:0; line-height:1;" aria-hidden="true">${n.icon}</div>
+            onmouseleave="this.style.background='${isRead ? 'transparent' : 'rgba(67,24,255,0.03)'}'">
+            <div style="font-size:1.5rem; flex-shrink:0; line-height:1; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.1));" aria-hidden="true">${n.icon}</div>
             <div style="flex:1; min-width:0;">
-                <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:3px;">
-                    <span style="font-weight:${isRead ? 700 : 900}; font-size:1rem; color:var(--text-main);">${n.title}</span>
-                    ${!isRead ? '<span style="width:8px;height:8px;background:var(--primary-color);border-radius:50%;flex-shrink:0;" aria-label="Okunmadı"></span>' : ''}
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:4px;">
+                    <span style="font-weight:${isRead ? 700 : 900}; font-size:1.05rem; color:var(--text-main); letter-spacing:-0.2px;">${n.title}</span>
+                    ${!isRead ? '<span style="width:8px;height:8px;background:var(--primary-color);border-radius:50%;flex-shrink:0;box-shadow:0 0 8px var(--primary-glow);" aria-label="Okunmadı"></span>' : ''}
                 </div>
-                <div style="font-size:0.9rem; color:var(--text-muted); font-weight:600; line-height:1.5;">${n.body}</div>
-                <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px; font-weight:800;">${n.time}</div>
+                <div style="font-size:0.95rem; color:var(--text-muted); font-weight:600; line-height:1.5;">${n.body}</div>
+                <div style="font-size:0.8rem; color:var(--text-muted); margin-top:6px; font-weight:800;">${n.time}</div>
             </div>
         </div>`;
     }).join('');
@@ -495,6 +495,7 @@ const searchModal = document.getElementById('searchModal');
 const searchInput = document.getElementById('searchInput');
 const searchIndex =[];
 
+// DOM'daki tüm uygulama kartlarını tarayıp arama dizinine ekler
 document.querySelectorAll('.page-section .app-card[href]').forEach(card => {
     const page = card.closest('.page-section');
     const menuItem = page ? document.querySelector('.nav-item[data-target="' + page.id + '"]') : null;
@@ -576,20 +577,20 @@ function renderSearchResults(query) {
 
     if (results.length === 0) {
         const isEng = localStorage.getItem('mugol-lang') === 'en';
-        container.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--text-muted);font-weight:800;font-size:1.05rem;">${isEng ? 'No results found' : 'Sonuç bulunamadı'}</div>`;
+        container.innerHTML = `<div style="text-align:center;padding:2.5rem;color:var(--text-muted);font-weight:800;font-size:1.1rem;">${isEng ? 'No results found' : 'Sonuç bulunamadı'}</div>`;
         return;
     }
 
     container.innerHTML = results.map(item => `
         <div class="search-result-item" role="option" tabindex="0" data-url="${item.url}" data-name="${item.name}" data-img="${item.img}"
-            style="display:flex;align-items:center;gap:14px;padding:12px 10px;border-radius:12px;cursor:pointer;transition:background 0.2s ease;">
-            <img src="${item.img}" alt="" style="width:46px;height:46px;border-radius:10px;object-fit:cover;background:var(--bg-body);flex-shrink:0;"
+            style="display:flex;align-items:center;gap:16px;padding:14px 12px;border-radius:14px;cursor:pointer;transition:all 0.2s ease;">
+            <img src="${item.img}" alt="" style="width:50px;height:50px;border-radius:12px;object-fit:cover;background:var(--bg-body);flex-shrink:0;box-shadow:var(--shadow-sm);"
                 onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(item.name)}&background=4318ff&color=fff&rounded=true&bold=true'">
             <div style="flex:1;min-width:0;">
-                <div style="font-weight:900;font-size:1.05rem;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</div>
-                <div style="font-size:0.9rem;font-weight:700;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.desc}</div>
+                <div style="font-weight:900;font-size:1.1rem;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</div>
+                <div style="font-size:0.95rem;font-weight:600;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.desc}</div>
             </div>
-            <span style="font-size:0.8rem;font-weight:900;color:var(--text-muted);background:var(--bg-body);padding:4px 12px;border-radius:20px;border:1px solid var(--border-color);flex-shrink:0;">${item.category || item.tag}</span>
+            <span style="font-size:0.8rem;font-weight:900;color:var(--text-muted);background:var(--bg-body);padding:6px 14px;border-radius:20px;border:1px solid var(--border-color);flex-shrink:0;">${item.category || item.tag}</span>
         </div>
     `).join('');
 
@@ -598,7 +599,7 @@ function renderSearchResults(query) {
             closeSearch();
             showRedirectToast(el.dataset.name, el.dataset.url, el.dataset.img);
         };
-        el.addEventListener('mouseenter', () => el.style.background = 'rgba(67,24,255,0.06)');
+        el.addEventListener('mouseenter', () => el.style.background = 'rgba(67,24,255,0.05)');
         el.addEventListener('mouseleave', () => el.style.background = 'transparent');
         el.addEventListener('click', triggerItem);
         el.addEventListener('keydown', (e) => {
@@ -657,7 +658,7 @@ if (mainContent && scrollTopBtn) {
 // =========================================================
 function animateCountUp(el, target, suffix) {
     let start = 0;
-    const duration = 1200;
+    const duration = 1500;
     const step = 16;
     const increment = target / (duration / step);
     const timer = setInterval(() => {
@@ -669,7 +670,7 @@ function animateCountUp(el, target, suffix) {
         el.textContent = Math.floor(start) + (suffix || '');
         el.setAttribute('aria-label', Math.floor(start));
         el.classList.add('counting');
-        setTimeout(() => el.classList.remove('counting'), 400);
+        setTimeout(() => el.classList.remove('counting'), 500);
     }, step);
 }
 
@@ -680,7 +681,8 @@ if (aboutMenuItem) {
         if (countUpDone) return;
         setTimeout(() => {
             const statEls = document.querySelectorAll('.stat-item strong');
-            const targets =[17, 4, 2025]; 
+            // GÜNCELLEME: Hedefler 18 uygulama, 4 Kategori, 2025 Kuruluş olarak güncellendi.
+            const targets =[18, 4, 2025]; 
             const suffixes =['', '', ''];
             statEls.forEach((el, i) => {
                 const t = parseInt(el.textContent) || targets[i];
@@ -795,7 +797,6 @@ const translations = {
 function applyLanguage(lang) {
     const t = translations[lang];
 
-    // 1. Sol Menü ve Sayfa Üst Başlığını Değiştirme
     const navItemsList = document.querySelectorAll('.nav-menu .nav-item:not(#installAppBtn)');
     navItemsList.forEach((item, index) => {
         const textEl = item.querySelector('.nav-text');
@@ -803,7 +804,6 @@ function applyLanguage(lang) {
             textEl.textContent = t.menu[index];
             item.setAttribute('data-title', t.menu[index]);
             
-            // Eğer aktif menüyse sayfa başlığını da hemen güncelle
             if (item.classList.contains('active')) {
                 const secTitle = document.getElementById('sectionTitle');
                 if (secTitle) secTitle.textContent = t.menu[index];
@@ -811,17 +811,14 @@ function applyLanguage(lang) {
         }
     });
 
-    // Uygulamayı İndir Butonu
     const installText = document.querySelector('#installAppBtn .nav-text');
     if (installText) installText.textContent = t.installBtn;
 
-    // 2. Ana Sayfa Karşılama Alanı
     const welcomeH1 = document.querySelector('.welcome-text h1');
     if (welcomeH1) welcomeH1.textContent = t.welcomeTitle;
     const welcomeP = document.querySelector('.welcome-text p');
     if (welcomeP) welcomeP.textContent = t.welcomeDesc;
 
-    // 3. İletişim Formu Sayfası
     const contactH3 = document.querySelector('.contact-left h3');
     if (contactH3) contactH3.textContent = t.contactTitle;
     const contactP = document.querySelector('.contact-left p');
@@ -829,13 +826,11 @@ function applyLanguage(lang) {
     const emailPill = document.querySelector('.lang-email');
     if (emailPill) emailPill.textContent = t.email;
 
-    // 4. Ayarlar Sayfası Metinleri
     const langT = document.getElementById('langTitle');
     const langD = document.getElementById('langDesc');
     if (langT) langT.textContent = t.settings.lang.title;
     if (langD) langD.textContent = t.settings.lang.desc;
 
-    // Ayarlardaki diğer elemanları ikonları üzerinden hatasız bulup çeviriyoruz
     const updateSetting = (iconClass, key) => {
         const icon = document.querySelector(`.setting-item i.${iconClass}`);
         if (icon && icon.nextElementSibling) {
@@ -851,17 +846,14 @@ function applyLanguage(lang) {
     updateSetting('fa-code-branch', 'version');
     updateSetting('fa-keyboard', 'shortcut');
 
-    // 5. Arama Kutusu Placeholder
     const searchInp = document.getElementById('searchInput');
     if (searchInp) {
         const isMac = navigator.platform.toLowerCase().includes('mac');
         searchInp.placeholder = t.searchPlaceholder + ' (' + (isMac ? '⌘' : 'Ctrl') + '+K)';
     }
 
-    // 6. Kartlardaki "Aç" Butonları
     document.querySelectorAll('.launch-btn .btn-label').forEach(el => el.textContent = t.openBtn);
 
-    // 7. Aşağı Çekerek Yenile Metni (O an yenilenmiyorsa değiştir)
     const ptrLabel = document.getElementById('ptr-label');
     if (ptrLabel && ptrLabel.textContent !== 'Yenileniyor...' && ptrLabel.textContent !== 'Refreshing...' && ptrLabel.textContent !== 'Bırakın, yenilensin' && ptrLabel.textContent !== 'Release to refresh') {
         ptrLabel.textContent = t.pullToRefresh;
@@ -884,7 +876,6 @@ function updateLangButtons(activeLang) {
     });
 }
 
-// Butonlara tıklandığında dili değiştir ve LocalStorage'a kaydet
 langBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         const selectedLang = btn.getAttribute('data-lang');
@@ -894,6 +885,5 @@ langBtns.forEach(btn => {
     });
 });
 
-// Sayfa yüklendiğinde hafızadaki dili otomatik uygula
 updateLangButtons(savedLang);
 applyLanguage(savedLang);
