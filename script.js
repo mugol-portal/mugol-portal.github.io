@@ -922,8 +922,6 @@ function showAdBlockOverlay() {
         overlay.classList.add('visible');
         document.body.style.overflow = 'hidden';
     }
-    const inline = document.getElementById('adblock-inline-warning');
-    if (inline) inline.style.display = 'flex';
 }
 
 function hideAdBlockOverlay() {
@@ -932,8 +930,6 @@ function hideAdBlockOverlay() {
         overlay.classList.remove('visible');
         document.body.style.overflow = '';
     }
-    const inline = document.getElementById('adblock-inline-warning');
-    if (inline) inline.style.display = 'none';
 }
 
 async function checkAdBlockAndReload() {

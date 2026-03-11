@@ -209,7 +209,7 @@
                 </div>
 
                 <!-- REKLAM ENGELLEYİCİ UYARI BANDI -->
-                <div id="adblock-inline-warning" style="display:none;">
+                <div id="adblock-inline-warning">
                     <div class="adblock-inline-icon"><i class="fas fa-shield-alt"></i></div>
                     <div class="adblock-inline-text">
                         <strong>Reklam engelleyici tespit edildi!</strong>
@@ -864,9 +864,9 @@
             margin-top: 5px !important;
         }
 
-        /* Inline adblock uyarı bandı */
+        /* Inline adblock uyarı bandı - her zaman görünür */
         #adblock-inline-warning {
-            display: flex;
+            display: flex !important;
             align-items: center;
             gap: 14px;
             background: linear-gradient(135deg, rgba(220,38,38,0.12), rgba(239,68,68,0.06));
