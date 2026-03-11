@@ -57,6 +57,7 @@
     <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1880946354382681" crossorigin="anonymous"></script>
+    <script async custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js"></script>
 
     <!-- Preconnect for Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -74,6 +75,8 @@
             <span class="ptr-label" id="ptr-label">Yenilemek için çekin</span>
         </div>
     </div>
+
+    <amp-auto-ads type="adsense" data-ad-client="ca-pub-1880946354382681"></amp-auto-ads>
 
     <div id="splash-screen" role="presentation">
         <div class="splash-particles" id="splashParticles"></div>
@@ -940,127 +943,6 @@
             <button id="adblock-reload-btn" onclick="checkAdBlockAndReload()">
                 <i class="fas fa-redo-alt"></i> Yenile
             </button>
-        </div>
-    </div>
-
-
-    <!-- GEÇİŞ REKLAM EKRANI -->
-    <style>
-        #ad-transition-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 99998;
-            background: rgba(0,0,0,0.92);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            align-items: center;
-            justify-content: center;
-        }
-        #ad-transition-modal.visible { display: flex !important; }
-        #ad-transition-box {
-            background: #ffffff;
-            border-radius: 24px;
-            width: min(520px, 94vw);
-            overflow: hidden;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.55);
-            animation: adPop 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;
-            display: flex;
-            flex-direction: column;
-        }
-        [data-theme="dark"] #ad-transition-box { background: #1e293b; }
-        @keyframes adPop {
-            from { opacity:0; transform: scale(0.88) translateY(24px); }
-            to   { opacity:1; transform: scale(1) translateY(0); }
-        }
-        #ad-topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 18px;
-            background: #f8fafc;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        [data-theme="dark"] #ad-topbar { background: #0f172a; border-bottom-color: #334155; }
-        #ad-app-info { display: flex; align-items: center; gap: 10px; }
-        #ad-app-logo { width: 36px; height: 36px; border-radius: 9px; object-fit: cover; }
-        #ad-app-label { font-size: 0.85rem; font-weight: 800; color: #64748b; font-family:"Nunito",sans-serif; display:block; }
-        #ad-app-name-top { display: block; font-size: 0.95rem; font-weight: 900; color: #0f172a; font-family:"Nunito",sans-serif; }
-        [data-theme="dark"] #ad-app-name-top { color: #f8fafc; }
-        #ad-skip-area { display: flex; align-items: center; gap: 10px; }
-        #ad-skip-btn {
-            background: linear-gradient(135deg,#4318ff,#00d2ff);
-            color: #fff; border: none; border-radius: 9px;
-            padding: 8px 16px; font-size: 0.85rem; font-weight: 900;
-            cursor: pointer; font-family: "Nunito", sans-serif;
-            display: none; align-items: center; gap: 6px;
-            transition: transform 0.15s, box-shadow 0.15s;
-            box-shadow: 0 4px 12px rgba(67,24,255,0.35);
-        }
-        #ad-skip-btn.show { display: inline-flex; }
-        #ad-skip-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(67,24,255,0.45); }
-        #ad-countdown-wrap {
-            display: flex; align-items: center; gap: 6px;
-            font-size: 0.85rem; font-weight: 800; color: #64748b;
-            font-family: "Nunito", sans-serif;
-        }
-        #ad-countdown-wrap svg { transform: rotate(-90deg); }
-        #ad-countdown-wrap circle.track { fill:none; stroke:#e2e8f0; stroke-width:3; }
-        #ad-countdown-wrap circle.prog  { fill:none; stroke:#4318ff; stroke-width:3; stroke-linecap:round; transition: stroke-dashoffset 1s linear; }
-        #ad-sec { font-size:1rem; font-weight:900; color:#4318ff; margin-left:-30px; }
-        #ad-content-area {
-            min-height: 90px; display: flex; align-items: center;
-            justify-content: center; flex-direction: column;
-            padding: 1rem; gap: 8px; position: relative;
-            background: #f1f5f9;
-        }
-        [data-theme="dark"] #ad-content-area { background: #0f172a; }
-        #ad-adsense-slot { width: 100%; display: flex; align-items: center; justify-content: center; }
-        #ad-progress-bar-wrap { height: 5px; background: #e2e8f0; overflow: hidden; }
-        [data-theme="dark"] #ad-progress-bar-wrap { background: #334155; }
-        #ad-progress-bar {
-            height: 100%; width: 100%;
-            background: linear-gradient(90deg,#4318ff,#00d2ff);
-            transform: scaleX(1); transform-origin: left;
-        }
-    </style>
-
-    <div id="ad-transition-modal">
-        <div id="ad-transition-box">
-            <div id="ad-topbar">
-                <div id="ad-app-info">
-                    <img id="ad-app-logo" src="" alt="">
-                    <div>
-                        <span id="ad-app-label">Şu an açılıyor:</span>
-                        <span id="ad-app-name-top">Uygulama</span>
-                    </div>
-                </div>
-                <div id="ad-skip-area">
-                    <div id="ad-countdown-wrap">
-                        <svg width="34" height="34" viewBox="0 0 34 34">
-                            <circle class="track" cx="17" cy="17" r="13"/>
-                            <circle class="prog" id="ad-ring" cx="17" cy="17" r="13"/>
-                        </svg>
-                        <span id="ad-sec">5</span>
-                    </div>
-                    <button id="ad-skip-btn" onclick="skipAd()">
-                        <i class="fas fa-forward"></i> Geç
-                    </button>
-                </div>
-            </div>
-            <div id="ad-content-area">
-                <div id="ad-adsense-slot">
-                    <ins class="adsbygoogle"
-                         style="display:inline-block;width:320px;height:50px;"
-                         data-ad-client="ca-pub-1880946354382681"
-                         data-ad-slot="auto"
-                         data-ad-format="auto"
-                         data-full-width-responsive="false"></ins>
-                </div>
-            </div>
-            <div id="ad-progress-bar-wrap">
-                <div id="ad-progress-bar"></div>
-            </div>
         </div>
     </div>
 
