@@ -887,3 +887,65 @@ langBtns.forEach(btn => {
 
 updateLangButtons(savedLang);
 applyLanguage(savedLang);
+
+// =========================================================
+// REKLAM ENGELLEYİCİ TESPİT SİSTEMİ
+// =========================================================
+function detectAdBlock() {
+    const testAd = document.createElement('div');
+    testAd.innerHTML = '&nbsp;';
+    testAd.className = 'adsbox ad-element pub_300x250 pub_300x250m pub_728x90 text-ad textAd text_ad text_ads text-ads';
+    testAd.style.cssText = 'width:1px;height:1px;position:absolute;left:-9999px;top:-9999px;';
+    document.body.appendChild(testAd);
+
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            const blocked =
+                testAd.offsetParent === null ||
+                testAd.offsetHeight === 0 ||
+                testAd.offsetLeft === 0 ||
+                testAd.offsetTop === 0 ||
+                testAd.offsetWidth === 0 ||
+                testAd.clientHeight === 0 ||
+                testAd.clientWidth === 0 ||
+                window.getComputedStyle(testAd).display === 'none' ||
+                window.getComputedStyle(testAd).visibility === 'hidden';
+            document.body.removeChild(testAd);
+            resolve(blocked);
+        }, 150);
+    });
+}
+
+function showAdBlockOverlay() {
+    const overlay = document.getElementById('adblock-overlay');
+    if (overlay) {
+        overlay.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function hideAdBlockOverlay() {
+    const overlay = document.getElementById('adblock-overlay');
+    if (overlay) {
+        overlay.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+async function checkAdBlockAndReload() {
+    const blocked = await detectAdBlock();
+    if (blocked) {
+        showAdBlockOverlay();
+    } else {
+        hideAdBlockOverlay();
+        window.location.reload();
+    }
+}
+
+// Sayfa yüklenince kontrol et
+window.addEventListener('load', async () => {
+    const blocked = await detectAdBlock();
+    if (blocked) {
+        showAdBlockOverlay();
+    }
+});
