@@ -187,62 +187,111 @@ window.resetContactForm = function() {
 // =========================================================
 // 6. YÖNLENDİRME TOAST (POP-UP ENGELLEYİCİ ÇÖZÜMLÜ)
 // =========================================================
-let toastTimer = null;
-let toastCountdown = null;
-let pendingUrl = null;
+// =========================================================
+// GEÇİŞ REKLAM SİSTEMİ (5 saniye - AdSense entegreli)
+// =========================================================
+let adTimer = null;
+let adInterval = null;
+let adPendingUrl = null;
+const AD_DURATION = 5; // saniye
+const AD_SKIP_AFTER = 5; // kaç saniye sonra geç butonu çıksın
 
+// Eski toast referansları (HTML hâlâ duruyor, sessizce devre dışı)
 const toast = document.getElementById('redirect-toast');
-const toastAppName = document.getElementById('toast-app-name');
-const toastCountEl = document.getElementById('toast-countdown');
-const toastRing = document.getElementById('toast-ring');
 const toastCancelBtn = document.getElementById('toast-cancel-btn');
-const CIRCUMFERENCE = 2 * Math.PI * 14;
-
-function cancelToast() {
-    if (toastTimer) clearTimeout(toastTimer);
-    if (toastCountdown) clearInterval(toastCountdown);
-    if (toast) toast.classList.remove('show');
-    pendingUrl = null;
-}
-
+function cancelToast() { if (toast) toast.classList.remove('show'); }
 if (toastCancelBtn) toastCancelBtn.addEventListener('click', cancelToast);
 
+function closeAdModal() {
+    if (adTimer) clearTimeout(adTimer);
+    if (adInterval) clearInterval(adInterval);
+    const modal = document.getElementById('ad-transition-modal');
+    if (modal) modal.classList.remove('visible');
+    document.body.style.overflow = '';
+    adPendingUrl = null;
+}
+
+function skipAd() {
+    const url = adPendingUrl;
+    closeAdModal();
+    if (url) window.location.href = url;
+}
+
 function showRedirectToast(appName, url, logoSrc) {
-    cancelToast();
-    pendingUrl = url;
+    closeAdModal();
+    adPendingUrl = url;
 
-    if (toastAppName) toastAppName.textContent = appName;
-    const toastLogo = document.getElementById('toast-app-logo');
-    if (toastLogo) toastLogo.src = logoSrc || '';
-    if (toastCountEl) toastCountEl.textContent = '3';
-    
-    if (toastRing) {
-        toastRing.style.strokeDashoffset = 0;
-        toastRing.style.transition = 'none';
+    // Uygulama bilgilerini doldur
+    const nameEl = document.getElementById('ad-app-name-top');
+    const logoEl = document.getElementById('ad-app-logo');
+    const secEl  = document.getElementById('ad-sec');
+    const skipBtn = document.getElementById('ad-skip-btn');
+    const ring   = document.getElementById('ad-ring');
+    const bar    = document.getElementById('ad-progress-bar');
+
+    if (nameEl) nameEl.textContent = appName;
+    if (logoEl) logoEl.src = logoSrc || '';
+    if (secEl)  secEl.textContent = AD_DURATION;
+    if (skipBtn) skipBtn.classList.remove('show');
+
+    // Ring animasyonu sıfırla
+    const R = 13;
+    const CIRC = 2 * Math.PI * R;
+    if (ring) {
+        ring.style.strokeDasharray  = CIRC;
+        ring.style.strokeDashoffset = 0;
+        ring.style.transition = 'none';
     }
-    if (toast) toast.classList.add('show');
+    // Progress bar sıfırla
+    if (bar) {
+        bar.style.transition = 'none';
+        bar.style.transform  = 'scaleX(1)';
+    }
 
-    requestAnimationFrame(() => {
-        if (toastRing) {
-            toastRing.style.transition = 'stroke-dashoffset 3s linear';
-            toastRing.style.strokeDashoffset = CIRCUMFERENCE;
+    // Modalı göster
+    const modal = document.getElementById('ad-transition-modal');
+    if (modal) modal.classList.add('visible');
+    document.body.style.overflow = 'hidden';
+
+    // AdSense yeniden push
+    try {
+        const ins = modal.querySelector('.adsbygoogle');
+        if (ins && !ins.getAttribute('data-adsbygoogle-status')) {
+            (window.adsbygoogle = window.adsbygoogle || []).push({});
         }
+    } catch(e) {}
+
+    // Animasyonu başlat (1 frame sonra)
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            if (ring) {
+                ring.style.transition = `stroke-dashoffset ${AD_DURATION}s linear`;
+                ring.style.strokeDashoffset = CIRC;
+            }
+            if (bar) {
+                bar.style.transition = `transform ${AD_DURATION}s linear`;
+                bar.style.transform  = 'scaleX(0)';
+            }
+        });
     });
 
-    let count = 3;
-    toastCountdown = setInterval(() => {
+    // Saniye sayacı
+    let count = AD_DURATION;
+    adInterval = setInterval(() => {
         count--;
-        if (toastCountEl) toastCountEl.textContent = count > 0 ? count : '';
-        if (count <= 0) clearInterval(toastCountdown);
+        if (secEl) secEl.textContent = count > 0 ? count : '';
+        if (count <= AD_DURATION - AD_SKIP_AFTER && skipBtn) {
+            skipBtn.classList.add('show');
+        }
+        if (count <= 0) clearInterval(adInterval);
     }, 1000);
 
-    toastTimer = setTimeout(() => {
-        if (toast) toast.classList.remove('show');
-        if (pendingUrl) {
-            window.location.href = pendingUrl; // Pop-up engeline takılmaz
-        }
-        pendingUrl = null;
-    }, 3000);
+    // Otomatik geçiş
+    adTimer = setTimeout(() => {
+        const dest = adPendingUrl;
+        closeAdModal();
+        if (dest) window.location.href = dest;
+    }, AD_DURATION * 1000);
 }
 
 document.querySelectorAll('.app-card').forEach(card => {
