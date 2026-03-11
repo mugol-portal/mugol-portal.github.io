@@ -919,17 +919,21 @@ function detectAdBlock() {
 function showAdBlockOverlay() {
     const overlay = document.getElementById('adblock-overlay');
     if (overlay) {
-        overlay.style.display = 'flex';
+        overlay.classList.add('visible');
         document.body.style.overflow = 'hidden';
     }
+    const inline = document.getElementById('adblock-inline-warning');
+    if (inline) inline.style.display = 'flex';
 }
 
 function hideAdBlockOverlay() {
     const overlay = document.getElementById('adblock-overlay');
     if (overlay) {
-        overlay.style.display = 'none';
+        overlay.classList.remove('visible');
         document.body.style.overflow = '';
     }
+    const inline = document.getElementById('adblock-inline-warning');
+    if (inline) inline.style.display = 'none';
 }
 
 async function checkAdBlockAndReload() {
