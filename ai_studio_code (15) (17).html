@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MuGöl GAMES - Oyun Portalı</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1880946354382681" crossorigin="anonymous"></script>
+    <!-- AMP Auto Ads -->
+    <script async custom-element="amp-auto-ads"
+            src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+    
+    <style>
+        :root {
+            --bg-dark: #09090b; /* Daha derin bir siyah/gri */
+            --bg-card: rgba(24, 24, 27, 0.6); /* Glassmorphism için saydamlaştırıldı */
+            --primary: #3b82f6; 
+            --primary-glow: rgba(59, 130, 246, 0.4);
+            --accent: #f43f5e;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #020617;
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- SİMÜLASYON KONTROL BARI --- */
+        .simulator-bar {
+            height: 50px;
+            background: rgba(9, 9, 11, 0.9);
+            border-bottom: var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            z-index: 9999;
+            backdrop-filter: blur(10px);
+        }
+
+        .sim-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 6px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sim-btn:hover, .sim-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+            transform: translateY(-2px);
+        }
+
+        /* --- ANA UYGULAMA ALANI & HAREKETLİ ARKA PLAN --- */
+        .app-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            background: var(--bg-dark);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bg-gradient {
+            position: absolute;
+            width: 100%; height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        /* Animasyonlu Neon Küreler (Bloblar) */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.5;
+            animation: floatBlob 15s infinite alternate ease-in-out;
+            will-change: transform;
+        }
+        .blob-1 { width: 350px; height: 350px; background: #3b82f6; top: -100px; left: -100px; }
+        .blob-2 { width: 400px; height: 400px; background: #8a2be2; bottom: -150px; right: -150px; animation-delay: -5s; }
+        .blob-3 { width: 250px; height: 250px; background: #059669; top: 40%; left: 30%; opacity: 0.3; animation-delay: -10s; }
+
+        @keyframes floatBlob { 
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(60px, 80px) scale(1.1); }
+        }
+
+        .device-frame {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(20px);
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        /* --- HEADER & LOGO --- */
+        .header {
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(9, 9, 11, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: var(--glass-border);
+            z-index: 50;
+        }
+
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+
+        .logo-box {
+            width: 48px; height: 48px;
+            background: linear-gradient(135deg, var(--primary), #60a5fa);
+            border-radius: 14px; /* Yuvarlak yerine modern kare-oval arası */
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 5px 15px var(--primary-glow);
+            font-size: 1.5rem; color: white; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .logo-title { font-weight: 900; font-size: 1.3rem; letter-spacing: -0.5px; color: #fff; line-height: 1.2; }
+        .logo-subtitle { font-size: 0.8rem; color: var(--primary); font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+
+        .menu-btn {
+            font-size: 1.5rem;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.2s, color 0.2s;
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%; border: var(--glass-border);
+        }
+        .menu-btn:hover { transform: scale(1.05); background: rgba(255,255,255,0.1); color: var(--primary); }
+
+        /* Filtre Butonları */
+        .filter-btn {
+            background: rgba(255,255,255,0.05);
+            color: #cbd5e1;
+            border: var(--glass-border);
+            padding: 10px 20px;
+            border-radius: 30px;
+            white-space: nowrap;
+            font-size: 0.9rem; font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .filter-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+        .filter-btn.active {
+            background: var(--primary); border-color: var(--primary);
+            color: #fff; box-shadow: 0 4px 15px var(--primary-glow); font-weight: 600;
+        }
+
+        /* --- İÇERİK & CUSTOM SCROLLBAR --- */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px;
+            padding-bottom: 80px;
+            scroll-behavior: smooth;
+        }
+
+        .content::-webkit-scrollbar { width: 6px; }
+        .content::-webkit-scrollbar-track { background: transparent; }
+        .content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+        .content::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+
+        /* HERO SECTION (Animasyonlu Günün Yıldızı) */
+        .hero-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(138, 43, 226, 0.1));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 28px;
+            padding: 30px;
+            margin-bottom: 35px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(15px);
+            transition: all 0.5s ease;
+        }
+        
+        .hero-card:hover { border-color: rgba(255,255,255,0.15); box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
+
+        .hero-badge {
+            background: linear-gradient(90deg, var(--accent), #e11d48);
+            color: white; padding: 6px 15px; border-radius: 20px;
+            font-size: 0.75rem; font-weight: 800; letter-spacing: 1px;
+            display: inline-block; margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(244, 63, 94, 0.4);
+        }
+
+        .hero-title { font-size: 2.5rem; font-weight: 900; margin-bottom: 10px; line-height: 1.1; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .hero-desc { color: var(--text-sub); font-size: 0.95rem; max-width: 65%; margin-bottom: 25px; line-height: 1.5; }
+
+        .hero-btn {
+            background: #fff; color: #000; border: none;
+            padding: 14px 35px; border-radius: 50px;
+            font-size: 1rem; font-weight: 800; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 10px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 5px 15px rgba(255,255,255,0.2);
+        }
+        
+        .hero-btn:hover { box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3); transform: translateY(-3px); background: #f8fafc; }
+        .hero-btn:active { transform: translateY(0) scale(0.95); }
+
+        .hero-img {
+            position: absolute; right: -10px; bottom: -10px;
+            font-size: 8rem; opacity: 0.9;
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.6));
+            animation: floatHeroIcon 4s ease-in-out infinite;
+        }
+
+        @keyframes floatHeroIcon {
+            0% { transform: translateY(0) rotate(-15deg); }
+            50% { transform: translateY(-15px) rotate(-10deg); }
+            100% { transform: translateY(0) rotate(-15deg); }
+        }
+
+        /* Arama Kutusu */
+        .search-container { position: relative; margin-bottom: 30px; }
+        .search-icon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--text-sub); font-size: 1.1rem; }
+        .search-input {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 18px 20px 18px 50px;
+            border-radius: 20px;
+            color: #fff; font-size: 1.05rem;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+        .search-input::placeholder { color: #64748b; }
+        .search-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 20px var(--primary-glow); background: rgba(0,0,0,0.5); }
+
+        /* Oyunlar Grid */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
+        }
+
+        .game-card {
+            background: var(--bg-card);
+            border-radius: 22px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .game-card:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4); 
+            border-color: rgba(255,255,255,0.2);
+        }
+        .game-card:active { transform: translateY(-3px) scale(0.97); }
+
+        .game-thumb {
+            height: 110px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3.5rem;
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border-bottom: 1px solid rgba(0,0,0,0.2);
+        }
+        
+        .game-card:hover .game-thumb { transform: scale(1.08); }
+
+        .game-card:nth-child(odd) .game-thumb { background: linear-gradient(135deg, #4f46e5, #818cf8); }
+        .game-card:nth-child(even) .game-thumb { background: linear-gradient(135deg, #059669, #34d399); }
+
+        .game-info {
+            padding: 15px; position: relative; z-index: 2;
+            background: linear-gradient(to top, rgba(24,24,27,0.95), rgba(24,24,27,0.8));
+        }
+
+        .game-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+        .game-cat { font-size: 0.75rem; color: var(--primary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Footer & Privacy */
+        .footer-menu {
+            margin-top: 40px; text-align: center; padding-top: 25px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .privacy-link { color: #64748b; text-decoration: none; font-size: 0.85rem; border-bottom: 1px dashed #64748b; cursor: pointer; transition: color 0.3s; }
+        .privacy-link:hover { color: #fff; border-color: #fff; }
+
+        /* Geliştirilmiş Yükleniyor Ekranı (Loader) */
+        .page-loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(4, 9, 20, 0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden; transition: 0.4s ease; color: #fff;
+        }
+
+        .page-loader.active { opacity: 1; visibility: visible; }
+
+        .loader-spinner {
+            width: 60px; height: 60px;
+            border: 4px solid rgba(59, 130, 246, 0.1); border-top-color: var(--primary);
+            border-radius: 50%; animation: spin 0.8s cubic-bezier(0.5, 0.1, 0.4, 0.9) infinite;
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 10000;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden; transition: 0.3s; backdrop-filter: blur(8px); padding: 20px;
+        }
+
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+
+        .modal-box {
+            background: #18181b; width: 100%; max-width: 450px;
+            border-radius: 28px; padding: 35px; border: 1px solid rgba(255,255,255,0.1);
+            position: relative; transform: translateY(30px) scale(0.95); transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+        }
+
+        .modal-overlay.active .modal-box { transform: translateY(0) scale(1); }
+
+        .modal-close {
+            position: absolute; top: 20px; right: 20px; font-size: 1.5rem; color: #94a3b8;
+            cursor: pointer; width: 40px; height: 40px; background: rgba(255,255,255,0.05);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s;
+        }
+        .modal-close:hover { background: rgba(244, 63, 94, 0.2); color: #f43f5e; transform: rotate(90deg); }
+
+        /* RESPONSIVE */
+        .device-frame.tablet { width: 768px; height: 95vh; border-radius: 35px; border: 12px solid #27272a; margin-top: 20px; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+        .device-frame.mobile-sim { width: 375px; height: 90vh; border-radius: 45px; border: 12px solid #27272a; margin-top: 20px; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+        @media (max-width: 768px) {
+            .simulator-bar { display: none !important; }
+            .app-container { padding: 0; }
+            .device-frame { width: 100% !important; height: 100% !important; border: none !important; border-radius: 0 !important; margin: 0 !important; }
+            .games-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+            .hero-title { font-size: 2rem; }
+            .hero-img { font-size: 6rem; right: -15px; bottom: -10px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- AMP Otomatik Reklamlar -->
+    <amp-auto-ads type="adsense"
+            data-ad-client="ca-pub-1880946354382681">
+    </amp-auto-ads>
+
+    <!-- Geçiş / Yükleniyor Ekranı -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-spinner"></div>
+        <div style="margin-top: 20px; font-weight: 800; letter-spacing: 3px; font-size: 0.9rem; color: var(--primary);">OYUN BAŞLATILIYOR</div>
+    </div>
+
+    <!-- SİMÜLASYON BARI (Telefonda GİZLİ) -->
+    <div class="simulator-bar">
+        <button class="sim-btn" onclick="setMode('mobile-sim')"><i class="fa-solid fa-mobile"></i> Mobil</button>
+        <button class="sim-btn" onclick="setMode('tablet')"><i class="fa-solid fa-tablet"></i> Tablet</button>
+        <button class="sim-btn active" onclick="setMode('desktop')"><i class="fa-solid fa-desktop"></i> Tam Ekran</button>
+    </div>
+
+    <div class="app-container">
+        <!-- Hareketli Bloblar (Yeni Arka Plan) -->
+        <div class="bg-gradient">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+        </div>
+
+        <div class="device-frame" id="deviceFrame">
+            <!-- HEADER -->
+            <header class="header">
+                <div class="logo-area">
+                    <div class="logo-box">
+                        <img src="logo.png" style="width:100%; height:100%; object-fit:contain; display:none;" onload="this.style.display='block'; this.parentElement.style.background='transparent';" onerror="this.style.display='none'">
+                        <i class="fa-solid fa-gamepad"></i>
+                    </div>
+                    <div>
+                        <div class="logo-title">MuGöl</div>
+                        <div class="logo-subtitle">GAMES</div>
+                    </div>
+                </div>
+                <div class="menu-btn" onclick="alert('Menü yakında aktif!')">
+                    <i class="fa-solid fa-bars-staggered"></i>
+                </div>
+            </header>
+
+            <!-- İÇERİK -->
+            <div class="content">
+                
+                <!-- GÜNÜN YILDIZI (Otomatik Değişir) -->
+                <div class="hero-card" id="dailyHero">
+                    <span class="hero-badge" id="heroBadge">🌟 GÜNÜN YILDIZI</span>
+                    <h1 class="hero-title" id="heroTitle">Yükleniyor...</h1>
+                    <p class="hero-desc" id="heroDesc">Oyun bilgileri getiriliyor...</p>
+                    <button class="hero-btn" id="heroBtn">
+                        <i class="fa-solid fa-play"></i> OYNA
+                    </button>
+                    <div class="hero-img" id="heroIcon">🎮</div>
+                </div>
+
+                <!-- ARAMA & FİLTRE -->
+                <div class="search-container">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Oyun ara... (örn: Word, Yılan)" id="searchInput">
+                </div>
+
+                <div style="display:flex; gap:12px; overflow-x:auto; margin-bottom:25px; padding-bottom:5px; scrollbar-width: none;">
+                    <button class="filter-btn active" id="filter-all" onclick="filterGames('all')">Tümü</button>
+                    <button class="filter-btn" id="filter-action" onclick="filterGames('action')">Aksiyon</button>
+                    <button class="filter-btn" id="filter-puzzle" onclick="filterGames('puzzle')">Zeka</button>
+                    <button class="filter-btn" id="filter-simulation" onclick="filterGames('simulation')">✈️ Simülasyon</button>
+                </div>
+
+                <!-- OYUN LİSTESİ -->
+                <div class="games-grid">
+                    
+                    <!-- YENİ & GÜNCEL OYUN: WORD MASTER (W Sembollü) -->
+                    <div class="game-card" data-category="puzzle" onclick="openGame('word-master.html')" style="border-color: rgba(138, 43, 226, 0.4); box-shadow: 0 5px 20px rgba(138, 43, 226, 0.15);">
+                        <div class="game-thumb" style="background: linear-gradient(135deg, #7c3aed, #c084fc) !important; font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 3.5rem; color: #fff; text-shadow: 0 5px 15px rgba(0,0,0,0.4);">
+                            W
+                        </div>
+                        <div class="game-info"><div class="game-title">Word Master</div><div class="game-cat" style="color:#c084fc;">Zeka / Eğitim</div></div>
+                    </div>
+
+                    <!-- UÇAK SİMÜLASYONU -->
+                    <div class="game-card" data-category="simulation" onclick="openGame('ucak-simulasyonu.html')">
+                        <div class="game-thumb" style="background: linear-gradient(135deg, #0284c7, #38bdf8) !important;">✈️</div>
+                        <div class="game-info"><div class="game-title">Uçak Simülasyonu</div><div class="game-cat">Simülasyon</div></div>
+                    </div>
+                    
+                    <!-- DİĞER OYUNLAR -->
+                    <div class="game-card" data-category="puzzle" onclick="openGame('block-puzzle.html')">
+                        <div class="game-thumb" style="background: linear-gradient(135deg, #d946ef, #f472b6) !important;">🧩</div>
+                        <div class="game-info"><div class="game-title">Block Legend</div><div class="game-cat">Bulmaca</div></div>
+                    </div>
+                    <div class="game-card" data-category="action" onclick="openGame('fruit-ninja.html')">
+                        <div class="game-thumb" style="background: linear-gradient(135deg, #ef4444, #fca5a5) !important;">🍉</div>
+                        <div class="game-info"><div class="game-title">Fruit Ninja</div><div class="game-cat">Aksiyon</div></div>
+                    </div>
+                    <div class="game-card" data-category="action" onclick="openGame('flappy-bird.html')">
+                        <div class="game-thumb" style="background: linear-gradient(135deg, #f59e0b, #fcd34d) !important;">🐦</div>
+                        <div class="game-info"><div class="game-title">Flappy Bird</div><div class="game-cat">Beceri</div></div>
+                    </div>
+                    <div class="game-card" data-category="action" onclick="openGame('space-shooter.html')">
+                        <div class="game-thumb" style="background: linear-gradient(135deg, #3b82f6, #93c5fd) !important;">🚀</div>
+                        <div class="game-info"><div class="game-title">Space Shooter</div><div class="game-cat">Uzay</div></div>
+                    </div>
+                    <div class="game-card" data-category="puzzle" onclick="openGame('stack-tower.html')">
+                        <div class="game-thumb" style="background: linear-gradient(135deg, #10b981, #6ee7b7) !important;">🏗️</div>
+                        <div class="game-info"><div class="game-title">Stack Tower</div><div class="game-cat">Zeka</div></div>
+                    </div>
+                    <div class="game-card" data-category="puzzle" onclick="openGame('bebble.html')">
+                        <div class="game-thumb" style="background: linear-gradient(135deg, #8b5cf6, #c4b5fd) !important;">🔮</div>
+                        <div class="game-info"><div class="game-title">Bubble Shooter</div><div class="game-cat">Bulmaca</div></div>
+                    </div>
+                    <div class="game-card" data-category="puzzle" onclick="openGame('kart-eslestirme.html')">
+                        <div class="game-thumb" style="background: linear-gradient(135deg, #14b8a6, #5eead4) !important;">🃏</div>
+                        <div class="game-info"><div class="game-title">Hafıza Kartları</div><div class="game-cat">Zeka</div></div>
+                    </div>
+                    <div class="game-card" data-category="action" onclick="openGame('yilan-oyunu.html')">
+                        <div class="game-thumb" style="background: linear-gradient(135deg, #22c55e, #86efac) !important;">🐍</div>
+                        <div class="game-info"><div class="game-title">Yılan Oyunu</div><div class="game-cat">Klasik</div></div>
+                    </div>
+                    <div class="game-card" data-category="action" onclick="openGame('araba.html')">
+                        <div class="game-thumb" style="background: linear-gradient(135deg, #ef4444, #f87171) !important;">🏎️</div>
+                        <div class="game-info"><div class="game-title">Araba Yarışı</div><div class="game-cat">Yarış</div></div>
+                    </div>
+                    <div class="game-card" data-category="puzzle" onclick="openGame('kelime-ustadi.html')">
+                        <div class="game-thumb" style="background: linear-gradient(135deg, #f97316, #fdba74) !important;">🔡</div>
+                        <div class="game-info"><div class="game-title">Kelime Üstadı</div><div class="game-cat">Kelime</div></div>
+                    </div>
+                    <div class="game-card" data-category="puzzle" onclick="openGame('turk-damasi.html')">
+                        <div class="game-thumb" style="background: linear-gradient(135deg, #64748b, #cbd5e1) !important;">⚫</div>
+                        <div class="game-info"><div class="game-title">Dama Oyunu</div><div class="game-cat">Strateji</div></div>
+                    </div>
+                    <div class="game-card" data-category="puzzle" onclick="openGame('kızma-birader.html')">
+                        <div class="game-thumb" style="background: linear-gradient(135deg, #eab308, #fde047) !important;">🎲</div>
+                        <div class="game-info"><div class="game-title">Kızma Birader</div><div class="game-cat">Klasik</div></div>
+                    </div>
+                </div>
+
+                <div class="footer-menu">
+                    <p style="color:#475569; font-weight:600; font-size:0.8rem; margin-bottom:12px; letter-spacing:1px;">MuGöl GAMES v5.0</p>
+                    <span class="privacy-link" onclick="openPrivacy()">Gizlilik Politikası</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GİZLİLİK MODALI -->
+    <div class="modal-overlay" id="privacyModal">
+        <div class="modal-box">
+            <div class="modal-close" onclick="closePrivacy()"><i class="fa-solid fa-xmark"></i></div>
+            <h2 style="color:#fff; margin-bottom:15px; font-weight: 800;">Gizlilik Politikası</h2>
+            <div style="color:#94a3b8; font-size:0.95rem; line-height:1.6;">
+                <p>MuGöl GAMES olarak kişisel verilerinizi toplamıyoruz.</p>
+                <br>
+                <p>Oyun verileriniz yalnızca cihazınızda (Tarayıcı Local Storage) şifrelenmeden saklanır. Sunucu tabanlı herhangi bir veri aktarımı veya kayıt sistemimiz yoktur.</p>
+                <br>
+                <button onclick="closePrivacy()" style="background:var(--primary); color:#fff; border:none; padding:12px 30px; border-radius:30px; width:100%; margin-top:15px; font-weight: 700; cursor: pointer; font-size: 1rem; box-shadow: 0 5px 15px var(--primary-glow); transition: 0.3s;">Anladım</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // OYUN VERİTABANI (Günün Oyunu İçin) - İKONU W OLARAK GÜNCELLENDİ
+        const gamesDB =[
+            { title: "Word Master", desc: "Gizli İngilizce kelimeleri bul, siber dünyanın hakimi ol!", icon: "W", url: "word-master.html", color: "#8a2be2" },
+            { title: "Uçak Simülasyonu", desc: "3D kokpite geç, uçağını kontrol et ve gökyüzünü fethet! Gerçekçi uçuş deneyimi.", icon: "✈️", url: "ucak-simulasyonu.html", color: "#0ea5e9" },
+            { title: "Block Legend", desc: "Blokları yerleştir, satırları yok et ve efsanevi kombolar yap!", icon: "🧩", url: "block-puzzle.html", color: "#d946ef" },
+            { title: "Fruit Ninja", desc: "Bıçaklarını bile, reflekslerini hazırla! Bombalara dokunmadan meyveleri kes.", icon: "🍉", url: "fruit-ninja.html", color: "#ef4444" },
+            { title: "Space Shooter", desc: "Uzay gemini yönet, galaksiyi düşman istilasından kurtar!", icon: "🚀", url: "space-shooter.html", color: "#3b82f6" },
+            { title: "Flappy Bird", desc: "Sinirlerine hakim ol! Boruların arasından geç ve rekoru kır.", icon: "🐦", url: "flappy-bird.html", color: "#f59e0b" },
+            { title: "Stack Tower", desc: "Blokları üst üste diz ve gökyüzüne ulaşan bir kule inşa et.", icon: "🏗️", url: "stack-tower.html", color: "#10b981" },
+            { title: "Bubble Shooter", desc: "Aynı renk topları eşleştir ve patlat. 40 bölümü tamamla!", icon: "🔮", url: "bebble.html", color: "#8b5cf6" },
+            { title: "Yılan Oyunu", desc: "Klasik Nokia efsanesi! Yemi ye, uza ama kuyruğuna çarpma.", icon: "🐍", url: "yilan-oyunu.html", color: "#22c55e" },
+            { title: "Araba Yarışı", desc: "Trafikte makas at, en yüksek puanı topla. Hız tutkunları buraya!", icon: "🏎️", url: "araba.html", color: "#ef4444" }
+        ];
+
+        // GÜNÜN OYUNUNU SEÇEN FONKSİYON
+        function updateDailyHero() {
+            const today = new Date();
+            const start = new Date(today.getFullYear(), 0, 0);
+            const diff = today - start;
+            const oneDay = 1000 * 60 * 60 * 24;
+            const dayOfYear = Math.floor(diff / oneDay);
+
+            const gameIndex = dayOfYear % gamesDB.length;
+            const todaysGame = gamesDB[gameIndex];
+
+            document.getElementById('heroTitle').innerHTML = todaysGame.title.replace(' ', '<br>');
+            document.getElementById('heroDesc').textContent = todaysGame.desc;
+            
+            // Eğer "Word Master" (W) ise font ailesini ayarlayıp kalın ve şık gösteriyoruz
+            const heroIconEl = document.getElementById('heroIcon');
+            heroIconEl.textContent = todaysGame.icon;
+            if(todaysGame.icon === 'W') {
+                heroIconEl.style.fontFamily = "'Outfit', sans-serif";
+                heroIconEl.style.fontWeight = "900";
+            } else {
+                heroIconEl.style.fontFamily = "inherit";
+            }
+
+            document.getElementById('heroBtn').setAttribute('onclick', `openGame('${todaysGame.url}')`);
+            
+            // Arka planı dinamik olarak değiştir
+            const heroCard = document.getElementById('dailyHero');
+            heroCard.style.background = `linear-gradient(135deg, ${todaysGame.color}25, rgba(24,24,27,0.5))`;
+            heroCard.style.borderColor = `${todaysGame.color}55`;
+            
+            // Buton rengini hafifçe temaya uydur
+            const heroBtn = document.getElementById('heroBtn');
+            heroBtn.style.color = todaysGame.color;
+        }
+
+        window.addEventListener('load', updateDailyHero);
+
+        // Ekran Kararma (Opacity) Geri Dönüş Bug Çözümü
+        window.addEventListener('pageshow', function (event) {
+            document.getElementById('pageLoader').classList.remove('active');
+        });
+
+        // OYUN AÇMA (Yükleniyor Animasyonu ile)
+        function openGame(url) { 
+            document.getElementById('pageLoader').classList.add('active');
+            setTimeout(() => {
+                window.location.href = url;
+            }, 450); 
+        }
+
+        // --- ARAYÜZ FONKSİYONLARI ---
+        function setMode(mode) {
+            const frame = document.getElementById('deviceFrame');
+            const btns = document.querySelectorAll('.sim-btn');
+            btns.forEach(b => b.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            frame.className = 'device-frame'; 
+            if (mode !== 'desktop') frame.classList.add(mode);
+        }
+
+        function openPrivacy() { document.getElementById('privacyModal').classList.add('active'); }
+        function closePrivacy() { document.getElementById('privacyModal').classList.remove('active'); }
+
+        // ARAMA SİSTEMİ
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase();
+            document.querySelectorAll('.game-card').forEach(card => {
+                const title = card.querySelector('.game-title').innerText.toLowerCase();
+                if (title.includes(term)) {
+                    card.style.display = 'block';
+                    card.style.animation = 'none'; // reset animation
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // KATEGORİ FİLTRELEME
+        function filterGames(category) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('filter-' + category).classList.add('active');
+            
+            document.querySelectorAll('.game-card').forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
