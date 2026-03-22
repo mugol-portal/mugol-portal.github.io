@@ -57,6 +57,16 @@
     <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1880946354382681" crossorigin="anonymous"></script>
+    <!-- Yatay Reklam Birimi -->
+    <style>
+        .adsense-banner-wrap {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 8px 0;
+            background: transparent;
+        }
+    </style>
 
     <!-- Preconnect for Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -123,6 +133,19 @@
             </div>
         </div>
     </header>
+
+    <!-- Yatay AdSense Reklam Bandı -->
+    <div class="adsense-banner-wrap">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-1880946354382681"
+             data-ad-slot="1435965312"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
 
     <div id="searchModal" role="dialog" aria-modal="true" aria-label="Uygulama Arama" style="display:none; position:fixed; inset:0; z-index:99990; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px); align-items:flex-start; justify-content:center; padding-top:80px;">
         <div style="background:var(--bg-card); border-radius:20px; width:min(560px,95vw); box-shadow:0 30px 60px rgba(0,0,0,0.4); overflow:hidden; animation:fadeIn 0.25s ease;">
@@ -637,17 +660,23 @@
                                 <p>Fikirleriniz, önerileriniz veya destek talepleriniz bizim için çok değerli. Formu doldurarak doğrudan ekibimize mesaj gönderebilirsiniz.</p>
                                 
                                 <div class="contact-pill-links">
-                                    <a href="/cdn-cgi/l/email-protection#ef829a888083c18a8b9a8c8e9b868081c1878a839faf88828e8683c18c8082" class="contact-pill">
-                                        <i class="fas fa-envelope" aria-hidden="true"></i> <span class="lang-email">E-Posta</span>
+                                    <a href="/cdn-cgi/l/email-protection#ef829a888083c18a8b9a8c8e9b868081c1878a839faf88828e8683c18c8082" class="contact-pill contact-pill-icon-only" title="E-Posta" aria-label="E-Posta">
+                                        <i class="fas fa-envelope" aria-hidden="true"></i>
                                     </a>
-                                    <a href="https://www.instagram.com/mugol_portal?igsh=MXFqNWFmbnE1aGZsaw==" target="_blank" class="contact-pill" aria-label="Instagram Sayfamız">
-                                        <i class="fab fa-instagram" aria-hidden="true"></i> Instagram
+                                    <a href="https://www.instagram.com/mugol_portal?igsh=MXFqNWFmbnE1aGZsaw==" target="_blank" class="contact-pill contact-pill-icon-only" aria-label="Instagram Sayfamız" title="Instagram">
+                                        <i class="fab fa-instagram" aria-hidden="true"></i>
                                     </a>
-                                    <a href="https://www.facebook.com/share/183xXabGca/" target="_blank" class="contact-pill facebook-pill" aria-label="Facebook Sayfamız">
-                                        <i class="fab fa-facebook-f" aria-hidden="true"></i> Facebook
+                                    <a href="https://www.facebook.com/share/183xXabGca/" target="_blank" class="contact-pill facebook-pill contact-pill-icon-only" aria-label="Facebook Sayfamız" title="Facebook">
+                                        <i class="fab fa-facebook-f" aria-hidden="true"></i>
                                     </a>
-                                    <a href="https://youtube.com/@mugolportal?si=LRsj-aAcU3G4eKHj" target="_blank" class="contact-pill youtube-pill" aria-label="YouTube Kanalımız">
-                                        <i class="fab fa-youtube" aria-hidden="true"></i> YouTube
+                                    <a href="https://youtube.com/@mugolportal?si=LRsj-aAcU3G4eKHj" target="_blank" class="contact-pill youtube-pill contact-pill-icon-only" aria-label="YouTube Kanalımız" title="YouTube">
+                                        <i class="fab fa-youtube" aria-hidden="true"></i>
+                                    </a>
+                                    <a href="https://nsosyal.com/mugol_portal" target="_blank" class="contact-pill nsosyal-pill contact-pill-icon-only" aria-label="NSosyal Sayfamız" title="NSosyal">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="flex-shrink:0;"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 2c4.418 0 8 3.582 8 8s-3.582 8-8 8-8-3.582-8-8 3.582-8 8-8zm-1 4v4H7l5 6 5-6h-4V8h-2z"/></svg>
+                                    </a>
+                                    <a href="https://pin.it/5JL6Fs2xP" target="_blank" class="contact-pill pinterest-pill contact-pill-icon-only" aria-label="Pinterest Sayfamız" title="Pinterest">
+                                        <i class="fab fa-pinterest-p" aria-hidden="true"></i>
                                     </a>
                                 </div>
                             </div>
@@ -772,6 +801,37 @@
         </div>
     </div>
 
+
+    <!-- NSosyal & Pinterest Pill Stilleri -->
+    <style>
+        .nsosyal-pill {
+            background: linear-gradient(135deg, #ff6b35, #f7c59f) !important;
+            color: #fff !important;
+            border-color: transparent !important;
+        }
+        .nsosyal-pill:hover { filter: brightness(1.1); }
+        .pinterest-pill {
+            background: linear-gradient(135deg, #e60023, #ad081b) !important;
+            color: #fff !important;
+            border-color: transparent !important;
+        }
+        .pinterest-pill:hover { filter: brightness(1.1); }
+        .contact-pill-icon-only {
+            width: 44px !important;
+            height: 44px !important;
+            min-width: 44px !important;
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border-radius: 50% !important;
+            font-size: 1.2rem !important;
+        }
+        .contact-pill-icon-only svg {
+            width: 18px;
+            height: 18px;
+        }
+    </style>
 
     <!-- REKLAM ENGELLEYİCİ OVERLAY -->
     <style>
