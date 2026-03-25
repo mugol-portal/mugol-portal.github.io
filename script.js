@@ -274,13 +274,25 @@ document.querySelectorAll('.category-card').forEach(catCard => {
 });
 
 // =========================================================
-// 8. AÇILIŞ ANİMASYONU (SPLASH SCREEN)
+// 8. AÇILIŞ ANİMASYONU (SPLASH SCREEN) VE REKLAM KONTROLÜ
 // =========================================================
 (function () {
+    // Açılış bittikten sonra reklam engelleyiciyi kontrol edecek fonksiyon
+    async function runAdblockCheck() {
+        if (typeof detectAdBlock === 'function') {
+            const blocked = await detectAdBlock();
+            if (blocked && typeof showAdBlockOverlay === 'function') {
+                showAdBlockOverlay();
+            }
+        }
+    }
+
     if (sessionStorage.getItem('skipSplash')) {
         sessionStorage.removeItem('skipSplash');
         const splash = document.getElementById('splash-screen');
         if (splash) splash.style.display = 'none';
+        // Animasyon atlandığında reklam uyarısını hemen kontrol et
+        runAdblockCheck();
         return;
     }
 
@@ -329,6 +341,11 @@ document.querySelectorAll('.category-card').forEach(catCard => {
             clearInterval(interval);
             setTimeout(() => {
                 if (splash) splash.classList.add('hidden');
+                
+                // SPLASH EKRANI GİZLENDİKTEN SONRA REKLAM UYARISINI ÇAĞIR
+                // 300ms gecikme ile görsel olarak daha pürüzsüz bir geçiş sağlar
+                setTimeout(runAdblockCheck, 300);
+                
             }, 600);
         }
     }, 150);
@@ -680,7 +697,6 @@ if (aboutMenuItem) {
         if (countUpDone) return;
         setTimeout(() => {
             const statEls = document.querySelectorAll('.stat-item strong');
-            // GÜNCELLEME: Hedefler 20 uygulama, 4 Kategori, 2025 Kuruluş olarak güncellendi.
             const targets =[20, 4, 2025]; 
             const suffixes =['', '', ''];
             statEls.forEach((el, i) => {
@@ -919,14 +935,13 @@ function detectAdBlock() {
     });
 }
 
-// Global kapatma fonksiyonunu buraya taşıyoruz
 window.closeAdblockWarning = function() {
     const ab = document.getElementById('adblock-overlay');
     if (ab) {
-        ab.style.opacity = '0'; // Animasyonlu kapanış için
+        ab.style.opacity = '0'; 
         setTimeout(() => { 
             ab.classList.remove('visible'); 
-            ab.style.opacity = '1'; // Tekrar tetiklenme ihtimaline karşı sıfırla
+            ab.style.opacity = '1'; 
         }, 300);
     }
 };
@@ -936,18 +951,9 @@ function showAdBlockOverlay() {
     if (overlay) {
         overlay.classList.add('visible');
         
-        // Geçici uyarı: Arka plan kilitlenmesini kaldırdık (overflow: hidden YOK)
         // Kutu açıldıktan 6 saniye sonra otomatik kapanmasını sağlıyoruz
         setTimeout(() => {
             window.closeAdblockWarning();
         }, 6000);
     }
 }
-
-// Sayfa yüklenince kontrol et
-window.addEventListener('load', async () => {
-    const blocked = await detectAdBlock();
-    if (blocked) {
-        showAdBlockOverlay();
-    }
-});
