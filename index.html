@@ -57,7 +57,16 @@
     <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1880946354382681" crossorigin="anonymous"></script>
-    <!-- Yatay Reklam Birimi -->
+    
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+
+    <!-- EK GELİŞTİRİLMİŞ TASARIM STİLLERİ -->
     <style>
         .adsense-banner-wrap {
             width: 100%;
@@ -66,15 +75,72 @@
             padding: 8px 0;
             background: transparent;
         }
-    </style>
 
-    <!-- Preconnect for Performance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <link rel="stylesheet" href="style.css">
+        /* Glassmorphism Header */
+        .header {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background-color: color-mix(in srgb, var(--bg-card) 85%, transparent) !important;
+            border-bottom: 1px solid rgba(150, 150, 150, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        /* Geliştirilmiş Kart Hover Efektleri */
+        .category-card {
+            border-radius: 20px;
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease !important;
+            border: 1px solid rgba(150, 150, 150, 0.1);
+        }
+        .category-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
+            border-color: rgba(67, 24, 255, 0.3);
+        }
+        .category-card .cat-icon-wrap {
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .category-card:hover .cat-icon-wrap {
+            transform: scale(1.15) rotate(6deg);
+        }
+
+        /* App Card İyileştirmeleri */
+        .app-card {
+            border-radius: 18px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+            border: 1px solid rgba(150, 150, 150, 0.1);
+            overflow: hidden;
+        }
+        [data-theme="dark"] .app-card, 
+        [data-theme="dark"] .category-card {
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+        .app-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
+            border-color: rgba(67, 24, 255, 0.4);
+        }
+
+        /* İletişim & Karşılama Kartları Tasarımı */
+        .welcome-banner--compact {
+            border-radius: 22px;
+            background: linear-gradient(135deg, rgba(67, 24, 255, 0.05), rgba(0, 210, 255, 0.05));
+            border: 1px solid rgba(67, 24, 255, 0.15);
+            box-shadow: inset 0 0 20px rgba(255,255,255,0.5);
+        }[data-theme="dark"] .welcome-banner--compact {
+            background: linear-gradient(135deg, rgba(67, 24, 255, 0.15), rgba(0, 210, 255, 0.1));
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+        
+        /* Modern İletişim Butonu Efekti */
+        .contact-pill-links a {
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+        }
+        .contact-pill-links a:hover {
+            transform: translateY(-3px) scale(1.03) !important;
+            box-shadow: 0 12px 28px rgba(67, 24, 255, 0.4) !important;
+        }
+    </style>
 </head>
 <body>
 
@@ -143,7 +209,7 @@
              data-ad-format="auto"
              data-full-width-responsive="true"></ins>
         <script>
-             (adsbygoogle = window.adsbygoogle || []).push({});
+             (adsbygoogle = window.adsbygoogle ||[]).push({});
         </script>
     </div>
 
@@ -228,17 +294,8 @@
                     </div>
                 </div>
 
-                <!-- REKLAM ENGELLEYİCİ UYARI BANDI -->
-                <div id="adblock-inline-warning">
-                    <div class="adblock-inline-icon"><i class="fas fa-shield-alt"></i></div>
-                    <div class="adblock-inline-text">
-                        <strong>Reklam engelleyici tespit edildi!</strong>
-                        <span>Bu siteyi ücretsiz sunabilmemiz reklam gelirleri sayesinde mümkün oluyor. Reklam engelleyicinizi kapatarak bize destek olursanız çok seviniriz. 🙏</span>
-                    </div>
-                    <button class="adblock-inline-btn" onclick="checkAdBlockAndReload()">
-                        <i class="fas fa-redo-alt"></i> Yenile
-                    </button>
-                </div>
+                <!-- Eski Satır İçi Reklam Uyarısı Kaldırıldı; JS hata vermesin diye gizli placeholder bırakıldı -->
+                <div id="adblock-inline-warning" style="display: none !important;"></div>
 
                 <div class="category-grid">
                     <div class="category-card" role="button" tabindex="0" data-target="page-gunluk" aria-label="Günlük Kategorisi - 7 Uygulama">
@@ -253,7 +310,6 @@
                         <i class="fas fa-chevron-right cat-arrow" aria-hidden="true"></i>
                     </div>
 
-                    <!-- Eğitim uygulama sayısı 5 olarak güncellendi -->
                     <div class="category-card" role="button" tabindex="0" data-target="page-egitim" aria-label="Eğitim Kategorisi - 5 Uygulama">
                         <div class="cat-icon-wrap" style="background: linear-gradient(135deg, #FF8B00, #FFD000);" aria-hidden="true">
                             <i class="fas fa-graduation-cap"></i>
@@ -420,7 +476,6 @@
                         </div>
                     </a>
 
-                    <!-- YENİ EKLENEN UYGULAMA: MuGöl English -->
                     <a href="https://mugol-portal.github.io/mugol-english/" class="app-card" style="animation-delay: 0.3s;">
                         <div class="app-card-header">
                             <img src="images/english.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=English&background=00d2ff&color=fff&rounded=true&bold=true'">
@@ -433,7 +488,6 @@
                         </div>
                     </a>
 
-                    <!-- YENİ EKLENEN UYGULAMA: MuGöl Karne Not Hesaplama -->
                     <a href="https://mugol-portal.github.io/karne-not-hesaplama/" class="app-card" style="animation-delay: 0.4s;">
                         <div class="app-card-header">
                             <img src="images/karne.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Karne&background=10b981&color=fff&rounded=true&bold=true'">
@@ -673,7 +727,7 @@
                                 <p>Fikirleriniz, önerileriniz veya destek talepleriniz bizim için çok değerli. Formu doldurarak doğrudan ekibimize mesaj gönderebilirsiniz.</p>
                                 
                                 <div class="contact-pill-links">
-                                    <a href="https://mugol-portal.github.io/erisim" target="_blank" class="contact-pill" aria-label="Sosyal Medya Hesaplarımız" style="display:inline-flex; align-items:center; gap:8px; padding:12px 22px; border-radius:14px; background:linear-gradient(135deg,#4318ff,#00d2ff); color:#fff; font-weight:800; font-size:0.95rem; text-decoration:none; border:none; box-shadow:0 4px 16px rgba(67,24,255,0.3); transition:transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(67,24,255,0.45)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(67,24,255,0.3)'">
+                                    <a href="https://mugol-portal.github.io/erisim" target="_blank" class="contact-pill" aria-label="Sosyal Medya Hesaplarımız" style="display:inline-flex; align-items:center; gap:8px; padding:12px 22px; border-radius:14px; background:linear-gradient(135deg,#4318ff,#00d2ff); color:#fff; font-weight:800; font-size:0.95rem; text-decoration:none; border:none; box-shadow:0 4px 16px rgba(67,24,255,0.3);">
                                         <i class="fas fa-share-alt" aria-hidden="true"></i>
                                         Sosyal Medya Hesaplarımız
                                     </a>
@@ -749,8 +803,8 @@
                         <div class="about-stats" aria-label="Platform İstatistikleri">
                             <div class="stat-item">
                                 <i class="fas fa-rocket" aria-hidden="true"></i>
-                                <!-- Toplam uygulama sayısı 19 olarak güncellendi -->
-                                <div><strong aria-label="19">19</strong><span>Uygulama</span></div>
+                                <!-- Toplam uygulama sayısı 20 olarak güncellendi -->
+                                <div><strong aria-label="20">20</strong><span>Uygulama</span></div>
                             </div>
                             <div class="stat-item">
                                 <i class="fas fa-layer-group" aria-hidden="true"></i>
@@ -832,7 +886,7 @@
         }
     </style>
 
-    <!-- REKLAM ENGELLEYİCİ OVERLAY -->
+    <!-- GEÇİCİ REKLAM ENGELLEYİCİ MESAJ KUTUSU STİLLERİ -->
     <style>
         #adblock-overlay {
             display: none;
@@ -840,36 +894,63 @@
             top: 0; left: 0; right: 0; bottom: 0;
             width: 100%; height: 100%;
             z-index: 999999;
-            background: rgba(0, 0, 0, 0.88);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(0, 0, 0, 0.4); /* Daha hafif arka plan */
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
             align-items: center;
             justify-content: center;
             flex-direction: column;
+            transition: opacity 0.3s ease;
         }
         #adblock-overlay.visible {
             display: flex !important;
         }
         #adblock-box {
-            background: #ffffff;
+            position: relative;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 24px;
             padding: 2.5rem 2rem;
-            max-width: 460px;
+            max-width: 440px;
             width: 90%;
             text-align: center;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
-            animation: adblockPop 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+            animation: adblockPop 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
         }
         [data-theme="dark"] #adblock-box {
-            background: #1e293b;
+            background: rgba(30, 41, 59, 0.95);
+            border-color: rgba(255, 255, 255, 0.05);
         }
         @keyframes adblockPop {
-            from { opacity: 0; transform: scale(0.85) translateY(20px); }
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
             to   { opacity: 1; transform: scale(1) translateY(0); }
         }
-        #adblock-box .ab-emoji { font-size: 3.5rem; margin-bottom: 0.8rem; line-height: 1; }
+        #adblock-close-btn {
+            position: absolute;
+            top: 15px; right: 15px;
+            background: rgba(0,0,0,0.05);
+            border: none;
+            border-radius: 50%;
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            color: #64748b;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }[data-theme="dark"] #adblock-close-btn {
+            background: rgba(255,255,255,0.1);
+            color: #cbd5e1;
+        }
+        #adblock-close-btn:hover {
+            background: rgba(220, 38, 38, 0.1);
+            color: #dc2626;
+            transform: scale(1.1);
+        }
+        #adblock-box .ab-emoji { font-size: 3.5rem; margin-bottom: 0.8rem; line-height: 1; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
         #adblock-box h2 {
-            font-size: 1.45rem;
+            font-size: 1.4rem;
             font-weight: 900;
             color: #0f172a;
             margin-bottom: 0.9rem;
@@ -879,141 +960,49 @@
         [data-theme="dark"] #adblock-box h2 { color: #f8fafc; }
         #adblock-box p {
             color: #64748b;
-            font-size: 0.98rem;
+            font-size: 0.95rem;
             font-weight: 600;
-            line-height: 1.75;
+            line-height: 1.6;
             margin-bottom: 1.8rem;
             font-family: 'Nunito', sans-serif;
         }
         [data-theme="dark"] #adblock-box p { color: #94a3b8; }
         #adblock-reload-btn {
-            background: linear-gradient(135deg, #4318ff, #00d2ff);
+            background: linear-gradient(135deg, #10b981, #059669);
             color: #fff;
             border: none;
-            border-radius: 14px;
-            padding: 14px 38px;
-            font-size: 1rem;
+            border-radius: 12px;
+            padding: 12px 32px;
+            font-size: 0.95rem;
             font-weight: 800;
             cursor: pointer;
             font-family: 'Nunito', sans-serif;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            box-shadow: 0 8px 22px rgba(67, 24, 255, 0.4);
+            gap: 8px;
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
         #adblock-reload-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(67, 24, 255, 0.5);
+            box-shadow: 0 10px 24px rgba(16, 185, 129, 0.4);
         }
         #adblock-reload-btn:active { transform: translateY(0); }
-
-        /* Küçültülmüş hoş geldiniz kutusu */
-        .welcome-banner--compact {
-            padding: 1.6rem 2.2rem !important;
-            margin-bottom: 1rem !important;
-        }
-        .welcome-banner--compact .welcome-text h1 {
-            font-size: 1.7rem !important;
-            margin-bottom: 5px !important;
-        }
-        .welcome-banner--compact .welcome-text p {
-            font-size: 1rem !important;
-        }
-        .welcome-banner--compact .datetime {
-            padding: 12px 20px !important;
-            min-width: 150px !important;
-        }
-        .welcome-banner--compact .time {
-            font-size: 2rem !important;
-        }
-        .welcome-banner--compact .date {
-            font-size: 0.88rem !important;
-            margin-top: 5px !important;
-        }
-
-        /* Inline adblock uyarı bandı - her zaman görünür */
-        #adblock-inline-warning {
-            display: flex !important;
-            align-items: center;
-            gap: 14px;
-            background: linear-gradient(135deg, rgba(220,38,38,0.12), rgba(239,68,68,0.06));
-            border: 1.5px solid rgba(220,38,38,0.45);
-            border-left: 5px solid #dc2626;
-            border-radius: 14px;
-            padding: 14px 18px;
-            margin-bottom: 1.8rem;
-            animation: adblockSlideIn 0.4s ease forwards;
-        }
-        @keyframes adblockSlideIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        .adblock-inline-icon {
-            font-size: 1.6rem;
-            color: #dc2626;
-            flex-shrink: 0;
-            line-height: 1;
-        }
-        .adblock-inline-text {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
-        .adblock-inline-text strong {
-            font-size: 0.95rem;
-            font-weight: 900;
-            color: #dc2626;
-            font-family: 'Nunito', sans-serif;
-        }
-        .adblock-inline-text span {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-muted, #64748b);
-            line-height: 1.55;
-            font-family: 'Nunito', sans-serif;
-        }
-        .adblock-inline-btn {
-            background: #dc2626;
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            padding: 9px 18px;
-            font-size: 0.875rem;
-            font-weight: 800;
-            cursor: pointer;
-            font-family: 'Nunito', sans-serif;
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            white-space: nowrap;
-            flex-shrink: 0;
-            transition: background 0.2s, transform 0.2s;
-            box-shadow: 0 4px 12px rgba(220,38,38,0.3);
-        }
-        .adblock-inline-btn:hover {
-            background: #b91c1c;
-            transform: translateY(-1px);
-        }
-        @media (max-width: 600px) {
-            #adblock-inline-warning { flex-wrap: wrap; }
-            .welcome-banner--compact { padding: 1.3rem 1.3rem !important; }
-            .welcome-banner--compact .welcome-text h1 { font-size: 1.4rem !important; }
-        }
     </style>
 
     <div id="adblock-overlay">
         <div id="adblock-box">
-            <div class="ab-emoji">🚫</div>
-            <h2>Reklam Engelleyici Tespit Edildi</h2>
-            <p>Bu siteyi ücretsiz sunabilmemiz reklam gelirleri sayesinde mümkün oluyor.<br>Reklam engelleyicinizi kapatarak bize destek olursanız çok seviniriz. 🙏</p>
-            <button id="adblock-reload-btn" onclick="checkAdBlockAndReload()">
-                <i class="fas fa-redo-alt"></i> Yenile
+            <button id="adblock-close-btn" onclick="closeAdblockWarning()" aria-label="Uyarıyı Kapat">
+                <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+            <div class="ab-emoji">🛡️</div>
+            <h2>Reklam Engelleyici Açık</h2>
+            <p>Platformumuzu ücretsiz sunabilmemiz için reklamlara ihtiyacımız var.<br>Bize destek olmak için kapatırsanız çok seviniriz. 🙏</p>
+            <button id="adblock-reload-btn" onclick="location.reload()">
+                <i class="fas fa-check" aria-hidden="true"></i> Kapattım, Yenile
             </button>
         </div>
     </div>
-
 
     <!-- GEÇİŞ REKLAM EKRANI -->
     <style>
@@ -1134,6 +1123,38 @@
             </div>
         </div>
     </div>
+
+    <!-- REKLAM ENGELLEYİCİ GEÇİCİ KAPATMA KODU -->
+    <script>
+        // Kullanıcı kendi isteğiyle veya zaman aşımıyla kapatabilmesi için fonksiyon
+        function closeAdblockWarning() {
+            const ab = document.getElementById('adblock-overlay');
+            if (ab) {
+                ab.style.opacity = '0'; // Animasyonlu kapanış için
+                setTimeout(() => { 
+                    ab.classList.remove('visible'); 
+                    ab.style.opacity = '1'; // Tekrar tetiklenme ihtimaline karşı sıfırla
+                }, 300);
+            }
+        }
+
+        // JS taraflı tetiklenirse, 6 saniye sonra otomatik kapanmasını sağlayan bir Observer
+        window.addEventListener('DOMContentLoaded', () => {
+            const abOverlay = document.getElementById('adblock-overlay');
+            if (abOverlay) {
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        if (mutation.target.classList.contains('visible')) {
+                            setTimeout(() => {
+                                closeAdblockWarning();
+                            }, 6000); // 6 saniye sonra otomatik gizlenir
+                        }
+                    });
+                });
+                observer.observe(abOverlay, { attributes: true, attributeFilter: ['class'] });
+            }
+        });
+    </script>
 
     <script src="script.js"></script>
 </body>

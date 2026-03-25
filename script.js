@@ -495,7 +495,6 @@ const searchModal = document.getElementById('searchModal');
 const searchInput = document.getElementById('searchInput');
 const searchIndex =[];
 
-// DOM'daki tüm uygulama kartlarını tarayıp arama dizinine ekler
 document.querySelectorAll('.page-section .app-card[href]').forEach(card => {
     const page = card.closest('.page-section');
     const menuItem = page ? document.querySelector('.nav-item[data-target="' + page.id + '"]') : null;
@@ -681,8 +680,8 @@ if (aboutMenuItem) {
         if (countUpDone) return;
         setTimeout(() => {
             const statEls = document.querySelectorAll('.stat-item strong');
-            // GÜNCELLEME: Hedefler 18 uygulama, 4 Kategori, 2025 Kuruluş olarak güncellendi.
-            const targets =[18, 4, 2025]; 
+            // GÜNCELLEME: Hedefler 20 uygulama, 4 Kategori, 2025 Kuruluş olarak güncellendi.
+            const targets =[20, 4, 2025]; 
             const suffixes =['', '', ''];
             statEls.forEach((el, i) => {
                 const t = parseInt(el.textContent) || targets[i];
@@ -889,8 +888,9 @@ updateLangButtons(savedLang);
 applyLanguage(savedLang);
 
 // =========================================================
-// REKLAM ENGELLEYİCİ TESPİT SİSTEMİ
+// REKLAM ENGELLEYİCİ TESPİT SİSTEMİ (Geçici Uyarı İçin Güncellendi)
 // =========================================================
+
 function detectAdBlock() {
     const testAd = document.createElement('div');
     testAd.innerHTML = '&nbsp;';
@@ -910,35 +910,37 @@ function detectAdBlock() {
                 testAd.clientWidth === 0 ||
                 window.getComputedStyle(testAd).display === 'none' ||
                 window.getComputedStyle(testAd).visibility === 'hidden';
-            document.body.removeChild(testAd);
+            
+            if (testAd.parentNode) {
+                document.body.removeChild(testAd);
+            }
             resolve(blocked);
         }, 150);
     });
 }
 
+// Global kapatma fonksiyonunu buraya taşıyoruz
+window.closeAdblockWarning = function() {
+    const ab = document.getElementById('adblock-overlay');
+    if (ab) {
+        ab.style.opacity = '0'; // Animasyonlu kapanış için
+        setTimeout(() => { 
+            ab.classList.remove('visible'); 
+            ab.style.opacity = '1'; // Tekrar tetiklenme ihtimaline karşı sıfırla
+        }, 300);
+    }
+};
+
 function showAdBlockOverlay() {
     const overlay = document.getElementById('adblock-overlay');
     if (overlay) {
         overlay.classList.add('visible');
-        document.body.style.overflow = 'hidden';
-    }
-}
-
-function hideAdBlockOverlay() {
-    const overlay = document.getElementById('adblock-overlay');
-    if (overlay) {
-        overlay.classList.remove('visible');
-        document.body.style.overflow = '';
-    }
-}
-
-async function checkAdBlockAndReload() {
-    const blocked = await detectAdBlock();
-    if (blocked) {
-        showAdBlockOverlay();
-    } else {
-        hideAdBlockOverlay();
-        window.location.reload();
+        
+        // Geçici uyarı: Arka plan kilitlenmesini kaldırdık (overflow: hidden YOK)
+        // Kutu açıldıktan 6 saniye sonra otomatik kapanmasını sağlıyoruz
+        setTimeout(() => {
+            window.closeAdblockWarning();
+        }, 6000);
     }
 }
 
