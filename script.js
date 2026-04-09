@@ -697,7 +697,7 @@ if (aboutMenuItem) {
         if (countUpDone) return;
         setTimeout(() => {
             const statEls = document.querySelectorAll('.stat-item strong');
-            const targets =[20, 4, 2025]; 
+            const targets =[21, 4, 2025]; 
             const suffixes =['', '', ''];
             statEls.forEach((el, i) => {
                 const t = parseInt(el.textContent) || targets[i];
