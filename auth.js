@@ -1,457 +1,154 @@
 /* =========================================================
-   AUTH.JS — GİRİŞ / KAYIT SİSTEMİ
-   MuGöl PORTAL · Bağımsız Dosya
-
-   Düzenleyebileceğiniz ayarlar:
-   - Arka plan rengi / gradyanı   → #auth-overlay background
-   - Kutu rengi / boyutu          → #auth-box
-   - Logo değiştirme              → .auth-logo-icon içindeki <img>
-   - Şifre min uzunluğu           → doRegister() içinde pass.length < 6
-   - Kullanıcı adını hatırla      → "Beni Hatırla" checkbox'ı
+   AUTH.JS — V3.1 ULTRA MASTER STABLE
+   MuGöl PORTAL · Kayıt Sorunu Giderildi & UX İyileştirildi
    ========================================================= */
 
 (function () {
 
     /* --------------------------------------------------
-       1. STİLLER
+       1. STİLLER (PREMIUM & MASTER)
     -------------------------------------------------- */
     var css = `
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Nunito:wght@400;700;900&display=swap');
+
         #auth-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 999997;
-            background: linear-gradient(135deg, #4318ff 0%, #00d2ff 100%);
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            display: none; position: fixed; inset: 0; z-index: 999998;
+            background: #0f172a; align-items: center; justify-content: center;
+            padding: 15px; font-family: 'Plus Jakarta Sans', sans-serif;
+            box-sizing: border-box; opacity: 0; transition: opacity 0.8s ease;
         }
-        #auth-overlay.visible { display: flex !important; }
+        #auth-overlay.visible { display: flex !important; opacity: 1; }
+
+        .auth-aura { position: absolute; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
+        .auth-aura div { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.2; animation: authAuraMove 12s infinite alternate; }
+        .aura-1 { width: 450px; height: 450px; background: #4318ff; top: -10%; left: -10%; }
+        .aura-2 { width: 350px; height: 350px; background: #00d2ff; bottom: -10%; right: -10%; }
+        @keyframes authAuraMove { from { transform: translate(0,0) scale(1); } to { transform: translate(50px, 50px) scale(1.1); } }
 
         #auth-box {
-            background: var(--bg-card, #fff);
-            border-radius: 28px;
-            width: min(420px, 100%);
-            padding: 2.5rem 2rem;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.3);
-            animation: authPop 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
+            background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border-radius: 35px; width: 100%; max-width: 410px; max-height: 95vh; overflow-y: auto;
+            padding: 35px 25px; box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.4); position: relative; box-sizing: border-box;
+            animation: authPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        [data-theme="dark"] #auth-box { background: #1e293b; }
+        [data-theme="dark"] #auth-box { background: rgba(30, 41, 59, 0.95); border-color: rgba(255, 255, 255, 0.1); }
 
-        @keyframes authPop {
-            from { opacity:0; transform: scale(0.88) translateY(24px); }
-            to   { opacity:1; transform: scale(1)   translateY(0); }
-        }
+        .auth-brand-wrapper { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; }
+        .auth-logo-row { display: flex; flex-direction: row; align-items: center; gap: 15px; }
+        .auth-brand-name { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.6rem; color: #0f172a; letter-spacing: -0.5px; }
+        [data-theme="dark"] .auth-brand-name { color: #f8fafc; }
+        
+        .auth-logo-icon { width: 55px; height: 55px; background: linear-gradient(135deg, #4318ff, #00d2ff); border-radius: 16px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(67, 24, 255, 0.2); }
+        .auth-greeting-text { font-size: 1.2rem; font-weight: 900; color: #0f172a; margin-top: 10px; font-family: 'Nunito', sans-serif; text-align: center; }
+        [data-theme="dark"] .auth-greeting-text { color: #f8fafc; }
 
-        .auth-logo {
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-        .auth-logo .auth-logo-icon {
-            width: 68px; height: 68px;
-            background: linear-gradient(135deg, #4318ff, #00d2ff);
-            border-radius: 18px;
-            display: inline-flex; align-items: center; justify-content: center;
-            font-size: 2rem; color: #fff;
-            box-shadow: 0 10px 25px rgba(67,24,255,0.35);
-            margin-bottom: 12px;
-        }
-        .auth-logo h2 {
-            font-size: 1.5rem; font-weight: 900;
-            color: var(--text-main, #0f172a);
-            font-family: 'Nunito', sans-serif;
-            margin: 0;
-        }
-        [data-theme="dark"] .auth-logo h2 { color: #f8fafc; }
-        .auth-logo p {
-            font-size: 0.9rem; color: var(--text-muted, #64748b);
-            font-weight: 600; margin: 4px 0 0;
-            font-family: 'Nunito', sans-serif;
-        }
+        .auth-tabs { display: flex; background: rgba(0,0,0,0.05); padding: 5px; border-radius: 16px; margin-bottom: 20px; }
+        .auth-tab-btn { flex: 1; padding: 10px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; background: transparent; color: #64748b; font-family: inherit; }
+        .auth-tab-btn.active { background: #fff; color: #4318ff; box-shadow: 0 5px 12px rgba(0,0,0,0.05); }
 
-        .auth-tabs {
-            display: flex; gap: 6px;
-            background: var(--bg-body, #f1f5f9);
-            border-radius: 14px; padding: 5px;
-            margin-bottom: 1.5rem;
-        }
-        [data-theme="dark"] .auth-tabs { background: #0f172a; }
-
-        .auth-tab-btn {
-            flex: 1; padding: 10px;
-            border: none; border-radius: 10px;
-            font-family: 'Nunito', sans-serif;
-            font-weight: 800; font-size: 0.95rem;
-            cursor: pointer; transition: all 0.2s;
-            background: transparent;
-            color: var(--text-muted, #64748b);
-        }
-        .auth-tab-btn.active {
-            background: var(--bg-card, #fff);
-            color: var(--primary-color, #4318ff);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-        [data-theme="dark"] .auth-tab-btn.active { background: #1e293b; }
-
-        .auth-form { display: flex; flex-direction: column; gap: 14px; }
+        .auth-form { display: flex; flex-direction: column; gap: 15px; width: 100%; }
         .auth-form.hidden { display: none; }
 
-        .auth-input-group {
-            display: flex; flex-direction: column; gap: 6px;
-        }
-        .auth-input-group label {
-            font-size: 0.85rem; font-weight: 800;
-            color: var(--text-muted, #64748b);
-            font-family: 'Nunito', sans-serif;
-        }
-        .auth-input-group input {
-            padding: 12px 16px;
-            border: 2px solid var(--border-color, #e2e8f0);
-            border-radius: 12px;
-            font-family: 'Nunito', sans-serif;
-            font-size: 1rem; font-weight: 700;
-            color: var(--text-main, #0f172a);
-            background: var(--bg-body, #f8fafc);
-            outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        [data-theme="dark"] .auth-input-group input {
-            background: #0f172a; color: #f8fafc;
-            border-color: #334155;
-        }
-        .auth-input-group input:focus {
-            border-color: var(--primary-color, #4318ff);
-            box-shadow: 0 0 0 3px rgba(67,24,255,0.1);
-        }
+        .auth-input-group label { font-size: 0.8rem; font-weight: 800; color: #64748b; margin-left: 5px; display: block; margin-bottom: 6px; }
+        .auth-input-group input { width: 100%; padding: 14px 16px; border: 2px solid transparent; border-radius: 15px; background: rgba(0,0,0,0.04); font-size: 0.95rem; font-weight: 600; box-sizing: border-box; outline: none; transition: 0.3s; color: inherit; }
+        .auth-input-group input:focus { border-color: #4318ff; background: #fff; }
 
-        /* ====== BENİ HATIRLA ====== */
-        .auth-remember {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            font-family: 'Nunito', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: var(--text-muted, #64748b);
-            user-select: none;
-        }
-        .auth-remember input[type="checkbox"] {
-            width: 18px; height: 18px;
-            accent-color: var(--primary-color, #4318ff);
-            cursor: pointer;
-            border-radius: 5px;
-            padding: 0;
-            border: 2px solid var(--border-color, #e2e8f0);
-        }
+        .auth-pass-wrap { position: relative; width: 100%; display: flex; align-items: center; }
+        .auth-pass-wrap input { padding-right: 85px !important; }
+        .auth-pass-toggle { position: absolute; right: 12px; background: none; border: none; cursor: pointer; color: #94a3b8; font-size: 1.1rem; z-index: 5; }
+        .caps-warn { position: absolute; right: 45px; font-size: 0.6rem; font-weight: 800; color: #f59e0b; display: none; background: rgba(245, 158, 11, 0.1); padding: 2px 5px; border-radius: 4px; z-index: 4; }
 
-        /* ====== KAYITLI GİRİŞ KUTUSU ====== */
-        #auth-saved-user-box {
-            display: none;
-            background: linear-gradient(135deg, rgba(67,24,255,0.07), rgba(0,210,255,0.07));
-            border: 1.5px solid rgba(67,24,255,0.18);
-            border-radius: 14px;
-            padding: 14px 16px;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 4px;
-        }
-        #auth-saved-user-box.show { display: flex !important; }
-        .auth-saved-avatar {
-            width: 40px; height: 40px; border-radius: 50%;
-            background: linear-gradient(135deg, #4318ff, #00d2ff);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; font-weight: 900; color: #fff;
-            font-family: 'Nunito', sans-serif;
-            flex-shrink: 0;
-        }
-        .auth-saved-info {
-            flex: 1;
-        }
-        .auth-saved-info span {
-            display: block;
-            font-family: 'Nunito', sans-serif;
-        }
-        .auth-saved-info .auth-saved-name {
-            font-size: 1rem; font-weight: 900;
-            color: var(--text-main, #0f172a);
-        }
-        [data-theme="dark"] .auth-saved-info .auth-saved-name { color: #f8fafc; }
-        .auth-saved-info .auth-saved-hint {
-            font-size: 0.78rem; font-weight: 700;
-            color: var(--text-muted, #64748b);
-        }
-        .auth-saved-clear {
-            background: none; border: none; cursor: pointer;
-            color: var(--text-muted, #94a3b8);
-            font-size: 1rem; padding: 4px;
-            transition: color 0.2s;
-        }
-        .auth-saved-clear:hover { color: #ef4444; }
+        .strength-meter { height: 4px; width: 100%; background: rgba(0,0,0,0.05); margin-top: -5px; border-radius: 2px; overflow: hidden; display: none; }
+        .strength-bar { height: 100%; width: 0; transition: 0.4s ease; }
 
-        /* ====== KULLANICI SEÇİCİ ====== */
-        #auth-user-picker {
-            display: none;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 2px;
-        }
-        #auth-user-picker.show { display: flex !important; }
-        .auth-picker-label {
-            font-size: 0.8rem; font-weight: 800;
-            color: var(--text-muted, #64748b);
-            font-family: 'Nunito', sans-serif;
-            text-align: center;
-            letter-spacing: 0.02em;
-        }
-        .auth-picker-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
-        }
-        .auth-picker-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-            padding: 10px 14px;
-            border-radius: 14px;
-            border: 2px solid rgba(67,24,255,0.12);
-            background: linear-gradient(135deg, rgba(67,24,255,0.05), rgba(0,210,255,0.05));
-            transition: all 0.2s cubic-bezier(0.2,0.8,0.2,1);
-            min-width: 68px;
-            font-family: 'Nunito', sans-serif;
-        }
-        .auth-picker-item:hover {
-            border-color: #4318ff;
-            background: linear-gradient(135deg, rgba(67,24,255,0.12), rgba(0,210,255,0.12));
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(67,24,255,0.2);
-        }
-        .auth-picker-avatar {
-            width: 44px; height: 44px; border-radius: 50%;
-            background: linear-gradient(135deg, #4318ff, #00d2ff);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.15rem; font-weight: 900; color: #fff;
-            font-family: 'Nunito', sans-serif;
-            box-shadow: 0 4px 12px rgba(67,24,255,0.25);
-        }
-        .auth-picker-name {
-            font-size: 0.78rem; font-weight: 800;
-            color: var(--text-main, #0f172a);
-            max-width: 76px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        [data-theme="dark"] .auth-picker-name { color: #f8fafc; }
-        .auth-picker-divider {
-            display: flex; align-items: center; gap: 10px;
-            margin: 2px 0;
-        }
-        .auth-picker-divider::before, .auth-picker-divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--border-color, #e2e8f0);
-        }
-        [data-theme="dark"] .auth-picker-divider::before,
-        [data-theme="dark"] .auth-picker-divider::after { background: #334155; }
-        .auth-picker-divider span {
-            font-size: 0.78rem; font-weight: 700;
-            color: var(--text-muted, #94a3b8);
-            font-family: 'Nunito', sans-serif;
-            white-space: nowrap;
-        }
+        .auth-account-card { background: linear-gradient(135deg, rgba(67, 24, 255, 0.05), rgba(0, 210, 255, 0.05)); border: 1px solid rgba(67, 24, 255, 0.1); border-radius: 18px; padding: 12px 15px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: 0.3s; margin-bottom: 15px; }
+        .auth-account-avatar { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; }
 
-        /* ====== ŞİFRE GÖSTER ====== */
-        .auth-pass-wrap {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        .auth-pass-wrap input {
-            width: 100%;
-            padding-right: 48px !important;
-            box-sizing: border-box;
-        }
-        .auth-pass-toggle {
-            position: absolute;
-            right: 13px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--text-muted, #94a3b8);
-            font-size: 1rem;
-            padding: 6px;
-            line-height: 1;
-            transition: color 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .auth-pass-toggle:hover { color: #4318ff; }
+        .auth-btn { width: 100%; padding: 15px; border: none; border-radius: 16px; background: linear-gradient(135deg, #4318ff, #00d2ff); color: #fff; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .auth-btn:disabled { opacity: 0.7; cursor: wait; }
+        .btn-quick-access { background: linear-gradient(135deg, #f59e0b, #ef4444) !important; margin-top: 5px; }
 
-        .auth-btn {
-            padding: 14px;
-            background: linear-gradient(135deg, #4318ff, #00d2ff);
-            color: #fff; border: none; border-radius: 14px;
-            font-family: 'Nunito', sans-serif;
-            font-size: 1rem; font-weight: 900;
-            cursor: pointer; margin-top: 4px;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 6px 20px rgba(67,24,255,0.35);
-        }
-        .auth-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(67,24,255,0.45); }
-        .auth-btn:active { transform: translateY(0); }
+        .auth-toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #1e293b; color: #fff; padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; z-index: 1000000; transition: 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 10px; }
+        .auth-toast.show { transform: translateX(-50%) translateY(0); }
 
-        .auth-error {
-            display: none;
-            background: rgba(239,68,68,0.1);
-            border: 1px solid rgba(239,68,68,0.3);
-            border-radius: 10px; padding: 10px 14px;
-            font-size: 0.9rem; font-weight: 700;
-            color: #ef4444; font-family: 'Nunito', sans-serif;
-        }
-        .auth-error.show { display: block; }
-        .auth-success {
-            display: none;
-            background: rgba(16,185,129,0.1);
-            border: 1px solid rgba(16,185,129,0.3);
-            border-radius: 10px; padding: 10px 14px;
-            font-size: 0.9rem; font-weight: 700;
-            color: #10b981; font-family: 'Nunito', sans-serif;
-        }
-        .auth-success.show { display: block; }
-        .auth-divider {
-            text-align: center;
-            font-size: 0.8rem; color: var(--text-muted, #94a3b8);
-            font-weight: 700; margin: 4px 0;
-            font-family: 'Nunito', sans-serif;
-        }
+        .auth-success-screen { display: none; position: absolute; inset: 0; background: inherit; border-radius: inherit; z-index: 100; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        @keyframes authSpin { to { transform: rotate(360deg); } }
+        .auth-spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: authSpin 0.8s linear infinite; }
+        .auth-error-box { display: none; background: rgba(239, 68, 68, 0.1); border-radius: 12px; padding: 10px; font-size: 0.8rem; font-weight: 700; color: #ef4444; text-align: center; margin-bottom: 10px; }
+        .auth-error-box.show { display: block; animation: authShake 0.4s; }
+        @keyframes authShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
     `;
 
     var styleEl = document.createElement('style');
     styleEl.textContent = css;
     document.head.appendChild(styleEl);
 
-
     /* --------------------------------------------------
        2. HTML
     -------------------------------------------------- */
     var html = `
-        <div id="auth-overlay" role="dialog" aria-modal="true" aria-label="Giriş Yap veya Kayıt Ol">
+        <div id="auth-toast" class="auth-toast"><i class="fas fa-info-circle"></i> <span id="auth-toast-text">İşlem Başarılı</span></div>
+        <div id="auth-overlay">
+            <div class="auth-aura"><div class="aura-1"></div><div class="aura-2"></div></div>
             <div id="auth-box">
+                <div id="authSuccessScreen" class="auth-success-screen">
+                    <div style="width:70px; height:70px; background:#10b981; color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2rem; margin-bottom:15px;"><i class="fas fa-check"></i></div>
+                    <h2 id="successUserTitle" style="font-weight:900; margin:0; color:var(--text-main);">Hoş Geldin!</h2>
+                    <p style="color:#64748b; font-weight:600; font-size:0.9rem;">Portal hazırlanıyor...</p>
+                </div>
 
-                <div class="auth-logo">
-                    <div class="auth-logo-icon">
-                        <img src="logo.png" alt="MuGöl"
-                            style="height:44px;border-radius:10px;object-fit:contain;"
-                            onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
-                        <span style="display:none;font-weight:900;font-size:1.1rem;font-family:Nunito,sans-serif;">MG</span>
+                <div class="auth-brand-wrapper">
+                    <div class="auth-logo-row">
+                        <div class="auth-logo-icon">
+                            <img src="logo.png" alt="MG" style="height:32px;" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+                            <span style="display:none; color:#fff; font-weight:900; font-size:1.1rem;">MG</span>
+                        </div>
+                        <span class="auth-brand-name">MuGöl <span style="color:#4318ff">PORTAL</span></span>
                     </div>
-                    <h2>MuGöl<span style="color:var(--primary-color,#4318ff)">PORTAL</span></h2>
-                    <p>Devam etmek için giriş yapın</p>
+                    <div class="auth-greeting-text" id="dynamicGreeting">Hoş Geldiniz</div>
                 </div>
 
                 <div class="auth-tabs">
-                    <button class="auth-tab-btn active" id="authTabLogin"
-                        onclick="MugolAuth.switchTab('login')">Giriş Yap</button>
-                    <button class="auth-tab-btn" id="authTabRegister"
-                        onclick="MugolAuth.switchTab('register')">Kayıt Ol</button>
+                    <button class="auth-tab-btn active" id="authTabLogin" onclick="MugolAuth.switchTab('login')">Giriş Yap</button>
+                    <button class="auth-tab-btn" id="authTabRegister" onclick="MugolAuth.switchTab('register')">Kayıt Ol</button>
                 </div>
 
-                <!-- GİRİŞ FORMU -->
                 <div class="auth-form" id="authLoginForm">
-
-                    <!-- KAYITLI KULLANICI SEÇİCİ -->
-                    <div id="auth-user-picker">
-                        <div class="auth-picker-label">⚡ Hızlı Giriş — Hesap Seç</div>
-                        <div class="auth-picker-list" id="authPickerList"></div>
-                        <div class="auth-picker-divider"><span>veya manuel giriş</span></div>
-                    </div>
-
-                    <!-- KAYITLI KULLANICI KUTUSU -->
-                    <div id="auth-saved-user-box">
-                        <div class="auth-saved-avatar" id="authSavedAvatar">?</div>
-                        <div class="auth-saved-info">
-                            <span class="auth-saved-name" id="authSavedName">-</span>
-                            <span class="auth-saved-hint">Kayıtlı hesap</span>
-                        </div>
-                        <button class="auth-saved-clear" onclick="MugolAuth.clearSaved()" title="Hesabı unut">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-
-                    <div class="auth-input-group" id="authUserInputGroup">
-                        <label for="auth-login-user">Kullanıcı Adı</label>
-                        <input type="text" id="auth-login-user"
-                            placeholder="kullanici_adi" autocomplete="username">
-                    </div>
-                    <div class="auth-input-group" id="authPassInputGroup">
-                        <label for="auth-login-pass">Şifre</label>
+                    <div id="authSavedContainer"></div>
+                    <div class="auth-input-group"><label>Kullanıcı Adı</label><input type="text" id="auth-login-user" placeholder="Kullanıcı adınız"></div>
+                    <div class="auth-input-group">
+                        <label>Şifre</label>
                         <div class="auth-pass-wrap">
-                            <input type="password" id="auth-login-pass"
-                                placeholder="••••••••" autocomplete="current-password">
-                            <button type="button" class="auth-pass-toggle" id="toggleLoginPass"
-                                onclick="MugolAuth.togglePassVis('auth-login-pass', this)"
-                                aria-label="Şifreyi göster/gizle">
-                                <i class="fas fa-eye"></i>
-                            </button>
+                            <input type="password" id="auth-login-pass" placeholder="••••••••">
+                            <div class="caps-warn" id="capsWarn">CAPS</div>
+                            <button type="button" class="auth-pass-toggle" onclick="MugolAuth.togglePassVis('auth-login-pass', this)"><i class="fas fa-eye"></i></button>
                         </div>
                     </div>
-                    <label class="auth-remember" id="authRememberLabel">
-                        <input type="checkbox" id="authRemember" checked>
-                        Beni hatırla (kullanıcı adını kaydet)
-                    </label>
-                    <div class="auth-error" id="loginError"></div>
+                    <div class="auth-error-box" id="loginError"></div>
                     <button class="auth-btn" id="authLoginBtn" onclick="MugolAuth.doLogin()">
-                        <i class="fas fa-sign-in-alt" style="margin-right:8px;"></i>Giriş Yap
+                        <span id="authLoginSpinner" style="display:none;" class="auth-spinner"></span>
+                        <span id="authLoginText">Giriş Yap</span>
                     </button>
-                    <div class="auth-divider">Hesabın yok mu? → Kayıt Ol sekmesine tıkla</div>
+                    <button class="auth-btn btn-quick-access" onclick="MugolAuth.doQuickLogin()"><i class="fas fa-bolt"></i> Hızlı Giriş</button>
                 </div>
 
-                <!-- KAYIT FORMU -->
                 <div class="auth-form hidden" id="authRegisterForm">
+                    <div class="auth-input-group"><label>Yeni Kullanıcı Adı</label><input type="text" id="auth-reg-user" placeholder="En az 3 karakter"></div>
                     <div class="auth-input-group">
-                        <label for="auth-reg-user">Kullanıcı Adı</label>
-                        <input type="text" id="auth-reg-user"
-                            placeholder="yeni_kullanici" autocomplete="username">
-                    </div>
-                    <div class="auth-input-group">
-                        <label for="auth-reg-pass">Şifre</label>
+                        <label>Şifre Oluştur</label>
                         <div class="auth-pass-wrap">
-                            <input type="password" id="auth-reg-pass"
-                                placeholder="••••••••" autocomplete="new-password">
-                            <button type="button" class="auth-pass-toggle"
-                                onclick="MugolAuth.togglePassVis('auth-reg-pass', this)"
-                                aria-label="Şifreyi göster/gizle">
-                                <i class="fas fa-eye"></i>
-                            </button>
+                            <input type="password" id="auth-reg-pass" placeholder="En az 6 karakter" oninput="MugolAuth.updateStrength(this.value)">
+                            <button type="button" class="auth-pass-toggle" onclick="MugolAuth.togglePassVis('auth-reg-pass', this)"><i class="fas fa-eye"></i></button>
                         </div>
                     </div>
-                    <div class="auth-input-group">
-                        <label for="auth-reg-pass2">Şifre Tekrar</label>
-                        <div class="auth-pass-wrap">
-                            <input type="password" id="auth-reg-pass2"
-                                placeholder="••••••••" autocomplete="new-password">
-                            <button type="button" class="auth-pass-toggle"
-                                onclick="MugolAuth.togglePassVis('auth-reg-pass2', this)"
-                                aria-label="Şifreyi göster/gizle">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="auth-error"   id="registerError"></div>
-                    <div class="auth-success" id="registerSuccess"></div>
-                    <button class="auth-btn" onclick="MugolAuth.doRegister()">
-                        <i class="fas fa-user-plus" style="margin-right:8px;"></i>Kayıt Ol
+                    <div class="strength-meter" id="strengthMeter"><div id="strengthBar" class="strength-bar"></div></div>
+                    <div class="auth-error-box" id="registerError"></div>
+                    <button class="auth-btn" id="authRegBtn" onclick="MugolAuth.doRegister()">
+                        <span id="authRegSpinner" style="display:none;" class="auth-spinner"></span>
+                        <span id="authRegText">Hesap Oluştur</span>
                     </button>
-                    <div class="auth-divider">Zaten hesabın var mı? → Giriş Yap sekmesine tıkla</div>
                 </div>
-
             </div>
         </div>
     `;
@@ -460,270 +157,209 @@
     container.innerHTML = html;
     document.body.appendChild(container);
 
-
     /* --------------------------------------------------
-       3. LOGİK
+       3. LOGİK (FIXED & IMPROVED)
     -------------------------------------------------- */
     window.MugolAuth = {
-
         getUsers: function () {
-            try { return JSON.parse(localStorage.getItem('mugol-users') || '{}'); }
-            catch (e) { return {}; }
+            try { return JSON.parse(localStorage.getItem('mugol-users') || '{}'); } catch (e) { return {}; }
+        },
+        saveUsers: function (users) { localStorage.setItem('mugol-users', JSON.stringify(users)); },
+        
+        showToast: function(msg) {
+            const toast = document.getElementById('auth-toast');
+            if(!toast) return;
+            document.getElementById('auth-toast-text').textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
         },
 
-        /* Kayıtlı kullanıcı adını ekrana yükle */
-        loadSavedUser: function () {
-            var saved = localStorage.getItem('mugol-remember-user');
-            var box            = document.getElementById('auth-saved-user-box');
-            var userInputGroup = document.getElementById('authUserInputGroup');
-            var passInputGroup = document.getElementById('authPassInputGroup');
-            var rememberLabel  = document.getElementById('authRememberLabel');
-            var loginBtn       = document.getElementById('authLoginBtn');
+        updateStrength: function(val) {
+            const meter = document.getElementById('strengthMeter');
+            const bar = document.getElementById('strengthBar');
+            if(!val) { meter.style.display = 'none'; return; }
+            meter.style.display = 'block';
+            let s = 0;
+            if(val.length > 5) s++;
+            if(/[A-Z]/.test(val)) s++;
+            if(/[0-9]/.test(val)) s++;
+            if(/[^A-Za-z0-9]/.test(val)) s++;
+            const colors = ['#ef4444', '#f59e0b', '#3b82f6', '#10b981'];
+            bar.style.width = s > 0 ? (s * 25) + '%' : '10%';
+            bar.style.background = colors[s-1] || colors[0];
+        },
 
+        updateGreeting: function() {
+            const saved = localStorage.getItem('mugol-remember-user');
+            const el = document.getElementById('dynamicGreeting');
             if (saved) {
-                /* Kayıtlı kullanıcı var → kutucuğu göster, inputlar da görünür kalsın */
-                document.getElementById('authSavedName').textContent   = saved;
-                document.getElementById('authSavedAvatar').textContent = saved.charAt(0).toUpperCase();
-                document.getElementById('auth-login-user').value = saved;
-                if (box)            box.classList.add('show');
-                if (userInputGroup) userInputGroup.style.display = '';
-                if (passInputGroup) passInputGroup.style.display = '';
-                if (rememberLabel)  rememberLabel.style.display  = '';
-                if (loginBtn)       loginBtn.innerHTML = '<i class="fas fa-sign-in-alt" style="margin-right:8px;"></i>Giriş Yap';
-                /* Kayıtlı şifreyi şifre alanına doldur */
-                var savedUsers = this.getUsers();
-                var passInput  = document.getElementById('auth-login-pass');
-                if (passInput) passInput.value = savedUsers[saved] || '';
+                el.innerHTML = `Tekrar Hoş Geldin, <span style="color:#4318ff">${saved}</span>`;
             } else {
-                /* Kayıtlı kullanıcı yok → normal görünüm */
-                if (box)            box.classList.remove('show');
-                if (userInputGroup) userInputGroup.style.display = '';
-                if (passInputGroup) passInputGroup.style.display = '';
-                if (rememberLabel)  rememberLabel.style.display  = '';
-                if (loginBtn)       loginBtn.innerHTML = '<i class="fas fa-sign-in-alt" style="margin-right:8px;"></i>Giriş Yap';
+                var hr = new Date().getHours();
+                var greet = (hr < 12) ? "Günaydın" : (hr < 18) ? "Tünaydın" : "İyi Akşamlar";
+                el.innerHTML = greet + ', <span style="color:#4318ff">PORTAL</span>';
             }
-        },
-
-        /* Kayıtlı kullanıcıyı unut */
-        clearSaved: function () {
-            localStorage.removeItem('mugol-remember-user');
-            document.getElementById('auth-login-user').value = '';
-            document.getElementById('auth-login-pass').value = '';
-            this.loadSavedUser();
-            this.loadUserPicker();
-        },
-
-        /* Tüm kayıtlı kullanıcıları seçici olarak göster
-           (Zaten "Beni Hatırla" kutusunda gösterilen kullanıcı hariç) */
-        loadUserPicker: function () {
-            var users   = this.getUsers();
-            var saved   = localStorage.getItem('mugol-remember-user') || '';
-            /* Hatırlanan kullanıcıyı listeden çıkar — o zaten aşağıdaki kutuda var */
-            var keys    = Object.keys(users).filter(function (u) { return u !== saved; });
-            var picker  = document.getElementById('auth-user-picker');
-            var list    = document.getElementById('authPickerList');
-            if (!picker || !list) return;
-            list.innerHTML = '';
-            if (keys.length === 0) {
-                picker.classList.remove('show');
-                return;
-            }
-            var self = this;
-            keys.forEach(function (username) {
-                var btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'auth-picker-item';
-                btn.title = username + ' olarak giriş yap';
-                btn.innerHTML =
-                    '<div class="auth-picker-avatar">' + username.charAt(0).toUpperCase() + '</div>' +
-                    '<span class="auth-picker-name">' + username + '</span>';
-                btn.addEventListener('click', function () { self.selectUser(username); });
-                list.appendChild(btn);
-            });
-            picker.classList.add('show');
-        },
-
-        /* Kullanıcıyı seç → kullanıcı adını forma doldur, şifre iste */
-        selectUser: function (username) {
-            var users = this.getUsers();
-            if (!users[username]) return;
-            /* Kullanıcı adını input'a yaz */
-            var userInput = document.getElementById('auth-login-user');
-            if (userInput) userInput.value = username;
-            /* Kayıtlı şifreyi şifre alanına doldur */
-            var passInput = document.getElementById('auth-login-pass');
-            if (passInput) passInput.value = users[username] || '';
-            /* Picker'ı gizle, saved-user kutusunu gizle, form alanlarını göster */
-            var picker = document.getElementById('auth-user-picker');
-            if (picker) picker.classList.remove('show');
-            var box = document.getElementById('auth-saved-user-box');
-            if (box) box.classList.remove('show');
-            var userInputGroup = document.getElementById('authUserInputGroup');
-            var passInputGroup = document.getElementById('authPassInputGroup');
-            var rememberLabel  = document.getElementById('authRememberLabel');
-            if (userInputGroup) userInputGroup.style.display = '';
-            if (passInputGroup) passInputGroup.style.display = '';
-            if (rememberLabel)  rememberLabel.style.display  = '';
-        },
-
-        /* Hoş geldiniz metnini güncelle (ortak yardımcı) */
-        _applyWelcome: function (user) {
-            var lang    = localStorage.getItem('mugol-lang') || 'tr';
-            var titleEl = document.getElementById('welcomeTitle');
-            var descEl  = document.getElementById('welcomeDesc');
-            if (titleEl) titleEl.textContent = lang === 'en' ? 'Welcome, ' + user + '! 👋' : 'Hoş Geldiniz, ' + user + '! 👋';
-            if (descEl)  descEl.textContent  = lang === 'en' ? 'MuGöl PORTAL is ready.' : 'MuGöl PORTAL\'a hoş geldiniz.';
-        },
-
-        /* Şifreyi göster / gizle */
-        togglePassVis: function (inputId, btn) {
-            var input = document.getElementById(inputId);
-            if (!input) return;
-            var isHidden = input.type === 'password';
-            input.type = isHidden ? 'text' : 'password';
-            btn.innerHTML = isHidden
-                ? '<i class="fas fa-eye-slash"></i>'
-                : '<i class="fas fa-eye"></i>';
         },
 
         switchTab: function (tab) {
-            var loginForm = document.getElementById('authLoginForm');
-            var regForm   = document.getElementById('authRegisterForm');
-            var tabLogin  = document.getElementById('authTabLogin');
-            var tabReg    = document.getElementById('authTabRegister');
-            if (tab === 'login') {
-                loginForm.classList.remove('hidden');
-                regForm.classList.add('hidden');
-                tabLogin.classList.add('active');
-                tabReg.classList.remove('active');
+            document.getElementById('authLoginForm').classList.toggle('hidden', tab !== 'login');
+            document.getElementById('authRegisterForm').classList.toggle('hidden', tab !== 'register');
+            document.getElementById('authTabLogin').classList.toggle('active', tab === 'login');
+            document.getElementById('authTabRegister').classList.toggle('active', tab === 'register');
+            document.getElementById('registerError').classList.remove('show');
+            document.getElementById('loginError').classList.remove('show');
+        },
+
+        togglePassVis: function (id, btn) {
+            var input = document.getElementById(id);
+            if(!input) return;
+            input.type = input.type === 'password' ? 'text' : 'password';
+            btn.querySelector('i').className = input.type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+        },
+
+        loadSavedAccounts: function () {
+            var users = this.getUsers();
+            var saved = localStorage.getItem('mugol-remember-user');
+            var cont = document.getElementById('authSavedContainer');
+            if (!cont) return;
+            if (saved && users[saved]) {
+                const colors = ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#3b82f6'];
+                const avatarCol = colors[saved.length % colors.length];
+                cont.innerHTML = `
+                    <div class="auth-account-card" onclick="MugolAuth.quickFill('${saved}')">
+                        <div class="auth-account-avatar" style="background:${avatarCol}">${saved.charAt(0).toUpperCase()}</div>
+                        <div style="flex:1;"><div style="font-weight:800; color:var(--text-main);">${saved}</div><div style="font-size:0.7rem; color:#64748b;">Kayıtlı Profil</div></div>
+                        <i class="fas fa-trash-alt" style="color:#94a3b8; padding:5px;" onclick="event.stopPropagation(); MugolAuth.clearSaved()"></i>
+                    </div>`;
+            } else { cont.innerHTML = ''; }
+        },
+
+        quickFill: function(user) {
+            var users = this.getUsers();
+            document.getElementById('auth-login-user').value = user;
+            document.getElementById('auth-login-pass').value = users[user] || '';
+            document.getElementById('auth-login-pass').focus();
+        },
+
+        clearSaved: function () { 
+            localStorage.removeItem('mugol-remember-user'); 
+            this.loadSavedAccounts(); this.updateGreeting();
+            this.showToast("Kayıtlı hesap kaldırıldı.");
+        },
+        
+        doLogin: function () {
+            var user = document.getElementById('auth-login-user').value.trim();
+            var pass = document.getElementById('auth-login-pass').value;
+            var users = this.getUsers();
+            var err = document.getElementById('loginError');
+
+            if (user && users[user] && users[user] === pass) {
+                document.getElementById('authLoginSpinner').style.display = 'inline-block';
+                document.getElementById('authLoginText').textContent = 'Doğrulanıyor...';
+                setTimeout(() => {
+                    localStorage.setItem('mugol-remember-user', user);
+                    sessionStorage.setItem('mugol-session', user);
+                    this.showSuccess(user);
+                }, 1000);
             } else {
-                loginForm.classList.add('hidden');
-                regForm.classList.remove('hidden');
-                tabLogin.classList.remove('active');
-                tabReg.classList.add('active');
+                err.textContent = "Kullanıcı adı veya şifre yanlış!";
+                err.classList.add('show');
             }
+        },
+
+        doQuickLogin: function() {
+            const randomNum = Math.floor(1000 + Math.random() * 9000);
+            const guestUser = "Misafir_" + randomNum;
+            const guestPass = "mg" + randomNum;
+            var users = this.getUsers();
+            users[guestUser] = guestPass;
+            this.saveUsers(users);
+            localStorage.setItem('mugol-remember-user', guestUser);
+            sessionStorage.setItem('mugol-session', guestUser);
+            this.showSuccess(guestUser);
         },
 
         doRegister: function () {
-            var user  = document.getElementById('auth-reg-user').value.trim();
-            var pass  = document.getElementById('auth-reg-pass').value;
-            var pass2 = document.getElementById('auth-reg-pass2').value;
-            var errEl = document.getElementById('registerError');
-            var sucEl = document.getElementById('registerSuccess');
-            errEl.classList.remove('show');
-            sucEl.classList.remove('show');
-
-            if (!user || user.length < 3) {
-                errEl.textContent = 'Kullanıcı adı en az 3 karakter olmalıdır.';
-                errEl.classList.add('show'); return;
-            }
-            if (!pass || pass.length < 6) {
-                errEl.textContent = 'Şifre en az 6 karakter olmalıdır.';
-                errEl.classList.add('show'); return;
-            }
-            if (pass !== pass2) {
-                errEl.textContent = 'Şifreler eşleşmiyor.';
-                errEl.classList.add('show'); return;
-            }
+            const user = document.getElementById('auth-reg-user').value.trim();
+            const pass = document.getElementById('auth-reg-pass').value;
+            const err = document.getElementById('registerError');
+            const btn = document.getElementById('authRegBtn');
+            const spin = document.getElementById('authRegSpinner');
+            const txt = document.getElementById('authRegText');
             var users = this.getUsers();
+
+            if (user.length < 3 || pass.length < 6) {
+                err.textContent = "Kullanıcı adı (3+) veya şifre (6+) çok kısa!";
+                err.classList.add('show'); return;
+            }
             if (users[user]) {
-                errEl.textContent = 'Bu kullanıcı adı zaten alınmış.';
-                errEl.classList.add('show'); return;
-            }
-            users[user] = pass;
-            localStorage.setItem('mugol-users', JSON.stringify(users));
-            sucEl.textContent = '✅ Kayıt başarılı! Giriş yapabilirsiniz.';
-            sucEl.classList.add('show');
-            document.getElementById('auth-reg-user').value  = '';
-            document.getElementById('auth-reg-pass').value  = '';
-            document.getElementById('auth-reg-pass2').value = '';
-            setTimeout(function () { MugolAuth.switchTab('login'); }, 1200);
-        },
-
-        doLogin: function () {
-            var userEl   = document.getElementById('auth-login-user');
-            var passEl   = document.getElementById('auth-login-pass');
-            var user     = userEl ? userEl.value.trim() : '';
-            var pass     = passEl ? passEl.value : '';
-            var users    = this.getUsers();
-            var errEl    = document.getElementById('loginError');
-            var remember = document.getElementById('authRemember');
-            errEl.classList.remove('show');
-
-            if (!user || !pass) {
-                errEl.textContent = 'Kullanıcı adı ve şifreyi doldurun.';
-                errEl.classList.add('show'); return;
-            }
-            if (!users[user] || users[user] !== pass) {
-                errEl.textContent = 'Kullanıcı adı veya şifre hatalı.';
-                errEl.classList.add('show'); return;
+                err.textContent = "Bu kullanıcı adı zaten mevcut!";
+                err.classList.add('show'); return;
             }
 
-            /* Beni hatırla seçiliyse kullanıcı adını kaydet */
-            if (remember && remember.checked) {
+            // Kayıt İşlemi Başlat
+            btn.disabled = true;
+            spin.style.display = 'inline-block';
+            txt.textContent = 'Oluşturuluyor...';
+
+            setTimeout(() => {
+                users[user] = pass;
+                this.saveUsers(users);
                 localStorage.setItem('mugol-remember-user', user);
-            }
-
-            /* Oturum aç — sayfa yenilenmesinde tekrar sorma */
-            sessionStorage.setItem('mugol-session', user);
-
-            /* Giriş başarılı → hoş geldiniz metnini güncelle */
-            this._applyWelcome(user);
-
-            /* Overlay kapat */
-            var overlay = document.getElementById('auth-overlay');
-            if (overlay) {
-                overlay.style.opacity    = '0';
-                overlay.style.transition = 'opacity 0.4s ease';
-                setTimeout(function () {
-                    overlay.classList.remove('visible');
-                    overlay.style.opacity = '';
-                }, 400);
-            }
+                
+                this.showToast("Hesap başarıyla oluşturuldu!");
+                
+                // Formu temizle ve Giriş ekranına dön
+                document.getElementById('auth-reg-user').value = '';
+                document.getElementById('auth-reg-pass').value = '';
+                this.updateStrength('');
+                
+                btn.disabled = false;
+                spin.style.display = 'none';
+                txt.textContent = 'Hesap Oluştur';
+                
+                this.switchTab('login');
+                this.loadSavedAccounts();
+                this.updateGreeting();
+                
+                // Giriş alanlarını doldur
+                document.getElementById('auth-login-user').value = user;
+                document.getElementById('auth-login-pass').value = pass;
+                document.getElementById('auth-login-pass').focus();
+            }, 1000);
         },
 
-        /* Oturumu kapat */
-        doLogout: function () {
-            sessionStorage.removeItem('mugol-session');
-            location.reload();
+        showSuccess: function(name) {
+            var screen = document.getElementById('authSuccessScreen');
+            document.getElementById('successUserTitle').textContent = "Hoş Geldin, " + name + "!";
+            screen.style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('auth-overlay').classList.remove('visible');
+                var welcome = document.getElementById('welcomeTitle');
+                if (welcome) welcome.textContent = 'Hoş Geldin, ' + name + '! 👋';
+            }, 1600);
         },
 
-        /* Splash bittikten sonra script.js tarafından çağrılır */
         checkAuth: function () {
-            var session   = sessionStorage.getItem('mugol-session');
-            var users      = this.getUsers();
-
-            /* Sadece aktif oturum (aynı sekme/session) varsa direkt geç */
-            if (session && users[session]) {
-                this._applyWelcome(session);
-                return; /* overlay açma */
+            var session = sessionStorage.getItem('mugol-session');
+            if (session) {
+                var welcome = document.getElementById('welcomeTitle');
+                if (welcome) welcome.textContent = 'Hoş Geldin, ' + session + '! 👋';
+                return false; 
             }
-
-            /* Oturum yok → giriş ekranını göster
-               (hatırlanan kullanıcı varsa loadSavedUser / loadUserPicker ile öne çıkar) */
-            localStorage.removeItem('mugol-logged-in');
-            var overlay = document.getElementById('auth-overlay');
-            if (overlay) {
-                this.loadSavedUser();
-                this.loadUserPicker();
-                overlay.classList.add('visible');
-            }
+            document.getElementById('auth-overlay').classList.add('visible');
+            this.updateGreeting();
+            this.loadSavedAccounts();
+            return true;
         }
     };
 
-    /* Enter tuşu desteği */
     document.addEventListener('keydown', function (e) {
-        if (e.key !== 'Enter') return;
-        var authOverlay = document.getElementById('auth-overlay');
-        if (!authOverlay || !authOverlay.classList.contains('visible')) return;
-        var loginForm = document.getElementById('authLoginForm');
-        if (!loginForm.classList.contains('hidden')) {
-            MugolAuth.doLogin();
-        } else {
-            MugolAuth.doRegister();
+        var warn = document.getElementById('capsWarn');
+        if (warn) warn.style.display = (e.getModifierState && e.getModifierState('CapsLock')) ? 'block' : 'none';
+        if (e.key === 'Enter' && document.getElementById('auth-overlay').classList.contains('visible')) {
+            var isRegVisible = !document.getElementById('authRegisterForm').classList.contains('hidden');
+            if (isRegVisible) MugolAuth.doRegister(); else MugolAuth.doLogin();
         }
     });
-
-    /* checkAuth, splash bittikten sonra script.js'den çağrılır */
-
 })();

@@ -239,7 +239,7 @@ function showRedirectToast(appName, url, logoSrc) {
     toastTimer = setTimeout(() => {
         if (toast) toast.classList.remove('show');
         if (pendingUrl) {
-            window.location.href = pendingUrl; // Pop-up engeline takılmaz
+            window.location.href = pendingUrl;
         }
         pendingUrl = null;
     }, 3000);
@@ -255,7 +255,6 @@ document.querySelectorAll('.app-card').forEach(card => {
     });
 });
 
-// Tümü sayfası tile tıklamaları
 document.querySelectorAll('.tumuu-tile').forEach(tile => {
     tile.addEventListener('click', function (e) {
         e.preventDefault();
@@ -285,37 +284,9 @@ document.querySelectorAll('.category-card').forEach(catCard => {
 });
 
 // =========================================================
-// 8. AÇILIŞ ANİMASYONU (SPLASH SCREEN) VE REKLAM KONTROLÜ
+// 8. AÇILIŞ ANİMASYONU (SPLASH SCREEN) VE SENKRONİZE GİRİŞ KONTROLÜ
 // =========================================================
 (function () {
-    // Açılış bittikten sonra reklam engelleyiciyi kontrol edecek fonksiyon
-    async function runAdblockCheck() {
-        if (typeof detectAdBlock === 'function') {
-            const blocked = await detectAdBlock();
-            if (blocked && typeof showAdBlockOverlay === 'function') {
-                showAdBlockOverlay();
-            }
-        }
-    }
-
-    // Her sayfa açılışında splash gösterilir (skip yok)
-
-    const particlesContainer = document.getElementById('splashParticles');
-    if (particlesContainer) {
-        for (let i = 0; i < 20; i++) {
-            const p = document.createElement('div');
-            p.className = 'splash-particle';
-            const size = Math.random() * 6 + 4;
-            p.style.cssText = `
-                width:${size}px; height:${size}px;
-                left:${Math.random() * 100}%;
-                animation-duration:${Math.random() * 5 + 4}s;
-                animation-delay:${Math.random() * 3}s;
-            `;
-            particlesContainer.appendChild(p);
-        }
-    }
-
     const bar = document.getElementById('splashProgressBar');
     const label = document.getElementById('splashProgressLabel');
     const splash = document.getElementById('splash-screen');
@@ -327,37 +298,36 @@ document.querySelectorAll('.category-card').forEach(catCard => {
         progress += Math.random() * 4 + 2;
         if (progress > 100) progress = 100;
         
-        if (bar) {
-            bar.style.width = progress + '%';
-            bar.setAttribute('aria-valuenow', Math.round(progress));
-        }
+        if (bar) bar.style.width = progress + '%';
         
         const newLabelIdx = Math.min(Math.floor(progress / 33), labels.length - 1);
         if (newLabelIdx !== labelIdx) {
             labelIdx = newLabelIdx;
-            if (label) {
-                const isEng = localStorage.getItem('mugol-lang') === 'en';
-                const labelsEn =['Starting System...', 'Preparing Apps...', 'Finalizing...', 'Welcome!'];
-                label.textContent = isEng ? labelsEn[labelIdx] : labels[labelIdx];
-            }
+            if (label) label.textContent = labels[labelIdx];
         }
+
         if (progress >= 100) {
             clearInterval(interval);
+            
+            // DÜZELTME: Splash bitmeden 200ms önce Auth kontrolü yapılır
+            // Böylece portal arayüzü asla görünmez (Flash sorunu çözüldü)
+            if (typeof MugolAuth !== 'undefined') {
+                MugolAuth.checkAuth();
+            }
+
             setTimeout(() => {
-                if (splash) splash.classList.add('hidden');
-                
-                // Splash bitti → önce giriş ekranını göster, sonra reklam kontrolü
-                setTimeout(() => {
-                    if (typeof MugolAuth !== 'undefined' && MugolAuth.checkAuth) {
-                        MugolAuth.checkAuth();
-                    }
-                    setTimeout(runAdblockCheck, 300);
-                }, 400);
-                
-            }, 600);
+                if (splash) {
+                    splash.style.opacity = '0'; // Yumuşak geçiş
+                    setTimeout(() => {
+                        splash.classList.add('hidden');
+                    }, 400);
+                }
+            }, 200);
         }
-    }, 150);
+    }, 120);
 })();
+
+// DİĞER TÜM SCRIPT.JS FONKSİYONLARIN (Menü, Toast, PWA vb.) BURADA DEVAM ETMELİ...
 
 // =========================================================
 // 9. AŞAĞI ÇEKME YENİLE (PULL TO REFRESH)
@@ -368,12 +338,8 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     const ptrLabel = document.getElementById('ptr-label');
     if (!mainContent || !ptrIndicator) return;
 
-    let startY = 0;
-    let currentY = 0;
-    let pulling = false;
-    let refreshing = false;
-    const THRESHOLD = 80;
-    const MAX_PULL = 130;
+    let startY = 0, currentY = 0, pulling = false, refreshing = false;
+    const THRESHOLD = 80, MAX_PULL = 130;
 
     mainContent.addEventListener('touchstart', (e) => {
         if (mainContent.scrollTop > 0) return;
@@ -404,25 +370,16 @@ document.querySelectorAll('.category-card').forEach(catCard => {
         if (!pulling || refreshing) return;
         pulling = false;
         const diff = currentY - startY;
-
         if (diff >= THRESHOLD) {
             refreshing = true;
             ptrIndicator.classList.add('refreshing');
-            ptrIndicator.classList.remove('ready');
             const isEng = localStorage.getItem('mugol-lang') === 'en';
             if (ptrLabel) ptrLabel.textContent = isEng ? 'Refreshing...' : 'Yenileniyor...';
-            ptrIndicator.style.height = '70px';
-
-            setTimeout(() => {
-                sessionStorage.setItem('skipSplash', '1');
-                location.reload();
-            }, 1000);
+            setTimeout(() => { location.reload(); }, 1000);
         } else {
             ptrIndicator.style.height = '0';
             ptrIndicator.classList.remove('visible', 'ready');
-            refreshing = false;
         }
-        startY = 0; currentY = 0;
     }, { passive: true });
 })();
 
@@ -430,9 +387,8 @@ document.querySelectorAll('.category-card').forEach(catCard => {
 // 10. BİLDİRİM SİSTEMİ
 // =========================================================
 const NOTIFICATIONS =[
-    { id: 'n1', icon: '🚀', title: 'MuGöl PORTAL v1.0 Yayında!', body: 'Bildirim paneli, gelişmiş iletişim formu ve yeni kısayollar eklendi.', time: 'Az önce' },
-    { id: 'n2', icon: '🔍', title: 'Hızlı Arama', body: 'Ctrl+K ile istediğiniz uygulamayı anında bulun.', time: '2 gün önce' },
-    { id: 'n3', icon: '🎨', title: 'Renk Teması', body: 'Ayarlar sayfasından portal rengini kişiselleştirebilirsiniz.', time: '3 gün önce' },
+    { id: 'n1', icon: '🚀', title: 'MuGöl PORTAL v1.0 Yayında!', body: 'Bildirim paneli ve yeni özellikler eklendi.', time: 'Az önce' },
+    { id: 'n2', icon: '🔍', title: 'Hızlı Arama', body: 'Ctrl+K ile uygulamaları anında bulun.', time: '2 gün önce' }
 ];
 
 let readNotifs = JSON.parse(localStorage.getItem('mugol-read-notifs') || '[]');
@@ -441,33 +397,15 @@ function renderNotifications() {
     const list = document.getElementById('notifList');
     const dot = document.getElementById('notifDot');
     if (!list) return;
-
     const unread = NOTIFICATIONS.filter(n => !readNotifs.includes(n.id));
     if (dot) dot.style.display = unread.length > 0 ? 'block' : 'none';
-
-    if (NOTIFICATIONS.length === 0) {
-        const isEng = localStorage.getItem('mugol-lang') === 'en';
-        list.innerHTML = `<div style="padding:2.5rem;text-align:center;color:var(--text-muted);font-weight:800;font-size:1.05rem;">${isEng ? 'No notifications' : 'Bildirim yok'}</div>`;
-        return;
-    }
-
     list.innerHTML = NOTIFICATIONS.map(n => {
         const isRead = readNotifs.includes(n.id);
-        return `<div data-notif-id="${n.id}" onclick="markNotifRead('${n.id}')" role="listitem" tabindex="0" style="
-            padding:16px 20px; border-bottom:1px solid var(--border-color);
-            cursor:pointer; transition:all 0.2s ease;
-            background:${isRead ? 'transparent' : 'rgba(67,24,255,0.03)'};
-            display:flex; gap:14px; align-items:flex-start;"
-            onmouseenter="this.style.background='rgba(67,24,255,0.06)'"
-            onmouseleave="this.style.background='${isRead ? 'transparent' : 'rgba(67,24,255,0.03)'}'">
-            <div style="font-size:1.5rem; flex-shrink:0; line-height:1; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.1));" aria-hidden="true">${n.icon}</div>
-            <div style="flex:1; min-width:0;">
-                <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:4px;">
-                    <span style="font-weight:${isRead ? 700 : 900}; font-size:1.05rem; color:var(--text-main); letter-spacing:-0.2px;">${n.title}</span>
-                    ${!isRead ? '<span style="width:8px;height:8px;background:var(--primary-color);border-radius:50%;flex-shrink:0;box-shadow:0 0 8px var(--primary-glow);" aria-label="Okunmadı"></span>' : ''}
-                </div>
-                <div style="font-size:0.95rem; color:var(--text-muted); font-weight:600; line-height:1.5;">${n.body}</div>
-                <div style="font-size:0.8rem; color:var(--text-muted); margin-top:6px; font-weight:800;">${n.time}</div>
+        return `<div onclick="markNotifRead('${n.id}')" style="padding:16px; border-bottom:1px solid var(--border-color); cursor:pointer; background:${isRead ? 'transparent' : 'rgba(67,24,255,0.03)'}; display:flex; gap:14px;">
+            <div style="font-size:1.5rem;">${n.icon}</div>
+            <div style="flex:1;">
+                <div style="font-weight:900; color:var(--text-main);">${n.title}</div>
+                <div style="font-size:0.9rem; color:var(--text-muted);">${n.body}</div>
             </div>
         </div>`;
     }).join('');
@@ -476,497 +414,102 @@ function renderNotifications() {
 window.markNotifRead = function(id) {
     if (!readNotifs.includes(id)) {
         readNotifs.push(id);
-        localStorage.setItem('mugol-read-notifs', JSON.stringify(readNotifs));
+        localStorage.setItem('read-notifs', JSON.stringify(readNotifs));
         renderNotifications();
     }
 };
 
 const notifBtn = document.getElementById('notifBtn');
 const notifPanel = document.getElementById('notifPanel');
-
-if (notifBtn && notifPanel) {
+if (notifBtn) {
     notifBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         const isOpen = notifPanel.style.display !== 'none';
         notifPanel.style.display = isOpen ? 'none' : 'block';
-        notifBtn.setAttribute('aria-expanded', !isOpen);
         if (!isOpen) renderNotifications();
-    });
-
-    const notifMarkAll = document.getElementById('notifMarkAll');
-    if (notifMarkAll) {
-        notifMarkAll.addEventListener('click', (e) => {
-            e.stopPropagation();
-            NOTIFICATIONS.forEach(n => { if (!readNotifs.includes(n.id)) readNotifs.push(n.id); });
-            localStorage.setItem('mugol-read-notifs', JSON.stringify(readNotifs));
-            renderNotifications();
-        });
-    }
-
-    document.addEventListener('click', (e) => {
-        if (!notifPanel.contains(e.target) && e.target !== notifBtn) {
-            notifPanel.style.display = 'none';
-            notifBtn.setAttribute('aria-expanded', 'false');
-        }
     });
 }
 
-renderNotifications();
-
 // =========================================================
-// 11. GLOBAL ARAMA (Debounce Desteği ile)
+// 11. GLOBAL ARAMA (Ctrl+K)
 // =========================================================
 const searchModal = document.getElementById('searchModal');
 const searchInput = document.getElementById('searchInput');
 const searchIndex =[];
 
-document.querySelectorAll('.page-section .app-card[href]').forEach(card => {
-    const page = card.closest('.page-section');
-    const menuItem = page ? document.querySelector('.nav-item[data-target="' + page.id + '"]') : null;
+document.querySelectorAll('.app-card[href]').forEach(card => {
     searchIndex.push({
-        name: card.querySelector('.app-info h3')?.textContent || '',
-        desc: card.querySelector('.app-desc')?.textContent || '',
-        tag: card.querySelector('.app-tag')?.textContent || '',
-        img: card.querySelector('.app-icon-img')?.src || '',
-        url: card.getAttribute('href'),
-        category: menuItem ? menuItem.querySelector('.nav-text')?.textContent : '',
+        name: card.querySelector('h3')?.textContent || '',
+        img: card.querySelector('img')?.src || '',
+        url: card.getAttribute('href')
     });
 });
-
-if (document.getElementById('searchBtn')) {
-    document.getElementById('searchBtn').addEventListener('click', openSearch);
-}
 
 function openSearch() {
     if (searchModal) {
         searchModal.style.display = 'flex';
         searchInput.value = '';
-        renderSearchResults('');
         setTimeout(() => searchInput.focus(), 100);
     }
 }
+window.closeSearch = () => { if(searchModal) searchModal.style.display = 'none'; };
+if(document.getElementById('searchBtn')) document.getElementById('searchBtn').addEventListener('click', openSearch);
 
-window.closeSearch = function() {
-    if (searchModal) searchModal.style.display = 'none';
-};
-
-if (searchModal) {
-    searchModal.addEventListener('click', function (e) {
-        if (e.target === searchModal) closeSearch();
-    });
-}
-
-document.addEventListener('keydown', function (e) {
-    if (searchModal && searchModal.style.display === 'flex' && e.key === 'Escape') {
-        closeSearch();
-    }
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') { 
-        e.preventDefault(); 
-        openSearch(); 
-    }
-    if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
-        e.preventDefault();
-        if (hamburgerBtn) hamburgerBtn.click();
-    }
-    if ((e.ctrlKey || e.metaKey) && e.key === 'h') {
-        e.preventDefault();
-        const homeMenu = document.querySelector('.nav-item[data-target="page-anasayfa"]');
-        if (homeMenu) homeMenu.click();
-    }
+document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
+    if (e.key === 'Escape') closeSearch();
 });
 
-function debounce(func, wait) {
-    let timeout;
-    return function(...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(this, args), wait);
-    };
-}
-
-if (searchInput) {
-    searchInput.addEventListener('input', debounce(function () {
-        renderSearchResults(this.value.trim().toLowerCase());
-    }, 250));
-}
-
-function renderSearchResults(query) {
-    const container = document.getElementById('searchResults');
-    if (!container) return;
-
-    const results = query === '' ? searchIndex.slice(0, 8) : searchIndex.filter(item =>
-        item.name.toLowerCase().includes(query) ||
-        item.desc.toLowerCase().includes(query) ||
-        item.tag.toLowerCase().includes(query)
-    );
-
-    if (results.length === 0) {
-        const isEng = localStorage.getItem('mugol-lang') === 'en';
-        container.innerHTML = `<div style="text-align:center;padding:2.5rem;color:var(--text-muted);font-weight:800;font-size:1.1rem;">${isEng ? 'No results found' : 'Sonuç bulunamadı'}</div>`;
-        return;
-    }
-
-    container.innerHTML = results.map(item => `
-        <div class="search-result-item" role="option" tabindex="0" data-url="${item.url}" data-name="${item.name}" data-img="${item.img}"
-            style="display:flex;align-items:center;gap:16px;padding:14px 12px;border-radius:14px;cursor:pointer;transition:all 0.2s ease;">
-            <img src="${item.img}" alt="" style="width:50px;height:50px;border-radius:12px;object-fit:cover;background:var(--bg-body);flex-shrink:0;box-shadow:var(--shadow-sm);"
-                onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(item.name)}&background=4318ff&color=fff&rounded=true&bold=true'">
-            <div style="flex:1;min-width:0;">
-                <div style="font-weight:900;font-size:1.1rem;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</div>
-                <div style="font-size:0.95rem;font-weight:600;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.desc}</div>
-            </div>
-            <span style="font-size:0.8rem;font-weight:900;color:var(--text-muted);background:var(--bg-body);padding:6px 14px;border-radius:20px;border:1px solid var(--border-color);flex-shrink:0;">${item.category || item.tag}</span>
-        </div>
-    `).join('');
-
-    container.querySelectorAll('.search-result-item').forEach(el => {
-        const triggerItem = () => {
-            closeSearch();
-            showRedirectToast(el.dataset.name, el.dataset.url, el.dataset.img);
-        };
-        el.addEventListener('mouseenter', () => el.style.background = 'rgba(67,24,255,0.05)');
-        el.addEventListener('mouseleave', () => el.style.background = 'transparent');
-        el.addEventListener('click', triggerItem);
-        el.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                triggerItem();
-            }
-        });
-    });
-}
-
 // =========================================================
-// 12. RENK TEMASI
+// 12. RENK TEMASI VE AYARLAR
 // =========================================================
 const savedColor = localStorage.getItem('mugol-primary-color');
-if (savedColor) {
-    document.documentElement.style.setProperty('--primary-color', savedColor);
-    document.querySelectorAll('.color-swatch').forEach(s => {
-        s.classList.toggle('active', s.getAttribute('data-color') === savedColor);
-    });
-}
+if (savedColor) document.documentElement.style.setProperty('--primary-color', savedColor);
 
 document.querySelectorAll('.color-swatch').forEach(swatch => {
-    const applyColor = () => {
+    swatch.addEventListener('click', () => {
         const color = swatch.getAttribute('data-color');
-        document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
-        swatch.classList.add('active');
         document.documentElement.style.setProperty('--primary-color', color);
         localStorage.setItem('mugol-primary-color', color);
-    };
-    swatch.addEventListener('click', applyColor);
-    swatch.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            applyColor();
-        }
     });
 });
 
 // =========================================================
-// 13. YUKARI KAYDIR BUTONU
+// 13. YUKARI KAYDIR VE DİL SİSTEMİ
 // =========================================================
 const scrollTopBtn = document.getElementById('scrollTopBtn');
-const mainContent = document.querySelector('.main-content');
 if (mainContent && scrollTopBtn) {
-    mainContent.addEventListener('scroll', () => {
-        scrollTopBtn.classList.toggle('visible', mainContent.scrollTop > 300);
-    });
-    scrollTopBtn.addEventListener('click', () => {
-        mainContent.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    mainContent.addEventListener('scroll', () => { scrollTopBtn.classList.toggle('visible', mainContent.scrollTop > 300); });
+    scrollTopBtn.addEventListener('click', () => { mainContent.scrollTo({ top: 0, behavior: 'smooth' }); });
 }
 
-// =========================================================
-// 14. COUNT-UP ANİMASYONU (Hakkında Sayfası)
-// =========================================================
-function animateCountUp(el, target, suffix) {
-    let start = 0;
-    const duration = 1500;
-    const step = 16;
-    const increment = target / (duration / step);
-    const timer = setInterval(() => {
-        start += increment;
-        if (start >= target) {
-            start = target;
-            clearInterval(timer);
-        }
-        el.textContent = Math.floor(start) + (suffix || '');
-        el.setAttribute('aria-label', Math.floor(start));
-        el.classList.add('counting');
-        setTimeout(() => el.classList.remove('counting'), 500);
-    }, step);
-}
-
-const aboutMenuItem = document.querySelector('.nav-item[data-target="page-hakkinda"]');
-let countUpDone = false;
-if (aboutMenuItem) {
-    aboutMenuItem.addEventListener('click', () => {
-        if (countUpDone) return;
-        setTimeout(() => {
-            const statEls = document.querySelectorAll('.stat-item strong');
-            const targets =[21, 4, 2025]; 
-            const suffixes =['', '', ''];
-            statEls.forEach((el, i) => {
-                const t = parseInt(el.textContent) || targets[i];
-                animateCountUp(el, t, suffixes[i]);
-            });
-            countUpDone = true;
-        }, 300);
-    });
-}
-
-// =========================================================
-// 15. SERVICE WORKER & PWA UYGULAMA İNDİRME SİSTEMİ
-// =========================================================
-let deferredPrompt;
-const installAppBtn = document.getElementById('installAppBtn');
-
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    if (installAppBtn) {
-        installAppBtn.style.display = 'flex';
-    }
-});
-
-if (installAppBtn) {
-    const triggerInstall = async () => {
-        if (!deferredPrompt) return;
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        console.log(`PWA Yükleme Sonucu: ${outcome}`);
-        deferredPrompt = null;
-        installAppBtn.style.display = 'none';
-        
-        if (window.innerWidth <= 992 && sidebar && sidebarOverlay) {
-            sidebar.classList.remove('mobile-open');
-            sidebarOverlay.classList.remove('active');
-            if (hamburgerBtn) hamburgerBtn.setAttribute('aria-expanded', 'false');
-        }
-    };
-    
-    installAppBtn.addEventListener('click', triggerInstall);
-    installAppBtn.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            triggerInstall();
-        }
-    });
-}
-
-window.addEventListener('appinstalled', () => {
-    deferredPrompt = null;
-    console.log('PWA başarıyla yüklendi!');
-    if (installAppBtn) {
-        installAppBtn.style.display = 'none';
-    }
-});
-
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
-            .then((registration) => console.log('✅ Service Worker kayıt başarılı:', registration))
-            .catch((err) => console.log('❌ Service Worker kayıt hatası:', err));
-    });
-}
-
-// =========================================================
-// 16. ÇOKLU DİL MOTORU (TR / EN DESTEĞİ)
-// =========================================================
 const translations = {
-    tr: {
-        menu:["Ana Sayfa", "Tümü", "Günlük", "Eğitim", "Araçlar", "Eğlence", "Ayarlar", "İletişim", "Hakkında", "Gizlilik"],
-        installBtn: "Uygulamayı İndir",
-        welcomeTitle: "Hoş Geldiniz! 👋",
-        welcomeDesc: "MuGöl PORTAL sistemine giriş yaptınız.",
-        searchPlaceholder: "Uygulama ara...",
-        openBtn: "Aç",
-        contactTitle: "Bize Ulaşın",
-        contactDesc: "Fikirleriniz, önerileriniz veya destek talepleriniz bizim için çok değerli. Formu doldurarak doğrudan ekibimize mesaj gönderebilirsiniz.",
-        email: "E-Posta",
-        settings: {
-            lang: { title: "Sistem Dili", desc: "Platformun varsayılan dilini seçin." },
-            theme: { title: "Karanlık Mod", desc: "Göz yorgunluğunu azaltmak için arayüzü koyu renklerle kullanın." },
-            font: { title: "Yazı Boyutu", desc: "Tüm platformdaki metin boyutlarını ihtiyacınıza göre ayarlayın." },
-            color: { title: "Renk Teması", desc: "Portal'ın vurgu rengini kişiselleştirin." },
-            version: { title: "Sistem Sürümü", desc: "MuGöl PORTAL'ın mevcut lisanslı ve güncel sürüm bilgisi." },
-            shortcut: { title: "Klavye Kısayolları", desc: "Portali daha hızlı kullanmak için kısayolları öğrenin." }
-        },
-        pullToRefresh: "Yenilemek için çekin"
-    },
-    en: {
-        menu:["Home", "All", "Daily", "Education", "Tools", "Entertainment", "Settings", "Contact", "About", "Privacy"],
-        installBtn: "Download App",
-        welcomeTitle: "Welcome! 👋",
-        welcomeDesc: "You have successfully logged into MuGöl PORTAL.",
-        searchPlaceholder: "Search app...",
-        openBtn: "Open",
-        contactTitle: "Contact Us",
-        contactDesc: "Your ideas, suggestions, or support requests are very valuable to us. You can send a direct message to our team by filling out the form.",
-        email: "Email",
-        settings: {
-            lang: { title: "System Language", desc: "Choose the default language for the platform." },
-            theme: { title: "Dark Mode", desc: "Use a dark interface to reduce eye strain." },
-            font: { title: "Font Size", desc: "Adjust text sizes across the platform to your needs." },
-            color: { title: "Color Theme", desc: "Personalize the portal's accent color." },
-            version: { title: "System Version", desc: "Current licensed and updated version of MuGöl PORTAL." },
-            shortcut: { title: "Keyboard Shortcuts", desc: "Learn the shortcuts to use the portal faster." }
-        },
-        pullToRefresh: "Pull to refresh"
-    }
+    tr: { welcomeTitle: "Hoş Geldiniz! 👋", pullToRefresh: "Yenilemek için çekin" },
+    en: { welcomeTitle: "Welcome! 👋", pullToRefresh: "Pull to refresh" }
 };
 
 function applyLanguage(lang) {
     const t = translations[lang];
-
-    const navItemsList = document.querySelectorAll('.nav-menu .nav-item:not(#installAppBtn)');
-    navItemsList.forEach((item, index) => {
-        const textEl = item.querySelector('.nav-text');
-        if (textEl && t.menu[index]) {
-            textEl.textContent = t.menu[index];
-            item.setAttribute('data-title', t.menu[index]);
-            
-            if (item.classList.contains('active')) {
-                const secTitle = document.getElementById('sectionTitle');
-                if (secTitle) secTitle.textContent = t.menu[index];
-            }
-        }
-    });
-
-    const installText = document.querySelector('#installAppBtn .nav-text');
-    if (installText) installText.textContent = t.installBtn;
-
-    const welcomeH1 = document.getElementById('welcomeTitle');
-    if (welcomeH1) welcomeH1.textContent = t.welcomeTitle;
-    const welcomeP = document.getElementById('welcomeDesc');
-    if (welcomeP) {
-        const loggedUser = localStorage.getItem('mugol-logged-in');
-        welcomeP.textContent = loggedUser
-            ? (lang === 'en' ? 'Welcome, ' + loggedUser + '! MuGöl PORTAL is ready.' : 'Merhaba, ' + loggedUser + '! MuGöl PORTAL\'a hoş geldiniz.')
-            : t.welcomeDesc;
-    }
-
-    const contactH3 = document.querySelector('.contact-left h3');
-    if (contactH3) contactH3.textContent = t.contactTitle;
-    const contactP = document.querySelector('.contact-left p');
-    if (contactP) contactP.textContent = t.contactDesc;
-    const emailPill = document.querySelector('.lang-email');
-    if (emailPill) emailPill.textContent = t.email;
-
-    const langT = document.getElementById('langTitle');
-    const langD = document.getElementById('langDesc');
-    if (langT) langT.textContent = t.settings.lang.title;
-    if (langD) langD.textContent = t.settings.lang.desc;
-
-    const updateSetting = (iconClass, key) => {
-        const icon = document.querySelector(`.setting-item i.${iconClass}`);
-        if (icon && icon.nextElementSibling) {
-            const h4 = icon.nextElementSibling.querySelector('h4');
-            const p = icon.nextElementSibling.querySelector('p');
-            if (h4) h4.textContent = t.settings[key].title;
-            if (p) p.textContent = t.settings[key].desc;
-        }
-    };
-    updateSetting('fa-moon', 'theme');
-    updateSetting('fa-text-height', 'font');
-    updateSetting('fa-palette', 'color');
-    updateSetting('fa-code-branch', 'version');
-    updateSetting('fa-keyboard', 'shortcut');
-
-    const searchInp = document.getElementById('searchInput');
-    if (searchInp) {
-        const isMac = navigator.platform.toLowerCase().includes('mac');
-        searchInp.placeholder = t.searchPlaceholder + ' (' + (isMac ? '⌘' : 'Ctrl') + '+K)';
-    }
-
-    document.querySelectorAll('.launch-btn .btn-label').forEach(el => el.textContent = t.openBtn);
-
-    const ptrLabel = document.getElementById('ptr-label');
-    if (ptrLabel && ptrLabel.textContent !== 'Yenileniyor...' && ptrLabel.textContent !== 'Refreshing...' && ptrLabel.textContent !== 'Bırakın, yenilensin' && ptrLabel.textContent !== 'Release to refresh') {
-        ptrLabel.textContent = t.pullToRefresh;
-    }
+    if (document.getElementById('welcomeTitle')) document.getElementById('welcomeTitle').textContent = t.welcomeTitle;
 }
 
-// =========================================================
-// DİL SEÇİCİ BAŞLATMA VE HAFIZA SİSTEMİ
-// =========================================================
 const savedLang = localStorage.getItem('mugol-lang') || 'tr';
-const langBtns = document.querySelectorAll('.lang-btn');
-
-function updateLangButtons(activeLang) {
-    langBtns.forEach(btn => {
-        if (btn.getAttribute('data-lang') === activeLang) {
-            btn.classList.add('active');
-        } else {
-            btn.classList.remove('active');
-        }
-    });
-}
-
-langBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        const selectedLang = btn.getAttribute('data-lang');
-        localStorage.setItem('mugol-lang', selectedLang); 
-        updateLangButtons(selectedLang);
-        applyLanguage(selectedLang);
-    });
-});
-
-updateLangButtons(savedLang);
 applyLanguage(savedLang);
 
 // =========================================================
-// REKLAM ENGELLEYİCİ TESPİT SİSTEMİ (Geçici Uyarı İçin Güncellendi)
+// 14. PWA YÜKLEME SİSTEMİ
 // =========================================================
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault(); deferredPrompt = e;
+    if (installAppBtn) installAppBtn.style.display = 'flex';
+});
 
-function detectAdBlock() {
-    const testAd = document.createElement('div');
-    testAd.innerHTML = '&nbsp;';
-    testAd.className = 'adsbox ad-element pub_300x250 pub_300x250m pub_728x90 text-ad textAd text_ad text_ads text-ads';
-    testAd.style.cssText = 'width:1px;height:1px;position:absolute;left:-9999px;top:-9999px;';
-    document.body.appendChild(testAd);
-
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            const blocked =
-                testAd.offsetParent === null ||
-                testAd.offsetHeight === 0 ||
-                testAd.offsetLeft === 0 ||
-                testAd.offsetTop === 0 ||
-                testAd.offsetWidth === 0 ||
-                testAd.clientHeight === 0 ||
-                testAd.clientWidth === 0 ||
-                window.getComputedStyle(testAd).display === 'none' ||
-                window.getComputedStyle(testAd).visibility === 'hidden';
-            
-            if (testAd.parentNode) {
-                document.body.removeChild(testAd);
-            }
-            resolve(blocked);
-        }, 150);
+if (installAppBtn) {
+    installAppBtn.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        deferredPrompt = null;
+        installAppBtn.style.display = 'none';
     });
-}
-
-window.closeAdblockWarning = function() {
-    const ab = document.getElementById('adblock-overlay');
-    if (ab) {
-        ab.style.opacity = '0'; 
-        setTimeout(() => { 
-            ab.classList.remove('visible'); 
-            ab.style.opacity = '1'; 
-        }, 300);
-    }
-};
-
-function showAdBlockOverlay() {
-    const overlay = document.getElementById('adblock-overlay');
-    if (overlay) {
-        overlay.classList.add('visible');
-        
-        // Kutu açıldıktan 6 saniye sonra otomatik kapanmasını sağlıyoruz
-        setTimeout(() => {
-            window.closeAdblockWarning();
-        }, 6000);
-    }
 }
