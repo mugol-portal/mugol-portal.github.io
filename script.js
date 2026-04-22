@@ -255,6 +255,17 @@ document.querySelectorAll('.app-card').forEach(card => {
     });
 });
 
+// Tümü sayfası tile tıklamaları
+document.querySelectorAll('.tumuu-tile').forEach(tile => {
+    tile.addEventListener('click', function (e) {
+        e.preventDefault();
+        const appName = this.querySelector('.tumuu-label')?.textContent || 'Uygulama';
+        const url = this.getAttribute('href');
+        const logoSrc = this.querySelector('.tumuu-icon')?.src || '';
+        showRedirectToast(appName, url, logoSrc);
+    });
+});
+
 // =========================================================
 // 7. ANA SAYFA KATEGORİ KARTLARI YÖNLENDİRMESİ
 // =========================================================
@@ -287,14 +298,7 @@ document.querySelectorAll('.category-card').forEach(catCard => {
         }
     }
 
-    if (sessionStorage.getItem('skipSplash')) {
-        sessionStorage.removeItem('skipSplash');
-        const splash = document.getElementById('splash-screen');
-        if (splash) splash.style.display = 'none';
-        // Animasyon atlandığında reklam uyarısını hemen kontrol et
-        runAdblockCheck();
-        return;
-    }
+    // Her sayfa açılışında splash gösterilir (skip yok)
 
     const particlesContainer = document.getElementById('splashParticles');
     if (particlesContainer) {
@@ -342,9 +346,13 @@ document.querySelectorAll('.category-card').forEach(catCard => {
             setTimeout(() => {
                 if (splash) splash.classList.add('hidden');
                 
-                // SPLASH EKRANI GİZLENDİKTEN SONRA REKLAM UYARISINI ÇAĞIR
-                // 300ms gecikme ile görsel olarak daha pürüzsüz bir geçiş sağlar
-                setTimeout(runAdblockCheck, 300);
+                // Splash bitti → önce giriş ekranını göster, sonra reklam kontrolü
+                setTimeout(() => {
+                    if (typeof MugolAuth !== 'undefined' && MugolAuth.checkAuth) {
+                        MugolAuth.checkAuth();
+                    }
+                    setTimeout(runAdblockCheck, 300);
+                }, 400);
                 
             }, 600);
         }
@@ -768,7 +776,7 @@ if ('serviceWorker' in navigator) {
 // =========================================================
 const translations = {
     tr: {
-        menu:["Ana Sayfa", "Günlük", "Eğitim", "Araçlar", "Eğlence", "Ayarlar", "İletişim", "Hakkında", "Gizlilik"],
+        menu:["Ana Sayfa", "Tümü", "Günlük", "Eğitim", "Araçlar", "Eğlence", "Ayarlar", "İletişim", "Hakkında", "Gizlilik"],
         installBtn: "Uygulamayı İndir",
         welcomeTitle: "Hoş Geldiniz! 👋",
         welcomeDesc: "MuGöl PORTAL sistemine giriş yaptınız.",
@@ -788,7 +796,7 @@ const translations = {
         pullToRefresh: "Yenilemek için çekin"
     },
     en: {
-        menu:["Home", "Daily", "Education", "Tools", "Entertainment", "Settings", "Contact", "About", "Privacy"],
+        menu:["Home", "All", "Daily", "Education", "Tools", "Entertainment", "Settings", "Contact", "About", "Privacy"],
         installBtn: "Download App",
         welcomeTitle: "Welcome! 👋",
         welcomeDesc: "You have successfully logged into MuGöl PORTAL.",
@@ -829,10 +837,15 @@ function applyLanguage(lang) {
     const installText = document.querySelector('#installAppBtn .nav-text');
     if (installText) installText.textContent = t.installBtn;
 
-    const welcomeH1 = document.querySelector('.welcome-text h1');
+    const welcomeH1 = document.getElementById('welcomeTitle');
     if (welcomeH1) welcomeH1.textContent = t.welcomeTitle;
-    const welcomeP = document.querySelector('.welcome-text p');
-    if (welcomeP) welcomeP.textContent = t.welcomeDesc;
+    const welcomeP = document.getElementById('welcomeDesc');
+    if (welcomeP) {
+        const loggedUser = localStorage.getItem('mugol-logged-in');
+        welcomeP.textContent = loggedUser
+            ? (lang === 'en' ? 'Welcome, ' + loggedUser + '! MuGöl PORTAL is ready.' : 'Merhaba, ' + loggedUser + '! MuGöl PORTAL\'a hoş geldiniz.')
+            : t.welcomeDesc;
+    }
 
     const contactH3 = document.querySelector('.contact-left h3');
     if (contactH3) contactH3.textContent = t.contactTitle;
