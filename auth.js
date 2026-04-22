@@ -481,15 +481,19 @@
             var loginBtn       = document.getElementById('authLoginBtn');
 
             if (saved) {
-                /* Kayıtlı kullanıcı var → kutucuğu göster, input + şifre gizle */
+                /* Kayıtlı kullanıcı var → kutucuğu göster, inputlar da görünür kalsın */
                 document.getElementById('authSavedName').textContent   = saved;
                 document.getElementById('authSavedAvatar').textContent = saved.charAt(0).toUpperCase();
                 document.getElementById('auth-login-user').value = saved;
                 if (box)            box.classList.add('show');
-                if (userInputGroup) userInputGroup.style.display = 'none';
-                if (passInputGroup) passInputGroup.style.display = 'none';
-                if (rememberLabel)  rememberLabel.style.display  = 'none';
-                if (loginBtn)       loginBtn.innerHTML = '<i class="fas fa-sign-in-alt" style="margin-right:8px;"></i>Giriş Yap — ' + saved;
+                if (userInputGroup) userInputGroup.style.display = '';
+                if (passInputGroup) passInputGroup.style.display = '';
+                if (rememberLabel)  rememberLabel.style.display  = '';
+                if (loginBtn)       loginBtn.innerHTML = '<i class="fas fa-sign-in-alt" style="margin-right:8px;"></i>Giriş Yap';
+                /* Kayıtlı şifreyi şifre alanına doldur */
+                var savedUsers = this.getUsers();
+                var passInput  = document.getElementById('auth-login-pass');
+                if (passInput) passInput.value = savedUsers[saved] || '';
             } else {
                 /* Kayıtlı kullanıcı yok → normal görünüm */
                 if (box)            box.classList.remove('show');
@@ -539,21 +543,27 @@
             picker.classList.add('show');
         },
 
-        /* Kullanıcıyı seç → şifresiz otomatik giriş */
+        /* Kullanıcıyı seç → kullanıcı adını forma doldur, şifre iste */
         selectUser: function (username) {
             var users = this.getUsers();
             if (!users[username]) return;
-            sessionStorage.setItem('mugol-session', username);
-            this._applyWelcome(username);
-            var overlay = document.getElementById('auth-overlay');
-            if (overlay) {
-                overlay.style.opacity    = '0';
-                overlay.style.transition = 'opacity 0.4s ease';
-                setTimeout(function () {
-                    overlay.classList.remove('visible');
-                    overlay.style.opacity = '';
-                }, 400);
-            }
+            /* Kullanıcı adını input'a yaz */
+            var userInput = document.getElementById('auth-login-user');
+            if (userInput) userInput.value = username;
+            /* Kayıtlı şifreyi şifre alanına doldur */
+            var passInput = document.getElementById('auth-login-pass');
+            if (passInput) passInput.value = users[username] || '';
+            /* Picker'ı gizle, saved-user kutusunu gizle, form alanlarını göster */
+            var picker = document.getElementById('auth-user-picker');
+            if (picker) picker.classList.remove('show');
+            var box = document.getElementById('auth-saved-user-box');
+            if (box) box.classList.remove('show');
+            var userInputGroup = document.getElementById('authUserInputGroup');
+            var passInputGroup = document.getElementById('authPassInputGroup');
+            var rememberLabel  = document.getElementById('authRememberLabel');
+            if (userInputGroup) userInputGroup.style.display = '';
+            if (passInputGroup) passInputGroup.style.display = '';
+            if (rememberLabel)  rememberLabel.style.display  = '';
         },
 
         /* Hoş geldiniz metnini güncelle (ortak yardımcı) */
@@ -631,16 +641,14 @@
         },
 
         doLogin: function () {
-            var saved    = localStorage.getItem('mugol-remember-user');
             var userEl   = document.getElementById('auth-login-user');
-            var user     = saved ? saved : userEl.value.trim();
+            var passEl   = document.getElementById('auth-login-pass');
+            var user     = userEl ? userEl.value.trim() : '';
+            var pass     = passEl ? passEl.value : '';
             var users    = this.getUsers();
             var errEl    = document.getElementById('loginError');
             var remember = document.getElementById('authRemember');
             errEl.classList.remove('show');
-
-            /* Kayıtlı kullanıcıda şifre inputtan değil, localStorage'dan gelir */
-            var pass = saved ? (users[user] || '') : document.getElementById('auth-login-pass').value;
 
             if (!user || !pass) {
                 errEl.textContent = 'Kullanıcı adı ve şifreyi doldurun.';
@@ -652,7 +660,7 @@
             }
 
             /* Beni hatırla seçiliyse kullanıcı adını kaydet */
-            if (!saved && remember && remember.checked) {
+            if (remember && remember.checked) {
                 localStorage.setItem('mugol-remember-user', user);
             }
 
@@ -683,21 +691,16 @@
         /* Splash bittikten sonra script.js tarafından çağrılır */
         checkAuth: function () {
             var session   = sessionStorage.getItem('mugol-session');
-            var remembered = localStorage.getItem('mugol-remember-user');
             var users      = this.getUsers();
 
-            /* Aktif oturum veya hatırlanan hesap varsa direkt ana sayfaya geç */
-            var autoUser = (session && users[session]) ? session
-                         : (remembered && users[remembered]) ? remembered
-                         : null;
-
-            if (autoUser) {
-                sessionStorage.setItem('mugol-session', autoUser);
-                this._applyWelcome(autoUser);
+            /* Sadece aktif oturum (aynı sekme/session) varsa direkt geç */
+            if (session && users[session]) {
+                this._applyWelcome(session);
                 return; /* overlay açma */
             }
 
-            /* Oturum yok → giriş ekranını göster */
+            /* Oturum yok → giriş ekranını göster
+               (hatırlanan kullanıcı varsa loadSavedUser / loadUserPicker ile öne çıkar) */
             localStorage.removeItem('mugol-logged-in');
             var overlay = document.getElementById('auth-overlay');
             if (overlay) {
