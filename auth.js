@@ -12,12 +12,14 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Nunito:wght@400;700;900&display=swap');
 
         #auth-overlay {
-            display: none; position: fixed; inset: 0; z-index: 999998;
+            display: flex; visibility: hidden; pointer-events: none;
+            position: fixed; inset: 0; z-index: 999998;
             background: #0f172a; align-items: center; justify-content: center;
             padding: 15px; font-family: 'Plus Jakarta Sans', sans-serif;
-            box-sizing: border-box; opacity: 0; transition: opacity 0.8s ease;
+            box-sizing: border-box; opacity: 0;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
         }
-        #auth-overlay.visible { display: flex !important; opacity: 1; }
+        #auth-overlay.visible { opacity: 1; visibility: visible; pointer-events: auto; }
 
         .auth-aura { position: absolute; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
         .auth-aura div { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.2; animation: authAuraMove 12s infinite alternate; }

@@ -765,9 +765,19 @@ input:checked + .slider:before { transform: translateX(28px); }
     .header { padding: 0 1.2rem; }
     .logo-area { font-size: 1.35rem; }
     .logo-area img { height: 36px; }
-    .main-content { padding: 1.5rem 1rem 5rem 1rem; }
-    .content-card { padding: 1.5rem 1.2rem; }
+    .main-content { padding: 1.2rem 0.9rem 5rem 0.9rem; box-sizing: border-box; }
+    .content-card { padding: 1.3rem 1rem; box-sizing: border-box; }
     
+    /* Taşma önleme */
+    .page-section { max-width: 100%; overflow-x: hidden; }
+    .profil-hero-card, .profil-hero-inner { overflow: hidden; }
+    .profil-hero-info { min-width: 0; overflow: hidden; }
+    .profil-username { font-size: 1.3rem !important; word-break: break-word; }
+    .profil-info-list { overflow: hidden; }
+    .profil-info-row { flex-wrap: wrap; gap: 8px; }
+    .profil-info-detail { min-width: 0; flex: 1; overflow: hidden; }
+    .profil-info-value { word-break: break-all; font-size: 0.9rem; }
+
     .welcome-banner, .welcome-banner--compact { padding: 2rem 1.5rem !important; gap: 18px; }
     .welcome-text h1 { font-size: 2rem !important; }
     .welcome-text p { font-size: 1.05rem !important; }
@@ -870,23 +880,15 @@ input:checked + .slider:before { transform: translateX(28px); }
 /* Section header — görsel iyileştirme */
 .section-header {
     position: relative;
-    padding-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
     margin-bottom: 0.5rem;
 }
 .section-title {
     position: relative;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
 }
-.section-title::after {
-    content: '';
-    position: absolute;
-    bottom: -6px; left: 0;
-    width: 40px; height: 3px;
-    background: var(--accent-gradient);
-    border-radius: 2px;
-    transition: width 0.4s ease;
-}
-.section-header:hover .section-title::after { width: 100%; }
+/* ::after çizgisi kaldırıldı — ::before sol çubuk yeterli */
 
 /* Sidebar nav item — aktif iken gradient */
 .nav-item.active {
@@ -1192,3 +1194,909 @@ input:checked + .slider:before { transform: translateX(28px); }
     .tumuu-label     { font-size: 0.7rem; }
     .tumuu-tile      { padding: 14px 6px 12px; border-radius: 16px; }
 }
+
+/* =========================================================
+   v2.0.0 — GELİŞTİRİLMİŞ TASARIM SİSTEMİ
+   ========================================================= */
+
+/* ── Yeni CSS Değişkenleri ── */
+:root {
+    --glow-primary: 0 0 20px rgba(67,24,255,0.25), 0 0 40px rgba(67,24,255,0.1);
+    --card-shine: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 60%);
+    --surface-elevated: rgba(255,255,255,0.7);
+    --noise-opacity: 0.025;
+}
+[data-theme="dark"] {
+    --surface-elevated: rgba(30,41,59,0.8);
+}
+
+/* ── Body — İnce Noise Texture ── */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: var(--noise-opacity);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* ── Header v2 — Daha Keskin Glassmorphism ── */
+.header {
+    background: color-mix(in srgb, var(--bg-header) 90%, transparent) !important;
+    backdrop-filter: blur(28px) saturate(200%) brightness(1.02) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(200%) brightness(1.02) !important;
+    border-bottom: 1px solid rgba(150,150,150,0.12) !important;
+}
+
+/* Header altına ince gradient çizgi */
+.header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary-color), #00d2ff, transparent);
+    opacity: 0.4;
+}
+
+/* ── Logo — Parlayan Yazı ── */
+.logo-area span {
+    background: linear-gradient(135deg, var(--text-main) 40%, var(--primary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+}
+[data-theme="dark"] .logo-area span {
+    background: linear-gradient(135deg, #f8fafc 40%, #818cf8);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+/* ── App Card v2 — Cam Efektli Şerit ── */
+.app-card {
+    background: var(--bg-card) !important;
+    position: relative;
+}
+
+/* Üstte parlak cam şeridi */
+.app-card .app-card-shine {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 50%;
+    background: var(--card-shine);
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0.6;
+}
+
+/* ── App Icon v2 — Renk Aura ── */
+.app-icon-img {
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), 
+                box-shadow 0.3s ease,
+                border-color 0.3s ease !important;
+}
+
+/* ── Category Card v2 — Parlak Kenar ── */
+.category-card {
+    position: relative;
+}
+.category-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--card-shine);
+    pointer-events: none;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
+.category-card:hover::after { opacity: 0; }
+
+/* ── Category Card — İkon Gölge Rengi ── */
+.cat-icon-wrap {
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), 
+                box-shadow 0.3s ease !important;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+}
+.category-card:hover .cat-icon-wrap {
+    filter: drop-shadow(0 8px 16px rgba(67,24,255,0.3));
+}
+
+/* ── Welcome Banner v2 — Zengin Arka Plan ── */
+.welcome-banner, .welcome-banner--compact {
+    background: linear-gradient(135deg, #4318ff 0%, #2979ff 40%, #00b4d8 80%, #00d2ff 100%) !important;
+    background-size: 300% 300% !important;
+    animation: richGradient 8s ease infinite !important;
+    position: relative;
+    overflow: hidden;
+}
+
+@keyframes richGradient {
+    0%   { background-position: 0% 50%; }
+    25%  { background-position: 100% 0%; }
+    50%  { background-position: 100% 100%; }
+    75%  { background-position: 0% 100%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Banner içi hareketli ışık topu */
+.welcome-banner::after,
+.welcome-banner--compact::after {
+    content: '';
+    position: absolute;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(255,255,255,0.15), transparent 70%);
+    border-radius: 50%;
+    top: -100px; right: -80px;
+    animation: bannerOrb 10s ease-in-out infinite;
+    pointer-events: none;
+}
+@keyframes bannerOrb {
+    0%,100% { transform: translate(0,0) scale(1); }
+    33%      { transform: translate(-30px, 20px) scale(1.15); }
+    66%      { transform: translate(20px,-15px) scale(0.9); }
+}
+
+/* ── Datetime Widget v2 ── */
+.datetime {
+    background: rgba(255,255,255,0.18) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255,255,255,0.35) !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.3) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.datetime:hover {
+    transform: scale(1.03) translateY(-2px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.35) !important;
+}
+.time {
+    text-shadow: 0 2px 8px rgba(0,0,0,0.2), 0 0 20px rgba(255,255,255,0.3) !important;
+}
+
+/* ── Sidebar v2 — Daha Rafine ── */
+.sidebar {
+    background: var(--bg-sidebar) !important;
+    border-right: 1px solid var(--border-color) !important;
+}
+
+/* Sidebar üst dekorasyon */
+.sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 200px;
+    background: radial-gradient(ellipse at top left, var(--primary-glow), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+.sidebar .menu-title, .sidebar .nav-menu, .sidebar .sidebar-profile {
+    position: relative;
+    z-index: 1;
+}
+
+/* ── Nav Item v2 — Gelişmiş Aktif Stil ── */
+.nav-item.active {
+    background: var(--accent-gradient) !important;
+    color: #fff !important;
+    box-shadow: 0 6px 20px rgba(67,24,255,0.35), inset 0 1px 0 rgba(255,255,255,0.15) !important;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.nav-item:not(.active):hover {
+    background: color-mix(in srgb, var(--primary-glow) 60%, transparent);
+    color: var(--primary-color);
+    transform: translateX(5px);
+}
+
+/* ── Sidebar Profile v2 ── */
+.sidebar-profile-avatar {
+    background: var(--accent-gradient) !important;
+    box-shadow: var(--glow-primary) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.sidebar-profile:hover .sidebar-profile-avatar {
+    transform: scale(1.1) rotate(5deg);
+}
+
+/* ── Tumuu Tile v2 — iOS Tarzı ── */
+.tumuu-tile {
+    background: var(--bg-card) !important;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+}
+/* Parlak üst köşe efekti */
+.tumuu-tile::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 40%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.08), transparent);
+    border-radius: inherit inherit 0 0;
+    pointer-events: none;
+}
+.tumuu-tile:hover {
+    transform: translateY(-6px) scale(1.04) !important;
+    box-shadow: 0 20px 40px rgba(67,24,255,0.15) !important;
+    border-color: rgba(67,24,255,0.4) !important;
+}
+.tumuu-icon-wrap {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12) !important;
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), 
+                box-shadow 0.3s ease !important;
+}
+.tumuu-tile:hover .tumuu-icon-wrap {
+    box-shadow: 0 12px 28px rgba(67,24,255,0.2) !important;
+}
+.tumuu-label {
+    font-size: 0.78rem !important;
+    font-weight: 800 !important;
+    color: var(--text-main) !important;
+    letter-spacing: -0.2px;
+}
+
+/* ── Scroll Top Button v2 ── */
+#scrollTopBtn {
+    background: var(--accent-gradient) !important;
+    box-shadow: 0 8px 24px rgba(67,24,255,0.4) !important;
+    border: 1px solid rgba(255,255,255,0.15);
+}
+#scrollTopBtn:hover {
+    transform: translateY(-6px) scale(1.15) !important;
+    box-shadow: 0 16px 36px rgba(67,24,255,0.5) !important;
+}
+
+/* ── Section Header v2 ── */
+.section-title {
+    background: linear-gradient(135deg, var(--text-main), var(--primary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+[data-theme="dark"] .section-title {
+    background: linear-gradient(135deg, #f8fafc, #818cf8);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+.section-title::before {
+    box-shadow: 0 4px 14px rgba(67,24,255,0.4) !important;
+}
+/* ::after (alt çizgi) tamamen kapat — ::before sol çubuk yeterli */
+.section-title::after { display: none !important; }
+
+/* ── Launch Button v2 — Daha Canlı ── */
+.app-card:hover .launch-btn {
+    background: var(--accent-gradient) !important;
+    background-size: 200% auto !important;
+    animation: shimmer 1.5s linear infinite !important;
+    color: #fff !important;
+    box-shadow: 0 8px 24px rgba(67,24,255,0.4) !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+}
+
+/* ── Content Card v2 ── */
+.content-card {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+    position: relative;
+    overflow: hidden;
+}
+.content-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent-gradient);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+.content-card:hover::before {
+    opacity: 1;
+}
+
+/* ── Splash Screen v2 — Daha Görkemli ── */
+#splash-screen {
+    background: linear-gradient(135deg, #060b18 0%, #0f172a 40%, #1a1040 70%, #060b18 100%) !important;
+}
+.splash-icon-ring {
+    box-shadow: 0 0 0 1px rgba(67,24,255,0.3),
+                0 0 0 8px rgba(67,24,255,0.1),
+                0 0 60px rgba(67,24,255,0.4),
+                0 30px 60px rgba(0,0,0,0.5) !important;
+    animation: splashRingPulse 2.5s ease-in-out infinite !important;
+}
+@keyframes splashRingPulse {
+    0%, 100% { box-shadow: 0 0 0 1px rgba(67,24,255,0.3), 0 0 0 8px rgba(67,24,255,0.1), 0 0 60px rgba(67,24,255,0.4), 0 30px 60px rgba(0,0,0,0.5); }
+    50%       { box-shadow: 0 0 0 1px rgba(67,24,255,0.5), 0 0 0 16px rgba(67,24,255,0.08), 0 0 80px rgba(67,24,255,0.6), 0 30px 60px rgba(0,0,0,0.5); }
+}
+.splash-progress-bar {
+    background: linear-gradient(90deg, #4318ff, #7c3aed, #00d2ff) !important;
+    background-size: 200% auto !important;
+    animation: progressShine 1.5s linear infinite !important;
+}
+@keyframes progressShine {
+    to { background-position: 200% center; }
+}
+
+/* ── Input / Form Alanları v2 ── */
+.form-control {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease !important;
+}
+.form-control:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 4px rgba(67,24,255,0.12), 0 4px 12px rgba(67,24,255,0.08) !important;
+    background-color: var(--bg-card) !important;
+}
+
+/* ── Setting Item v2 ── */
+.setting-item {
+    transition: background 0.2s ease, padding-left 0.2s ease;
+}
+.setting-item:hover {
+    background: rgba(67,24,255,0.03);
+    border-radius: var(--radius-sm);
+    padding-left: 0.5rem;
+}
+
+/* ── Animasyon: Fade In ── */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── App Tag Hover ── */
+.app-card:hover .app-tag {
+    letter-spacing: 0.8px;
+}
+
+/* ── Notification Panel v2 ── */
+#notifPanel {
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.18), 0 0 0 1px rgba(255,255,255,0.05) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+}
+
+/* ── Search Modal v2 ── */
+#searchModal > div {
+    box-shadow: 0 30px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(67,24,255,0.1) !important;
+}
+
+/* ── Ad Transition Box v2 ── */
+#ad-transition-box {
+    box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05) !important;
+}
+
+/* ── Dark Mode — Kart Parlaklığı Azalt ── */
+[data-theme="dark"] .app-card,
+[data-theme="dark"] .category-card,
+[data-theme="dark"] .tumuu-tile {
+    background: color-mix(in srgb, var(--bg-card) 95%, rgba(255,255,255,0.03)) !important;
+}
+[data-theme="dark"] .app-card:hover,
+[data-theme="dark"] .category-card:hover {
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(99,102,241,0.2) !important;
+    border-color: rgba(99,102,241,0.3) !important;
+}
+
+/* ── Genel — Seçim Rengi ── */
+::selection {
+    background: rgba(67,24,255,0.2);
+    color: var(--text-main);
+}
+
+/* ── Hover Efekti Mobilde Kapat ── */
+@media (hover: none) {
+    .app-grid:hover .app-card:not(:hover),
+    .category-grid:hover .category-card:not(:hover) {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+    .welcome-banner::after,
+    .welcome-banner--compact::after {
+        display: none;
+    }
+    body::before {
+        display: none;
+    }
+}
+
+/* ── Responsive Düzenlemeler ── */
+@media (max-width: 600px) {
+    .tumuu-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; }
+    .section-title {
+        font-size: 1.5rem !important;
+    }
+}
+
+/* =========================================================
+   v2.0.0 — ARAYÜZ GÜNCELLEMESİ — YENİ BİLEŞENLER
+   ========================================================= */
+
+/* ── Hızlı Erişim Şeridi (Quick Access Strip) ── */
+.quick-access-strip {
+    display: flex;
+    gap: 10px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 4px 2px 12px;
+    margin-bottom: 1.6rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+}
+.quick-access-strip::-webkit-scrollbar { display: none; }
+
+.qa-chip {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 18px 10px 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 50px;
+    text-decoration: none;
+    color: var(--text-main);
+    font-size: 0.9rem;
+    font-weight: 800;
+    white-space: nowrap;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1),
+                box-shadow 0.25s ease,
+                border-color 0.25s ease;
+    cursor: pointer;
+}
+.qa-chip:hover {
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 10px 24px rgba(67,24,255,0.14);
+    border-color: rgba(67,24,255,0.3);
+}
+.qa-chip:active { transform: scale(0.97); }
+
+.qa-icon {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.qa-chip:hover .qa-icon {
+    transform: scale(1.2) rotate(8deg);
+}
+
+[data-theme="dark"] .qa-chip {
+    border-color: rgba(255,255,255,0.07);
+}
+
+/* ── Version Badge Yükseltildi ── */
+.version-badge {
+    background: linear-gradient(135deg, rgba(67,24,255,0.1), rgba(0,210,255,0.1)) !important;
+    border: 1px solid rgba(67,24,255,0.2) !important;
+    color: var(--primary-color) !important;
+    box-shadow: 0 4px 14px rgba(67,24,255,0.12) !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.3px;
+}
+
+/* ── App Card — "YENİ" Rozet Desteği ── */
+.app-card-badge {
+    position: absolute;
+    top: 14px; right: 14px;
+    background: linear-gradient(135deg, #FF5630, #FF8B00);
+    color: #fff;
+    font-size: 0.62rem;
+    font-weight: 900;
+    padding: 3px 9px;
+    border-radius: 20px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 10px rgba(255,86,48,0.35);
+    animation: badgePop 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+    z-index: 3;
+}
+@keyframes badgePop {
+    from { transform: scale(0) rotate(-12deg); opacity: 0; }
+    to   { transform: scale(1) rotate(0deg);   opacity: 1; }
+}
+
+/* ── Sidebar — Versiyon Numarası Yükseltildi ── */
+.sidebar-profile-info span {
+    font-weight: 900 !important;
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ── Genel — Odak Halkası Güçlü ── */
+button:focus-visible,
+a:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 4px;
+    border-radius: 10px;
+}
+
+/* ── Responsive — Quick Access Tablet ── */
+@media (max-width: 600px) {
+    .qa-chip { font-size: 0.82rem; padding: 9px 14px 9px 9px; gap: 7px; }
+    .qa-icon { width: 26px; height: 26px; font-size: 0.7rem; }
+    .quick-access-strip { gap: 8px; margin-bottom: 1.2rem; }
+}
+
+/* =========================================================
+   PROFİL SAYFASI & SIDEBAR AYIRICI
+   ========================================================= */
+
+/* ── Nav Divider (Sidebar Ayırıcı) ── */
+.nav-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 10px 8px;
+    list-style: none;
+}
+
+/* ── Sidebar Profil Nav Öğesi ── */
+.nav-item--profil {
+    margin-top: 4px;
+    background: linear-gradient(135deg, rgba(67,24,255,0.06), rgba(0,210,255,0.06)) !important;
+    border: 1px solid rgba(67,24,255,0.12) !important;
+}
+.nav-item--profil:hover {
+    background: linear-gradient(135deg, rgba(67,24,255,0.12), rgba(0,210,255,0.12)) !important;
+    border-color: rgba(67,24,255,0.25) !important;
+}
+.nav-item--profil.active {
+    background: var(--accent-gradient) !important;
+    border-color: transparent !important;
+}
+
+.nav-profil-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--accent-gradient);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 3px 8px rgba(67,24,255,0.3);
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    font-family: 'Nunito', sans-serif;
+}
+.nav-item--profil:hover .nav-profil-avatar,
+.nav-item--profil.active .nav-profil-avatar {
+    transform: scale(1.15) rotate(5deg);
+}
+.nav-item--profil.active .nav-profil-avatar {
+    background: rgba(255,255,255,0.25);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+/* Collapsed sidebar'da profil avatarı */
+.sidebar.collapsed .nav-item--profil { justify-content: center; }
+
+/* ── Profil Hero Kartı ── */
+.profil-hero-card {
+    position: relative;
+    overflow: hidden;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+.profil-hero-bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #4318ff 0%, #2979ff 45%, #00d2ff 100%);
+    background-size: 300% 300%;
+    animation: richGradient 8s ease infinite;
+}
+.profil-hero-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.profil-hero-inner {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 2.8rem 3rem;
+    flex-wrap: wrap;
+}
+
+/* ── Profil Avatar ── */
+.profil-avatar-wrap {
+    position: relative;
+    flex-shrink: 0;
+}
+.profil-avatar {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    border: 3px solid rgba(255,255,255,0.5);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    font-size: 2rem;
+    font-weight: 900;
+    font-family: 'Nunito', sans-serif;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3);
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    overflow: hidden;
+}
+.profil-hero-card:hover .profil-avatar {
+    transform: scale(1.07) rotate(3deg);
+}
+.profil-avatar-ring {
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 2px dashed rgba(255,255,255,0.4);
+    animation: profilRingSpin 12s linear infinite;
+}
+@keyframes profilRingSpin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── Profil Hero Info ── */
+.profil-hero-info { flex: 1; min-width: 200px; }
+.profil-username {
+    font-size: 1.9rem;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -0.5px;
+    margin: 0 0 10px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.profil-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.35);
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 900;
+    padding: 5px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.4px;
+    backdrop-filter: blur(8px);
+    margin-bottom: 10px;
+}
+.profil-joined {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.8);
+    font-weight: 700;
+    margin: 8px 0 0;
+}
+
+/* ── Profil Bölüm Başlığı ── */
+.profil-section-label {
+    font-size: 1rem;
+    font-weight: 900;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 1.4rem;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px solid var(--border-color);
+}
+.profil-section-label i {
+    width: 32px; height: 32px;
+    border-radius: 10px;
+    background: var(--primary-glow);
+    color: var(--primary-color);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem;
+}
+
+/* ── Profil Bilgi Listesi ── */
+.profil-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.profil-info-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    transition: background 0.2s ease;
+}
+.profil-info-row:hover {
+    background: rgba(67,24,255,0.03);
+}
+.profil-info-icon {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.profil-info-row:hover .profil-info-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+.profil-info-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+}
+.profil-info-label {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+.profil-info-value {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+/* ── Çıkış Butonu ── */
+.profil-logout-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(239,68,68,0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239,68,68,0.25);
+    border-radius: 14px;
+    padding: 12px 24px;
+    font-size: 0.95rem;
+    font-weight: 900;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    white-space: nowrap;
+}
+.profil-logout-btn:hover {
+    background: #ef4444;
+    color: #fff;
+    border-color: #ef4444;
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 10px 24px rgba(239,68,68,0.35);
+}
+.profil-logout-btn:active { transform: scale(0.97); }
+
+/* ── Şifre mesaj kutusu ── */
+#profil-pass-msg.success {
+    display: block !important;
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.25);
+    color: #059669;
+    border-radius: 12px;
+    padding: 10px 14px;
+}
+#profil-pass-msg.error {
+    display: block !important;
+    background: rgba(239,68,68,0.08);
+    border: 1px solid rgba(239,68,68,0.2);
+    color: #ef4444;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+    .profil-hero-inner { padding: 2rem 1.5rem; gap: 1.4rem; }
+    .profil-avatar { width: 72px; height: 72px; font-size: 1.6rem; }
+    .profil-username { font-size: 1.5rem; }
+    .profil-info-row { padding: 12px 10px; }
+}
+
+/* =========================================================
+   ÜYELİK KODU & REKLAMSIZ SİSTEM STİLLERİ
+   ========================================================= */
+
+/* Üyelik kodu kutusu */
+.uyelik-kodu-card {
+    background: linear-gradient(135deg, rgba(67,24,255,0.06), rgba(0,210,255,0.06));
+    border: 2px dashed rgba(67,24,255,0.25);
+    border-radius: 20px;
+    padding: 1.5rem 1.4rem;
+    margin-top: 1.5rem;
+    box-sizing: border-box;
+}
+.uyelik-kodu-card h3 {
+    margin: 0 0 0.8rem;
+    font-size: 1rem;
+    font-weight: 900;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.uyelik-kodu-input-wrap {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.uyelik-kodu-input-wrap input {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 14px;
+    background: var(--bg-body);
+    color: var(--text-main);
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+.uyelik-kodu-input-wrap input:focus {
+    border-color: var(--primary-color);
+}
+.uyelik-kodu-btn {
+    padding: 12px 22px;
+    background: linear-gradient(135deg, #4318ff, #00d2ff);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.uyelik-kodu-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(67,24,255,0.35);
+}
+.uyelik-kodu-msg {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 10px 14px;
+    border-radius: 12px;
+    display: none;
+}
+.uyelik-kodu-msg.success {
+    display: block;
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.3);
+    color: #10b981;
+}
+.uyelik-kodu-msg.error {
+    display: block;
+    background: rgba(239,68,68,0.08);
+    border: 1px solid rgba(239,68,68,0.2);
+    color: #ef4444;
+}
+.reklamlama-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 0.82rem;
+    font-weight: 800;
+    background: linear-gradient(135deg,#10b981,#06b6d4);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(16,185,129,0.3);
+    margin-left: 8px;
+}
+/* Üyelik tipi alanını dinamik güncelle */
+#profilUyelikTipi { transition: all 0.3s ease; }

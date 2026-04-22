@@ -66,7 +66,7 @@
     
     <link rel="stylesheet" href="style.css">
 
-    <!-- EK GELİŞTİRİLMİŞ TASARIM STİLLERİ -->
+    <!-- v2.0.0 — GELİŞTİRİLMİŞ TASARIM STİLLERİ -->
     <style>
         .adsense-banner-wrap {
             width: 100%;
@@ -76,58 +76,65 @@
             background: transparent;
         }
 
-        /* Glassmorphism Header */
+        /* ── Glassmorphism Header v2 ── */
         .header {
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            background-color: color-mix(in srgb, var(--bg-card) 85%, transparent) !important;
+            backdrop-filter: blur(28px) saturate(200%) !important;
+            -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
+            background-color: color-mix(in srgb, var(--bg-header) 92%, transparent) !important;
             border-bottom: 1px solid rgba(150, 150, 150, 0.1);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04), inset 0 -1px 0 rgba(255,255,255,0.06);
         }
 
-        /* Geliştirilmiş Kart Hover Efektleri */
+        /* ── Category Card v2 ── */
         .category-card {
-            border-radius: 20px;
-            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease !important;
+            border-radius: 22px;
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                        box-shadow 0.3s ease, 
+                        border-color 0.3s ease !important;
             border: 1px solid rgba(150, 150, 150, 0.1);
         }
         .category-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
-            border-color: rgba(67, 24, 255, 0.3);
+            transform: translateY(-7px) scale(1.025);
+            box-shadow: 0 20px 40px rgba(67, 24, 255, 0.12), 0 4px 12px rgba(0,0,0,0.06);
+            border-color: rgba(67, 24, 255, 0.35);
         }
         .category-card .cat-icon-wrap {
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        filter 0.3s ease,
+                        box-shadow 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
         .category-card:hover .cat-icon-wrap {
-            transform: scale(1.15) rotate(6deg);
+            transform: scale(1.18) rotate(8deg);
+            filter: brightness(1.1) drop-shadow(0 8px 16px rgba(67,24,255,0.3));
         }
 
-        /* App Card İyileştirmeleri */
+        /* ── App Card v2 ── */
         .app-card {
-            border-radius: 18px;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+            border-radius: 22px;
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
             border: 1px solid rgba(150, 150, 150, 0.1);
             overflow: hidden;
-        }[data-theme="dark"] .app-card, 
+        }
+        [data-theme="dark"] .app-card, 
         [data-theme="dark"] .category-card {
-            border-color: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.06);
         }
         .app-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
+            transform: translateY(-8px) scale(1.015);
+            box-shadow: 0 24px 48px rgba(67, 24, 255, 0.14), 0 6px 16px rgba(0,0,0,0.05);
             border-color: rgba(67, 24, 255, 0.4);
         }
 
-        /* =========================================
-           HOŞ GELDİNİZ KUTUSU YENİ TASARIM
-           ========================================= */
+        /* ── Welcome Banner v2 ── */
         .welcome-banner--compact {
-            border-radius: 22px;
-            background: linear-gradient(135deg, #4318ff, #00d2ff) !important;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #4318ff 0%, #2979ff 40%, #00b4d8 80%, #00d2ff 100%) !important;
+            background-size: 300% 300% !important;
             border: none !important;
-            box-shadow: 0 10px 25px rgba(67, 24, 255, 0.25) !important;
+            box-shadow: 0 12px 32px rgba(67, 24, 255, 0.3), 
+                        0 2px 8px rgba(0,210,255,0.2),
+                        inset 0 1px 0 rgba(255,255,255,0.2) !important;
             color: #ffffff !important;
         }
         .welcome-banner--compact h1, 
@@ -137,19 +144,42 @@
             color: #ffffff !important;
         }
         .welcome-banner--compact .datetime {
-            background: rgba(255, 255, 255, 0.15) !important;
-            backdrop-filter: blur(10px) !important;
-            -webkit-backdrop-filter: blur(10px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            background: rgba(255, 255, 255, 0.18) !important;
+            backdrop-filter: blur(20px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.3) !important;
         }
-        
-        /* Modern İletişim Butonu Efekti */
+
+        /* ── İletişim Butonları v2 ── */
         .contact-pill-links a {
-            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
         }
         .contact-pill-links a:hover {
-            transform: translateY(-3px) scale(1.03) !important;
-            box-shadow: 0 12px 28px rgba(67, 24, 255, 0.4) !important;
+            transform: translateY(-4px) scale(1.04) !important;
+            box-shadow: 0 14px 32px rgba(67, 24, 255, 0.45) !important;
+        }
+
+        /* ── Tumuu Grid — 4 Kolon (Geniş Ekran) ── */
+        @media (min-width: 900px) {
+            .tumuu-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 14px; }
+        }
+        @media (min-width: 1200px) {
+            .tumuu-grid { grid-template-columns: repeat(5, 1fr) !important; }
+        }
+
+        /* ── Genel Hover Geçiş Hızlandırma ── */
+        .nav-item, .tumuu-tile, .launch-btn, .hamburger-btn {
+            will-change: transform;
+        }
+
+        /* ── Versiyon Rozeti ── */
+        .sidebar-profile-info span {
+            background: linear-gradient(90deg, var(--primary-color), #00d2ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900 !important;
         }
     </style>
 </head>
@@ -273,6 +303,12 @@
                 <li class="nav-item" role="menuitem" tabindex="0" data-target="page-gizlilik" data-title="Gizlilik Politikası">
                     <i class="fas fa-shield-alt" aria-hidden="true"></i> <span class="nav-text">Gizlilik</span>
                 </li>
+
+                <li class="nav-divider" role="separator" aria-hidden="true"></li>
+                <li class="nav-item nav-item--profil" role="menuitem" tabindex="0" data-target="page-profil" data-title="Profilim">
+                    <span class="nav-profil-avatar" id="sidebarProfilAvatar" aria-hidden="true">MG</span>
+                    <span class="nav-text">Profil</span>
+                </li>
                 
                 <li class="nav-item install-app-btn" role="button" tabindex="0" id="installAppBtn" style="display: none; margin-top: 15px;">
                     <i class="fas fa-download" aria-hidden="true"></i> <span class="nav-text">Uygulamayı İndir</span>
@@ -283,7 +319,7 @@
                 <div class="sidebar-profile-avatar">MG</div>
                 <div class="sidebar-profile-info">
                     <strong>MuGöl PORTAL</strong>
-                    <span>Sürüm 1.0.0</span>
+                    <span>Sürüm 2.0.0</span>
                 </div>
             </div>
         </aside>
@@ -309,6 +345,34 @@
                 </div>
 
                 <div id="adblock-inline-warning" style="display: none !important;"></div>
+
+                <!-- Hızlı Erişim Şeridi -->
+                <div class="quick-access-strip" role="navigation" aria-label="Hızlı Erişim">
+                    <a href="https://mugol-portal.github.io/MuGol.bugun/" class="qa-chip" target="_blank">
+                        <span class="qa-icon" style="background:linear-gradient(135deg,#4318ff,#00d2ff)"><i class="fas fa-calendar-day"></i></span>
+                        <span>Takvim</span>
+                    </a>
+                    <a href="https://mugol-portal.github.io/mugol.havadurumu/" class="qa-chip" target="_blank">
+                        <span class="qa-icon" style="background:linear-gradient(135deg,#FFAB00,#FF8B00)"><i class="fas fa-cloud-sun"></i></span>
+                        <span>Hava</span>
+                    </a>
+                    <a href="https://mugol-portal.github.io/mugol.haber/" class="qa-chip" target="_blank">
+                        <span class="qa-icon" style="background:linear-gradient(135deg,#FF5630,#E31A1A)"><i class="fas fa-newspaper"></i></span>
+                        <span>Haber</span>
+                    </a>
+                    <a href="https://mugol-portal.github.io/mugol.ekonomi/" class="qa-chip" target="_blank">
+                        <span class="qa-icon" style="background:linear-gradient(135deg,#00B8D9,#0052CC)"><i class="fas fa-chart-line"></i></span>
+                        <span>Ekonomi</span>
+                    </a>
+                    <a href="https://mugol-portal.github.io/deprem/" class="qa-chip" target="_blank">
+                        <span class="qa-icon" style="background:linear-gradient(135deg,#E31A1A,#7f1d1d)"><i class="fas fa-wave-square"></i></span>
+                        <span>Deprem</span>
+                    </a>
+                    <a href="https://mugol-portal.github.io/mugol.imsak-vakti/" class="qa-chip" target="_blank">
+                        <span class="qa-icon" style="background:linear-gradient(135deg,#36B37E,#064e3b)"><i class="fas fa-mosque"></i></span>
+                        <span>Namaz</span>
+                    </a>
+                </div>
 
                 <div class="category-grid">
                     <div class="category-card" role="button" tabindex="0" data-target="page-gunluk" aria-label="Günlük Kategorisi - 7 Uygulama">
@@ -859,7 +923,7 @@
                                 <p>MuGöl PORTAL'ın mevcut lisanslı ve güncel sürüm bilgisi.</p>
                             </div>
                         </div>
-                        <span class="version-badge" aria-label="Uygulama Sürümü 1.0.0">Sürüm 1.0.0</span>
+                        <span class="version-badge" aria-label="Uygulama Sürümü 2.0.0">Sürüm 2.0.0</span>
                     </div>
 
                     <div class="setting-item" style="flex-direction:column; align-items:flex-start; gap:14px;">
@@ -961,6 +1025,137 @@
                 </div>
             </div>
 
+            <!-- SAYFA: PROFİL -->
+            <div id="page-profil" class="page-section" role="region" aria-label="Profilim">
+
+                <!-- Profil Hero Kartı -->
+                <div class="profil-hero-card content-card premium-card">
+                    <div class="profil-hero-bg" aria-hidden="true"></div>
+                    <div class="profil-hero-inner">
+                        <div class="profil-avatar-wrap">
+                            <div class="profil-avatar" id="profilAvatarBig">MG</div>
+                            <div class="profil-avatar-ring" aria-hidden="true"></div>
+                        </div>
+                        <div class="profil-hero-info">
+                            <h2 class="profil-username" id="profilUsername">Kullanıcı</h2>
+                            <span class="profil-badge" id="profilBadge">
+                                <i class="fas fa-check-circle" aria-hidden="true"></i> Kayıtlı Üye
+                            </span>
+                            <p class="profil-joined" id="profilJoinedText">MuGöl PORTAL üyesi</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hesap Bilgileri Kartı -->
+                <div class="content-card" style="margin-top:1.5rem;">
+                    <h3 class="profil-section-label"><i class="fas fa-user-circle"></i> Hesap Bilgileri</h3>
+                    <div class="profil-info-list">
+                        <div class="profil-info-row">
+                            <div class="profil-info-icon" style="background:linear-gradient(135deg,#4318ff,#00d2ff)">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="profil-info-detail">
+                                <span class="profil-info-label">Kullanıcı Adı</span>
+                                <span class="profil-info-value" id="profilInfoUsername">—</span>
+                            </div>
+                        </div>
+                        <div class="profil-info-row">
+                            <div class="profil-info-icon" style="background:linear-gradient(135deg,#36B37E,#00875A)">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="profil-info-detail">
+                                <span class="profil-info-label">Hesap Durumu</span>
+                                <span class="profil-info-value" style="color:#16a34a;">
+                                    <i class="fas fa-circle" style="font-size:0.5rem;vertical-align:middle;margin-right:5px;"></i>Aktif
+                                </span>
+                            </div>
+                        </div>
+                        <div class="profil-info-row">
+                            <div class="profil-info-icon" style="background:linear-gradient(135deg,#FF8B00,#FFAB00)">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="profil-info-detail">
+                                <span class="profil-info-label">Üyelik Tipi</span>
+                                <span class="profil-info-value" id="profilUyelikTipi">Ücretsiz Plan</span>
+                            </div>
+                        </div>
+                        <div class="profil-info-row">
+                            <div class="profil-info-icon" style="background:linear-gradient(135deg,#6554C0,#4318ff)">
+                                <i class="fas fa-code-branch"></i>
+                            </div>
+                            <div class="profil-info-detail">
+                                <span class="profil-info-label">Platform Sürümü</span>
+                                <span class="profil-info-value">MuGöl PORTAL v2.0.0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Üyelik Kodu Kartı -->
+                <div class="content-card uyelik-kodu-card" style="margin-top:1.5rem;">
+                    <h3 class="profil-section-label"><i class="fas fa-key" style="color:#4318ff;"></i> Üyelik Kodu</h3>
+                    <p style="font-size:0.9rem;color:var(--text-muted);font-weight:600;margin:0 0 1rem;">Reklamsız erişim için size verilen özel kodu girin.</p>
+                    <div class="uyelik-kodu-input-wrap">
+                        <input type="text" id="uyelikKoduInput" placeholder="ÖRNEK: MUGOL-2025" maxlength="20" autocomplete="off">
+                        <button class="uyelik-kodu-btn" onclick="uyelikKoduKontrol()">
+                            <i class="fas fa-check"></i> Uygula
+                        </button>
+                    </div>
+                    <div class="uyelik-kodu-msg" id="uyelikKoduMsg"></div>
+                    <p style="font-size:0.8rem;color:var(--text-muted);font-weight:600;margin:12px 0 0;opacity:0.7;">
+                        <i class="fas fa-info-circle"></i> Kod aktive edildikten sonra reklamlar gizlenir.
+                    </p>
+                </div>
+
+                <!-- Şifre Değiştir Kartı -->
+                <div class="content-card" style="margin-top:1.5rem;">
+                    <h3 class="profil-section-label"><i class="fas fa-lock"></i> Şifre Değiştir</h3>
+                    <div style="display:flex; flex-direction:column; gap:1rem; max-width:460px;">
+                        <div class="form-group">
+                            <label for="profil-cur-pass" style="font-size:0.95rem;font-weight:800;color:var(--text-main);">Mevcut Şifre</label>
+                            <div style="position:relative;">
+                                <input type="password" id="profil-cur-pass" class="form-control" placeholder="Mevcut şifreniz">
+                                <button type="button" onclick="toggleProfilPass('profil-cur-pass',this)" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:1.1rem;">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="profil-new-pass" style="font-size:0.95rem;font-weight:800;color:var(--text-main);">Yeni Şifre</label>
+                            <div style="position:relative;">
+                                <input type="password" id="profil-new-pass" class="form-control" placeholder="En az 6 karakter">
+                                <button type="button" onclick="toggleProfilPass('profil-new-pass',this)" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:1.1rem;">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="profil-pass-msg" style="display:none;font-size:0.9rem;font-weight:700;padding:10px 14px;border-radius:12px;"></div>
+                        <button onclick="changeProfilPassword()" class="submit-btn" style="width:auto;padding:14px 28px;font-size:1rem;">
+                            <i class="fas fa-save" aria-hidden="true"></i> Şifreyi Güncelle
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Çıkış Yap Kartı -->
+                <div class="content-card profil-logout-card" style="margin-top:1.5rem;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+                        <div style="display:flex;align-items:center;gap:16px;">
+                            <div style="width:48px;height:48px;border-radius:14px;background:rgba(239,68,68,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i class="fas fa-sign-out-alt" style="color:#ef4444;font-size:1.3rem;"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight:900;font-size:1.05rem;color:var(--text-main);">Çıkış Yap</div>
+                                <div style="font-size:0.9rem;color:var(--text-muted);font-weight:600;">Oturumunuzu güvenle sonlandırın.</div>
+                            </div>
+                        </div>
+                        <button onclick="profilLogout()" class="profil-logout-btn" aria-label="Çıkış Yap">
+                            <i class="fas fa-sign-out-alt"></i> Çıkış Yap
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
             <!-- SAYFA: HAKKINDA -->
             <div id="page-hakkinda" class="page-section" role="region" aria-label="Hakkımızda Sayfası">
                 <div class="content-card premium-card">
@@ -1004,11 +1199,112 @@
 
             <!-- SAYFA: GİZLİLİK -->
             <div id="page-gizlilik" class="page-section" role="region" aria-label="Gizlilik Politikası">
-                <div class="content-card premium-card" style="text-align: center; padding: 5rem 2rem;">
-                    <i class="fas fa-shield-alt" aria-hidden="true" style="font-size: 4rem; color: var(--primary-color); opacity: 0.8; margin-bottom: 1.5rem; filter: drop-shadow(0 10px 15px rgba(67,24,255,0.3));"></i>
-                    <h3 style="font-size: 1.8rem; font-weight: 900; margin-bottom: 0.8rem; color: var(--text-main);">Gizlilik Politikası</h3>
-                    <p style="color: var(--text-muted); font-size: 1.1rem; font-weight: 600;">Kurum içi gizlilik sözleşmeleri ve metinler.</p>
+
+                <!-- Başlık Kartı -->
+                <div class="content-card premium-card" style="text-align: center; padding: 3rem 2rem 2rem;">
+                    <div style="width:72px;height:72px;background:linear-gradient(135deg,#4318ff,#00d2ff);border-radius:20px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:1.2rem;box-shadow:0 12px 28px rgba(67,24,255,0.25);">
+                        <i class="fas fa-shield-alt" style="font-size:2rem;color:#fff;"></i>
+                    </div>
+                    <h2 style="font-size:2rem;font-weight:900;color:var(--text-main);margin:0 0 0.5rem;">Gizlilik Politikası</h2>
+                    <p style="color:var(--text-muted);font-size:1rem;font-weight:600;max-width:480px;margin:0 auto;">Son güncelleme: Nisan 2026 &nbsp;·&nbsp; MuGöl PORTAL v2.0</p>
                 </div>
+
+                <!-- Ana ilke - vurgulu kutu -->
+                <div class="content-card" style="border-left:4px solid #4318ff;background:linear-gradient(135deg,rgba(67,24,255,0.05),rgba(0,210,255,0.05));">
+                    <div style="display:flex;align-items:flex-start;gap:1rem;">
+                        <div style="width:44px;height:44px;background:linear-gradient(135deg,#4318ff,#00d2ff);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i class="fas fa-mobile-alt" style="color:#fff;font-size:1.1rem;"></i>
+                        </div>
+                        <div>
+                            <h3 style="font-size:1.2rem;font-weight:900;color:var(--text-main);margin:0 0 0.5rem;">Verileriniz Tamamen Sizin Cihazınızda Saklanır</h3>
+                            <p style="color:var(--text-muted);font-weight:600;line-height:1.7;margin:0;">
+                                MuGöl PORTAL, girdiğiniz kullanıcı adı, şifre, tercihler ve ayarlar dahil <strong style="color:var(--text-main);">tüm kişisel verilerinizi yalnızca kendi cihazınızın yerel depolama alanında (localStorage / sessionStorage)</strong> tutar. Hiçbir veri bizim sunucularımıza veya üçüncü taraf sistemlere gönderilmez, iletilmez ya da yedeklenmez.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Maddeler -->
+                <div class="content-card">
+                    <h3 style="font-size:1.1rem;font-weight:900;color:var(--text-main);margin:0 0 1.2rem;display:flex;align-items:center;gap:0.6rem;">
+                        <i class="fas fa-list-ul" style="color:#4318ff;"></i> Hangi Veriler, Nerede Saklanır?
+                    </h3>
+                    <div style="display:flex;flex-direction:column;gap:0.8rem;">
+
+                        <div style="display:flex;align-items:flex-start;gap:0.9rem;padding:0.9rem;background:rgba(0,0,0,0.03);border-radius:14px;">
+                            <i class="fas fa-user-circle" style="color:#4318ff;font-size:1.2rem;margin-top:2px;"></i>
+                            <div>
+                                <strong style="color:var(--text-main);display:block;margin-bottom:3px;">Hesap Bilgileri</strong>
+                                <span style="color:var(--text-muted);font-size:0.9rem;font-weight:600;">Kullanıcı adı ve şifre yalnızca tarayıcınızın localStorage alanına kaydedilir. Sunucuya hiçbir zaman gönderilmez.</span>
+                            </div>
+                        </div>
+
+                        <div style="display:flex;align-items:flex-start;gap:0.9rem;padding:0.9rem;background:rgba(0,0,0,0.03);border-radius:14px;">
+                            <i class="fas fa-palette" style="color:#4318ff;font-size:1.2rem;margin-top:2px;"></i>
+                            <div>
+                                <strong style="color:var(--text-main);display:block;margin-bottom:3px;">Tema, Renk ve Dil Tercihleri</strong>
+                                <span style="color:var(--text-muted);font-size:0.9rem;font-weight:600;">Seçtiğiniz koyu/açık tema, renk paleti ve dil ayarı tarayıcı localStorage'ında tutulur. Sayfayı kapatsanız da tercihleriniz korunur.</span>
+                            </div>
+                        </div>
+
+                        <div style="display:flex;align-items:flex-start;gap:0.9rem;padding:0.9rem;background:rgba(0,0,0,0.03);border-radius:14px;">
+                            <i class="fas fa-clock" style="color:#4318ff;font-size:1.2rem;margin-top:2px;"></i>
+                            <div>
+                                <strong style="color:var(--text-main);display:block;margin-bottom:3px;">Oturum Bilgisi</strong>
+                                <span style="color:var(--text-muted);font-size:0.9rem;font-weight:600;">Aktif giriş durumunuz yalnızca sekme açık kaldığı sürece geçerli olan sessionStorage'da tutulur. Tarayıcı kapandığında otomatik silinir.</span>
+                            </div>
+                        </div>
+
+                        <div style="display:flex;align-items:flex-start;gap:0.9rem;padding:0.9rem;background:rgba(0,0,0,0.03);border-radius:14px;">
+                            <i class="fas fa-bell" style="color:#4318ff;font-size:1.2rem;margin-top:2px;"></i>
+                            <div>
+                                <strong style="color:var(--text-main);display:block;margin-bottom:3px;">Bildirim Geçmişi</strong>
+                                <span style="color:var(--text-muted);font-size:0.9rem;font-weight:600;">Hangi bildirimleri okuduğunuza dair bilgi cihazınızdaki localStorage'a kaydedilir. İçerik dışarıya aktarılmaz.</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Güvenlik kartı -->
+                <div class="content-card">
+                    <h3 style="font-size:1.1rem;font-weight:900;color:var(--text-main);margin:0 0 1rem;display:flex;align-items:center;gap:0.6rem;">
+                        <i class="fas fa-lock" style="color:#10b981;"></i> Güvenlik ve Sorumluluk
+                    </h3>
+                    <p style="color:var(--text-muted);font-weight:600;line-height:1.8;margin:0 0 0.8rem;">
+                        Tüm veriler <strong style="color:var(--text-main);">şifreli değil, düz metin olarak</strong> tarayıcı deposunda saklanır. Bu nedenle ortak kullanılan bilgisayarlardan portal'a giriş yapmanız tavsiye edilmez. Hesabınızı silmek veya verilerinizi temizlemek için tarayıcınızın "Site Verilerini Temizle" özelliğini kullanabilirsiniz.
+                    </p>
+                    <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+                        <span style="display:inline-flex;align-items:center;gap:0.4rem;padding:6px 14px;background:rgba(16,185,129,0.1);border-radius:20px;color:#10b981;font-weight:800;font-size:0.85rem;">
+                            <i class="fas fa-check-circle"></i> Sunucu yoktur
+                        </span>
+                        <span style="display:inline-flex;align-items:center;gap:0.4rem;padding:6px 14px;background:rgba(16,185,129,0.1);border-radius:20px;color:#10b981;font-weight:800;font-size:0.85rem;">
+                            <i class="fas fa-check-circle"></i> Veri transferi yoktur
+                        </span>
+                        <span style="display:inline-flex;align-items:center;gap:0.4rem;padding:6px 14px;background:rgba(16,185,129,0.1);border-radius:20px;color:#10b981;font-weight:800;font-size:0.85rem;">
+                            <i class="fas fa-check-circle"></i> Üçüncü taraf paylaşımı yoktur
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Çerez notu -->
+                <div class="content-card">
+                    <h3 style="font-size:1.1rem;font-weight:900;color:var(--text-main);margin:0 0 0.8rem;display:flex;align-items:center;gap:0.6rem;">
+                        <i class="fas fa-cookie-bite" style="color:#f59e0b;"></i> Çerezler (Cookies)
+                    </h3>
+                    <p style="color:var(--text-muted);font-weight:600;line-height:1.8;margin:0;">
+                        MuGöl PORTAL kendi bünyesinde çerez (cookie) kullanmaz. Ancak sayfada gösterilen <strong style="color:var(--text-main);">Google AdSense reklamları</strong>, reklam kişiselleştirme amacıyla Google'ın çerez politikasına göre çerez yerleştirebilir. Bu çerezler Google'ın gizlilik politikası kapsamında yönetilir ve MuGöl PORTAL'ın doğrudan kontrolünde değildir.
+                    </p>
+                </div>
+
+                <!-- İletişim -->
+                <div class="content-card" style="text-align:center;padding:2rem;">
+                    <p style="color:var(--text-muted);font-weight:600;margin:0 0 0.8rem;">Gizlilik politikasıyla ilgili sorularınız için:</p>
+                    <a href="mailto:mugol.education.help@gmail.com" style="display:inline-flex;align-items:center;gap:0.5rem;padding:10px 22px;background:linear-gradient(135deg,#4318ff,#00d2ff);color:#fff;border-radius:14px;font-weight:800;text-decoration:none;font-size:0.95rem;">
+                        <i class="fas fa-envelope"></i> mugol.education.help@gmail.com
+                    </a>
+                </div>
+
             </div>
 
         </main>
@@ -1302,6 +1598,20 @@
 
     <!-- REKLAM ENGELLEYİCİ GEÇİCİ KAPATMA KODU -->
     <script>
+        // Üyelik kodu ile reklamsız mod kontrolü
+        (function() {
+            if (localStorage.getItem('mugol-noads') === 'true') {
+                // Tüm reklam elementlerini anında gizle
+                var style = document.createElement('style');
+                style.textContent = '.adsense-banner-wrap, ins.adsbygoogle, #ad-transition-modal, #adblock-overlay { display: none !important; }';
+                document.head.appendChild(style);
+                // Geçiş reklamı fonksiyonlarını devre dışı bırak
+                window.showAdTransition = function() { return false; };
+                window.startAdCountdown = function() { return false; };
+                window.openAppWithAd = function(url) { window.open(url, '_blank'); };
+            }
+        })();
+
         window.addEventListener('DOMContentLoaded', () => {
             const abOverlay = document.getElementById('adblock-overlay');
             if (abOverlay) {
