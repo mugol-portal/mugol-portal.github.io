@@ -843,6 +843,13 @@ function refreshProfilUI() {
     // Şifre değiştir kartını misafirde gizle
     var passCard = document.getElementById('profilPassCard');
     if (passCard) passCard.style.display = isMisafir ? 'none' : '';
+
+    // Giriş daveti / profil içeriği göster-gizle
+    var girisPanel  = document.getElementById('profil-giris-daveti');
+    var icerikPanel = document.getElementById('profil-icerik');
+    var girisYapildi = !!(sessionStorage.getItem('mugol-session') || localStorage.getItem('mugol-remember-user'));
+    if (girisPanel)  girisPanel.style.display  = girisYapildi ? 'none' : '';
+    if (icerikPanel) icerikPanel.style.display = girisYapildi ? ''     : 'none';
 }
 
 // --- Şifre göster/gizle ---
@@ -868,18 +875,42 @@ window.changeProfilPassword = function() {
         showProfilMsg(msgEl, 'error', '⚠️ Yeni şifre en az 6 karakter olmalı.'); return;
     }
 
-    try {
-        var users = JSON.parse(localStorage.getItem('mugol-users') || '{}');
-        if (users[user] !== curPass.value) {
-            showProfilMsg(msgEl, 'error', '❌ Mevcut şifre yanlış!'); return;
+    var curVal = curPass.value;
+    var newVal = newPass.value;
+
+    function _doPassChange(users) {
+        try {
+            if (users[user] !== curVal) {
+                showProfilMsg(msgEl, 'error', '❌ Mevcut şifre yanlış!'); return;
+            }
+            users[user] = newVal;
+            // Hem cache/localStorage hem Firebase'e yaz
+            if (typeof _saveUsersToCloud === 'function') {
+                _saveUsersToCloud(users);
+            } else {
+                localStorage.setItem('mugol-users', JSON.stringify(users));
+            }
+            curPass.value = '';
+            newPass.value = '';
+            showProfilMsg(msgEl, 'success', '✅ Şifreniz başarıyla güncellendi!');
+        } catch(e) {
+            showProfilMsg(msgEl, 'error', '❌ Bir hata oluştu, tekrar deneyin.');
         }
-        users[user] = newPass.value;
-        localStorage.setItem('mugol-users', JSON.stringify(users));
-        curPass.value = '';
-        newPass.value = '';
-        showProfilMsg(msgEl, 'success', '✅ Şifreniz başarıyla güncellendi!');
-    } catch(e) {
-        showProfilMsg(msgEl, 'error', '❌ Bir hata oluştu, tekrar deneyin.');
+    }
+
+    // Firebase'den güncel kullanıcı listesini al
+    if (typeof _loadUsersFromCloud === 'function') {
+        showProfilMsg(msgEl, 'success', '⏳ Doğrulanıyor...');
+        _loadUsersFromCloud(function(latestUsers) {
+            _doPassChange(latestUsers || {});
+        });
+    } else {
+        try {
+            var users = JSON.parse(localStorage.getItem('mugol-users') || '{}');
+            _doPassChange(users);
+        } catch(e) {
+            showProfilMsg(msgEl, 'error', '❌ Bir hata oluştu, tekrar deneyin.');
+        }
     }
 };
 
@@ -888,14 +919,6 @@ window.profilLogout = function() {
     sessionStorage.removeItem('mugol-session');
     sessionStorage.removeItem('mugol-session-start');
     localStorage.removeItem('mugol-remember-user');
-    var overlay = document.getElementById('auth-overlay');
-    if (overlay) {
-        overlay.classList.add('visible');
-        if (window.MugolAuth) {
-            MugolAuth.updateGreeting();
-            MugolAuth.loadSavedAccounts();
-        }
-    }
     refreshProfilUI();
     var homeNav = document.querySelector('.nav-item[data-target="page-anasayfa"]');
     if (homeNav) homeNav.click();
@@ -1119,4 +1142,271 @@ window.openAppWithAd = function(url, appName, logoSrc) {
             _fbLoadPrefs(function (prefs) { _fbApplyPrefs(prefs); });
         }
     }, 1200);
+})();
+
+// =========================================================
+// 15. MuGöl GAMES ENTEGRASYONU
+//     MuGöl PORTAL içinde MuGöl GAMES oyunlarını gösterir.
+//     Oyunlar yeni sekmede https://mugol-portal.github.io/Mugol.games/
+//     adresinde açılır. Veri bu dosyada tanımlıdır — harici
+//     bir dosyaya bağımlılık yoktur.
+// =========================================================
+(function () {
+    'use strict';
+
+    // -----------------------------------------------------------
+    // OYUN VERİTABANI
+    // Yeni oyun eklemek için sadece bu diziye satır ekleyin.
+    // url: MuGöl GAMES'teki dosya adı (tam URL aşağıda üretilir)
+    // -----------------------------------------------------------
+    var GAMES_BASE_URL = 'https://mugol-portal.github.io/Mugol.games/';
+
+    var MUGOL_GAMES = [
+        { id: 'ok_labirenti',  title: 'Ok Labirenti',      catId: 'puzzle',     catName: 'Zeka',       desc: 'Okları takip ederek doğru çıkışı bul!',                  icon: '🏹', url: 'ok_labirenti.html',     color1: '#6c63ff', color2: '#22d3ae', badge: 'YENİ'    },
+        { id: 'tas_kirma',     title: '3D Stack Ball',      catId: 'action',     catName: 'Aksiyon',    desc: 'Ekrana basılı tut, kuleyi yık, öfke modunu aç!',         icon: '💥', url: 'tas-kirma.html',        color1: '#ff0844', color2: '#ffb199', badge: 'YENİ'    },
+        { id: 'hokey',         title: 'Neon Masa Hokeyi',   catId: 'action',     catName: 'Aksiyon',    desc: 'Neon ışıklar altında yapay zekaya karşı kapış!',         icon: '🏒', url: 'masa-hokeyi.html',       color1: '#d900ff', color2: '#00ffff', badge: 'POPÜLER' },
+        { id: 'kelime_puz',    title: 'Kelime Puzzle',      catId: 'puzzle',     catName: 'Bulmaca',    desc: 'Kozmik uzayda kelimeleri bul, zekanı test et!',          icon: '🔠', url: 'kelime_puzzle.html',    color1: '#6366f1', color2: '#8b5cf6'                  },
+        { id: '2048',          title: '2048 Pro',            catId: 'puzzle',     catName: 'Zeka',       desc: 'Sayıları birleştir, 2048\'e ulaş!',                      icon: '🔢', url: '2048.html',             color1: '#f59e0b', color2: '#fbbf24'                  },
+        { id: 'enerji',        title: 'Enerji Tüpleri',     catId: 'strategy',   catName: 'Strateji',   desc: 'Tüpleri bağla, enerjiyi akıt!',                          icon: '⚡', url: 'enerji-toplari.html',   color1: '#eab308', color2: '#fde047'                  },
+        { id: 'kuantum',       title: 'Kuantum Kalkanı',    catId: 'action',     catName: 'Aksiyon',    desc: 'Kalkanını yönet, düşmanları savuş!',                     icon: '🛡️', url: 'kuantum-kalkani.html',  color1: '#06b6d4', color2: '#67e8f9'                  },
+        { id: 'word_master',   title: 'Word Master',         catId: 'puzzle',     catName: 'Eğitim',     desc: 'Gizli kelimeleri bul, siber dünyanın hakimi ol!',        icon: 'W',  url: 'word-master.html',      color1: '#7c3aed', color2: '#c084fc', isText: true    },
+        { id: 'ucak',          title: 'Uçak Simülasyonu',   catId: 'simulation', catName: 'Simülasyon', desc: '3D kokpite geç, gökyüzünü fethet!',                      icon: '✈️', url: 'ucak-simulasyonu.html', color1: '#0284c7', color2: '#38bdf8'                  },
+        { id: 'block',         title: 'Block Legend',        catId: 'puzzle',     catName: 'Bulmaca',    desc: 'Blokları yerleştir, kombolar yap!',                      icon: '🧩', url: 'block-puzzle.html',     color1: '#d946ef', color2: '#f472b6'                  },
+        { id: 'ninja',         title: 'Fruit Ninja',         catId: 'action',     catName: 'Aksiyon',    desc: 'Bıçaklarını bile, meyveleri kes.',                       icon: '🍉', url: 'fruit-ninja.html',      color1: '#ef4444', color2: '#fca5a5'                  },
+        { id: 'flappy',        title: 'Flappy Bird',         catId: 'action',     catName: 'Beceri',     desc: 'Boruların arasından geç ve rekoru kır.',                 icon: '🐦', url: 'flappy-bird.html',      color1: '#f59e0b', color2: '#fcd34d'                  },
+        { id: 'space',         title: 'Space Shooter',       catId: 'action',     catName: 'Uzay',       desc: 'Galaksiyi düşman istilasından kurtar!',                  icon: '🚀', url: 'space-shooter.html',    color1: '#3b82f6', color2: '#93c5fd'                  },
+        { id: 'stack',         title: 'Stack Tower',         catId: 'puzzle',     catName: 'Zeka',       desc: 'Blokları üst üste diz, kule inşa et.',                   icon: '🏗️', url: 'stack-tower.html',      color1: '#10b981', color2: '#6ee7b7'                  },
+        { id: 'bubble',        title: 'Bubble Shooter',      catId: 'puzzle',     catName: 'Bulmaca',    desc: 'Aynı renk topları eşleştir ve patlat.',                  icon: '🔮', url: 'bubble.html',           color1: '#8b5cf6', color2: '#c4b5fd'                  },
+        { id: 'memory',        title: 'Hafıza Kartları',     catId: 'puzzle',     catName: 'Zeka',       desc: 'Kartları eşleştir, hafızanı zorla.',                     icon: '🃏', url: 'kart-eslestirme.html',  color1: '#14b8a6', color2: '#5eead4'                  },
+        { id: 'snake',         title: 'Yılan Oyunu',         catId: 'action',     catName: 'Klasik',     desc: 'Klasik efsane! Yemi ye, uza.',                           icon: '🐍', url: 'yilan-oyunu.html',      color1: '#22c55e', color2: '#86efac'                  },
+        { id: 'race',          title: 'Araba Yarışı',        catId: 'action',     catName: 'Yarış',      desc: 'Trafikte makas at, rekor kır.',                          icon: '🏎️', url: 'araba.html',            color1: '#ef4444', color2: '#f87171'                  },
+        { id: 'kelime_ust',    title: 'Kelime Üstadı',       catId: 'puzzle',     catName: 'Kelime',     desc: 'Harfleri birleştir, kelime türet.',                      icon: '🔡', url: 'kelime-ustadi.html',    color1: '#f97316', color2: '#fdba74'                  },
+        { id: 'dama',          title: 'Dama Oyunu',          catId: 'strategy',   catName: 'Strateji',   desc: 'Türk daması kurallarıyla rakibini alt et.',              icon: '⚫', url: 'turk-damasi.html',      color1: '#64748b', color2: '#cbd5e1'                  },
+        { id: 'kizma',         title: 'Kızma Birader',       catId: 'strategy',   catName: 'Klasik',     desc: 'Zarlarını at, piyonlarını eve ulaştır.',                 icon: '🎲', url: 'kizma-birader.html',    color1: '#eab308', color2: '#fde047'                  },
+        { id: 'mugolyoner',    title: 'MuGölyoner',          catId: 'puzzle',     catName: 'Bilgi',      desc: 'Kim Milyoner Olmak İster tarzı bilgi yarışması!',        icon: '💰', url: 'mugolyoner.html',       color1: '#ffaa00', color2: '#00d4ff', badge: 'YENİ'    },
+        { id: 'adam_asmaca',   title: 'Adam Asmaca',         catId: 'puzzle',     catName: 'Kelime',     desc: 'Harfleri tahmin et, adamı kurtar!',                      icon: '🪢', url: 'adam-asmaca.html',      color1: '#1e293b', color2: '#38bdf8', badge: 'YENİ'    }
+    ];
+
+    var MUGOL_GAMES_CATS = {
+        'action':     { name: 'Aksiyon',        icon: '⚡', color: '#ef4444' },
+        'puzzle':     { name: 'Zeka & Bulmaca', icon: '🧠', color: '#a855f7' },
+        'strategy':   { name: 'Strateji',       icon: '♟️', color: '#eab308' },
+        'simulation': { name: 'Simülasyon',     icon: '✈️', color: '#0ea5e9' }
+    };
+
+    // -----------------------------------------------------------
+    // CSS — bir kere DOM'a eklenir
+    // -----------------------------------------------------------
+    function _injectStyles() {
+        if (document.getElementById('mugol-games-styles')) return;
+        var style = document.createElement('style');
+        style.id = 'mugol-games-styles';
+        style.textContent = [
+            '.mg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:14px;}',
+            '.mg-card{background:var(--bg-card,rgba(24,24,27,.65));border-radius:18px;overflow:hidden;',
+            'cursor:pointer;border:1px solid rgba(255,255,255,.06);transition:transform .3s,box-shadow .3s;',
+            'position:relative;-webkit-tap-highlight-color:transparent;}',
+            '.mg-card:hover{transform:translateY(-6px);box-shadow:0 14px 30px rgba(0,0,0,.4);}',
+            '.mg-card:active{transform:translateY(-2px) scale(.97);}',
+            '.mg-thumb{height:90px;display:flex;align-items:center;justify-content:center;}',
+            '.mg-info{padding:10px 10px 12px;}',
+            '.mg-title{font-size:.88rem;font-weight:700;color:var(--text-main,#f8fafc);',
+            'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}',
+            '.mg-cat{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.4px;}',
+            '.mg-badge{position:absolute;top:8px;left:8px;background:#f43f5e;color:#fff;',
+            'font-size:.6rem;font-weight:800;padding:3px 8px;border-radius:8px;letter-spacing:.8px;}',
+            '.mg-filter-wrap{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}',
+            '.mg-cat-btn{background:rgba(255,255,255,.04);color:var(--text-sub,#94a3b8);',
+            'border:1px solid rgba(255,255,255,.07);padding:7px 14px;border-radius:20px;',
+            'font-size:.82rem;font-weight:600;cursor:pointer;transition:all .25s;white-space:nowrap;',
+            'font-family:inherit;}',
+            '.mg-cat-btn:hover{background:rgba(255,255,255,.1);color:var(--text-main,#f8fafc);}',
+            '.mg-cat-btn.active{background:var(--primary,#3b82f6);border-color:var(--primary,#3b82f6);color:#fff;}',
+            '.mg-search{width:100%;padding:12px 16px 12px 44px;border-radius:16px;',
+            'border:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.35);color:var(--text-main,#f8fafc);',
+            'font-size:.95rem;box-sizing:border-box;outline:none;font-family:inherit;margin-bottom:14px;}',
+            '.mg-search:focus{border-color:rgba(59,130,246,.6);}',
+            '.mg-search-wrap{position:relative;}',
+            '.mg-search-wrap i{position:absolute;left:16px;top:50%;transform:translateY(-50%);',
+            'color:var(--text-sub,#94a3b8);pointer-events:none;}',
+            '.mg-header-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}',
+            '.mg-section-title{font-size:1.1rem;font-weight:800;color:var(--text-main,#f8fafc);',
+            'display:flex;align-items:center;gap:10px;}',
+            '.mg-section-title::before{content:"";display:block;width:4px;height:20px;',
+            'background:var(--primary,#3b82f6);border-radius:4px;}',
+            '.mg-count{font-size:.85rem;color:var(--text-sub,#94a3b8);}',
+            '.mg-empty{grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--text-sub,#94a3b8);}',
+            '.mg-open-btn{display:inline-flex;align-items:center;gap:8px;margin-top:20px;',
+            'background:var(--primary,#3b82f6);color:#fff;border:none;padding:12px 24px;',
+            'border-radius:30px;font-weight:700;font-size:.9rem;cursor:pointer;font-family:inherit;',
+            'transition:all .25s;text-decoration:none;}',
+            '.mg-open-btn:hover{opacity:.85;transform:translateY(-2px);}',
+            '.mg-banner{background:linear-gradient(135deg,rgba(59,130,246,.12),rgba(138,43,226,.08));',
+            'border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:20px;margin-bottom:24px;',
+            'display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}',
+            '.mg-banner-text h3{font-size:1rem;font-weight:800;color:var(--text-main,#f8fafc);margin-bottom:4px;}',
+            '.mg-banner-text p{font-size:.83rem;color:var(--text-sub,#94a3b8);}'
+        ].join('');
+        document.head.appendChild(style);
+    }
+
+    // -----------------------------------------------------------
+    // KAT FİLTRE BUTONLARI
+    // -----------------------------------------------------------
+    function _buildFilters(containerId, activeCat) {
+        var wrap = document.getElementById(containerId);
+        if (!wrap) return;
+        var html = '<button class="mg-cat-btn' + (activeCat === 'all' ? ' active' : '') +
+                   '" onclick="_mgFilter(this,\'all\')">Tümü (' + MUGOL_GAMES.length + ')</button>';
+        Object.keys(MUGOL_GAMES_CATS).forEach(function (id) {
+            var cat = MUGOL_GAMES_CATS[id];
+            var cnt = MUGOL_GAMES.filter(function (g) { return g.catId === id; }).length;
+            html += '<button class="mg-cat-btn' + (activeCat === id ? ' active' : '') +
+                    '" onclick="_mgFilter(this,\'' + id + '\')">' +
+                    cat.icon + ' ' + cat.name + ' (' + cnt + ')</button>';
+        });
+        wrap.innerHTML = html;
+    }
+
+    // -----------------------------------------------------------
+    // OYUN KARTLARI
+    // -----------------------------------------------------------
+    function _buildCard(game) {
+        var fullUrl  = GAMES_BASE_URL + game.url;
+        var iconSt   = game.isText
+            ? 'font-family:"Outfit",sans-serif;font-weight:900;font-size:2rem;color:#fff;'
+            : 'font-size:2.2rem;';
+        var badgeHTML = game.badge ? '<div class="mg-badge">' + game.badge + '</div>' : '';
+        // Portal'da openAppWithAd varsa onu kullan, yoksa yeni sekme
+        var clickHandler = 'typeof openAppWithAd==="function"?' +
+            'openAppWithAd(\'' + fullUrl + '\',\'' + game.title.replace(/'/g, "\\'") + '\',\'\')' +
+            ':window.open(\'' + fullUrl + '\',\'_blank\',\'noopener,noreferrer\')';
+        return '<div class="mg-card" onclick="' + clickHandler + '" title="' + game.desc.replace(/"/g, '&quot;') + '">' +
+                    badgeHTML +
+                    '<div class="mg-thumb" style="background:linear-gradient(135deg,' + game.color1 + ',' + game.color2 + ');">' +
+                        '<span style="' + iconSt + '">' + game.icon + '</span>' +
+                    '</div>' +
+                    '<div class="mg-info">' +
+                        '<div class="mg-title">' + game.title + '</div>' +
+                        '<div class="mg-cat" style="color:' + game.color2 + '">' + game.catName + '</div>' +
+                    '</div>' +
+               '</div>';
+    }
+
+    // -----------------------------------------------------------
+    // GRID RENDER
+    // -----------------------------------------------------------
+    function _render(gridId, countId, searchQ, catFilter) {
+        var grid = document.getElementById(gridId);
+        if (!grid) return;
+        var list = MUGOL_GAMES;
+        if (catFilter && catFilter !== 'all') {
+            list = list.filter(function (g) { return g.catId === catFilter; });
+        }
+        if (searchQ) {
+            var q = searchQ.toLowerCase();
+            list = list.filter(function (g) {
+                return g.title.toLowerCase().indexOf(q) !== -1 ||
+                       g.catName.toLowerCase().indexOf(q) !== -1;
+            });
+        }
+        var countEl = document.getElementById(countId);
+        if (countEl) countEl.textContent = list.length + ' Oyun';
+        if (list.length === 0) {
+            grid.innerHTML = '<div class="mg-empty"><i class="fa-regular fa-face-frown" style="font-size:2rem;opacity:.4;display:block;margin-bottom:10px;"></i>Oyun bulunamadı.</div>';
+            return;
+        }
+        grid.innerHTML = list.map(_buildCard).join('');
+    }
+
+    // -----------------------------------------------------------
+    // GLOBAL CALLBACK'LER (onclick'ten çağrılır)
+    // -----------------------------------------------------------
+    window._mgFilter = function (btn, catId) {
+        // Hangi panel içindeyiz bul
+        var wrap = btn.closest ? btn.closest('.mg-filter-wrap') : btn.parentNode;
+        if (wrap) {
+            wrap.querySelectorAll('.mg-cat-btn').forEach(function (b) { b.classList.remove('active'); });
+        }
+        btn.classList.add('active');
+        // Aynı konteynerin data-gridid'ini oku
+        var panel = wrap ? (wrap.closest ? wrap.closest('[data-mg-panel]') : null) : null;
+        var gridId  = panel ? panel.getAttribute('data-mg-grid')  : 'mgGamesGrid';
+        var countId = panel ? panel.getAttribute('data-mg-count') : 'mgGamesCount';
+        var searchId = panel ? panel.getAttribute('data-mg-search') : 'mgGamesSearch';
+        var sq = document.getElementById(searchId);
+        _render(gridId, countId, sq ? sq.value.trim() : '', catId);
+    };
+
+    // -----------------------------------------------------------
+    // PANEL BAŞLATICI — id="page-oyunlar" veya data-mg-panel
+    // -----------------------------------------------------------
+    function _initPanel(panel) {
+        _injectStyles();
+        var gridId   = panel.getAttribute('data-mg-grid')   || 'mgGamesGrid';
+        var countId  = panel.getAttribute('data-mg-count')  || 'mgGamesCount';
+        var filterId = panel.getAttribute('data-mg-filter') || 'mgGamesFilter';
+        var searchId = panel.getAttribute('data-mg-search') || 'mgGamesSearch';
+
+        // Filtreler
+        _buildFilters(filterId, 'all');
+
+        // İlk render
+        _render(gridId, countId, '', 'all');
+
+        // Arama bağlantısı
+        var inp = document.getElementById(searchId);
+        if (inp && !inp._mgBound) {
+            inp._mgBound = true;
+            inp.addEventListener('input', function () {
+                var activeCat = 'all';
+                var fw = document.getElementById(filterId);
+                if (fw) {
+                    var ab = fw.querySelector('.mg-cat-btn.active');
+                    if (ab) activeCat = ab.getAttribute('onclick').match(/'([^']+)'\)$/)[1];
+                }
+                _render(gridId, countId, this.value.trim(), activeCat);
+            });
+        }
+    }
+
+    // -----------------------------------------------------------
+    // NAV CLICK İZLEYİCİ — "page-oyunlar" sekmesi açılınca çalışır
+    // -----------------------------------------------------------
+    function _watchNav() {
+        document.querySelectorAll('.nav-item[data-target]').forEach(function (item) {
+            item.addEventListener('click', function () {
+                var targetId = item.getAttribute('data-target');
+                setTimeout(function () {
+                    var page = document.getElementById(targetId);
+                    if (page && (page.hasAttribute('data-mg-panel') || targetId === 'page-oyunlar')) {
+                        if (!page._mgInited) {
+                            page._mgInited = true;
+                            _initPanel(page);
+                        }
+                    }
+                }, 60);
+            });
+        });
+    }
+
+    // -----------------------------------------------------------
+    // BAŞLANGIÇ
+    // -----------------------------------------------------------
+    function _boot() {
+        _watchNav();
+        // Sayfa yüklendiğinde "page-oyunlar" zaten aktifse hemen başlat
+        var activePage = document.querySelector('.page-section.active[id="page-oyunlar"], [data-mg-panel].page-section.active');
+        if (activePage && !activePage._mgInited) {
+            activePage._mgInited = true;
+            _initPanel(activePage);
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', _boot);
+    } else {
+        _boot();
+    }
+
 })();

@@ -66,7 +66,7 @@
     
     <link rel="stylesheet" href="style.css">
 
-    <!-- v2.0.0 — GELİŞTİRİLMİŞ TASARIM STİLLERİ -->
+    <!-- v3.0 — GÜNCELLENMİŞ TASARIM STİLLERİ -->
     <style>
         .adsense-banner-wrap {
             width: 100%;
@@ -76,7 +76,7 @@
             background: transparent;
         }
 
-        /* ── Glassmorphism Header v2 ── */
+        /* ── Glassmorphism Header v3 ── */
         .header {
             backdrop-filter: blur(28px) saturate(200%) !important;
             -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
@@ -85,61 +85,64 @@
             box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04), inset 0 -1px 0 rgba(255,255,255,0.06);
         }
 
-        /* ── Category Card v2 ── */
+        /* ── Category Card v3 ── */
         .category-card {
-            border-radius: 22px;
-            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), 
-                        box-shadow 0.3s ease, 
-                        border-color 0.3s ease !important;
-            border: 1px solid rgba(150, 150, 150, 0.1);
+            border-radius: 20px;
+            transition: transform 0.28s cubic-bezier(0.25, 0.8, 0.25, 1),
+                        box-shadow 0.28s ease,
+                        border-color 0.28s ease !important;
+            border: 1px solid var(--border-color);
         }
         .category-card:hover {
-            transform: translateY(-7px) scale(1.025);
-            box-shadow: 0 20px 40px rgba(67, 24, 255, 0.12), 0 4px 12px rgba(0,0,0,0.06);
-            border-color: rgba(67, 24, 255, 0.35);
+            /* Azaltıldı: -7→-4 px — üste taşma önlendi */
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(67, 24, 255, 0.1), 0 4px 12px rgba(0,0,0,0.05);
+            border-color: rgba(67, 24, 255, 0.22);
         }
         .category-card .cat-icon-wrap {
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-                        filter 0.3s ease,
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
                         box-shadow 0.3s ease;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
         .category-card:hover .cat-icon-wrap {
-            transform: scale(1.18) rotate(8deg);
-            filter: brightness(1.1) drop-shadow(0 8px 16px rgba(67,24,255,0.3));
+            transform: scale(1.12) rotate(-6deg);
+            filter: brightness(1.05) drop-shadow(0 6px 12px rgba(67,24,255,0.25));
         }
 
-        /* ── App Card v2 ── */
+        /* ── App Card v3 ── */
         .app-card {
-            border-radius: 22px;
-            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-            border: 1px solid rgba(150, 150, 150, 0.1);
-            overflow: hidden;
+            border-radius: 20px;
+            /* Transition tek eksende — daha öngörülebilir */
+            transition: transform 0.28s cubic-bezier(0.25, 0.8, 0.25, 1),
+                        box-shadow 0.28s ease,
+                        border-color 0.28s ease !important;
+            border: 1px solid var(--border-color);
+            overflow: hidden;        /* İç taşma engellendi */
         }
-        [data-theme="dark"] .app-card, 
+        [data-theme="dark"] .app-card,
         [data-theme="dark"] .category-card {
-            border-color: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.07);
         }
         .app-card:hover {
-            transform: translateY(-8px) scale(1.015);
-            box-shadow: 0 24px 48px rgba(67, 24, 255, 0.14), 0 6px 16px rgba(0,0,0,0.05);
-            border-color: rgba(67, 24, 255, 0.4);
+            /* Azaltıldı: -8→-5 px, scale kaldırıldı — taşma durdu */
+            transform: translateY(-5px);
+            box-shadow: 0 14px 36px rgba(67, 24, 255, 0.12), 0 4px 12px rgba(0,0,0,0.05);
+            border-color: rgba(67, 24, 255, 0.22);
         }
 
-        /* ── Welcome Banner v2 ── */
+        /* ── Welcome Banner v3 ── */
         .welcome-banner--compact {
-            border-radius: 24px;
+            border-radius: 22px;
             background: linear-gradient(135deg, #4318ff 0%, #2979ff 40%, #00b4d8 80%, #00d2ff 100%) !important;
             background-size: 300% 300% !important;
             border: none !important;
-            box-shadow: 0 12px 32px rgba(67, 24, 255, 0.3), 
-                        0 2px 8px rgba(0,210,255,0.2),
+            box-shadow: 0 12px 32px rgba(67, 24, 255, 0.28),
+                        0 2px 8px rgba(0,210,255,0.18),
                         inset 0 1px 0 rgba(255,255,255,0.2) !important;
             color: #ffffff !important;
         }
-        .welcome-banner--compact h1, 
-        .welcome-banner--compact p, 
-        .welcome-banner--compact .time, 
+        .welcome-banner--compact h1,
+        .welcome-banner--compact p,
+        .welcome-banner--compact .time,
         .welcome-banner--compact .date {
             color: #ffffff !important;
         }
@@ -151,16 +154,16 @@
             box-shadow: 0 8px 24px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.3) !important;
         }
 
-        /* ── İletişim Butonları v2 ── */
+        /* ── İletişim Butonları v3 ── */
         .contact-pill-links a {
-            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+            transition: all 0.28s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
         }
         .contact-pill-links a:hover {
-            transform: translateY(-4px) scale(1.04) !important;
-            box-shadow: 0 14px 32px rgba(67, 24, 255, 0.45) !important;
+            transform: translateY(-3px) scale(1.03) !important;
+            box-shadow: 0 10px 28px rgba(67, 24, 255, 0.38) !important;
         }
 
-        /* ── Tumuu Grid — 4 Kolon (Geniş Ekran) ── */
+        /* ── Tumuu Grid — Çok Kolon (Geniş Ekran) ── */
         @media (min-width: 900px) {
             .tumuu-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 14px; }
         }
@@ -168,8 +171,8 @@
             .tumuu-grid { grid-template-columns: repeat(5, 1fr) !important; }
         }
 
-        /* ── Genel Hover Geçiş Hızlandırma ── */
-        .nav-item, .tumuu-tile, .launch-btn, .hamburger-btn {
+        /* ── Performans ipuçları ── */
+        .app-card, .category-card, .tumuu-tile, .launch-btn {
             will-change: transform;
         }
 
@@ -1028,6 +1031,22 @@
             <!-- SAYFA: PROFİL -->
             <div id="page-profil" class="page-section" role="region" aria-label="Profilim">
 
+                <!-- GİRİŞ YAPILMAMIŞ: Giriş Daveti Kartı -->
+                <div id="profil-giris-daveti" class="content-card" style="display:none; margin-bottom:1.5rem; text-align:center; padding:2.2rem 1.5rem;">
+                    <div style="width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,#4318ff,#00d2ff);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;box-shadow:0 8px 24px rgba(67,24,255,0.25);">
+                        <i class="fas fa-user-lock" style="color:#fff;font-size:1.6rem;"></i>
+                    </div>
+                    <h3 style="font-weight:900;font-size:1.15rem;color:var(--text-main);margin:0 0 0.5rem;">Hesabınıza Giriş Yapın</h3>
+                    <p style="color:var(--text-muted);font-weight:600;font-size:0.9rem;margin:0 0 1.4rem;line-height:1.6;">Profil bilgilerinizi görmek, üyelik kodunuzu girmek ve kişisel tercihlerinizi kaydetmek için giriş yapın.</p>
+                    <button onclick="MugolAuth.openProfileLogin()" style="display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border:none;border-radius:16px;background:linear-gradient(135deg,#4318ff,#00d2ff);color:#fff;font-weight:800;font-size:1rem;cursor:pointer;font-family:inherit;box-shadow:0 6px 20px rgba(67,24,255,0.3);transition:transform 0.2s,box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 10px 28px rgba(67,24,255,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow='0 6px 20px rgba(67,24,255,0.3)'">
+                        <i class="fas fa-sign-in-alt"></i> Giriş Yap / Kayıt Ol
+                    </button>
+                    <p style="margin:1.2rem 0 0;font-size:0.8rem;color:var(--text-muted);font-weight:600;opacity:0.7;"><i class="fas fa-info-circle"></i> Giriş isteğe bağlıdır — portali giriş yapmadan da kullanabilirsiniz.</p>
+                </div>
+
+                <!-- GİRİŞ YAPILMIŞ: Profil İçeriği -->
+                <div id="profil-icerik">
+
                 <!-- Profil Hero Kartı -->
                 <div class="profil-hero-card content-card premium-card">
                     <div class="profil-hero-bg" aria-hidden="true"></div>
@@ -1174,6 +1193,8 @@
                         </button>
                     </div>
                 </div>
+
+                </div><!-- /profil-icerik -->
 
             </div>
 

@@ -460,12 +460,16 @@ function _getUsers() {
             if (session) {
                 var welcome = document.getElementById('welcomeTitle');
                 if (welcome) welcome.textContent = 'Hoş Geldin, ' + session + '! 👋';
-                return false; 
             }
+            // Giriş artık profil sayfasında isteğe bağlı — overlay açılmaz
+            return false;
+        },
+
+        // Profil sayfasındaki giriş panelinden çağrılır
+        openProfileLogin: function () {
             document.getElementById('auth-overlay').classList.add('visible');
             this.updateGreeting();
             this.loadSavedAccounts();
-            return true;
         }
     };
 
