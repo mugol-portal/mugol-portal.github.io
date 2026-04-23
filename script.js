@@ -1,4 +1,85 @@
 // =========================================================
+// FIREBASE VERİ YARDIMCILARI
+// auth.js'deki _db ve _fbReady değişkenlerini kullanır
+// =========================================================
+function _fbGetUser() {
+    return sessionStorage.getItem('mugol-session') ||
+           localStorage.getItem('mugol-remember-user') || null;
+}
+
+function _fbSafePath(user) {
+    // Firebase path için özel karakterleri temizle
+    return (user || '').replace(/[.#$\[\]]/g, '_');
+}
+
+function _fbSetPref(field, value) {
+    var user = _fbGetUser();
+    if (!user || typeof _fbReady === 'undefined' || !_fbReady || !_db) return;
+    var ref = _db.ref('mugol/prefs/' + _fbSafePath(user) + '/' + field);
+    if (value === null || value === undefined) {
+        ref.remove().catch(function(e) { console.warn('[MuGöl DB] Silme hatası:', e.message); });
+    } else {
+        ref.set(value).catch(function(e) { console.warn('[MuGöl DB] Yazma hatası:', e.message); });
+    }
+}
+
+function _fbLoadPrefs(callback) {
+    var user = _fbGetUser();
+    if (!user || typeof _fbReady === 'undefined' || !_fbReady || !_db) {
+        if (callback) callback(null); return;
+    }
+    _db.ref('mugol/prefs/' + _fbSafePath(user)).once('value')
+        .then(function(snap) { if (callback) callback(snap.val() || {}); })
+        .catch(function(e) {
+            console.warn('[MuGöl DB] Yükleme hatası:', e.message);
+            if (callback) callback(null);
+        });
+}
+
+function _fbApplyPrefs(prefs) {
+    if (!prefs) return;
+    var user = _fbGetUser();
+    // Tema
+    if (prefs.theme) {
+        document.documentElement.setAttribute('data-theme', prefs.theme);
+        localStorage.setItem('mugol-theme', prefs.theme);
+        var ts = document.getElementById('themeSwitch');
+        if (ts) ts.checked = prefs.theme === 'dark';
+    }
+    // Renk
+    if (prefs.color) {
+        document.documentElement.style.setProperty('--primary-color', prefs.color);
+        localStorage.setItem('mugol-primary-color', prefs.color);
+    }
+    // Dil
+    if (prefs.lang) {
+        localStorage.setItem('mugol-lang', prefs.lang);
+        if (typeof applyLanguage === 'function') applyLanguage(prefs.lang);
+    }
+    // Bildirim okuma geçmişi
+    if (prefs.readNotifs && Array.isArray(prefs.readNotifs)) {
+        localStorage.setItem('mugol-read-notifs', JSON.stringify(prefs.readNotifs));
+        if (typeof readNotifs !== 'undefined') {
+            readNotifs = prefs.readNotifs;
+        }
+    }
+    // Reklamsız durum
+    if (user && prefs.noads) {
+        localStorage.setItem('mugol-noads-' + user, prefs.noads);
+    }
+    if (user && prefs.noadsKod) {
+        localStorage.setItem('mugol-noads-kod-' + user, prefs.noadsKod);
+    }
+    // Giriş zamanı (varsa koru, yoksa yaz)
+    if (user && prefs.loginTime) {
+        var ltKey = 'mugol-login-time-' + user;
+        if (!localStorage.getItem(ltKey)) {
+            localStorage.setItem(ltKey, prefs.loginTime);
+        }
+    }
+}
+
+// =========================================================
 // DEĞİŞKENLER VE DOM ELEMENTLERİ
 // =========================================================
 const navItems = document.querySelectorAll('.nav-item');
@@ -7,6 +88,7 @@ const sectionTitle = document.getElementById('sectionTitle');
 const hamburgerBtn = document.getElementById('hamburgerBtn');
 const sidebar = document.getElementById('sidebar');
 const sidebarOverlay = document.getElementById('sidebarOverlay');
+const mainContent = document.querySelector('.main-content');
 
 // =========================================================
 // 1. MENÜ GEÇİŞ SİSTEMİ (Tıklama ve Klavye Desteği)
@@ -93,6 +175,7 @@ if (themeSwitch) {
         const theme = e.target.checked ? 'dark' : 'light';
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('mugol-theme', theme);
+        _fbSetPref('theme', theme);
     });
 }
 
@@ -347,7 +430,6 @@ document.querySelectorAll('.category-card').forEach(catCard => {
 // 9. AŞAĞI ÇEKME YENİLE (PULL TO REFRESH)
 // =========================================================
 (function () {
-    const mainContent = document.querySelector('.main-content');
     const ptrIndicator = document.getElementById('ptr-indicator');
     const ptrLabel = document.getElementById('ptr-label');
     if (!mainContent || !ptrIndicator) return;
@@ -428,7 +510,8 @@ function renderNotifications() {
 window.markNotifRead = function(id) {
     if (!readNotifs.includes(id)) {
         readNotifs.push(id);
-        localStorage.setItem('read-notifs', JSON.stringify(readNotifs));
+        localStorage.setItem('mugol-read-notifs', JSON.stringify(readNotifs));
+        _fbSetPref('readNotifs', readNotifs);
         renderNotifications();
     }
 };
@@ -450,6 +533,7 @@ if (notifMarkAll) {
     notifMarkAll.addEventListener('click', () => {
         readNotifs = NOTIFICATIONS.map(n => n.id);
         localStorage.setItem('mugol-read-notifs', JSON.stringify(readNotifs));
+        _fbSetPref('readNotifs', readNotifs);
         renderNotifications();
     });
 }
@@ -502,6 +586,7 @@ document.querySelectorAll('.color-swatch').forEach(swatch => {
         const color = swatch.getAttribute('data-color');
         document.documentElement.style.setProperty('--primary-color', color);
         localStorage.setItem('mugol-primary-color', color);
+        _fbSetPref('color', color);
     });
 });
 
@@ -527,6 +612,7 @@ function applyLanguage(lang) {
         btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
     });
     localStorage.setItem('mugol-lang', lang);
+    _fbSetPref('lang', lang);
 }
 
 // Dil butonları click
@@ -566,6 +652,54 @@ function getActiveUser() {
            localStorage.getItem('mugol-remember-user') || '';
 }
 
+// --- Yardımcı: kullanıcıya özel noads key ---
+function noadsKey(user) {
+    return user ? 'mugol-noads-' + user : 'mugol-noads';
+}
+function noadsKodKey(user) {
+    return user ? 'mugol-noads-kod-' + user : 'mugol-noads-kod';
+}
+function userHasNoads(user) {
+    if (!user) return false;
+    // Per-user key (yeni sistem)
+    if (localStorage.getItem(noadsKey(user)) === 'true') return true;
+    // Eski global key — sadece aynı kullanıcıysa say
+    var savedUser = localStorage.getItem('mugol-remember-user');
+    return (savedUser === user) && localStorage.getItem('mugol-noads') === 'true';
+}
+function userNoadsKod(user) {
+    if (!user) return '';
+    return localStorage.getItem(noadsKodKey(user)) ||
+           (localStorage.getItem('mugol-remember-user') === user ? localStorage.getItem('mugol-noads-kod') : '') || '';
+}
+
+// --- Giriş/çıkış zamanını kaydet ---
+function kaydetGirisZamani(user) {
+    if (!user) return;
+    var key = 'mugol-login-time-' + user;
+    if (!localStorage.getItem(key)) {
+        var _loginTs = new Date().toISOString();
+        localStorage.setItem(key, _loginTs);
+        _fbSetPref('loginTime', _loginTs);
+    }
+    sessionStorage.setItem('mugol-session-start', Date.now());
+}
+function formatTarih(isoStr) {
+    if (!isoStr) return '—';
+    try {
+        var d = new Date(isoStr);
+        return d.toLocaleDateString('tr-TR', {day:'2-digit',month:'long',year:'numeric'});
+    } catch(e) { return '—'; }
+}
+function formatOturumSuresi() {
+    var start = parseInt(sessionStorage.getItem('mugol-session-start') || '0');
+    if (!start) return '—';
+    var diff = Math.floor((Date.now() - start) / 1000);
+    if (diff < 60) return diff + ' saniye';
+    if (diff < 3600) return Math.floor(diff/60) + ' dakika';
+    return Math.floor(diff/3600) + ' saat ' + Math.floor((diff%3600)/60) + ' dk';
+}
+
 // --- Yardımcı: isim → avatar rengi ---
 function avatarColor(name) {
     var palette = ['#6366f1','#ec4899','#f59e0b','#10b981','#3b82f6','#8b5cf6','#ef4444','#00b4d8'];
@@ -601,6 +735,8 @@ function refreshProfilUI() {
     var display = user || 'Misafir';
     var initial = display.charAt(0).toUpperCase();
     var color   = avatarColor(display);
+    var isMisafir = display.startsWith('Misafir_') || display === 'Misafir';
+    var noads   = userHasNoads(user);
 
     // Sidebar küçük avatar
     var sidebarAvatar = document.getElementById('sidebarProfilAvatar');
@@ -609,9 +745,24 @@ function refreshProfilUI() {
         sidebarAvatar.style.background = 'linear-gradient(135deg,' + color + ',#00d2ff)';
     }
 
-    // Sidebar alt kart
+    // Sidebar alt kart — kullanıcı adı + plan
     var sidebarProfileAvatar = document.querySelector('.sidebar-profile-avatar');
     if (sidebarProfileAvatar) sidebarProfileAvatar.textContent = initial;
+    var sidebarName = document.getElementById('sidebarProfileName');
+    if (sidebarName) sidebarName.textContent = display;
+    var sidebarPlan = document.getElementById('sidebarProfilePlan');
+    if (sidebarPlan) {
+        if (noads) {
+            sidebarPlan.innerHTML = '<i class="fas fa-star" style="color:#f59e0b;font-size:0.65rem;"></i> Reklamsız Plan';
+            sidebarPlan.style.color = '#f59e0b';
+        } else if (isMisafir) {
+            sidebarPlan.innerHTML = '<i class="fas fa-bolt" style="font-size:0.65rem;"></i> Misafir';
+            sidebarPlan.style.color = '';
+        } else {
+            sidebarPlan.innerHTML = 'Ücretsiz Plan';
+            sidebarPlan.style.color = '';
+        }
+    }
 
     // Büyük avatar
     var bigAvatar = document.getElementById('profilAvatarBig');
@@ -626,41 +777,72 @@ function refreshProfilUI() {
     // Rozet
     var badgeEl = document.getElementById('profilBadge');
     if (badgeEl) {
-        if (display.startsWith('Misafir_') || display === 'Misafir') {
+        if (isMisafir) {
             badgeEl.innerHTML = '<i class="fas fa-bolt"></i> Misafir';
             badgeEl.style.cssText = 'background:rgba(255,171,0,0.2);border:1px solid rgba(255,171,0,0.35);color:#d97706;';
+        } else if (noads) {
+            badgeEl.innerHTML = '<i class="fas fa-star"></i> Premium Üye';
+            badgeEl.style.cssText = 'background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.35);color:#d97706;';
         } else {
             badgeEl.innerHTML = '<i class="fas fa-check-circle"></i> Kayıtlı Üye';
             badgeEl.style.cssText = '';
         }
     }
 
-    // Katılım metni
+    // Katılım tarihi
     var joinedEl = document.getElementById('profilJoinedText');
-    if (joinedEl) joinedEl.textContent = user ? 'MuGöl PORTAL üyesi' : 'Lütfen giriş yapın';
+    if (joinedEl) {
+        if (!user) {
+            joinedEl.textContent = 'Lütfen giriş yapın';
+        } else {
+            var loginTime = localStorage.getItem('mugol-login-time-' + user);
+            joinedEl.textContent = loginTime
+                ? ('Kayıt: ' + formatTarih(loginTime))
+                : 'MuGöl PORTAL üyesi';
+        }
+    }
+
+    // Oturum süresi
+    var oturumEl = document.getElementById('profilOturumSuresi');
+    if (oturumEl) oturumEl.textContent = user ? formatOturumSuresi() : '—';
+
+    // Son giriş tarihi (ayrı alan)
+    var sonGirisEl = document.getElementById('profilSonGiris');
+    if (sonGirisEl) {
+        var lt = user ? localStorage.getItem('mugol-login-time-' + user) : null;
+        sonGirisEl.textContent = lt ? formatTarih(lt) : '—';
+    }
 
     // Üyelik tipi
-    var noads = localStorage.getItem('mugol-noads') === 'true';
     var tipEl = document.getElementById('profilUyelikTipi');
     if (tipEl) {
         tipEl.innerHTML = noads
             ? 'Reklamsız Plan <span class="reklamlama-badge"><i class="fas fa-star"></i> Aktif</span>'
-            : 'Ücretsiz Plan';
+            : (isMisafir ? 'Misafir (Sınırlı)' : 'Ücretsiz Plan');
     }
 
-    // Üyelik kodu input
-    var aktifKod = localStorage.getItem('mugol-noads-kod');
+    // Üyelik kodu input + iptal butonu
+    var aktifKod = user ? userNoadsKod(user) : '';
     var koduInp  = document.getElementById('uyelikKoduInput');
+    var kodIptalBtn = document.getElementById('uyelikKoduIptalBtn');
     if (koduInp) {
         if (aktifKod) {
             koduInp.value = aktifKod;
             koduInp.disabled = true;
             koduInp.style.opacity = '0.6';
         } else {
+            koduInp.value = '';
             koduInp.disabled = false;
             koduInp.style.opacity = '1';
         }
     }
+    if (kodIptalBtn) {
+        kodIptalBtn.style.display = (aktifKod && user) ? 'inline-flex' : 'none';
+    }
+
+    // Şifre değiştir kartını misafirde gizle
+    var passCard = document.getElementById('profilPassCard');
+    if (passCard) passCard.style.display = isMisafir ? 'none' : '';
 }
 
 // --- Şifre göster/gizle ---
@@ -704,6 +886,8 @@ window.changeProfilPassword = function() {
 // --- Çıkış yap ---
 window.profilLogout = function() {
     sessionStorage.removeItem('mugol-session');
+    sessionStorage.removeItem('mugol-session-start');
+    localStorage.removeItem('mugol-remember-user');
     var overlay = document.getElementById('auth-overlay');
     if (overlay) {
         overlay.classList.add('visible');
@@ -712,17 +896,52 @@ window.profilLogout = function() {
             MugolAuth.loadSavedAccounts();
         }
     }
+    refreshProfilUI();
     var homeNav = document.querySelector('.nav-item[data-target="page-anasayfa"]');
     if (homeNav) homeNav.click();
 };
 
-// --- Profil sayfası açıldığında güncelle ---
-var _profilNavItem = document.querySelector('.nav-item[data-target="page-profil"]');
-if (_profilNavItem) _profilNavItem.addEventListener('click', refreshProfilUI);
+// --- Üyelik kodunu iptal et ---
+window.uyelikKoduIptal = function() {
+    var user = getActiveUser();
+    if (!user) return;
+    localStorage.removeItem(noadsKey(user));
+    localStorage.removeItem(noadsKodKey(user));
+    // Eski global keyleri de temizle (aynı kullanıcıysa)
+    localStorage.removeItem('mugol-noads');
+    localStorage.removeItem('mugol-noads-kod');
+    _fbSetPref('noads', null);
+    _fbSetPref('noadsKod', null);
+    // Reklamları yeniden göster
+    document.querySelectorAll('.adsense-banner-wrap, ins.adsbygoogle').forEach(function(el) {
+        el.style.removeProperty('display');
+    });
+    refreshProfilUI();
+    var msg = document.getElementById('uyelikKoduMsg');
+    if (msg) {
+        msg.style.cssText = 'display:block;padding:10px 14px;border-radius:12px;font-weight:700;font-size:0.9rem;margin-top:10px;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);color:#10b981;';
+        msg.textContent = '✅ Üyelik kodu kaldırıldı.';
+        setTimeout(function(){ msg.style.display = 'none'; }, 3000);
+    }
+};
 
-// İlk yükleme + auth animasyonundan sonra güncelle
-refreshProfilUI();
-setTimeout(refreshProfilUI, 1800);
+// --- Profil sayfası açıldığında güncelle ---
+function _bindProfilNav() {
+    var _profilNavItem = document.querySelector('.nav-item[data-target="page-profil"]');
+    if (_profilNavItem) _profilNavItem.addEventListener('click', refreshProfilUI);
+    refreshProfilUI();
+    setTimeout(refreshProfilUI, 1800);
+    // Oturum süresi göstergesini her dakika güncelle
+    setInterval(function() {
+        var oturumEl = document.getElementById('profilOturumSuresi');
+        if (oturumEl) oturumEl.textContent = formatOturumSuresi();
+    }, 60000);
+}
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _bindProfilNav);
+} else {
+    _bindProfilNav();
+}
 
 // =========================================================
 // ÜYELİK KODU & REKLAMSIZ SİSTEM
@@ -740,7 +959,7 @@ function reklamlariGizle() {
     var m = document.getElementById('ad-transition-modal');
     if (m) { m.style.setProperty('display','none','important'); m.classList.remove('visible'); }
 }
-if (localStorage.getItem('mugol-noads') === 'true') reklamlariGizle();
+if (userHasNoads(getActiveUser())) reklamlariGizle();
 
 window.uyelikKoduKontrol = function() {
     var inp = document.getElementById('uyelikKoduInput');
@@ -753,12 +972,16 @@ window.uyelikKoduKontrol = function() {
                 : 'background:rgba(239,68,68,0.10);border:1px solid rgba(239,68,68,0.25);color:#ef4444;');
         msg.textContent = yazi;
     }
-    if (localStorage.getItem('mugol-noads') === 'true') { goster('success','✅ Kod zaten aktif! Reklamlar kapalı.'); return; }
+    var user = getActiveUser();
+    if (userHasNoads(user)) { goster('success','✅ Kod zaten aktif! Reklamlar kapalı.'); return; }
     var girilen = inp.value.trim().toUpperCase();
     if (!girilen) { goster('error','⚠️ Lütfen bir kod girin.'); return; }
+    if (!user) { goster('error','⚠️ Kodu aktive etmek için giriş yapmalısınız.'); return; }
     if (_NOADS_KODLAR.indexOf(girilen) !== -1) {
-        localStorage.setItem('mugol-noads','true');
-        localStorage.setItem('mugol-noads-kod', girilen);
+        localStorage.setItem(noadsKey(user), 'true');
+        localStorage.setItem(noadsKodKey(user), girilen);
+        _fbSetPref('noads', 'true');
+        _fbSetPref('noadsKod', girilen);
         reklamlariGizle();
         refreshProfilUI();
         inp.disabled = true; inp.style.opacity = '0.6';
@@ -802,7 +1025,7 @@ window.skipAd = function() {
 // Geçiş reklamı geri sayımı (reklamsız modda devre dışı kalır)
 window.startAdCountdown = function(url, appName, logoSrc) {
     // Reklamsız mod aktifse direkt aç
-    if (localStorage.getItem('mugol-noads') === 'true') {
+    if (userHasNoads(getActiveUser())) {
         if (url) window.open(url, '_blank', 'noopener,noreferrer');
         return;
     }
@@ -854,9 +1077,46 @@ window.startAdCountdown = function(url, appName, logoSrc) {
 
 // openAppWithAd: app-card click'lerinden çağrılabilir
 window.openAppWithAd = function(url, appName, logoSrc) {
-    if (localStorage.getItem('mugol-noads') === 'true') {
+    if (userHasNoads(getActiveUser())) {
         window.open(url, '_blank', 'noopener,noreferrer');
     } else {
         window.startAdCountdown(url, appName, logoSrc);
     }
 };
+
+
+// =========================================================
+// GİRİŞ SONRASI & SAYFA AÇILIŞINDA FİREBASE TERCİHLERİ YÜKLE
+// refreshProfilUI her login sonrası çağrıldığı için buraya eklendi
+// =========================================================
+(function () {
+    var _origRefreshProfil = window.refreshProfilUI;
+    window.refreshProfilUI = function () {
+        if (_origRefreshProfil) _origRefreshProfil.apply(this, arguments);
+        // Login olduktan sonra Firebase'den güncel tercihleri çek
+        setTimeout(function () {
+            _fbLoadPrefs(function (prefs) {
+                _fbApplyPrefs(prefs);
+                // Reklam durumunu yenile
+                if (typeof userHasNoads === 'function' && typeof reklamlariGizle === 'function') {
+                    if (userHasNoads(_fbGetUser())) reklamlariGizle();
+                }
+                if (typeof refreshProfilUI !== 'undefined' && window._profilUIRefreshed !== true) {
+                    window._profilUIRefreshed = true;
+                    // Profil UI verilerini güncelle (noads badge vb.)
+                    var tipEl = document.getElementById('profilUyelikTipi');
+                    var badgeEl = document.getElementById('profilBadge');
+                    if (_origRefreshProfil) _origRefreshProfil.apply(this, arguments);
+                    window._profilUIRefreshed = false;
+                }
+            });
+        }, 300);
+    };
+
+    // Sayfa açılışında da yükle (hatırlanan kullanıcı varsa)
+    setTimeout(function () {
+        if (_fbGetUser()) {
+            _fbLoadPrefs(function (prefs) { _fbApplyPrefs(prefs); });
+        }
+    }, 1200);
+})();

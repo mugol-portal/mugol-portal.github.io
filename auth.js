@@ -1,8 +1,98 @@
 /* =========================================================
-   AUTH.JS — V3.1 ULTRA MASTER STABLE
-   MuGöl PORTAL · Kayıt Sorunu Giderildi & UX İyileştirildi
+   AUTH.JS — V4.0 FIREBASE EDİTİON
+   MuGöl PORTAL · Bulut Veritabanı Entegrasyonu
+   =========================================================
+
+   🔥 KURULUM (BİR KERE YAPILIR):
+   1. https://console.firebase.google.com adresine gidin
+   2. "Proje Oluştur" → isim verin → devam edin
+   3. Sol menü: "Realtime Database" → "Veritabanı oluştur"
+      → "Test modunda başlat" seçin (sonra kural güncelleyin)
+   4. Sol menü: Proje Ayarları (⚙️) → "Genel" sekmesi
+      → Aşağı kaydırın → "Web uygulaması ekle" (</> ikonu)
+   5. Çıkan config nesnesini aşağıdaki MUGOL_FIREBASE_CONFIG'e yapıştırın
    ========================================================= */
 
+// ⚙️ FIREBASE YAPILANDIRMASI — BURAYA KENDİ BİLGİLERİNİZİ GİRİN
+var MUGOL_FIREBASE_CONFIG = {
+    apiKey:            "AIzaSyDW6HJAObv1odB9nDAiJoEpxCsOxb6YteI",
+    authDomain:        "mugol-portal.firebaseapp.com",
+    databaseURL:       "https://mugol-portal-default-rtdb.firebaseio.com",
+    projectId:         "mugol-portal",
+    storageBucket:     "mugol-portal.firebasestorage.app",
+    messagingSenderId: "385545819489",
+    appId:             "1:385545819489:web:efb05c9da17954c8e0a120"
+};
+
+// =========================================================
+// FIREBASE BAŞLATICI & KULLANICI CACHE SİSTEMİ
+// Firebase yoksa otomatik olarak localStorage'a geri döner
+// =========================================================
+var _db          = null;   // Firebase database ref
+var _fbReady     = false;  // Firebase hazır mı?
+var _usersCache  = null;   // Bellekteki kullanıcı cache'i
+
+function _initFirebase() {
+    try {
+        if (typeof firebase === 'undefined') return false;
+        if (!firebase.apps || !firebase.apps.length) {
+            firebase.initializeApp(MUGOL_FIREBASE_CONFIG);
+        }
+        _db      = firebase.database();
+        _fbReady = true;
+        return true;
+    } catch(e) {
+        console.warn('[MuGöl] Firebase başlatılamadı, localStorage kullanılıyor.', e.message);
+        return false;
+    }
+}
+
+// Kullanıcıları Firebase'den yükle ve cache'e al (sayfa açılışında 1 kez çalışır)
+function _loadUsersFromCloud(callback) {
+    // Önce localStorage'daki mevcut veriyi cache'e al (hızlı erişim için)
+    try { _usersCache = JSON.parse(localStorage.getItem('mugol-users') || '{}'); } catch(e) { _usersCache = {}; }
+
+    if (!_fbReady || !_db) {
+        if (callback) callback(_usersCache);
+        return;
+    }
+
+    _db.ref('mugol/users').once('value')
+        .then(function(snap) {
+            var cloudData = snap.val() || {};
+            // Cloud ve localStorage'ı birleştir (cloud öncelikli)
+            _usersCache = Object.assign({}, _usersCache, cloudData);
+            // Birleşik veriyi localStorage'a da yaz
+            localStorage.setItem('mugol-users', JSON.stringify(_usersCache));
+            if (callback) callback(_usersCache);
+        })
+        .catch(function(e) {
+            console.warn('[MuGöl] Firebase okuma hatası:', e.message);
+            if (callback) callback(_usersCache);
+        });
+}
+
+// Kullanıcı verisini hem cache'e hem localStorage'a hem Firebase'e kaydet
+function _saveUsersToCloud(users) {
+    _usersCache = users;
+    localStorage.setItem('mugol-users', JSON.stringify(users));
+    if (_fbReady && _db) {
+        _db.ref('mugol/users').set(users)
+            .catch(function(e) {
+                console.warn('[MuGöl] Firebase yazma hatası:', e.message);
+            });
+    }
+}
+
+// Senkron kullanıcı getirme (cache'den — anında döner)
+function _getUsers() {
+    if (_usersCache !== null) return _usersCache;
+    try { return JSON.parse(localStorage.getItem('mugol-users') || '{}'); } catch(e) { return {}; }
+}
+
+// =========================================================
+// IIFE — GERİ KALAN TÜM AUTH MANTIĞI (ORİJİNAL KORUNDU)
+// =========================================================
 (function () {
 
     /* --------------------------------------------------
@@ -160,13 +250,18 @@
     document.body.appendChild(container);
 
     /* --------------------------------------------------
-       3. LOGİK (FIXED & IMPROVED)
+       3. FIREBASE BAŞLAT & KULLANICI VERİSİNİ YÜKLE
+    -------------------------------------------------- */
+    _initFirebase();
+    _loadUsersFromCloud(null); // Arka planda Firebase'den yükle
+
+    /* --------------------------------------------------
+       4. LOGİK (ORİJİNAL + FIREBASE ENTEGRASYONU)
     -------------------------------------------------- */
     window.MugolAuth = {
-        getUsers: function () {
-            try { return JSON.parse(localStorage.getItem('mugol-users') || '{}'); } catch (e) { return {}; }
-        },
-        saveUsers: function (users) { localStorage.setItem('mugol-users', JSON.stringify(users)); },
+        // Artık _getUsers() global cache helper'ını kullanıyor
+        getUsers: function () { return _getUsers(); },
+        saveUsers: function (users) { _saveUsersToCloud(users); },
         
         showToast: function(msg) {
             const toast = document.getElementById('auth-toast');
@@ -252,42 +347,49 @@
         doLogin: function () {
             var user = document.getElementById('auth-login-user').value.trim();
             var pass = document.getElementById('auth-login-pass').value;
-            var users = this.getUsers();
-            var err = document.getElementById('loginError');
+            var err  = document.getElementById('loginError');
+            var self = this;
 
-            if (user && users[user] && users[user] === pass) {
-                document.getElementById('authLoginSpinner').style.display = 'inline-block';
-                document.getElementById('authLoginText').textContent = 'Doğrulanıyor...';
-                setTimeout(() => {
-                    localStorage.setItem('mugol-remember-user', user);
-                    sessionStorage.setItem('mugol-session', user);
-                    this.showSuccess(user);
-                }, 1000);
-            } else {
-                err.textContent = "Kullanıcı adı veya şifre yanlış!";
-                err.classList.add('show');
-            }
+            document.getElementById('authLoginSpinner').style.display = 'inline-block';
+            document.getElementById('authLoginText').textContent = 'Doğrulanıyor...';
+
+            // Firebase'den en güncel veriyi al, sonra kontrol et
+            _loadUsersFromCloud(function(users) {
+                if (user && users[user] && users[user] === pass) {
+                    setTimeout(function() {
+                        localStorage.setItem('mugol-remember-user', user);
+                        sessionStorage.setItem('mugol-session', user);
+                        self.showSuccess(user);
+                    }, 800);
+                } else {
+                    document.getElementById('authLoginSpinner').style.display = 'none';
+                    document.getElementById('authLoginText').textContent = 'Giriş Yap';
+                    err.textContent = "Kullanıcı adı veya şifre yanlış!";
+                    err.classList.add('show');
+                }
+            });
         },
 
         doQuickLogin: function() {
-            const randomNum = Math.floor(1000 + Math.random() * 9000);
-            const guestUser = "Misafir_" + randomNum;
-            const guestPass = "mg" + randomNum;
+            var randomNum = Math.floor(1000 + Math.random() * 9000);
+            var guestUser = "Misafir_" + randomNum;
+            var guestPass = "mg" + randomNum;
             var users = this.getUsers();
             users[guestUser] = guestPass;
-            this.saveUsers(users);
+            this.saveUsers(users); // Hem cache hem Firebase'e yazar
             localStorage.setItem('mugol-remember-user', guestUser);
             sessionStorage.setItem('mugol-session', guestUser);
             this.showSuccess(guestUser);
         },
 
         doRegister: function () {
-            const user = document.getElementById('auth-reg-user').value.trim();
-            const pass = document.getElementById('auth-reg-pass').value;
-            const err = document.getElementById('registerError');
-            const btn = document.getElementById('authRegBtn');
-            const spin = document.getElementById('authRegSpinner');
-            const txt = document.getElementById('authRegText');
+            var user = document.getElementById('auth-reg-user').value.trim();
+            var pass = document.getElementById('auth-reg-pass').value;
+            var err  = document.getElementById('registerError');
+            var btn  = document.getElementById('authRegBtn');
+            var spin = document.getElementById('authRegSpinner');
+            var txt  = document.getElementById('authRegText');
+            var self = this;
             var users = this.getUsers();
 
             if (user.length < 3 || pass.length < 6) {
@@ -299,46 +401,57 @@
                 err.classList.add('show'); return;
             }
 
-            // Kayıt İşlemi Başlat
             btn.disabled = true;
             spin.style.display = 'inline-block';
             txt.textContent = 'Oluşturuluyor...';
 
-            setTimeout(() => {
-                users[user] = pass;
-                this.saveUsers(users);
-                localStorage.setItem('mugol-remember-user', user);
-                
-                this.showToast("Hesap başarıyla oluşturuldu!");
-                
-                // Formu temizle ve Giriş ekranına dön
-                document.getElementById('auth-reg-user').value = '';
-                document.getElementById('auth-reg-pass').value = '';
-                this.updateStrength('');
-                
-                btn.disabled = false;
-                spin.style.display = 'none';
-                txt.textContent = 'Hesap Oluştur';
-                
-                this.switchTab('login');
-                this.loadSavedAccounts();
-                this.updateGreeting();
-                
-                // Giriş alanlarını doldur
-                document.getElementById('auth-login-user').value = user;
-                document.getElementById('auth-login-pass').value = pass;
-                document.getElementById('auth-login-pass').focus();
-            }, 1000);
+            // Kayıt öncesi Firebase'den son kontrolü yap
+            _loadUsersFromCloud(function(latestUsers) {
+                if (latestUsers[user]) {
+                    err.textContent = "Bu kullanıcı adı zaten mevcut!";
+                    err.classList.add('show');
+                    btn.disabled = false; spin.style.display = 'none'; txt.textContent = 'Hesap Oluştur';
+                    return;
+                }
+                setTimeout(function() {
+                    latestUsers[user] = pass;
+                    self.saveUsers(latestUsers); // Firebase + localStorage'a yaz
+
+                    localStorage.setItem('mugol-remember-user', user);
+                    self.showToast("Hesap başarıyla oluşturuldu!");
+
+                    document.getElementById('auth-reg-user').value = '';
+                    document.getElementById('auth-reg-pass').value = '';
+                    self.updateStrength('');
+
+                    btn.disabled = false;
+                    spin.style.display = 'none';
+                    txt.textContent = 'Hesap Oluştur';
+
+                    self.switchTab('login');
+                    self.loadSavedAccounts();
+                    self.updateGreeting();
+
+                    document.getElementById('auth-login-user').value = user;
+                    document.getElementById('auth-login-pass').value = pass;
+                    document.getElementById('auth-login-pass').focus();
+                }, 1000);
+            });
         },
 
         showSuccess: function(name) {
             var screen = document.getElementById('authSuccessScreen');
             document.getElementById('successUserTitle').textContent = "Hoş Geldin, " + name + "!";
             screen.style.display = 'flex';
-            setTimeout(() => {
+            if (typeof kaydetGirisZamani === 'function') kaydetGirisZamani(name);
+            setTimeout(function() {
                 document.getElementById('auth-overlay').classList.remove('visible');
                 var welcome = document.getElementById('welcomeTitle');
                 if (welcome) welcome.textContent = 'Hoş Geldin, ' + name + '! 👋';
+                if (typeof refreshProfilUI === 'function') refreshProfilUI();
+                if (typeof userHasNoads === 'function' && typeof reklamlariGizle === 'function') {
+                    if (userHasNoads(name)) reklamlariGizle();
+                }
             }, 1600);
         },
 
@@ -364,4 +477,5 @@
             if (isRegVisible) MugolAuth.doRegister(); else MugolAuth.doLogin();
         }
     });
+
 })();
