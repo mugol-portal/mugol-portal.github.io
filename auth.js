@@ -379,7 +379,38 @@ function _getUsers() {
             this.saveUsers(users); // Hem cache hem Firebase'e yazar
             localStorage.setItem('mugol-remember-user', guestUser);
             sessionStorage.setItem('mugol-session', guestUser);
+            // 10 dakika sonra otomatik silme
+            var expiry = Date.now() + 10 * 60 * 1000;
+            sessionStorage.setItem('mugol-guest-expiry', expiry.toString());
+            sessionStorage.setItem('mugol-guest-name', guestUser);
+            var self = this;
+            setTimeout(function() { self._expireGuest(guestUser); }, 10 * 60 * 1000);
             this.showSuccess(guestUser);
+        },
+
+        // Misafir oturumunu sona erdir ve veritabanından sil
+        _expireGuest: function(guestUser) {
+            var currentSession = sessionStorage.getItem('mugol-session');
+            if (currentSession !== guestUser) return; // Farklı kullanıcı, iptal
+            // 1) Cache ve localStorage'dan sil
+            var users = _getUsers();
+            if (users[guestUser]) {
+                delete users[guestUser];
+                _saveUsersToCloud(users);
+            }
+            // 2) Firebase'den direkt olarak da sil
+            if (_fbReady && _db) {
+                try { _db.ref('mugol/users/' + guestUser).remove(); } catch(e) {}
+            }
+            // 3) Oturumu temizle
+            localStorage.removeItem('mugol-remember-user');
+            sessionStorage.removeItem('mugol-session');
+            sessionStorage.removeItem('mugol-guest-expiry');
+            sessionStorage.removeItem('mugol-guest-name');
+            // 4) Bildirim göster ve giriş ekranını aç
+            this.showToast('⏰ Misafir oturumunuz 10 dakika dolduğu için sona erdi.');
+            var self = this;
+            setTimeout(function() { self.openProfileLogin(); }, 2000);
         },
 
         doRegister: function () {
@@ -481,5 +512,20 @@ function _getUsers() {
             if (isRegVisible) MugolAuth.doRegister(); else MugolAuth.doLogin();
         }
     });
+
+    // Sayfa yenilenirse misafir süre kontrolünü yeniden başlat
+    (function checkGuestOnLoad() {
+        var expiry   = sessionStorage.getItem('mugol-guest-expiry');
+        var guestName = sessionStorage.getItem('mugol-guest-name');
+        if (!expiry || !guestName) return;
+        var remaining = parseInt(expiry) - Date.now();
+        if (remaining <= 0) {
+            // Süre zaten dolmuş
+            MugolAuth._expireGuest(guestName);
+        } else {
+            // Kalan süreyi ayarla
+            setTimeout(function() { MugolAuth._expireGuest(guestName); }, remaining);
+        }
+    })();
 
 })();

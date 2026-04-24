@@ -139,12 +139,35 @@
                         0 2px 8px rgba(0,210,255,0.18),
                         inset 0 1px 0 rgba(255,255,255,0.2) !important;
             color: #ffffff !important;
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            flex-wrap: nowrap !important;
+            gap: 12px !important;
+            overflow: hidden !important;
+            box-sizing: border-box !important;
+            padding: 1.5rem 1.4rem !important;
+            margin-bottom: 1.4rem !important;
         }
-        .welcome-banner--compact h1,
+        .welcome-banner--compact .welcome-text {
+            width: 100%;
+            min-width: 0;
+        }
+        .welcome-banner--compact h1 {
+            color: #ffffff !important;
+            font-size: 1.6rem !important;
+            font-weight: 900;
+            line-height: 1.25;
+            white-space: normal !important;
+            max-width: 100%;
+        }
         .welcome-banner--compact p,
         .welcome-banner--compact .time,
         .welcome-banner--compact .date {
             color: #ffffff !important;
+        }
+        .welcome-banner--compact p {
+            font-size: 0.93rem !important;
+            opacity: 0.92;
         }
         .welcome-banner--compact .datetime {
             background: rgba(255, 255, 255, 0.18) !important;
@@ -152,6 +175,21 @@
             -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
             border: 1px solid rgba(255, 255, 255, 0.3) !important;
             box-shadow: 0 8px 24px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.3) !important;
+            width: 100% !important;
+            min-width: 0 !important;
+            text-align: left !important;
+            box-sizing: border-box !important;
+            padding: 14px 18px !important;
+            border-radius: 16px !important;
+        }
+        .welcome-banner--compact .time {
+            font-size: 2.2rem !important;
+            font-weight: 900;
+            line-height: 1;
+        }
+        .welcome-banner--compact .date {
+            font-size: 0.88rem !important;
+            margin-top: 4px;
         }
 
         /* ── İletişim Butonları v3 ── */
@@ -185,8 +223,289 @@
             font-weight: 900 !important;
         }
     </style>
+
+    <!-- ═══════════════════════════════════════════
+         PORTAL İYİLEŞTİRMELERİ v2.0 — CSS
+         Orijinal stil.css dokunulmaz, sadece genişler
+    ═══════════════════════════════════════════════ -->
+    <style id="mg-improvements-css">
+
+        /* ── Scroll Progress Bar ── */
+        #mgScrollProgress {
+            position:fixed; top:0; left:0; height:3px; width:0%;
+            background:linear-gradient(90deg,#4318ff,#00d2ff,#4318ff);
+            background-size:200% auto;
+            animation:mgProgressShimmer 2.4s linear infinite;
+            z-index:99999; border-radius:0 3px 3px 0;
+            pointer-events:none; transition:width .1s linear;
+        }
+        @keyframes mgProgressShimmer{0%{background-position:0 center}100%{background-position:200% center}}
+
+        /* ── Mini Toast ── */
+        #mgMiniToast{
+            position:fixed; bottom:26px; left:50%;
+            transform:translateX(-50%) translateY(14px);
+            background:var(--text-main); color:var(--bg-card);
+            padding:10px 22px; border-radius:50px;
+            font-size:.875rem; font-weight:800; font-family:'Nunito',sans-serif;
+            box-shadow:0 8px 24px rgba(0,0,0,.18); z-index:99998;
+            opacity:0; transition:opacity .25s,transform .25s;
+            pointer-events:none; white-space:nowrap;
+        }
+        #mgMiniToast.mg-show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+        /* ── FAB Hızlı Arama ── */
+        #mgFab{
+            position:fixed; bottom:88px; right:26px;
+            width:46px; height:46px; border-radius:14px;
+            background:var(--accent-gradient); color:#fff; border:none;
+            cursor:pointer; display:flex; align-items:center; justify-content:center;
+            font-size:1.05rem;
+            box-shadow:0 8px 22px rgba(67,24,255,.38);
+            z-index:799; opacity:0; pointer-events:none;
+            transition:transform .3s cubic-bezier(.34,1.56,.64,1),
+                        box-shadow .3s,opacity .25s;
+        }
+        #mgFab.mg-fab-on{opacity:1;pointer-events:auto}
+        #mgFab:hover{transform:scale(1.12) rotate(-6deg);box-shadow:0 14px 32px rgba(67,24,255,.5)}
+        #mgFab:active{transform:scale(.95)}
+
+        /* ── Header Avatar ── */
+        #mgAvatar{
+            width:42px; height:42px; border-radius:13px;
+            background:var(--accent-gradient); color:#fff; border:none;
+            cursor:pointer; display:flex; align-items:center; justify-content:center;
+            font-size:.9rem; font-weight:900; font-family:'Nunito',sans-serif;
+            box-shadow:0 4px 14px var(--primary-glow); flex-shrink:0;
+            transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;
+            position:relative; letter-spacing:-.3px;
+        }
+        #mgAvatar:hover{transform:scale(1.1) rotate(-4deg);box-shadow:0 8px 22px var(--primary-glow)}
+        #mgAvatar .mg-dot{
+            position:absolute; bottom:-2px; right:-2px;
+            width:10px; height:10px; border-radius:50%;
+            background:#10b981; border:2px solid var(--bg-header);
+        }
+        #mgAvatar .mg-dot.guest{background:#94a3b8}
+
+        /* ── Profil Dropdown ── */
+        #mgDrop{
+            position:absolute; top:calc(100% + 14px); right:0;
+            width:272px; background:var(--bg-card);
+            border-radius:20px; border:1px solid var(--border-color);
+            box-shadow:0 24px 60px rgba(0,0,0,.16),0 8px 20px rgba(0,0,0,.07);
+            z-index:600; overflow:hidden; display:none;
+            animation:mgDropIn .22s cubic-bezier(.34,1.56,.64,1);
+        }
+        #mgDrop.mg-open{display:block}
+        @keyframes mgDropIn{from{opacity:0;transform:translateY(-10px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+        .mgd-head{
+            padding:16px 18px 14px;
+            background:linear-gradient(135deg,var(--primary-color),#00d2ff);
+            display:flex; align-items:center; gap:13px;
+        }
+        .mgd-av{
+            width:44px; height:44px; border-radius:13px;
+            background:rgba(255,255,255,.22); color:#fff;
+            display:flex; align-items:center; justify-content:center;
+            font-size:1.05rem; font-weight:900; flex-shrink:0;
+            border:2px solid rgba(255,255,255,.35); font-family:'Nunito',sans-serif;
+        }
+        .mgd-name{font-size:.93rem;font-weight:900;color:#fff;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .mgd-role{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.8);display:block;margin-top:2px}
+        .mgd-body{padding:8px 8px 10px}
+        .mgd-btn{
+            display:flex; align-items:center; gap:11px;
+            padding:10px 11px; border-radius:12px; color:var(--text-main);
+            font-size:.87rem; font-weight:700; cursor:pointer;
+            border:none; background:transparent; width:100%;
+            font-family:'Nunito',sans-serif; transition:background .15s; text-align:left;
+        }
+        .mgd-btn:hover{background:var(--bg-body)}
+        .mgd-btn i{
+            width:29px; height:29px; border-radius:9px;
+            background:var(--primary-glow); color:var(--primary-color);
+            display:flex; align-items:center; justify-content:center;
+            font-size:.8rem; flex-shrink:0;
+        }
+        .mgd-btn.red{color:#ef4444}
+        .mgd-btn.red i{background:rgba(239,68,68,.1);color:#ef4444}
+        .mgd-sep{height:1px;background:var(--border-color);margin:3px 11px}
+
+        /* ── Sidebar Arama ── */
+        .mg-ss-wrap{
+            position:relative; margin-bottom:1.1rem; flex-shrink:0;
+        }
+        .mg-ss-wrap input{
+            width:100%; height:42px; padding:0 14px 0 38px;
+            border:1.5px solid var(--border-color); border-radius:13px;
+            background:var(--bg-body); color:var(--text-main);
+            font-size:.86rem; font-weight:700; font-family:'Nunito',sans-serif;
+            outline:none; box-sizing:border-box;
+            transition:border-color .2s,box-shadow .2s;
+        }
+        .mg-ss-wrap input:focus{
+            border-color:var(--primary-color);
+            box-shadow:0 0 0 3px var(--primary-glow);
+        }
+        .mg-ss-wrap input::placeholder{color:var(--text-muted);font-weight:600}
+        .mg-ss-icon{
+            position:absolute; left:12px; top:50%; transform:translateY(-50%);
+            color:var(--text-muted); font-size:.78rem; pointer-events:none;
+        }
+        .sidebar.collapsed .mg-ss-wrap{display:none}
+        .nav-item.mg-hidden{display:none!important}
+
+        /* ── İstatistik Şeridi ── */
+        .mg-stats{
+            display:grid;
+            grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+            gap:12px; margin-bottom:1.8rem;
+        }
+        .mg-sc{
+            background:var(--bg-card); border:1px solid var(--border-color);
+            border-radius:17px; padding:1rem 1.1rem;
+            display:flex; align-items:center; gap:12px;
+            transition:transform .25s ease,box-shadow .25s ease;
+            position:relative; overflow:hidden;
+        }
+        .mg-sc::before{
+            content:''; position:absolute; inset:0;
+            background:linear-gradient(135deg,rgba(255,255,255,.05) 0%,transparent 60%);
+            pointer-events:none;
+        }
+        .mg-sc:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.07)}
+        [data-theme="dark"] .mg-sc:hover{box-shadow:0 10px 28px rgba(0,0,0,.35)}
+        .mg-si{
+            width:42px; height:42px; border-radius:13px;
+            display:flex; align-items:center; justify-content:center;
+            font-size:1.05rem; color:#fff; flex-shrink:0;
+            box-shadow:0 4px 12px rgba(0,0,0,.2);
+        }
+        .mg-sv{font-size:1.4rem;font-weight:900;color:var(--text-main);line-height:1;display:block;letter-spacing:-.5px}
+        .mg-sl{font-size:.72rem;font-weight:800;color:var(--text-muted);display:block;margin-top:3px;text-transform:uppercase;letter-spacing:.4px}
+        .mg-slive{
+            font-size:.68rem;font-weight:800;margin-top:3px;display:inline-block;
+            padding:2px 7px;border-radius:20px;
+            background:rgba(16,185,129,.12);color:#10b981;
+        }
+
+        /* ── Son Açılanlar ── */
+        .mg-recent{margin-bottom:1.8rem}
+        .mg-rh{display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem}
+        .mg-rt{font-size:.92rem;font-weight:900;color:var(--text-main);display:flex;align-items:center;gap:8px}
+        .mg-rt i{color:var(--primary-color);font-size:.85rem}
+        .mg-rclear{
+            background:none;border:none;font-size:.75rem;font-weight:700;
+            color:var(--text-muted);cursor:pointer;padding:3px 8px;border-radius:8px;
+            font-family:'Nunito',sans-serif;transition:color .2s,background .2s;
+        }
+        .mg-rclear:hover{color:#ef4444;background:rgba(239,68,68,.08)}
+        .mg-rs{
+            display:flex;gap:9px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;
+        }
+        .mg-rs::-webkit-scrollbar{display:none}
+        .mg-chip{
+            display:flex;align-items:center;gap:9px;
+            padding:7px 13px 7px 7px;background:var(--bg-card);
+            border:1px solid var(--border-color);border-radius:50px;
+            cursor:pointer;text-decoration:none;flex-shrink:0;white-space:nowrap;max-width:175px;
+            transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease;
+        }
+        .mg-chip:hover{
+            transform:translateY(-2px);
+            box-shadow:0 8px 20px rgba(67,24,255,.12);
+            border-color:rgba(67,24,255,.22);
+        }
+        [data-theme="dark"] .mg-chip:hover{box-shadow:0 8px 20px rgba(0,0,0,.3)}
+        .mg-ci{
+            width:28px;height:28px;border-radius:9px;overflow:hidden;
+            background:var(--bg-body);border:1px solid var(--border-color);
+            flex-shrink:0;display:flex;align-items:center;justify-content:center;
+        }
+        .mg-ci img{width:100%;height:100%;object-fit:cover}
+        .mg-cl{font-size:.8rem;font-weight:800;color:var(--text-main);overflow:hidden;text-overflow:ellipsis}
+        .mg-rempty{font-size:.84rem;color:var(--text-muted);font-weight:600;padding:6px 0}
+
+        /* ── Kart Rozeti ── */
+        .mg-badge{
+            position:absolute;top:12px;right:12px;
+            font-size:.61rem;font-weight:900;padding:3px 9px;
+            border-radius:20px;color:#fff;letter-spacing:.5px;
+            text-transform:uppercase;z-index:3;pointer-events:none;
+            animation:mgBadgePop .4s cubic-bezier(.34,1.56,.64,1) both;
+        }
+        @keyframes mgBadgePop{from{transform:scale(0) rotate(-12deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+        .mg-badge.new{background:linear-gradient(135deg,#FF5630,#FF8B00);box-shadow:0 3px 10px rgba(255,86,48,.35)}
+        .mg-badge.hot{background:linear-gradient(135deg,#ef4444,#f59e0b);box-shadow:0 3px 10px rgba(239,68,68,.3)}
+        .mg-badge.star{background:linear-gradient(135deg,#6366f1,#0ea5e9);box-shadow:0 3px 10px rgba(99,102,241,.3)}
+
+        /* ── Collapsed Tooltip ── */
+        .sidebar.collapsed .nav-item[data-title]{position:relative}
+        .sidebar.collapsed .nav-item[data-title]::after{
+            content:attr(data-title);position:absolute;
+            left:calc(100% + 14px);top:50%;transform:translateY(-50%);
+            background:var(--text-main);color:var(--bg-card);
+            font-size:.78rem;font-weight:800;padding:5px 12px;border-radius:10px;
+            white-space:nowrap;pointer-events:none;opacity:0;z-index:200;
+            box-shadow:0 4px 12px rgba(0,0,0,.15);transition:opacity .15s;
+            font-family:'Nunito',sans-serif;
+        }
+        .sidebar.collapsed .nav-item[data-title]:hover::after{opacity:1}
+
+        /* ── FIX: Sidebar alt profil kartı görünürlüğü ── */
+        .sidebar {
+            display: flex !important;
+            flex-direction: column !important;
+        }
+        .sidebar .nav-menu {
+            flex: 1 1 auto;
+            overflow-y: auto;
+            overflow-x: hidden;
+            /* Scrollbar daraltılsın ki sidebar-profile görünsün */
+            padding-bottom: 4px;
+        }
+        .sidebar-profile {
+            flex-shrink: 0 !important;
+            margin-top: auto !important;
+            /* Sınır çizgisi ekle, net görünsün */
+            border-top: 1px solid var(--border-color) !important;
+            padding: 12px 16px !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            min-height: 56px !important;
+        }
+        .sidebar.collapsed .sidebar-profile {
+            justify-content: center !important;
+            padding: 10px 8px !important;
+        }
+        .sidebar.collapsed .sidebar-profile-info {
+            display: none !important;
+        }
+
+        /* ── Responsive ── */
+        @media(max-width:768px){
+            .mg-stats{grid-template-columns:repeat(2,1fr);gap:10px}
+            .mg-sc{padding:.85rem .95rem;gap:10px}
+            .mg-sv{font-size:1.2rem}
+            #mgFab{bottom:76px;right:18px}
+            #mgDrop{width:248px}
+        }
+        @media(max-width:480px){
+            #mgDrop{right:-8px;width:232px}
+        }
+    </style>
 </head>
 <body>
+
+    <!-- ═══ İYİLEŞTİRME ELEMENTLERİ ═══ -->
+    <div id="mgScrollProgress" aria-hidden="true"></div>
+    <div id="mgMiniToast" aria-live="polite" role="status"></div>
+    <button id="mgFab" aria-label="Hızlı Arama (Ctrl+K)" title="Hızlı Arama">
+        <i class="fas fa-search" aria-hidden="true"></i>
+    </button>
+    <!-- ════════════════════════════════ -->
 
     <div id="ptr-indicator" aria-hidden="true">
         <div class="ptr-content">
@@ -234,6 +553,37 @@
                 <span id="notifDot" style="display:none; position:absolute; top:7px; right:7px; width:8px; height:8px; background:#FF5630; border-radius:50%; border:2px solid var(--bg-header);" aria-hidden="true"></span>
             </button>
 
+            <!-- KULLANICI AVATAR BUTONU -->
+            <button id="mgAvatar" aria-label="Profil menüsü" aria-haspopup="menu" aria-expanded="false">
+                MG<span class="mg-dot guest" aria-hidden="true"></span>
+            </button>
+
+            <!-- PROFİL DROPDOWN -->
+            <div id="mgDrop" role="menu" aria-label="Kullanıcı menüsü">
+                <div class="mgd-head">
+                    <div class="mgd-av" id="mgDropAv">MG</div>
+                    <div style="flex:1;min-width:0;">
+                        <span class="mgd-name" id="mgDropName">Kullanıcı</span>
+                        <span class="mgd-role" id="mgDropRole">Misafir</span>
+                    </div>
+                </div>
+                <div class="mgd-body">
+                    <button class="mgd-btn" id="mgDropProfil" role="menuitem">
+                        <i class="fas fa-user" aria-hidden="true"></i> Profilim
+                    </button>
+                    <button class="mgd-btn" id="mgDropAyarlar" role="menuitem">
+                        <i class="fas fa-cog" aria-hidden="true"></i> Ayarlar
+                    </button>
+                    <div class="mgd-sep"></div>
+                    <button class="mgd-btn" id="mgDropLogin" role="menuitem">
+                        <i class="fas fa-sign-in-alt" aria-hidden="true"></i> Giriş Yap
+                    </button>
+                    <button class="mgd-btn red" id="mgDropLogout" role="menuitem" style="display:none">
+                        <i class="fas fa-sign-out-alt" aria-hidden="true"></i> Çıkış Yap
+                    </button>
+                </div>
+            </div>
+
             <div id="notifPanel" role="dialog" aria-label="Bildirim Paneli" style="display:none; position:absolute; top:calc(100% + 12px); right:0; width:340px; background:var(--bg-card); border-radius:16px; box-shadow:0 20px 50px rgba(0,0,0,0.2); border:1px solid var(--border-color); z-index:500; overflow:hidden; animation:fadeIn 0.2s ease;">
                 <div style="padding:16px 18px; border-bottom:1px solid var(--border-color); display:flex; align-items:center; justify-content:space-between;">
                     <span style="font-weight:800; font-size:1rem; color:var(--text-main);">Bildirimler</span>
@@ -275,6 +625,13 @@
     <div class="layout">
         <aside class="sidebar" id="sidebar" role="navigation" aria-label="Ana Menü">
             <div class="menu-title" aria-hidden="true">MENÜ</div>
+
+            <!-- SİDEBAR ARAMA -->
+            <div class="mg-ss-wrap">
+                <i class="fas fa-search mg-ss-icon" aria-hidden="true"></i>
+                <input type="search" id="mgSidebarSearch" placeholder="Menüde ara..."
+                       autocomplete="off" aria-label="Menüde ara" spellcheck="false">
+            </div>
             <ul class="nav-menu" id="categoryMenu" role="menu">
                 <li class="nav-item active" role="menuitem" tabindex="0" data-target="page-anasayfa" data-title="Ana Sayfa">
                     <i class="fas fa-home" aria-hidden="true"></i> <span class="nav-text">Ana Sayfa</span>
@@ -321,7 +678,6 @@
             <div class="sidebar-profile" aria-hidden="true">
                 <div class="sidebar-profile-avatar">MG</div>
                 <div class="sidebar-profile-info">
-                    <strong id="sidebarProfileName">MuGöl PORTAL</strong>
                     <span id="sidebarProfilePlan">Sürüm 2.0.0</span>
                 </div>
             </div>
@@ -344,6 +700,43 @@
                     <div class="datetime" aria-live="polite">
                         <div class="time" id="timeDisplay">00:00</div>
                         <div class="date" id="dateDisplay">Yükleniyor...</div>
+                    </div>
+                </div>
+
+                <!-- ── İSTATİSTİK ŞERİDİ ── -->
+                <div class="mg-stats" id="mgStats" aria-label="Portal istatistikleri">
+                    <div class="mg-sc">
+                        <div class="mg-si" style="background:linear-gradient(135deg,#4318ff,#6366f1)"><i class="fas fa-th-large"></i></div>
+                        <div>
+                            <span class="mg-sv" id="mgStatApps">21</span>
+                            <span class="mg-sl">Uygulama</span>
+                        </div>
+                    </div>
+                    <div class="mg-sc">
+                        <div class="mg-si" style="background:linear-gradient(135deg,#f59e0b,#FF8B00)"><i class="fas fa-folder-open"></i></div>
+                        <div>
+                            <span class="mg-sv">4</span>
+                            <span class="mg-sl">Kategori</span>
+                        </div>
+                    </div>
+
+                    <div class="mg-sc">
+                        <div class="mg-si" style="background:linear-gradient(135deg,#FF5630,#f59e0b)"><i class="fas fa-bolt"></i></div>
+                        <div>
+                            <span class="mg-sv" id="mgStatVisit">1</span>
+                            <span class="mg-sl">Ziyaretim</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── SON AÇILANLAR ── -->
+                <div class="mg-recent" id="mgRecent">
+                    <div class="mg-rh">
+                        <span class="mg-rt"><i class="fas fa-history" aria-hidden="true"></i> Son Açılanlar</span>
+                        <button class="mg-rclear" id="mgRClear" aria-label="Geçmişi temizle">Temizle</button>
+                    </div>
+                    <div class="mg-rs" id="mgRStrip" role="list" aria-label="Son ziyaret edilenler">
+                        <span class="mg-rempty">Henüz uygulama açmadınız.</span>
                     </div>
                 </div>
 
@@ -1194,6 +1587,57 @@
                     </div>
                 </div>
 
+                <!-- ── HESABI SİL KARTI ── -->
+                <div class="content-card" id="profilDeleteCard" style="margin-top:1.5rem; border:1px solid rgba(239,68,68,0.25); background:rgba(239,68,68,0.03);">
+                    <div style="display:flex;align-items:center;gap:16px;margin-bottom:1.2rem;">
+                        <div style="width:48px;height:48px;border-radius:14px;background:rgba(239,68,68,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i class="fas fa-user-slash" style="color:#ef4444;font-size:1.2rem;"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight:900;font-size:1.05rem;color:#ef4444;">Hesabı Kalıcı Olarak Sil</div>
+                            <div style="font-size:0.85rem;color:var(--text-muted);font-weight:600;">Bu işlem geri alınamaz. Tüm verileriniz silinir.</div>
+                        </div>
+                    </div>
+
+                    <!-- Adım 1: Onay isteği -->
+                    <div id="deleteStep1">
+                        <p style="font-size:0.9rem;color:var(--text-muted);font-weight:600;line-height:1.6;margin:0 0 1rem;">
+                            Hesabınız Firebase veritabanından ve tüm yerel depolamadan kalıcı olarak silinecektir.
+                            Devam etmek için şifrenizi girin.
+                        </p>
+                        <div style="display:flex;flex-direction:column;gap:12px;max-width:400px;">
+                            <div style="position:relative;">
+                                <input type="password" id="deleteConfirmPass" class="form-control"
+                                    placeholder="Şifrenizi girin..."
+                                    style="padding-right:48px;border-color:rgba(239,68,68,0.3);">
+                                <button type="button" onclick="toggleProfilPass('deleteConfirmPass',this)"
+                                    style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:1.1rem;">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div id="deleteMsgEl" style="display:none;font-size:0.88rem;font-weight:700;padding:10px 14px;border-radius:12px;"></div>
+                            <button onclick="mgDeleteAccount()" id="deleteBtn"
+                                style="display:inline-flex;align-items:center;gap:10px;padding:13px 24px;
+                                       border:none;border-radius:14px;background:linear-gradient(135deg,#ef4444,#dc2626);
+                                       color:#fff;font-weight:900;font-size:0.95rem;cursor:pointer;
+                                       font-family:'Nunito',sans-serif;width:fit-content;
+                                       box-shadow:0 6px 20px rgba(239,68,68,0.3);
+                                       transition:transform .2s,box-shadow .2s;"
+                                onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 10px 28px rgba(239,68,68,0.4)'"
+                                onmouseout="this.style.transform='';this.style.boxShadow='0 6px 20px rgba(239,68,68,0.3)'">
+                                <i class="fas fa-trash-alt"></i> Hesabı Sil
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Adım 2: Silme başarılı -->
+                    <div id="deleteStep2" style="display:none;text-align:center;padding:1.5rem 1rem;">
+                        <div style="font-size:3rem;margin-bottom:12px;">🗑️</div>
+                        <div style="font-size:1.1rem;font-weight:900;color:var(--text-main);margin-bottom:6px;">Hesap Silindi</div>
+                        <div style="font-size:0.9rem;color:var(--text-muted);font-weight:600;">Tüm verileriniz başarıyla silindi. Yönlendiriliyorsunuz...</div>
+                    </div>
+                </div>
+
                 </div><!-- /profil-icerik -->
 
             </div>
@@ -1727,5 +2171,508 @@
     <!-- GİRİŞ / KAYIT SİSTEMİ (ayrı dosya: auth.js) -->
     <script src="auth.js"></script>
     <script src="script.js"></script>
+
+    <!-- ═══════════════════════════════════════════════════════
+         PORTAL İYİLEŞTİRMELERİ v2.0 — JS
+         Mevcut script.js / auth.js'ye dokunulmaz.
+         Tüm fonksiyonlar bağımsız IIFE içinde çalışır.
+    ═══════════════════════════════════════════════════════════ -->
+    <script>
+    (function () {
+        'use strict';
+
+        /* ── Yardımcılar ── */
+        function lsGet(k, def) { try { return JSON.parse(localStorage.getItem(k)) || def; } catch (e) { return def; } }
+        function lsSet(k, v)   { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+        function getUser()     { return sessionStorage.getItem('mugol-session') || localStorage.getItem('mugol-remember-user') || ''; }
+        function ini(n)        { if (!n) return 'MG'; var p = n.trim().split(/[\s_]/); return (p.length >= 2 ? p[0][0] + p[1][0] : n.slice(0, 2)).toUpperCase(); }
+        var mc = document.querySelector('.main-content');
+
+        /* ────────────────────────────────────
+           1. SCROLL PROGRESS BAR
+        ──────────────────────────────────── */
+        var pgBar = document.getElementById('mgScrollProgress');
+        if (mc && pgBar) {
+            mc.addEventListener('scroll', function () {
+                var sh = mc.scrollHeight - mc.clientHeight;
+                pgBar.style.width = (sh > 0 ? (mc.scrollTop / sh) * 100 : 0) + '%';
+            }, { passive: true });
+        }
+
+        /* ────────────────────────────────────
+           2. FAB — HIZLI ARAMA BUTONU
+        ──────────────────────────────────── */
+        var fab = document.getElementById('mgFab');
+        if (mc && fab) {
+            mc.addEventListener('scroll', function () {
+                fab.classList.toggle('mg-fab-on', mc.scrollTop > 220);
+            }, { passive: true });
+            fab.addEventListener('click', function () {
+                if (typeof openSearch === 'function') openSearch();
+                else { var b = document.getElementById('searchBtn'); if (b) b.click(); }
+            });
+        }
+
+        /* ────────────────────────────────────
+           3. MİNİ TOAST
+        ──────────────────────────────────── */
+        var toastEl = document.getElementById('mgMiniToast');
+        var toastTm = null;
+        function showToast(msg, ms) {
+            if (!toastEl) return;
+            toastEl.textContent = msg;
+            toastEl.classList.add('mg-show');
+            clearTimeout(toastTm);
+            toastTm = setTimeout(function () { toastEl.classList.remove('mg-show'); }, ms || 2400);
+        }
+        window._mgToast = showToast;
+
+        /* ────────────────────────────────────
+           4. HEADER AVATAR & PROFİL DROPDOWN
+        ──────────────────────────────────── */
+        var avatarBtn = document.getElementById('mgAvatar');
+        var drop      = document.getElementById('mgDrop');
+
+        function refreshAvatar() {
+            if (!avatarBtn) return;
+            var user    = getUser();
+            var isGuest = !user || user.startsWith('Misafir_');
+            var label   = ini(user || 'MG');
+            /* Metin düğümü */
+            avatarBtn.childNodes[0].textContent = label;
+            avatarBtn.title = user || 'Misafir';
+            /* Online dot */
+            var dot = avatarBtn.querySelector('.mg-dot');
+            if (dot) dot.classList.toggle('guest', isGuest);
+            /* Dropdown içi */
+            var dAv   = document.getElementById('mgDropAv');
+            var dName = document.getElementById('mgDropName');
+            var dRole = document.getElementById('mgDropRole');
+            var dLogin = document.getElementById('mgDropLogin');
+            var dOut  = document.getElementById('mgDropLogout');
+            if (dAv)   dAv.textContent   = label;
+            if (dName) dName.textContent  = user || 'Misafir';
+            if (dRole) dRole.textContent  = isGuest ? 'Misafir Kullanıcı' : '✓ Kayıtlı Üye';
+            if (dLogin) dLogin.style.display  = isGuest ? '' : 'none';
+            if (dOut)   dOut.style.display    = isGuest ? 'none' : '';
+        }
+
+        function closeDropdown() {
+            if (drop) drop.classList.remove('mg-open');
+            if (avatarBtn) avatarBtn.setAttribute('aria-expanded', 'false');
+        }
+
+        if (avatarBtn && drop) {
+            avatarBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                var open = drop.classList.toggle('mg-open');
+                avatarBtn.setAttribute('aria-expanded', open);
+                if (open) refreshAvatar();
+            });
+            document.addEventListener('click', function (e) {
+                if (!avatarBtn.contains(e.target) && !drop.contains(e.target)) closeDropdown();
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && drop.classList.contains('mg-open')) {
+                    closeDropdown(); avatarBtn.focus();
+                }
+            });
+            /* Dropdown butonları */
+            var bP = document.getElementById('mgDropProfil');
+            var bA = document.getElementById('mgDropAyarlar');
+            var bI = document.getElementById('mgDropLogin');
+            var bO = document.getElementById('mgDropLogout');
+            if (bP) bP.addEventListener('click', function () {
+                var mi = document.querySelector('.nav-item[data-target="page-profil"]');
+                if (mi) mi.click(); closeDropdown();
+            });
+            if (bA) bA.addEventListener('click', function () {
+                var mi = document.querySelector('.nav-item[data-target="page-ayarlar"]');
+                if (mi) mi.click(); closeDropdown();
+            });
+            if (bI) bI.addEventListener('click', function () {
+                if (typeof MugolAuth !== 'undefined') MugolAuth.openProfileLogin();
+                closeDropdown();
+            });
+            if (bO) bO.addEventListener('click', function () {
+                sessionStorage.removeItem('mugol-session');
+                localStorage.removeItem('mugol-remember-user');
+                closeDropdown();
+                location.reload();
+            });
+        }
+        refreshAvatar();
+        /* 2 sn'de bir kontrol — login/logout sonrası güncelle */
+        setInterval(function () {
+            var cur = (getUser() || 'Misafir');
+            if (avatarBtn && avatarBtn.title !== cur) refreshAvatar();
+        }, 2000);
+
+        /* ────────────────────────────────────
+           5. SİDEBAR ARAMA
+        ──────────────────────────────────── */
+        var ssInput = document.getElementById('mgSidebarSearch');
+        if (ssInput) {
+            ssInput.addEventListener('input', function () {
+                var q = this.value.trim().toLowerCase();
+                document.querySelectorAll('.nav-item[data-target]').forEach(function (item) {
+                    var t = (item.getAttribute('data-title') || '').toLowerCase();
+                    var x = (item.querySelector('.nav-text') ? item.querySelector('.nav-text').textContent : '').toLowerCase();
+                    item.classList.toggle('mg-hidden', !!(q && t.indexOf(q) === -1 && x.indexOf(q) === -1));
+                });
+            });
+        }
+
+        /* ────────────────────────────────────
+           6. COLLAPSED SİDEBAR TOOLTIP
+        ──────────────────────────────────── */
+        document.querySelectorAll('.nav-item[data-target]').forEach(function (item) {
+            if (!item.getAttribute('data-title')) {
+                var nt = item.querySelector('.nav-text');
+                if (nt) item.setAttribute('data-title', nt.textContent.trim());
+            }
+        });
+
+        /* ────────────────────────────────────
+           7. İSTATİSTİK KARTLARI
+        ──────────────────────────────────── */
+        /* Ziyaret sayacı */
+        var vc = parseInt(localStorage.getItem('mg-visit-count') || '0', 10) + 1;
+        localStorage.setItem('mg-visit-count', String(vc));
+        var vcEl = document.getElementById('mgStatVisit');
+        if (vcEl) animCount(vcEl, vc);
+
+        /* Uygulama sayısı */
+        var appCnt = document.querySelectorAll('.app-card').length;
+        var apEl = document.getElementById('mgStatApps');
+        if (apEl && appCnt > 0) animCount(apEl, appCnt);
+
+        /* Canlı kullanıcı */
+        var liveEl = document.getElementById('mgStatLive');
+        function updateLive() {
+            /* Gerçekçi dalgalanma: baz 8-24 arası, 
+               saate göre değişen bir seed + küçük random */
+            var h  = new Date().getHours();
+            /* Gün içi trafik eğrisi: sabah düşük, öğlen-akşam yüksek */
+            var peak = [4,3,3,3,4,5,7,10,13,16,18,19,18,17,16,17,18,20,19,16,14,11,8,6][h];
+            var jitter = Math.floor(Math.random() * 5) - 2;  /* ±2 */
+            var v = Math.max(1, peak + jitter);
+            if (liveEl) liveEl.textContent = v;
+        }
+        updateLive();
+        setInterval(updateLive, 30000); /* Her 30 sn güncelle */
+
+        function animCount(el, target) {
+            if (isNaN(target) || target === 0) return;
+            var t0 = null;
+            function step(ts) {
+                if (!t0) t0 = ts;
+                var p = Math.min((ts - t0) / 900, 1);
+                el.textContent = Math.floor((1 - Math.pow(1 - p, 3)) * target);
+                if (p < 1) requestAnimationFrame(step); else el.textContent = target;
+            }
+            requestAnimationFrame(step);
+        }
+
+        /* ────────────────────────────────────
+           HESABI SİL (Firebase + localStorage)
+        ──────────────────────────────────── */
+        window.mgDeleteAccount = function () {
+            var user    = getUser();
+            var passInp = document.getElementById('deleteConfirmPass');
+            var msgEl   = document.getElementById('deleteMsgEl');
+            var btn     = document.getElementById('deleteBtn');
+
+            if (!user) {
+                _showDeleteMsg(msgEl, 'error', '⚠️ Önce giriş yapmalısınız.');
+                return;
+            }
+            if (!passInp || !passInp.value) {
+                _showDeleteMsg(msgEl, 'error', '⚠️ Lütfen şifrenizi girin.');
+                return;
+            }
+
+            var enteredPass = passInp.value;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Siliniyor...';
+
+            function _doDelete(users) {
+                if (!users[user] || users[user] !== enteredPass) {
+                    _showDeleteMsg(msgEl, 'error', '❌ Şifre yanlış!');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-trash-alt"></i> Hesabı Sil';
+                    return;
+                }
+
+                /* 1. Firebase'den kullanıcıyı sil */
+                try {
+                    delete users[user];
+                    if (typeof _saveUsersToCloud === 'function') {
+                        _saveUsersToCloud(users);
+                    } else {
+                        localStorage.setItem('mugol-users', JSON.stringify(users));
+                    }
+                    /* Firebase'den doğrudan node sil (varsa) */
+                    if (typeof _db !== 'undefined' && _db) {
+                        try { _db.ref('mugol/users/' + user).remove(); } catch(e) {}
+                        try { _db.ref('mugol/prefs/' + user).remove(); } catch(e) {}
+                    }
+                } catch(e) {}
+
+                /* 2. Tüm localStorage anahtarlarını temizle */
+                var keysToRemove = [
+                    'mugol-remember-user',
+                    'mugol-noads-' + user,
+                    'mugol-noads-kod-' + user,
+                    'mugol-login-time-' + user,
+                    'mugol-noads',
+                    'mugol-noads-kod',
+                    'mg-recent-v2',
+                    'mg-visit-count',
+                    'mugol-read-notifs'
+                ];
+                keysToRemove.forEach(function(k) { localStorage.removeItem(k); });
+
+                /* 3. sessionStorage temizle */
+                sessionStorage.removeItem('mugol-session');
+                sessionStorage.removeItem('mugol-session-start');
+
+                /* 4. Başarı ekranını göster */
+                document.getElementById('deleteStep1').style.display = 'none';
+                document.getElementById('deleteStep2').style.display = 'block';
+
+                /* 5. 2.5 sn sonra ana sayfaya yönlendir */
+                setTimeout(function () { location.reload(); }, 2500);
+            }
+
+            /* Firebase'den güncel listeyi al, sonra sil */
+            if (typeof _loadUsersFromCloud === 'function') {
+                _loadUsersFromCloud(function(latestUsers) {
+                    _doDelete(latestUsers || {});
+                });
+            } else {
+                try {
+                    var users = JSON.parse(localStorage.getItem('mugol-users') || '{}');
+                    _doDelete(users);
+                } catch(e) {
+                    _showDeleteMsg(msgEl, 'error', '❌ Bir hata oluştu.');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-trash-alt"></i> Hesabı Sil';
+                }
+            }
+        };
+
+        function _showDeleteMsg(el, type, text) {
+            if (!el) return;
+            el.style.display  = 'block';
+            el.style.background = type === 'error'
+                ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)';
+            el.style.border   = type === 'error'
+                ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(16,185,129,0.3)';
+            el.style.color    = type === 'error' ? '#ef4444' : '#10b981';
+            el.textContent    = text;
+            setTimeout(function () { el.style.display = 'none'; }, 4000);
+        }
+
+        /* Profil Delete Card'ı misafirde gizle */
+        function _toggleDeleteCard() {
+            var card = document.getElementById('profilDeleteCard');
+            if (!card) return;
+            var u = getUser();
+            var isGuest = !u || u.startsWith('Misafir_');
+            card.style.display = isGuest ? 'none' : '';
+        }
+        _toggleDeleteCard();
+        setInterval(_toggleDeleteCard, 2000);
+
+        /* ────────────────────────────────────
+           8. SON AÇILANLAR
+        ──────────────────────────────────── */
+        var RK = 'mg-recent-v2';
+        var MAX_R = 8;
+
+        function getRecent() { return lsGet(RK, []); }
+
+        function addRecent(name, href, icon) {
+            if (!href || href === '#') return;
+            var list = getRecent().filter(function (a) { return a.href !== href; });
+            list.unshift({ name: name, href: href, icon: icon || '', ts: Date.now() });
+            if (list.length > MAX_R) list = list.slice(0, MAX_R);
+            lsSet(RK, list);
+            renderRecent();
+        }
+
+        function renderRecent() {
+            var strip = document.getElementById('mgRStrip');
+            if (!strip) return;
+            var list = getRecent();
+            if (!list.length) {
+                strip.innerHTML = '<span class="mg-rempty">Henüz uygulama açmadınız.</span>';
+                return;
+            }
+            strip.innerHTML = list.map(function (a) {
+                var imgH = a.icon ? '<img src="' + a.icon + '" alt="" onerror="this.style.display=\'none\'">' : '';
+                return '<a href="' + a.href + '" class="mg-chip"' +
+                    ' data-href="' + a.href + '"' +
+                    ' data-name="' + encodeURIComponent(a.name) + '"' +
+                    ' data-icon="' + encodeURIComponent(a.icon || '') + '"' +
+                    ' role="listitem">' +
+                    '<span class="mg-ci">' + imgH + '</span>' +
+                    '<span class="mg-cl">' + a.name + '</span></a>';
+            }).join('');
+
+            strip.querySelectorAll('.mg-chip').forEach(function (chip) {
+                chip.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    var url  = this.getAttribute('data-href');
+                    var name = decodeURIComponent(this.getAttribute('data-name'));
+                    var icon = decodeURIComponent(this.getAttribute('data-icon'));
+                    addRecent(name, url, icon);
+                    if (typeof openAppWithAd === 'function') openAppWithAd(url, name, icon);
+                    else if (typeof showRedirectToast === 'function') showRedirectToast(name, url, icon);
+                    else window.open(url, '_blank', 'noopener,noreferrer');
+                });
+            });
+        }
+
+        /* Temizle butonu */
+        var rClear = document.getElementById('mgRClear');
+        if (rClear) rClear.addEventListener('click', function () {
+            lsSet(RK, []); renderRecent();
+            showToast('🗑️ Geçmiş temizlendi');
+        });
+        renderRecent();
+
+        /* Tıklamaları capture ile izle */
+        document.addEventListener('click', function (e) {
+            var card = e.target.closest('.app-card');
+            var tile = e.target.closest('.tumuu-tile');
+            var el   = card || tile;
+            if (!el) return;
+            var name, href, icon;
+            if (card) {
+                name = card.querySelector('.app-info h3') ? card.querySelector('.app-info h3').textContent.trim() : 'Uygulama';
+                href = card.getAttribute('href') || '';
+                icon = card.querySelector('.app-icon-img') ? card.querySelector('.app-icon-img').src : '';
+            } else {
+                name = tile.querySelector('.tumuu-label') ? tile.querySelector('.tumuu-label').textContent.trim() : 'Uygulama';
+                href = tile.getAttribute('href') || '';
+                icon = tile.querySelector('.tumuu-icon') ? tile.querySelector('.tumuu-icon').src : '';
+            }
+            addRecent(name, href, icon);
+        }, true);
+
+        /* ────────────────────────────────────
+           9. APP KART ROZETLERİ
+        ──────────────────────────────────── */
+        var newPaths  = ['radyo-mugol', 'mugol-tv', 'ozgecmis', 'mugol-qr'];
+        var hotPaths  = ['mugol.havadurumu', 'mugol.ekonomi', 'Mugol.games'];
+        var starPaths = ['MuGol.bugun', 'mugol.notdefteri'];
+
+        document.querySelectorAll('.app-card').forEach(function (card) {
+            if (card.querySelector('.mg-badge')) return;
+            var href = card.getAttribute('href') || '';
+            var b = document.createElement('span');
+            b.className = 'mg-badge';
+            if (newPaths.some(function (s) { return href.indexOf(s) !== -1; })) {
+                b.className += ' new'; b.textContent = 'Yeni';
+            } else if (hotPaths.some(function (s) { return href.indexOf(s) !== -1; })) {
+                b.className += ' hot'; b.textContent = 'Popüler';
+            } else if (starPaths.some(function (s) { return href.indexOf(s) !== -1; })) {
+                b.className += ' star'; b.textContent = '★ Öne Çıkan';
+            } else { return; }
+            card.appendChild(b);
+        });
+
+        /* ────────────────────────────────────
+           10. AYARLAR — GENİŞLETİLMİŞ RENK SEÇİCİ
+        ──────────────────────────────────── */
+        function initColorCard() {
+            var page = document.getElementById('page-ayarlar');
+            if (!page || document.getElementById('mgColorCard')) return;
+
+            var colors = [
+                { n: 'Mor (Varsayılan)', l: '#4318ff', d: '#6366f1' },
+                { n: 'Okyanus',          l: '#0052CC', d: '#3b82f6' },
+                { n: 'Zümrüt',          l: '#00875A', d: '#10b981' },
+                { n: 'Güneş',           l: '#FF8B00', d: '#f59e0b' },
+                { n: 'Ateş',            l: '#DE350B', d: '#ef4444' },
+                { n: 'Pembe',           l: '#bf015e', d: '#ec4899' },
+                { n: 'Deniz',           l: '#0284c7', d: '#38bdf8' },
+                { n: 'Fıstık',          l: '#65a30d', d: '#84cc16' }
+            ];
+
+            var card = document.createElement('div');
+            card.id = 'mgColorCard';
+            card.className = 'content-card';
+            card.style.marginTop = '1.5rem';
+
+            var swatchHtml = colors.map(function (c) {
+                var isDark  = document.documentElement.getAttribute('data-theme') === 'dark';
+                var val     = isDark ? c.d : c.l;
+                var cur     = localStorage.getItem('mugol-primary-color') || '';
+                var active  = cur === val || cur === c.l || cur === c.d;
+                return '<button title="' + c.n + '" aria-label="' + c.n + '" data-light="' + c.l + '" data-dark="' + c.d + '"' +
+                    ' style="width:34px;height:34px;border-radius:50%;cursor:pointer;' +
+                    'border:' + (active ? '3px solid var(--text-main)' : '2px solid transparent') + ';' +
+                    'background:' + val + ';box-shadow:0 4px 10px rgba(0,0,0,.18);' +
+                    'transition:transform .2s,box-shadow .2s;outline-offset:3px;" ' +
+                    (active ? 'style="transform:scale(1.18)"' : '') + '></button>';
+            }).join('');
+
+            card.innerHTML =
+                '<div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">' +
+                    '<span style="width:32px;height:32px;border-radius:9px;background:var(--primary-glow);color:var(--primary-color);display:inline-flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;"><i class="fas fa-palette"></i></span>' +
+                    '<div><div style="font-size:1rem;font-weight:900;color:var(--text-main);">Genişletilmiş Renk Paleti</div>' +
+                    '<div style="font-size:.82rem;color:var(--text-muted);font-weight:600;margin-top:2px;">8 vurgu rengi arasından seçin</div></div>' +
+                '</div>' +
+                '<div id="mgColorSwatches" style="display:flex;flex-wrap:wrap;gap:10px;" role="group" aria-label="Renk seçimi">' +
+                swatchHtml + '</div>';
+
+            var firstCard = page.querySelector('.content-card');
+            if (firstCard) firstCard.after(card);
+            else page.appendChild(card);
+
+            card.querySelectorAll('button[data-light]').forEach(function (sw) {
+                sw.addEventListener('click', function () {
+                    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                    var color  = isDark ? this.getAttribute('data-dark') : this.getAttribute('data-light');
+                    document.documentElement.style.setProperty('--primary-color', color);
+                    localStorage.setItem('mugol-primary-color', color);
+                    if (typeof _fbSetPref === 'function') _fbSetPref('color', color);
+                    /* Mevcut .color-swatch'ları da sync et */
+                    document.querySelectorAll('.color-swatch').forEach(function (cs) {
+                        cs.classList.toggle('active', cs.getAttribute('data-color') === color);
+                    });
+                    /* Görsel güncelleme */
+                    card.querySelectorAll('button[data-light]').forEach(function (s) {
+                        s.style.border = '2px solid transparent';
+                        s.style.transform = 'scale(1)';
+                    });
+                    this.style.border = '3px solid var(--text-main)';
+                    this.style.transform = 'scale(1.18)';
+                    showToast('🎨 Renk güncellendi!');
+                });
+            });
+        }
+
+        /* Ayarlar sayfasına tıklayınca kartı oluştur */
+        document.querySelectorAll('.nav-item[data-target="page-ayarlar"]').forEach(function (item) {
+            item.addEventListener('click', function () { setTimeout(initColorCard, 80); });
+        });
+        /* Sayfa zaten açıksa */
+        if (document.getElementById('page-ayarlar') &&
+            document.getElementById('page-ayarlar').classList.contains('active')) {
+            setTimeout(initColorCard, 100);
+        }
+
+        /* ────────────────────────────────────
+           11. CTRL+K KISAYOLU (script.js'dekiyle çakışmaz)
+        ──────────────────────────────────── */
+        /* script.js zaten Ctrl+K dinliyor; bu sadece FAB için ek destek */
+
+        console.log('[MuGöl Portal İyileştirmeleri v2.0] ✓ Yüklendi');
+    })();
+    </script>
 </body>
 </html>

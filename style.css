@@ -863,10 +863,18 @@ input:checked + .slider:before { transform: translateX(28px); }
     .sidebar { position: fixed; left: -100%; top: var(--header-height); height: calc(100vh - var(--header-height)); box-shadow: 10px 0 30px rgba(0,0,0,0.15); border-right: none;}
     .sidebar.mobile-open { left: 0; }
     .sidebar-overlay.active { opacity: 1; visibility: visible; }
-    .main-content { padding: 2rem 1.5rem 6rem 1.5rem; }
+    .main-content { padding: 1.4rem 1rem 6rem 1rem; box-sizing: border-box; }
     .content-card { padding: 2rem; }
-    .welcome-banner, .welcome-banner--compact { flex-direction: column; align-items: flex-start; padding: 2.5rem 2rem !important; }
-    .datetime { width: 100%; text-align: left; }
+    .section-header { margin-bottom: 1.2rem; }
+    .welcome-banner, .welcome-banner--compact {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        padding: 1.6rem 1.4rem !important;
+        gap: 12px !important;
+        box-sizing: border-box !important;
+    }
+    .welcome-text { min-width: 0; width: 100%; }
+    .datetime { width: 100% !important; text-align: left !important; min-width: 0 !important; box-sizing: border-box !important; padding: 16px 20px !important; }
     .app-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.2rem; }
     .category-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.2rem; }
 }
@@ -880,14 +888,16 @@ input:checked + .slider:before { transform: translateX(28px); }
 
 @media (max-width: 600px) {
     :root { --header-height: 64px; --base-font-size: 14px; }
-    .header { padding: 0 1.2rem; }
-    .logo-area { font-size: 1.35rem; }
-    .logo-area img { height: 36px; }
-    .main-content { padding: 1.2rem 0.9rem 5rem 0.9rem; box-sizing: border-box; }
+    .header { padding: 0 1rem; }
+    .logo-area { font-size: 1.3rem; gap: 8px; }
+    .logo-area img { height: 34px; }
+    .main-content { padding: 1rem 0.85rem 5rem 0.85rem; box-sizing: border-box; }
+    .section-header { margin-bottom: 1rem; }
+    .section-title { font-size: 1.5rem; }
     .content-card { padding: 1.3rem 1rem; box-sizing: border-box; }
     
     /* Taşma önleme */
-    .page-section { max-width: 100%; overflow-x: hidden; }
+    .page-section { max-width: 100%; overflow-x: hidden; box-sizing: border-box; }
     .profil-hero-card, .profil-hero-inner { overflow: hidden; }
     .profil-hero-info { min-width: 0; overflow: hidden; }
     .profil-username { font-size: 1.3rem !important; word-break: break-word; }
@@ -896,10 +906,29 @@ input:checked + .slider:before { transform: translateX(28px); }
     .profil-info-detail { min-width: 0; flex: 1; overflow: hidden; }
     .profil-info-value { word-break: break-all; font-size: 0.9rem; }
 
-    .welcome-banner, .welcome-banner--compact { padding: 2rem 1.5rem !important; gap: 18px; }
-    .welcome-text h1 { font-size: 2rem !important; }
-    .welcome-text p { font-size: 1.05rem !important; }
-    .time { font-size: 2.2rem; }
+    /* Banner */
+    .welcome-banner, .welcome-banner--compact {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        padding: 1.3rem 1.2rem !important;
+        gap: 10px !important;
+        box-sizing: border-box !important;
+        width: 100% !important;
+        margin-bottom: 1.2rem !important;
+    }
+    .welcome-text { min-width: 0; width: 100%; }
+    .welcome-text h1 { font-size: 1.55rem !important; font-weight: 900; letter-spacing: -0.3px; line-height: 1.25; }
+    .welcome-text p { font-size: 0.9rem !important; opacity: 0.92; }
+    .datetime {
+        width: 100% !important;
+        min-width: 0 !important;
+        text-align: left !important;
+        box-sizing: border-box !important;
+        padding: 14px 18px !important;
+        border-radius: 16px !important;
+    }
+    .time { font-size: 2.2rem !important; }
+    .date { font-size: 0.85rem !important; margin-top: 4px; }
     
     .app-grid, .category-grid { grid-template-columns: 1fr; gap: 1rem; }
     .app-card { padding: 1.3rem 1.1rem; min-height: unset; }
