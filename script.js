@@ -294,38 +294,22 @@ function showRedirectToast(appName, url, logoSrc) {
     cancelToast();
     pendingUrl = url;
 
-    if (toastAppName) toastAppName.textContent = appName;
-    const toastLogo = document.getElementById('toast-app-logo');
-    if (toastLogo) toastLogo.src = logoSrc || '';
-    if (toastCountEl) toastCountEl.textContent = '3';
-    
-    if (toastRing) {
-        toastRing.style.strokeDashoffset = 0;
-        toastRing.style.transition = 'none';
+    // POPUP FIX: Safari/Chrome mobilde setTimeout icindeki window.open
+    // "kullanici etkilesimi olmayan" acilma sayilip engellenir.
+    // Cozum: tiklamanin SENKRON call-stack'inde hidden <a> + .click() ile aninda ac.
+    if (url) {
+        var _navA = document.createElement('a');
+        _navA.href = url;
+        _navA.target = '_blank';
+        _navA.rel = 'noopener noreferrer';
+        _navA.style.cssText = 'position:fixed;width:0;height:0;opacity:0;pointer-events:none;left:-9999px;';
+        document.body.appendChild(_navA);
+        _navA.click();
+        setTimeout(function() { if (_navA.parentNode) _navA.parentNode.removeChild(_navA); }, 500);
     }
-    if (toast) toast.classList.add('show');
 
-    requestAnimationFrame(() => {
-        if (toastRing) {
-            toastRing.style.transition = 'stroke-dashoffset 3s linear';
-            toastRing.style.strokeDashoffset = CIRCUMFERENCE;
-        }
-    });
-
-    let count = 3;
-    toastCountdown = setInterval(() => {
-        count--;
-        if (toastCountEl) toastCountEl.textContent = count > 0 ? count : '';
-        if (count <= 0) clearInterval(toastCountdown);
-    }, 1000);
-
-    toastTimer = setTimeout(() => {
-        if (toast) toast.classList.remove('show');
-        if (pendingUrl) {
-            window.open(pendingUrl, '_blank', 'noopener,noreferrer');
-        }
-        pendingUrl = null;
-    }, 3000);
+    // Toast gösterilmez, direkt geçiş yapılır
+    pendingUrl = null;
 }
 
 document.querySelectorAll('.app-card').forEach(card => {
@@ -438,8 +422,10 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     const THRESHOLD = 80, MAX_PULL = 130;
 
     mainContent.addEventListener('touchstart', (e) => {
-        if (mainContent.scrollTop > 0) return;
+        // scrollTop > 5: bazi telefonlarda "sifir" pozisyonu tam 0 degil
+        if (mainContent.scrollTop > 5) return;
         startY = e.touches[0].clientY;
+        currentY = startY; // Baslangicta esitle; yanlis diff hesabi onlenir
         pulling = true;
     }, { passive: true });
 
@@ -447,7 +433,13 @@ document.querySelectorAll('.category-card').forEach(catCard => {
         if (!pulling || refreshing) return;
         currentY = e.touches[0].clientY;
         const diff = Math.min(currentY - startY, MAX_PULL);
-        if (diff <= 0) return;
+        // Asagi cekme degil VEYA scroll baslamissa pull'u iptal et
+        if (diff <= 0 || mainContent.scrollTop > 5) {
+            pulling = false;
+            ptrIndicator.style.height = '0';
+            ptrIndicator.classList.remove('visible', 'ready');
+            return;
+        }
 
         const height = Math.min(diff * 0.6, 75);
         ptrIndicator.style.height = height + 'px';
@@ -1032,24 +1024,36 @@ window.closeAdblockWarning = function() {
 };
 
 // Geçiş reklamını geç / kapat
+// Yardimci: senkron navigasyon (popup engeli olmaz)
+function _mgOpenUrl(url) {
+    if (!url) return;
+    var _a = document.createElement('a');
+    _a.href = url;
+    _a.target = '_blank';
+    _a.rel = 'noopener noreferrer';
+    _a.style.cssText = 'position:fixed;width:0;height:0;opacity:0;pointer-events:none;left:-9999px;';
+    document.body.appendChild(_a);
+    _a.click();
+    setTimeout(function() { if (_a.parentNode) _a.parentNode.removeChild(_a); }, 500);
+}
+
 window.skipAd = function() {
     var modal = document.getElementById('ad-transition-modal');
     if (modal) {
         modal.classList.remove('visible');
         modal.style.display = 'none';
     }
-    // Bekleyen URL varsa aç
     if (window._adPendingUrl) {
-        window.open(window._adPendingUrl, '_blank', 'noopener,noreferrer');
+        _mgOpenUrl(window._adPendingUrl);
         window._adPendingUrl = null;
     }
 };
 
-// Geçiş reklamı geri sayımı (reklamsız modda devre dışı kalır)
+// Gecis reklami geri sayimi (reklamiz modda devre disi kalir)
 window.startAdCountdown = function(url, appName, logoSrc) {
-    // Reklamsız mod aktifse direkt aç
+    // Reklamsiz mod aktifse direkt ac (sync — popup engel yok)
     if (userHasNoads(getActiveUser())) {
-        if (url) window.open(url, '_blank', 'noopener,noreferrer');
+        _mgOpenUrl(url);
         return;
     }
     var modal = document.getElementById('ad-transition-modal');
@@ -1058,7 +1062,7 @@ window.startAdCountdown = function(url, appName, logoSrc) {
     var skipBtn = document.getElementById('ad-skip-btn');
     var nameEl  = document.getElementById('ad-app-name-top');
     var logoEl  = document.getElementById('ad-app-logo');
-    if (!modal) return;
+    if (!modal) { _mgOpenUrl(url); return; }
 
     window._adPendingUrl = url || null;
     if (nameEl) nameEl.textContent = appName || 'Uygulama';
@@ -1098,10 +1102,10 @@ window.startAdCountdown = function(url, appName, logoSrc) {
     }, 1000);
 };
 
-// openAppWithAd: app-card click'lerinden çağrılabilir
+// openAppWithAd: app-card click'lerinden cagrilabilir
 window.openAppWithAd = function(url, appName, logoSrc) {
     if (userHasNoads(getActiveUser())) {
-        window.open(url, '_blank', 'noopener,noreferrer');
+        _mgOpenUrl(url);
     } else {
         window.startAdCountdown(url, appName, logoSrc);
     }
