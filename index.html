@@ -3381,6 +3381,173 @@
     })();
     </script>
 
+    <!-- ═══════════════════════════════════════
+         GEÇİŞ REKLAMI OVERLAY (Interstitial)
+    ════════════════════════════════════════ -->
+    <div id="mgAdOverlay" role="dialog" aria-modal="true" aria-label="Reklam" style="display:none;">
+        <div id="mgAdOverlayBox">
+            <div id="mgAdOverlayTop">
+                <span id="mgAdOverlayTitle"><i class="fas fa-ad"></i> Reklam</span>
+                <div id="mgAdOverlayRight">
+                    <span id="mgAdCountdown">5</span>
+                    <button id="mgAdSkipBtn" disabled>Geç <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+            <div id="mgAdOverlayContent">
+                <ins class="adsbygoogle"
+                     style="display:block;width:100%;min-height:250px;"
+                     data-ad-client="ca-pub-1880946354382681"
+                     data-ad-slot="1689789138"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+            </div>
+            <div id="mgAdOverlayBar">
+                <div id="mgAdOverlayProgress"></div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    #mgAdOverlay {
+        position:fixed; inset:0; z-index:999999;
+        background:rgba(0,0,0,0.72);
+        backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+        align-items:center; justify-content:center;
+        animation:mgAdFadeIn .25s ease;
+    }
+    #mgAdOverlay[style*="display:none"]{display:none!important}
+    @keyframes mgAdFadeIn{from{opacity:0}to{opacity:1}}
+    #mgAdOverlayBox{
+        background:var(--bg-card,#fff);
+        border-radius:22px;
+        width:min(480px,94vw);
+        overflow:hidden;
+        box-shadow:0 32px 80px rgba(0,0,0,.35),0 0 0 1px rgba(255,255,255,.08);
+        animation:mgAdSlideUp .3s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes mgAdSlideUp{
+        from{transform:translateY(30px) scale(.96);opacity:0}
+        to{transform:translateY(0) scale(1);opacity:1}
+    }
+    #mgAdOverlayTop{
+        display:flex; align-items:center; justify-content:space-between;
+        padding:14px 18px;
+        background:linear-gradient(135deg,#4318ff,#00d2ff);
+    }
+    #mgAdOverlayTitle{
+        font-size:.88rem; font-weight:900; color:#fff;
+        display:flex; align-items:center; gap:8px;
+        font-family:'Nunito',sans-serif;
+    }
+    #mgAdOverlayRight{display:flex;align-items:center;gap:10px}
+    #mgAdCountdown{
+        width:32px; height:32px; border-radius:50%;
+        background:rgba(255,255,255,.22);
+        border:2px solid rgba(255,255,255,.45);
+        color:#fff; font-size:.88rem; font-weight:900;
+        display:flex; align-items:center; justify-content:center;
+        font-family:'Nunito',sans-serif; flex-shrink:0;
+    }
+    #mgAdSkipBtn{
+        background:rgba(255,255,255,.18);
+        border:1.5px solid rgba(255,255,255,.4);
+        color:#fff; border-radius:50px;
+        padding:6px 16px; font-size:.82rem; font-weight:800;
+        cursor:pointer; font-family:'Nunito',sans-serif;
+        display:flex; align-items:center; gap:6px;
+        transition:background .2s,opacity .2s; white-space:nowrap;
+    }
+    #mgAdSkipBtn:disabled{opacity:.45;cursor:not-allowed}
+    #mgAdSkipBtn:not(:disabled):hover{background:rgba(255,255,255,.32)}
+    #mgAdOverlayContent{
+        padding:14px 16px; min-height:280px;
+        display:flex; align-items:center; justify-content:center;
+    }
+    #mgAdOverlayContent ins{width:100%}
+    #mgAdOverlayBar{
+        height:4px; background:rgba(0,0,0,.08);
+        border-radius:0 0 22px 22px; overflow:hidden;
+    }
+    [data-theme="dark"] #mgAdOverlayBar{background:rgba(255,255,255,.08)}
+    #mgAdOverlayProgress{
+        height:100%; width:100%;
+        background:linear-gradient(90deg,#4318ff,#00d2ff);
+        transform-origin:left; transform:scaleX(1);
+        border-radius:0 0 22px 22px;
+    }
+    </style>
+
+    <script>
+    (function(){
+        var COUNTDOWN  = 5;
+        var overlay    = document.getElementById('mgAdOverlay');
+        var skipBtn    = document.getElementById('mgAdSkipBtn');
+        var countEl    = document.getElementById('mgAdCountdown');
+        var progressEl = document.getElementById('mgAdOverlayProgress');
+        var pendingUrl = null;
+        var timer      = null;
+        var adPushed   = false;
+
+        function pushAd(){
+            if(adPushed) return;
+            adPushed = true;
+            try{(window.adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}
+        }
+
+        function openAd(url){
+            pendingUrl = url;
+            overlay.style.display = 'flex';
+            pushAd();
+
+            var remaining = COUNTDOWN;
+            countEl.textContent = remaining;
+            skipBtn.disabled    = true;
+            progressEl.style.transition = 'none';
+            progressEl.style.transform  = 'scaleX(1)';
+
+            requestAnimationFrame(function(){
+                requestAnimationFrame(function(){
+                    progressEl.style.transition = 'transform '+COUNTDOWN+'s linear';
+                    progressEl.style.transform  = 'scaleX(0)';
+                });
+            });
+
+            timer = setInterval(function(){
+                remaining--;
+                countEl.textContent = remaining;
+                if(remaining <= 0){
+                    clearInterval(timer);
+                    skipBtn.disabled = false;
+                    skipBtn.focus();
+                }
+            }, 1000);
+        }
+
+        function closeAd(){
+            clearInterval(timer);
+            overlay.style.display = 'none';
+            if(pendingUrl){
+                window.open(pendingUrl,'_blank','noopener,noreferrer');
+                pendingUrl = null;
+            }
+        }
+
+        skipBtn.addEventListener('click', function(){
+            if(!skipBtn.disabled) closeAd();
+        });
+
+        document.addEventListener('click', function(e){
+            var link = e.target.closest('a.app-card, a.tumuu-tile');
+            if(!link) return;
+            var href = link.getAttribute('href');
+            if(!href || href==='#' || href.charAt(0)==='#') return;
+            e.preventDefault();
+            openAd(href);
+        }, true);
+
+    })();
+    </script>
+
     <!-- Kısayol ipucu rozeti (masaüstünde köşede görünür) -->
     <div class="mg-shortcut-hint" id="mgShortcutHint" title="Klavye kısayollarını göster" role="button" tabindex="0" aria-label="Klavye kısayolları">
         <span class="mg-sh-key">?</span>
