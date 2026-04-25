@@ -2080,24 +2080,7 @@
         </main>
     </div>
 
-    <!-- YÖNLENDİRME TOAST -->
-    <div id="redirect-toast" role="alert" aria-live="assertive">
-        <div class="toast-app-icon"><img id="toast-app-logo" src="" alt="" style="width:38px;height:38px;border-radius:10px;object-fit:cover;display:block;"></div>
-        <div class="toast-body">
-            <strong id="toast-app-name">Uygulama</strong>
-            <span>3 saniye içinde açılıyor...</span>
-        </div>
-        <div class="toast-right">
-            <div class="toast-countdown-ring" aria-hidden="true">
-                <svg width="36" height="36" viewBox="0 0 36 36">
-                    <circle class="track" cx="18" cy="18" r="14"/>
-                    <circle class="progress" id="toast-ring" cx="18" cy="18" r="14"/>
-                </svg>
-                <span class="toast-num" id="toast-countdown">3</span>
-            </div>
-            <button class="toast-cancel-btn" id="toast-cancel-btn" aria-label="Yönlendirmeyi İptal Et">İptal</button>
-        </div>
-    </div>
+
 
 
     <!-- NSosyal & Pinterest Pill Stilleri -->
@@ -2248,123 +2231,7 @@
         </div>
     </div>
 
-    <!-- GEÇİŞ REKLAM EKRANI -->
-    <style>
-        #ad-transition-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 99998;
-            background: rgba(0,0,0,0.92);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            align-items: center;
-            justify-content: center;
-        }
-        #ad-transition-modal.visible { display: flex !important; }
-        #ad-transition-box {
-            background: #ffffff;
-            border-radius: 24px;
-            width: min(520px, 94vw);
-            overflow: hidden;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.55);
-            animation: adPop 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;
-            display: flex;
-            flex-direction: column;
-        }[data-theme="dark"] #ad-transition-box { background: #1e293b; }
-        @keyframes adPop {
-            from { opacity:0; transform: scale(0.88) translateY(24px); }
-            to   { opacity:1; transform: scale(1) translateY(0); }
-        }
-        #ad-topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 18px;
-            background: #f8fafc;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        [data-theme="dark"] #ad-topbar { background: #0f172a; border-bottom-color: #334155; }
-        #ad-app-info { display: flex; align-items: center; gap: 10px; }
-        #ad-app-logo { width: 36px; height: 36px; border-radius: 9px; object-fit: cover; }
-        #ad-app-label { font-size: 0.85rem; font-weight: 800; color: #64748b; font-family:"Nunito",sans-serif; display:block; }
-        #ad-app-name-top { display: block; font-size: 0.95rem; font-weight: 900; color: #0f172a; font-family:"Nunito",sans-serif; }
-        [data-theme="dark"] #ad-app-name-top { color: #f8fafc; }
-        #ad-skip-area { display: flex; align-items: center; gap: 10px; }
-        #ad-skip-btn {
-            background: linear-gradient(135deg,#4318ff,#00d2ff);
-            color: #fff; border: none; border-radius: 9px;
-            padding: 8px 16px; font-size: 0.85rem; font-weight: 900;
-            cursor: pointer; font-family: "Nunito", sans-serif;
-            display: none; align-items: center; gap: 6px;
-            transition: transform 0.15s, box-shadow 0.15s;
-            box-shadow: 0 4px 12px rgba(67,24,255,0.35);
-        }
-        #ad-skip-btn.show { display: inline-flex; }
-        #ad-skip-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(67,24,255,0.45); }
-        #ad-countdown-wrap {
-            display: flex; align-items: center; gap: 6px;
-            font-size: 0.85rem; font-weight: 800; color: #64748b;
-            font-family: "Nunito", sans-serif;
-        }
-        #ad-countdown-wrap svg { transform: rotate(-90deg); }
-        #ad-countdown-wrap circle.track { fill:none; stroke:#e2e8f0; stroke-width:3; }
-        #ad-countdown-wrap circle.prog  { fill:none; stroke:#4318ff; stroke-width:3; stroke-linecap:round; transition: stroke-dashoffset 1s linear; }
-        #ad-sec { font-size:1rem; font-weight:900; color:#4318ff; margin-left:-30px; }
-        #ad-content-area {
-            min-height: 90px; display: flex; align-items: center;
-            justify-content: center; flex-direction: column;
-            padding: 1rem; gap: 8px; position: relative;
-            background: #f1f5f9;
-        }
-        [data-theme="dark"] #ad-content-area { background: #0f172a; }
-        #ad-adsense-slot { width: 100%; display: flex; align-items: center; justify-content: center; }
-        #ad-progress-bar-wrap { height: 5px; background: #e2e8f0; overflow: hidden; }[data-theme="dark"] #ad-progress-bar-wrap { background: #334155; }
-        #ad-progress-bar {
-            height: 100%; width: 100%;
-            background: linear-gradient(90deg,#4318ff,#00d2ff);
-            transform: scaleX(1); transform-origin: left;
-        }
-    </style>
 
-    <div id="ad-transition-modal">
-        <div id="ad-transition-box">
-            <div id="ad-topbar">
-                <div id="ad-app-info">
-                    <img id="ad-app-logo" src="" alt="">
-                    <div>
-                        <span id="ad-app-label">Şu an açılıyor:</span>
-                        <span id="ad-app-name-top">Uygulama</span>
-                    </div>
-                </div>
-                <div id="ad-skip-area">
-                    <div id="ad-countdown-wrap">
-                        <svg width="34" height="34" viewBox="0 0 34 34">
-                            <circle class="track" cx="17" cy="17" r="13"/>
-                            <circle class="prog" id="ad-ring" cx="17" cy="17" r="13"/>
-                        </svg>
-                        <span id="ad-sec">5</span>
-                    </div>
-                    <button id="ad-skip-btn" onclick="skipAd()">
-                        <i class="fas fa-forward"></i> Geç
-                    </button>
-                </div>
-            </div>
-            <div id="ad-content-area">
-                <div id="ad-adsense-slot">
-                    <ins class="adsbygoogle"
-                         style="display:inline-block;width:320px;height:50px;"
-                         data-ad-client="ca-pub-1880946354382681"
-                         data-ad-slot="auto"
-                         data-ad-format="auto"
-                         data-full-width-responsive="false"></ins>
-                </div>
-            </div>
-            <div id="ad-progress-bar-wrap">
-                <div id="ad-progress-bar"></div>
-            </div>
-        </div>
-    </div>
 
     <!-- REKLAM ENGELLEYİCİ GEÇİCİ KAPATMA KODU -->
     <script>
@@ -2373,12 +2240,8 @@
             if (localStorage.getItem('mugol-noads') === 'true') {
                 // Tüm reklam elementlerini anında gizle
                 var style = document.createElement('style');
-                style.textContent = '.adsense-banner-wrap, ins.adsbygoogle, #ad-transition-modal, #adblock-overlay { display: none !important; }';
+                style.textContent = '.adsense-banner-wrap, ins.adsbygoogle, #adblock-overlay { display: none !important; }';
                 document.head.appendChild(style);
-                // Geçiş reklamı fonksiyonlarını devre dışı bırak
-                window.showAdTransition = function() { return false; };
-                window.startAdCountdown = function() { return false; };
-                window.openAppWithAd = function(url) { window.open(url, '_blank'); };
             }
         })();
 
@@ -3381,180 +3244,12 @@
     })();
     </script>
 
-    <!-- ═══════════════════════════════════════
-         GEÇİŞ REKLAMI OVERLAY (Interstitial)
-    ════════════════════════════════════════ -->
-    <div id="mgAdOverlay" role="dialog" aria-modal="true" aria-label="Reklam" style="display:none;">
-        <div id="mgAdOverlayBox">
-            <div id="mgAdOverlayTop">
-                <span id="mgAdOverlayTitle"><i class="fas fa-ad"></i> Reklam</span>
-                <div id="mgAdOverlayRight">
-                    <span id="mgAdCountdown">5</span>
-                    <button id="mgAdSkipBtn" disabled>Geç <i class="fas fa-arrow-right"></i></button>
-                </div>
-            </div>
-            <div id="mgAdOverlayContent">
-                <!-- Reklam JS tarafından dinamik yüklenir -->
-            </div>
-            <div id="mgAdOverlayBar">
-                <div id="mgAdOverlayProgress"></div>
-            </div>
-        </div>
-    </div>
 
-    <style>
-    #mgAdOverlay {
-        position:fixed; inset:0; z-index:999999;
-        background:rgba(0,0,0,0.72);
-        backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-        align-items:center; justify-content:center;
-        animation:mgAdFadeIn .25s ease;
-    }
-    #mgAdOverlay[style*="display:none"]{display:none!important}
-    @keyframes mgAdFadeIn{from{opacity:0}to{opacity:1}}
-    #mgAdOverlayBox{
-        background:var(--bg-card,#fff);
-        border-radius:22px;
-        width:min(480px,94vw);
-        overflow:hidden;
-        box-shadow:0 32px 80px rgba(0,0,0,.35),0 0 0 1px rgba(255,255,255,.08);
-        animation:mgAdSlideUp .3s cubic-bezier(.34,1.56,.64,1);
-    }
-    @keyframes mgAdSlideUp{
-        from{transform:translateY(30px) scale(.96);opacity:0}
-        to{transform:translateY(0) scale(1);opacity:1}
-    }
-    #mgAdOverlayTop{
-        display:flex; align-items:center; justify-content:space-between;
-        padding:14px 18px;
-        background:linear-gradient(135deg,#4318ff,#00d2ff);
-    }
-    #mgAdOverlayTitle{
-        font-size:.88rem; font-weight:900; color:#fff;
-        display:flex; align-items:center; gap:8px;
-        font-family:'Nunito',sans-serif;
-    }
-    #mgAdOverlayRight{display:flex;align-items:center;gap:10px}
-    #mgAdCountdown{
-        width:32px; height:32px; border-radius:50%;
-        background:rgba(255,255,255,.22);
-        border:2px solid rgba(255,255,255,.45);
-        color:#fff; font-size:.88rem; font-weight:900;
-        display:flex; align-items:center; justify-content:center;
-        font-family:'Nunito',sans-serif; flex-shrink:0;
-    }
-    #mgAdSkipBtn{
-        background:rgba(255,255,255,.18);
-        border:1.5px solid rgba(255,255,255,.4);
-        color:#fff; border-radius:50px;
-        padding:6px 16px; font-size:.82rem; font-weight:800;
-        cursor:pointer; font-family:'Nunito',sans-serif;
-        display:flex; align-items:center; gap:6px;
-        transition:background .2s,opacity .2s; white-space:nowrap;
-    }
-    #mgAdSkipBtn:disabled{opacity:.45;cursor:not-allowed}
-    #mgAdSkipBtn:not(:disabled):hover{background:rgba(255,255,255,.32)}
-    #mgAdOverlayContent{
-        padding:14px 16px; min-height:280px;
-        display:flex; align-items:center; justify-content:center;
-    }
-    #mgAdOverlayContent ins{width:100%}
-    #mgAdOverlayBar{
-        height:4px; background:rgba(0,0,0,.08);
-        border-radius:0 0 22px 22px; overflow:hidden;
-    }
-    [data-theme="dark"] #mgAdOverlayBar{background:rgba(255,255,255,.08)}
-    #mgAdOverlayProgress{
-        height:100%; width:100%;
-        background:linear-gradient(90deg,#4318ff,#00d2ff);
-        transform-origin:left; transform:scaleX(1);
-        border-radius:0 0 22px 22px;
-    }
-    </style>
+
+
 
     <script>
-    (function(){
-        var COUNTDOWN   = 5;
-        var overlay     = document.getElementById('mgAdOverlay');
-        var skipBtn     = document.getElementById('mgAdSkipBtn');
-        var countEl     = document.getElementById('mgAdCountdown');
-        var progressEl  = document.getElementById('mgAdOverlayProgress');
-        var adContent   = document.getElementById('mgAdOverlayContent');
-        var pendingWin  = null;
-        var timer       = null;
-
-        function loadFreshAd(){
-            adContent.innerHTML = '';
-            var ins = document.createElement('ins');
-            ins.className = 'adsbygoogle';
-            ins.style.cssText = 'display:block;width:100%;min-height:250px;';
-            ins.setAttribute('data-ad-client', 'ca-pub-1880946354382681');
-            ins.setAttribute('data-ad-slot',   '1689789138');
-            ins.setAttribute('data-ad-format', 'auto');
-            ins.setAttribute('data-full-width-responsive', 'true');
-            adContent.appendChild(ins);
-            try{(window.adsbygoogle = window.adsbygoogle || []).push({});}catch(e){}
-        }
-
-        function openAd(win, url){
-            loadFreshAd();
-            overlay.style.display = 'flex';
-            pendingWin = win;
-
-            var remaining = COUNTDOWN;
-            countEl.textContent = remaining;
-            skipBtn.disabled    = true;
-            progressEl.style.transition = 'none';
-            progressEl.style.transform  = 'scaleX(1)';
-
-            requestAnimationFrame(function(){
-                requestAnimationFrame(function(){
-                    progressEl.style.transition = 'transform ' + COUNTDOWN + 's linear';
-                    progressEl.style.transform  = 'scaleX(0)';
-                });
-            });
-
-            timer = setInterval(function(){
-                remaining--;
-                countEl.textContent = remaining;
-                if(remaining <= 0){
-                    clearInterval(timer);
-                    skipBtn.disabled = false;
-                    skipBtn.focus();
-                    /* Geri sayım bitince Geç butonu aktif — kullanıcı basar */
-                }
-            }, 1000);
-
-            /* Geç butonuna basılınca yönlendir */
-            skipBtn.onclick = function(){
-                if(skipBtn.disabled) return;
-                clearInterval(timer);
-                overlay.style.display = 'none';
-                if(pendingWin && !pendingWin.closed){
-                    pendingWin.location.href = url;
-                }
-                pendingWin = null;
-            };
-        }
-
-        document.body.addEventListener('click', function(e){
-            if(overlay.contains(e.target)) return;
-            var link = e.target.closest('a.app-card, a.tumuu-tile');
-            if(!link) return;
-            var href = link.getAttribute('href');
-            if(!href || href === '#' || href.charAt(0) === '#') return;
-
-            /* 1. ADIM: Tıklama event'i içinde hemen pencere aç — popup blocker geçmez */
-            var win = window.open('about:blank', '_blank');
-
-            /* 2. ADIM: Artık gezinmeyi iptal et, reklam göster */
-            e.preventDefault();
-            e.stopImmediatePropagation();
-
-            openAd(win, href);
-        });
-
-    })();
+    /* Geçiş reklamı kaldırıldı — linkler doğrudan yeni sekmede açılır */
     </script>
 
     <!-- Kısayol ipucu rozeti (masaüstünde köşede görünür) -->
