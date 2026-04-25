@@ -3394,12 +3394,7 @@
                 </div>
             </div>
             <div id="mgAdOverlayContent">
-                <ins class="adsbygoogle"
-                     style="display:block;width:100%;min-height:250px;"
-                     data-ad-client="ca-pub-1880946354382681"
-                     data-ad-slot="1689789138"
-                     data-ad-format="auto"
-                     data-full-width-responsive="true"></ins>
+                <!-- Reklam JS tarafından dinamik yüklenir -->
             </div>
             <div id="mgAdOverlayBar">
                 <div id="mgAdOverlayProgress"></div>
@@ -3479,25 +3474,33 @@
 
     <script>
     (function(){
-        var COUNTDOWN  = 5;
-        var overlay    = document.getElementById('mgAdOverlay');
-        var skipBtn    = document.getElementById('mgAdSkipBtn');
-        var countEl    = document.getElementById('mgAdCountdown');
-        var progressEl = document.getElementById('mgAdOverlayProgress');
-        var pendingUrl = null;
-        var timer      = null;
-        var adPushed   = false;
+        var COUNTDOWN   = 5;
+        var overlay     = document.getElementById('mgAdOverlay');
+        var skipBtn     = document.getElementById('mgAdSkipBtn');
+        var countEl     = document.getElementById('mgAdCountdown');
+        var progressEl  = document.getElementById('mgAdOverlayProgress');
+        var adContent   = document.getElementById('mgAdOverlayContent');
+        var pendingUrl  = null;
+        var timer       = null;
 
-        function pushAd(){
-            if(adPushed) return;
-            adPushed = true;
-            try{(window.adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}
+        /* Her açılışta reklam alanını temizle ve yeni ins ekle */
+        function loadFreshAd(){
+            adContent.innerHTML = '';
+            var ins = document.createElement('ins');
+            ins.className = 'adsbygoogle';
+            ins.style.cssText = 'display:block;width:100%;min-height:250px;';
+            ins.setAttribute('data-ad-client', 'ca-pub-1880946354382681');
+            ins.setAttribute('data-ad-slot',   '1689789138');
+            ins.setAttribute('data-ad-format', 'auto');
+            ins.setAttribute('data-full-width-responsive', 'true');
+            adContent.appendChild(ins);
+            try{(window.adsbygoogle = window.adsbygoogle || []).push({});}catch(e){}
         }
 
         function openAd(url){
             pendingUrl = url;
+            loadFreshAd();
             overlay.style.display = 'flex';
-            pushAd();
 
             var remaining = COUNTDOWN;
             countEl.textContent = remaining;
@@ -3507,7 +3510,7 @@
 
             requestAnimationFrame(function(){
                 requestAnimationFrame(function(){
-                    progressEl.style.transition = 'transform '+COUNTDOWN+'s linear';
+                    progressEl.style.transition = 'transform ' + COUNTDOWN + 's linear';
                     progressEl.style.transform  = 'scaleX(0)';
                 });
             });
@@ -3527,7 +3530,7 @@
             clearInterval(timer);
             overlay.style.display = 'none';
             if(pendingUrl){
-                window.open(pendingUrl,'_blank','noopener,noreferrer');
+                window.open(pendingUrl, '_blank', 'noopener,noreferrer');
                 pendingUrl = null;
             }
         }
@@ -3536,14 +3539,18 @@
             if(!skipBtn.disabled) closeAd();
         });
 
-        document.addEventListener('click', function(e){
+        /* Link yakalamak için bubble phase — stopPropagation çakışması olmaz */
+        document.body.addEventListener('click', function(e){
+            /* Overlay içindeki tıklamaları yoksay */
+            if(overlay.contains(e.target)) return;
             var link = e.target.closest('a.app-card, a.tumuu-tile');
             if(!link) return;
             var href = link.getAttribute('href');
-            if(!href || href==='#' || href.charAt(0)==='#') return;
+            if(!href || href === '#' || href.charAt(0) === '#') return;
             e.preventDefault();
+            e.stopImmediatePropagation();
             openAd(href);
-        }, true);
+        });
 
     })();
     </script>
