@@ -3480,10 +3480,9 @@
         var countEl     = document.getElementById('mgAdCountdown');
         var progressEl  = document.getElementById('mgAdOverlayProgress');
         var adContent   = document.getElementById('mgAdOverlayContent');
-        var pendingUrl  = null;
+        var pendingWin  = null;
         var timer       = null;
 
-        /* Her açılışta reklam alanını temizle ve yeni ins ekle */
         function loadFreshAd(){
             adContent.innerHTML = '';
             var ins = document.createElement('ins');
@@ -3497,10 +3496,10 @@
             try{(window.adsbygoogle = window.adsbygoogle || []).push({});}catch(e){}
         }
 
-        function openAd(url){
-            pendingUrl = url;
+        function openAd(win, url){
             loadFreshAd();
             overlay.style.display = 'flex';
+            pendingWin = win;
 
             var remaining = COUNTDOWN;
             countEl.textContent = remaining;
@@ -3522,34 +3521,37 @@
                     clearInterval(timer);
                     skipBtn.disabled = false;
                     skipBtn.focus();
+                    /* Geri sayım bitince Geç butonu aktif — kullanıcı basar */
                 }
             }, 1000);
+
+            /* Geç butonuna basılınca yönlendir */
+            skipBtn.onclick = function(){
+                if(skipBtn.disabled) return;
+                clearInterval(timer);
+                overlay.style.display = 'none';
+                if(pendingWin && !pendingWin.closed){
+                    pendingWin.location.href = url;
+                }
+                pendingWin = null;
+            };
         }
 
-        function closeAd(){
-            clearInterval(timer);
-            overlay.style.display = 'none';
-            if(pendingUrl){
-                window.open(pendingUrl, '_blank', 'noopener,noreferrer');
-                pendingUrl = null;
-            }
-        }
-
-        skipBtn.addEventListener('click', function(){
-            if(!skipBtn.disabled) closeAd();
-        });
-
-        /* Link yakalamak için bubble phase — stopPropagation çakışması olmaz */
         document.body.addEventListener('click', function(e){
-            /* Overlay içindeki tıklamaları yoksay */
             if(overlay.contains(e.target)) return;
             var link = e.target.closest('a.app-card, a.tumuu-tile');
             if(!link) return;
             var href = link.getAttribute('href');
             if(!href || href === '#' || href.charAt(0) === '#') return;
+
+            /* 1. ADIM: Tıklama event'i içinde hemen pencere aç — popup blocker geçmez */
+            var win = window.open('about:blank', '_blank');
+
+            /* 2. ADIM: Artık gezinmeyi iptal et, reklam göster */
             e.preventDefault();
             e.stopImmediatePropagation();
-            openAd(href);
+
+            openAd(win, href);
         });
 
     })();
