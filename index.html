@@ -59,11 +59,83 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1880946354382681" crossorigin="anonymous"></script>
     
     <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Awesome — çoklu CDN yedekli yükleme -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.0/css/all.css" crossorigin="anonymous">
+    <script>
+    (function(){
+        /* Font Awesome yüklendi mi kontrol et — yüklenmediyse jsDelivr ile dene */
+        function faLoaded(){
+            var el=document.createElement('span');
+            el.className='fa fa-home';
+            el.style.cssText='position:absolute;left:-9999px;font-family:"Font Awesome 6 Free"';
+            document.body.appendChild(el);
+            var w=window.getComputedStyle(el,':before').content;
+            document.body.removeChild(el);
+            return w&&w!=='none'&&w!=='""'&&w!=="''";
+        }
+        window.addEventListener('load',function(){
+            setTimeout(function(){
+                if(!faLoaded()){
+                    var links=[
+                        'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css',
+                        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css'
+                    ];
+                    links.forEach(function(href){
+                        var l=document.createElement('link');
+                        l.rel='stylesheet'; l.href=href; l.crossOrigin='anonymous';
+                        document.head.appendChild(l);
+                    });
+                }
+            },800);
+        });
+    })();
+    </script>
     
+
+    <!-- İKON FALLBACK — FA yüklenemezse emoji/unicode ikonlar göster -->
+    <style id="mg-icon-fallback">
+    /* FA yüklenene kadar boşluk bırak */
+    .nav-item i,
+    .setting-info i,
+    .section-title i,
+    button i { min-width: 1.1em; display: inline-block; }
+
+    /* FA font ailesi tanımı — local yedek */
+    @font-face {
+        font-family: "Font Awesome 6 Free";
+        font-style: normal;
+        font-weight: 900;
+        font-display: block;
+        src: url("https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/webfonts/fa-solid-900.woff2") format("woff2"),
+             url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2") format("woff2"),
+             url("https://use.fontawesome.com/releases/v6.4.0/webfonts/fa-solid-900.woff2") format("woff2");
+    }
+    @font-face {
+        font-family: "Font Awesome 6 Free";
+        font-style: normal;
+        font-weight: 400;
+        font-display: block;
+        src: url("https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/webfonts/fa-regular-400.woff2") format("woff2"),
+             url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-regular-400.woff2") format("woff2");
+    }
+    @font-face {
+        font-family: "Font Awesome 6 Brands";
+        font-style: normal;
+        font-weight: 400;
+        font-display: block;
+        src: url("https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/webfonts/fa-brands-400.woff2") format("woff2"),
+             url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.woff2") format("woff2");
+    }
+    </style>
+
     <link rel="stylesheet" href="style.css">
 
     <!-- v3.0 — GÜNCELLENMİŞ TASARIM STİLLERİ -->
@@ -74,6 +146,43 @@
             justify-content: center;
             padding: 8px 0;
             background: transparent;
+        }
+
+        /* ── AdSense Reklam Kutusu ── */
+        .mg-ad-box {
+            position: relative;
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 28px 12px 12px;
+            margin-bottom: 1.4rem;
+            overflow: hidden;
+            box-sizing: border-box;
+            min-height: 100px;
+        }
+        .mg-ad-box--bottom {
+            margin-top: 1rem;
+        }
+        .mg-ad-label {
+            position: absolute;
+            top: 7px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.62rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            background: var(--bg-body);
+            padding: 2px 10px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        [data-theme="dark"] .mg-ad-box {
+            border-color: rgba(255,255,255,0.07);
         }
 
         /* ── Glassmorphism Header v3 ── */
@@ -553,6 +662,11 @@
                 <span id="notifDot" style="display:none; position:absolute; top:7px; right:7px; width:8px; height:8px; background:#FF5630; border-radius:50%; border:2px solid var(--bg-header);" aria-hidden="true"></span>
             </button>
 
+            <!-- TEMA TOGGLE BUTONU -->
+            <button class="hamburger-btn mg-theme-toggle" id="headerThemeToggle" aria-label="Tema Değiştir" title="Temayı Değiştir">
+                <i class="fas fa-moon" id="headerThemeIcon"></i>
+            </button>
+
             <!-- KULLANICI AVATAR BUTONU -->
             <button id="mgAvatar" aria-label="Profil menüsü" aria-haspopup="menu" aria-expanded="false">
                 MG<span class="mg-dot guest" aria-hidden="true"></span>
@@ -688,6 +802,14 @@
         <main class="main-content" role="main">
             <div class="section-header">
                 <h2 class="section-title" id="sectionTitle">Ana Sayfa</h2>
+                <div class="mg-view-toggle" id="mgViewToggle" aria-label="Görünüm modu" title="Grid / Liste Görünümü">
+                    <button class="mg-vt-btn active" id="mgViewGrid" aria-label="Grid görünümü" aria-pressed="true">
+                        <i class="fas fa-th-large" aria-hidden="true"></i>
+                    </button>
+                    <button class="mg-vt-btn" id="mgViewList" aria-label="Liste görünümü" aria-pressed="false">
+                        <i class="fas fa-list" aria-hidden="true"></i>
+                    </button>
+                </div>
             </div>
 
             <!-- SAYFA: ANA SAYFA -->
@@ -742,6 +864,21 @@
 
                 <div id="adblock-inline-warning" style="display: none !important;"></div>
 
+                <!-- ── ADSENSE REKLAM KUTUSU 1 — Resimli ── -->
+                <div class="mg-ad-box" aria-label="Reklam" role="complementary">
+                    <span class="mg-ad-label">Reklam</span>
+                    <!-- Resimli -->
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-1880946354382681"
+                         data-ad-slot="1689789138"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>
+                         (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+
                 <!-- Hızlı Erişim Şeridi -->
                 <div class="quick-access-strip" role="navigation" aria-label="Hızlı Erişim">
                     <a href="https://mugol-portal.github.io/MuGol.bugun/" class="qa-chip" target="_blank">
@@ -768,6 +905,18 @@
                         <span class="qa-icon" style="background:linear-gradient(135deg,#36B37E,#064e3b)"><i class="fas fa-mosque"></i></span>
                         <span>Namaz</span>
                     </a>
+                </div>
+
+                <!-- ── ADSENSE — Kategoriler Üstü ── -->
+                <div class="mg-ad-box" aria-label="Reklam" role="complementary">
+                    <span class="mg-ad-label">Reklam</span>
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-1880946354382681"
+                         data-ad-slot="1689789138"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                 </div>
 
                 <div class="category-grid">
@@ -819,6 +968,22 @@
                         <i class="fas fa-chevron-right cat-arrow" aria-hidden="true"></i>
                     </div>
                 </div>
+
+                <!-- ── ADSENSE REKLAM KUTUSU 2 — Resimli (Alt Ana Sayfa) ── -->
+                <div class="mg-ad-box mg-ad-box--bottom" aria-label="Reklam" role="complementary">
+                    <span class="mg-ad-label">Reklam</span>
+                    <!-- Resimli -->
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-1880946354382681"
+                         data-ad-slot="1689789138"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>
+                         (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+
             </div>
 
             <!-- SAYFA: TÜMÜ -->
@@ -973,6 +1138,18 @@
                     </a>
 
                 </div>
+
+                <!-- ── ADSENSE — Tümü Sayfası Alt ── -->
+                <div class="mg-ad-box mg-ad-box--bottom" aria-label="Reklam" role="complementary">
+                    <span class="mg-ad-label">Reklam</span>
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-1880946354382681"
+                         data-ad-slot="1689789138"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                </div>
             </div>
 
             <!-- SAYFA: GÜNLÜK -->
@@ -1062,6 +1239,18 @@
                         </div>
                     </a>
                 </div>
+
+                <!-- ── ADSENSE — Günlük Sayfası Alt ── -->
+                <div class="mg-ad-box mg-ad-box--bottom" aria-label="Reklam" role="complementary">
+                    <span class="mg-ad-label">Reklam</span>
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-1880946354382681"
+                         data-ad-slot="1689789138"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                </div>
             </div>
 
             <!-- SAYFA: EĞİTİM -->
@@ -1139,6 +1328,18 @@
                         </div>
                     </a>
                 </div>
+
+                <!-- ── ADSENSE — Eğitim Sayfası Alt ── -->
+                <div class="mg-ad-box mg-ad-box--bottom" aria-label="Reklam" role="complementary">
+                    <span class="mg-ad-label">Reklam</span>
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-1880946354382681"
+                         data-ad-slot="1689789138"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                </div>
             </div>
 
             <!-- SAYFA: ARAÇLAR -->
@@ -1204,6 +1405,18 @@
                         </div>
                     </a>
                 </div>
+
+                <!-- ── ADSENSE — Araçlar Sayfası Alt ── -->
+                <div class="mg-ad-box mg-ad-box--bottom" aria-label="Reklam" role="complementary">
+                    <span class="mg-ad-label">Reklam</span>
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-1880946354382681"
+                         data-ad-slot="1689789138"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                </div>
             </div>
 
             <!-- SAYFA: EĞLENCE -->
@@ -1244,6 +1457,18 @@
                             <div class="launch-btn" aria-hidden="true"><span class="btn-label">Aç</span><i class="fas fa-arrow-right"></i></div>
                         </div>
                     </a>
+                </div>
+
+                <!-- ── ADSENSE — Eğlence Sayfası Alt ── -->
+                <div class="mg-ad-box mg-ad-box--bottom" aria-label="Reklam" role="complementary">
+                    <span class="mg-ad-label">Reklam</span>
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-1880946354382681"
+                         data-ad-slot="1689789138"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                 </div>
             </div>
 
@@ -2674,5 +2899,504 @@
         console.log('[MuGöl Portal İyileştirmeleri v2.0] ✓ Yüklendi');
     })();
     </script>
+
+    <!-- İKON KURTARMA SİSTEMİ — FA yüklenemezse emoji göster -->
+    <script>
+    (function(){
+        /* Nav item emoji haritası */
+        var iconMap = {
+            'fa-home':           '🏠',
+            'fa-th':             '⚏',
+            'fa-calendar-day':   '📅',
+            'fa-graduation-cap': '🎓',
+            'fa-toolbox':        '🔧',
+            'fa-gamepad':        '🎮',
+            'fa-cog':            '⚙️',
+            'fa-envelope':       '✉️',
+            'fa-info-circle':    'ℹ️',
+            'fa-shield-alt':     '🛡️',
+            'fa-download':       '⬇️',
+            'fa-search':         '🔍',
+            'fa-bell':           '🔔',
+            'fa-moon':           '🌙',
+            'fa-sun':            '☀️',
+            'fa-arrow-up':       '↑',
+            'fa-times':          '✕',
+            'fa-check':          '✓',
+            'fa-star':           '★',
+            'fa-fire':           '🔥',
+            'fa-palette':        '🎨',
+            'fa-user':           '👤',
+            'fa-sign-out-alt':   '🚪',
+            'fa-external-link-alt': '↗',
+            'fa-trash':          '🗑️',
+            'fa-paint-brush':    '🖌️',
+            'fa-chart-bar':      '📊',
+            'fa-globe':          '🌐',
+            'fa-lock':           '🔒',
+            'fa-wifi':           '📶',
+            'fa-mobile-alt':     '📱',
+            'fa-database':       '🗃️'
+        };
+
+        function isFALoaded() {
+            try {
+                var testEl = document.createElement('i');
+                testEl.className = 'fas fa-home';
+                testEl.style.cssText = 'position:fixed;top:-999px;left:-999px;font-size:16px;';
+                document.body.appendChild(testEl);
+                var computed = window.getComputedStyle(testEl, ':before');
+                var content = computed.getPropertyValue('content');
+                var fontFamily = computed.getPropertyValue('font-family');
+                document.body.removeChild(testEl);
+                return fontFamily && fontFamily.toLowerCase().indexOf('awesome') !== -1
+                    && content && content !== 'none' && content !== '""' && content.length > 0;
+            } catch(e) { return false; }
+        }
+
+        function applyEmojiIcons() {
+            var icons = document.querySelectorAll('i[class*="fa-"]');
+            icons.forEach(function(icon) {
+                var classes = icon.className.split(' ');
+                for (var i = 0; i < classes.length; i++) {
+                    var cls = classes[i];
+                    if (iconMap[cls]) {
+                        icon.textContent = iconMap[cls];
+                        icon.style.cssText += 'font-family:inherit!important;font-style:normal;font-size:1em;display:inline-block;';
+                        break;
+                    }
+                }
+            });
+            console.log('[MuGöl] İkon emoji fallback aktif');
+        }
+
+        /* FA yüklü mü kontrol et — 1s sonra */
+        setTimeout(function() {
+            if (!isFALoaded()) {
+                /* Bir kez daha yüklemeyi dene */
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css';
+                link.crossOrigin = 'anonymous';
+                document.head.appendChild(link);
+
+                link.onload = function() {
+                    setTimeout(function() {
+                        if (!isFALoaded()) applyEmojiIcons();
+                    }, 500);
+                };
+                link.onerror = function() {
+                    applyEmojiIcons();
+                };
+
+                /* 2s içinde hala yüklenemediyse emoji uygula */
+                setTimeout(function() {
+                    if (!isFALoaded()) applyEmojiIcons();
+                }, 2000);
+            }
+        }, 1000);
+    })();
+    </script>
+
+    <!-- ══════════════════════════════════════════
+         BAĞLAM MENÜSÜ (SAĞ TIK)
+    ══════════════════════════════════════════ -->
+    <div id="mgCtxMenu" class="mg-ctx-menu" role="menu" aria-label="Kart Seçenekleri">
+        <button class="mg-ctx-item" id="mgCtxOpen" role="menuitem">
+            <span class="mg-ctx-icon" style="background:linear-gradient(135deg,#1e3a8a,#2563eb)"><i class="fas fa-external-link-alt" aria-hidden="true"></i></span>
+            <span>Aç</span>
+        </button>
+        <button class="mg-ctx-item" id="mgCtxNewTab" role="menuitem">
+            <span class="mg-ctx-icon" style="background:linear-gradient(135deg,#0ea5e9,#06b6d4)"><i class="fas fa-external-link-alt" aria-hidden="true"></i></span>
+            <span>Yeni Sekmede Aç</span>
+        </button>
+        <div class="mg-ctx-sep" role="separator"></div>
+        <button class="mg-ctx-item" id="mgCtxFav" role="menuitem">
+            <span class="mg-ctx-icon" style="background:linear-gradient(135deg,#ef4444,#f97316)"><i class="fas fa-heart" aria-hidden="true"></i></span>
+            <span id="mgCtxFavLabel">Favorilere Ekle</span>
+        </button>
+        <button class="mg-ctx-item" id="mgCtxCopy" role="menuitem">
+            <span class="mg-ctx-icon" style="background:linear-gradient(135deg,#8b5cf6,#6366f1)"><i class="fas fa-link" aria-hidden="true"></i></span>
+            <span>Bağlantıyı Kopyala</span>
+        </button>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         KLAVYE KISAYOL PANELİ
+    ══════════════════════════════════════════ -->
+    <div id="mgShortcutOverlay" class="mg-shortcut-overlay" role="dialog" aria-modal="true" aria-label="Klavye Kısayolları" style="display:none;">
+        <div class="mg-shortcut-panel">
+            <div class="mg-sp-head">
+                <span class="mg-sp-title"><i class="fas fa-keyboard" aria-hidden="true"></i> Klavye Kısayolları</span>
+                <button class="mg-sp-close" id="mgSpClose" aria-label="Kapat"><i class="fas fa-times" aria-hidden="true"></i></button>
+            </div>
+            <div class="mg-sp-body">
+                <div class="mg-sp-group">
+                    <div class="mg-sp-row"><kbd>Ctrl</kbd><kbd>K</kbd><span>Uygulama Ara</span></div>
+                    <div class="mg-sp-row"><kbd>?</kbd><span>Bu paneli aç / kapat</span></div>
+                    <div class="mg-sp-row"><kbd>Esc</kbd><span>Arama / Paneli kapat</span></div>
+                </div>
+                <div class="mg-sp-divider"></div>
+                <div class="mg-sp-group">
+                    <div class="mg-sp-row"><kbd>1</kbd>–<kbd>9</kbd><span>Menü öğesine git</span></div>
+                    <div class="mg-sp-row"><kbd>Alt</kbd><kbd>T</kbd><span>Temayı Değiştir</span></div>
+                    <div class="mg-sp-row"><kbd>Alt</kbd><kbd>V</kbd><span>Grid / Liste geçiş</span></div>
+                </div>
+                <div class="mg-sp-divider"></div>
+                <div class="mg-sp-group">
+                    <div class="mg-sp-row"><kbd>Sağ Tık</kbd><span>Kart bağlam menüsü</span></div>
+                    <div class="mg-sp-row"><kbd>Sayfa Yukarı</kbd><span>Sayfa başına git</span></div>
+                </div>
+            </div>
+            <div class="mg-sp-foot">
+                <span>MuGöl PORTAL — Kısayol Rehberi</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         YENİ ÖZELLİKLER — JAVASCRIPT
+    ══════════════════════════════════════════ -->
+    <script>
+    (function() {
+
+        /* ─────────────────────────────────────────
+           YARDIMCI: RIPPLE
+        ───────────────────────────────────────── */
+        function addRipple(el, e) {
+            var ripple = document.createElement('span');
+            ripple.className = 'mg-ripple';
+            var rect = el.getBoundingClientRect();
+            var size = Math.max(rect.width, rect.height) * 2.2;
+            var x = e ? (e.clientX - rect.left - size / 2) : (rect.width / 2 - size / 2);
+            var y = e ? (e.clientY - rect.top  - size / 2) : (rect.height / 2 - size / 2);
+            ripple.style.cssText = 'width:' + size + 'px;height:' + size + 'px;left:' + x + 'px;top:' + y + 'px;';
+            el.style.overflow = 'hidden';
+            el.appendChild(ripple);
+            setTimeout(function() { if (ripple.parentNode) ripple.remove(); }, 650);
+        }
+        window._mgAddRipple = addRipple;
+
+        /* ─────────────────────────────────────────
+           1. HEADER TEMA TOGGLE
+        ───────────────────────────────────────── */
+        var headerThemeToggle = document.getElementById('headerThemeToggle');
+        var headerThemeIcon   = document.getElementById('headerThemeIcon');
+
+        function syncThemeIcon() {
+            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (headerThemeIcon) headerThemeIcon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+            if (headerThemeToggle) headerThemeToggle.setAttribute('title', isDark ? 'Açık Temaya Geç' : 'Koyu Temaya Geç');
+        }
+        syncThemeIcon();
+
+        if (headerThemeToggle) {
+            headerThemeToggle.addEventListener('click', function() {
+                var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                var newTheme = isDark ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('mugol-theme', newTheme);
+                syncThemeIcon();
+                var ts = document.getElementById('themeSwitch');
+                if (ts) ts.checked = newTheme === 'dark';
+                if (typeof _fbSetPref === 'function') _fbSetPref('theme', newTheme);
+                addRipple(headerThemeToggle);
+                if (typeof showToast === 'function') showToast(newTheme === 'dark' ? '🌙 Koyu tema' : '☀️ Açık tema');
+            });
+        }
+        new MutationObserver(syncThemeIcon).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+        /* ─────────────────────────────────────────
+           2. GRID / LİSTE TOGGLE
+        ───────────────────────────────────────── */
+        var btnGrid = document.getElementById('mgViewGrid');
+        var btnList = document.getElementById('mgViewList');
+
+        function applyView(mode) {
+            document.body.classList.toggle('mg-list-view', mode === 'list');
+            if (btnGrid) { btnGrid.classList.toggle('active', mode === 'grid'); btnGrid.setAttribute('aria-pressed', mode === 'grid' ? 'true' : 'false'); }
+            if (btnList) { btnList.classList.toggle('active', mode === 'list'); btnList.setAttribute('aria-pressed', mode === 'list' ? 'true' : 'false'); }
+            localStorage.setItem('mugol-view-mode', mode);
+        }
+        applyView(localStorage.getItem('mugol-view-mode') || 'grid');
+        if (btnGrid) btnGrid.addEventListener('click', function() { applyView('grid'); addRipple(this); });
+        if (btnList) btnList.addEventListener('click', function() { applyView('list'); addRipple(this); });
+
+        /* ─────────────────────────────────────────
+           3. FAVORİ BUTONU
+        ───────────────────────────────────────── */
+        var favorites = JSON.parse(localStorage.getItem('mugol-favorites') || '[]');
+
+        function addFavBtns() {
+            document.querySelectorAll('.app-card').forEach(function(card) {
+                if (card.querySelector('.mg-fav-btn')) return;
+                var href = card.getAttribute('href') || '';
+                var btn = document.createElement('button');
+                btn.className = 'mg-fav-btn' + (favorites.indexOf(href) !== -1 ? ' active' : '');
+                btn.setAttribute('aria-label', 'Favorilere Ekle / Çıkar');
+                btn.innerHTML = '<i class="fas fa-heart" aria-hidden="true"></i>';
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault(); e.stopPropagation();
+                    var idx = favorites.indexOf(href);
+                    if (idx === -1) { favorites.push(href); btn.classList.add('active'); if (typeof showToast === 'function') showToast('❤️ Favorilere eklendi'); }
+                    else            { favorites.splice(idx,1); btn.classList.remove('active'); if (typeof showToast === 'function') showToast('💔 Favorilerden çıkarıldı'); }
+                    localStorage.setItem('mugol-favorites', JSON.stringify(favorites));
+                    addRipple(btn);
+                });
+                card.appendChild(btn);
+            });
+        }
+        new MutationObserver(addFavBtns).observe(document.querySelector('.main-content') || document.body, { childList: true, subtree: true });
+        setTimeout(addFavBtns, 500);
+
+        /* ─────────────────────────────────────────
+           4. BAĞLAM MENÜSÜ (SAĞ TIK)
+        ───────────────────────────────────────── */
+        var ctxMenu     = document.getElementById('mgCtxMenu');
+        var ctxTarget   = null;   /* tıklanan .app-card */
+
+        function openCtx(card, x, y) {
+            ctxTarget = card;
+            var href  = card.getAttribute('href') || '';
+            var isFav = favorites.indexOf(href) !== -1;
+            var lbl   = document.getElementById('mgCtxFavLabel');
+            if (lbl) lbl.textContent = isFav ? 'Favorilerden Çıkar' : 'Favorilere Ekle';
+
+            ctxMenu.style.display = 'block';
+            /* Ekran dışına taşmasını engelle */
+            var mw = 210, mh = ctxMenu.offsetHeight || 170;
+            var cx = Math.min(x, window.innerWidth  - mw - 8);
+            var cy = Math.min(y, window.innerHeight - mh - 8);
+            ctxMenu.style.left = cx + 'px';
+            ctxMenu.style.top  = cy + 'px';
+            ctxMenu.classList.add('mg-ctx-open');
+        }
+
+        function closeCtx() {
+            ctxMenu.classList.remove('mg-ctx-open');
+            setTimeout(function() { if (!ctxMenu.classList.contains('mg-ctx-open')) ctxMenu.style.display = 'none'; }, 160);
+            ctxTarget = null;
+        }
+
+        document.addEventListener('contextmenu', function(e) {
+            var card = e.target.closest('.app-card');
+            if (card) {
+                e.preventDefault();
+                openCtx(card, e.clientX, e.clientY);
+            } else {
+                closeCtx();
+            }
+        });
+
+        document.addEventListener('click',   function(e) { if (!ctxMenu.contains(e.target)) closeCtx(); });
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeCtx(); });
+        document.addEventListener('scroll',  closeCtx, true);
+
+        document.getElementById('mgCtxOpen').addEventListener('click', function() {
+            if (ctxTarget) { var h = ctxTarget.getAttribute('href'); if (h) window.location.href = h; }
+            closeCtx();
+        });
+        document.getElementById('mgCtxNewTab').addEventListener('click', function() {
+            if (ctxTarget) { var h = ctxTarget.getAttribute('href'); if (h) window.open(h, '_blank', 'noopener'); }
+            closeCtx();
+        });
+        document.getElementById('mgCtxFav').addEventListener('click', function() {
+            if (!ctxTarget) return closeCtx();
+            var href = ctxTarget.getAttribute('href') || '';
+            var idx  = favorites.indexOf(href);
+            if (idx === -1) { favorites.push(href); if (typeof showToast === 'function') showToast('❤️ Favorilere eklendi'); }
+            else            { favorites.splice(idx,1); if (typeof showToast === 'function') showToast('💔 Favorilerden çıkarıldı'); }
+            localStorage.setItem('mugol-favorites', JSON.stringify(favorites));
+            /* Favori butonunu güncelle */
+            var favBtn = ctxTarget.querySelector('.mg-fav-btn');
+            if (favBtn) favBtn.classList.toggle('active', favorites.indexOf(href) !== -1);
+            closeCtx();
+        });
+        document.getElementById('mgCtxCopy').addEventListener('click', function() {
+            if (ctxTarget) {
+                var h = ctxTarget.getAttribute('href') || window.location.href;
+                navigator.clipboard ? navigator.clipboard.writeText(h).then(function() {
+                    if (typeof showToast === 'function') showToast('🔗 Bağlantı kopyalandı!');
+                }) : (function() {
+                    var ta = document.createElement('textarea');
+                    ta.value = h; document.body.appendChild(ta);
+                    ta.select(); document.execCommand('copy');
+                    ta.remove();
+                    if (typeof showToast === 'function') showToast('🔗 Bağlantı kopyalandı!');
+                })();
+            }
+            closeCtx();
+        });
+
+        /* ─────────────────────────────────────────
+           5. SAYFA İÇİ FİLTRE ÇUBUĞU
+        ───────────────────────────────────────── */
+        var filterPages = ['page-gunluk','page-egitim','page-araclar','page-eglence','page-tumuu'];
+
+        function buildFilterBar(pageId) {
+            var page = document.getElementById(pageId);
+            if (!page || page.querySelector('.mg-filter-bar')) return;
+            var grid = page.querySelector('.app-grid, .tumuu-grid');
+            if (!grid) return;
+
+            var bar = document.createElement('div');
+            bar.className = 'mg-filter-bar';
+            bar.innerHTML =
+                '<span class="mg-fb-icon"><i class="fas fa-filter" aria-hidden="true"></i></span>' +
+                '<input type="search" class="mg-fb-input" placeholder="Bu sayfada ara…" autocomplete="off" aria-label="Uygulamalarda ara">' +
+                '<span class="mg-fb-count"></span>';
+            page.insertBefore(bar, grid);
+
+            var input     = bar.querySelector('.mg-fb-input');
+            var countSpan = bar.querySelector('.mg-fb-count');
+
+            function filterCards(q) {
+                q = q.trim().toLowerCase();
+                var cards  = grid.querySelectorAll('.app-card, .tumuu-tile');
+                var visible = 0;
+                cards.forEach(function(c) {
+                    var txt = (c.textContent || '').toLowerCase();
+                    var show = !q || txt.indexOf(q) !== -1;
+                    c.style.display = show ? '' : 'none';
+                    if (show) visible++;
+                });
+                countSpan.textContent = q ? (visible + ' sonuç') : '';
+                countSpan.style.display = q ? 'flex' : 'none';
+            }
+
+            input.addEventListener('input', function() { filterCards(this.value); });
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') { this.value = ''; filterCards(''); this.blur(); }
+            });
+        }
+
+        filterPages.forEach(buildFilterBar);
+        /* Sayfa değiştiğinde filtre çubuklarını da kur */
+        document.querySelectorAll('.nav-item[data-target]').forEach(function(item) {
+            item.addEventListener('click', function() {
+                var t = this.getAttribute('data-target');
+                if (t) setTimeout(function() { buildFilterBar(t); }, 100);
+            });
+        });
+
+        /* ─────────────────────────────────────────
+           6. KLAVYE KISAYOL PANELİ
+        ───────────────────────────────────────── */
+        var shortcutOverlay = document.getElementById('mgShortcutOverlay');
+        var spClose         = document.getElementById('mgSpClose');
+
+        function toggleShortcuts(force) {
+            var show = force !== undefined ? force : shortcutOverlay.style.display === 'none';
+            shortcutOverlay.style.display = show ? 'flex' : 'none';
+            if (show) shortcutOverlay.focus();
+        }
+
+        if (spClose) spClose.addEventListener('click', function() { toggleShortcuts(false); addRipple(this); });
+        shortcutOverlay.addEventListener('click', function(e) { if (e.target === shortcutOverlay) toggleShortcuts(false); });
+
+        /* ─────────────────────────────────────────
+           7. KLAVYE KISAYOLLARI (Global)
+        ───────────────────────────────────────── */
+        document.addEventListener('keydown', function(e) {
+            var tag = (document.activeElement && document.activeElement.tagName) || '';
+            var inInput = (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT');
+
+            /* ? → kısayol paneli */
+            if (!inInput && (e.key === '?' || (e.shiftKey && e.key === '/'))) {
+                e.preventDefault();
+                toggleShortcuts();
+                return;
+            }
+
+            /* Esc → paneli kapat */
+            if (e.key === 'Escape') { toggleShortcuts(false); return; }
+
+            /* Alt+T → tema değiştir */
+            if (e.altKey && e.key.toLowerCase() === 't') {
+                e.preventDefault();
+                if (headerThemeToggle) headerThemeToggle.click();
+                return;
+            }
+
+            /* Alt+V → grid/liste toggle */
+            if (e.altKey && e.key.toLowerCase() === 'v') {
+                e.preventDefault();
+                var cur = localStorage.getItem('mugol-view-mode') || 'grid';
+                applyView(cur === 'grid' ? 'list' : 'grid');
+                if (typeof showToast === 'function') showToast(cur === 'grid' ? '☰ Liste görünümü' : '⊞ Grid görünümü');
+                return;
+            }
+
+            /* 1-9 → ilgili nav öğesine git */
+            if (!inInput && !e.altKey && !e.ctrlKey && !e.metaKey && e.key >= '1' && e.key <= '9') {
+                var idx = parseInt(e.key) - 1;
+                var items = document.querySelectorAll('.nav-item:not(.install-app-btn):not(.nav-item--profil)');
+                if (items[idx]) { items[idx].click(); items[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+                return;
+            }
+
+            /* PageUp → sayfanın başına */
+            if (!inInput && e.key === 'PageUp') {
+                var mc = document.querySelector('.main-content');
+                if (mc) mc.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+
+        /* ─────────────────────────────────────────
+           8. RİPPLE — GLOBAL
+        ───────────────────────────────────────── */
+        document.querySelectorAll('.nav-item, .qa-chip, .category-card, .hamburger-btn').forEach(function(el) {
+            el.addEventListener('click', function(e) { addRipple(this, e); });
+        });
+
+        /* ─────────────────────────────────────────
+           9. STAGGERED KART ANİMASYONLARI
+        ───────────────────────────────────────── */
+        function staggerCards(container) {
+            if (!container) return;
+            container.querySelectorAll('.app-card, .tumuu-tile, .category-card, .mg-sc').forEach(function(card, i) {
+                card.style.setProperty('--stagger-delay', (i * 0.045) + 's');
+            });
+        }
+        document.querySelectorAll('.nav-item').forEach(function(item) {
+            item.addEventListener('click', function() {
+                var t = this.getAttribute('data-target');
+                if (t) setTimeout(function() { staggerCards(document.getElementById(t)); }, 60);
+            });
+        });
+        setTimeout(function() { staggerCards(document.getElementById('page-anasayfa')); }, 350);
+
+        console.log('[MuGöl v1.1] ✓ Tema | Grid/Liste | Favori | Bağlam Menüsü | Filtre | Kısayol Paneli');
+    })();
+    </script>
+
+    <!-- Kısayol ipucu rozeti (masaüstünde köşede görünür) -->
+    <div class="mg-shortcut-hint" id="mgShortcutHint" title="Klavye kısayollarını göster" role="button" tabindex="0" aria-label="Klavye kısayolları">
+        <span class="mg-sh-key">?</span>
+        <span>Kısayollar</span>
+    </div>
+    <script>
+    (function() {
+        /* Kısayol ipucu — 3s sonra göster */
+        setTimeout(function() {
+            var hint = document.getElementById('mgShortcutHint');
+            if (hint) {
+                hint.classList.add('mg-sh-visible');
+                hint.addEventListener('click', function() {
+                    var overlay = document.getElementById('mgShortcutOverlay');
+                    if (overlay) overlay.style.display = 'flex';
+                });
+                hint.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        var overlay = document.getElementById('mgShortcutOverlay');
+                        if (overlay) overlay.style.display = 'flex';
+                    }
+                });
+            }
+        }, 3000);
+    })();
+    </script>
+
 </body>
 </html>
