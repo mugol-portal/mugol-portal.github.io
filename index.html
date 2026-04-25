@@ -157,9 +157,9 @@
             border-radius: 16px;
             padding: 28px 12px 12px;
             margin-bottom: 1.4rem;
-            overflow: hidden;
+            overflow: visible;
             box-sizing: border-box;
-            min-height: 100px;
+            min-height: 120px;
         }
         .mg-ad-box--bottom {
             margin-top: 1rem;
@@ -180,9 +180,20 @@
             border: 1px solid var(--border-color);
             white-space: nowrap;
             pointer-events: none;
+            z-index: 1;
         }
         [data-theme="dark"] .mg-ad-box {
             border-color: rgba(255,255,255,0.07);
+        }
+
+        /* ── Kısayol rozeti — sadece masaüstünde görünsün ── */
+        .mg-shortcut-hint {
+            display: none !important;
+        }
+        @media (min-width: 1024px) {
+            .mg-shortcut-hint {
+                display: flex !important;
+            }
         }
 
         /* ── Glassmorphism Header v3 ── */
