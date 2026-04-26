@@ -871,9 +871,6 @@
                          data-ad-client="ca-pub-1880946354382681"
                          data-ad-slot="1689789138"
                          data-ad-format="rectangle"></ins>
-                    <script>
-                         (adsbygoogle = window.adsbygoogle || []).push({});
-                    </script>
                 </div>
 
                 <!-- Hızlı Erişim Şeridi -->
@@ -912,7 +909,6 @@
                          data-ad-client="ca-pub-1880946354382681"
                          data-ad-slot="1689789138"
                          data-ad-format="rectangle"></ins>
-                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                 </div>
 
                 <div class="category-grid">
@@ -974,9 +970,6 @@
                          data-ad-client="ca-pub-1880946354382681"
                          data-ad-slot="1689789138"
                          data-ad-format="rectangle"></ins>
-                    <script>
-                         (adsbygoogle = window.adsbygoogle || []).push({});
-                    </script>
                 </div>
 
             </div>
@@ -1142,7 +1135,6 @@
                          data-ad-client="ca-pub-1880946354382681"
                          data-ad-slot="1689789138"
                          data-ad-format="rectangle"></ins>
-                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                 </div>
             </div>
 
@@ -1242,7 +1234,6 @@
                          data-ad-client="ca-pub-1880946354382681"
                          data-ad-slot="1689789138"
                          data-ad-format="rectangle"></ins>
-                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                 </div>
             </div>
 
@@ -1330,7 +1321,6 @@
                          data-ad-client="ca-pub-1880946354382681"
                          data-ad-slot="1689789138"
                          data-ad-format="rectangle"></ins>
-                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                 </div>
             </div>
 
@@ -1406,7 +1396,6 @@
                          data-ad-client="ca-pub-1880946354382681"
                          data-ad-slot="1689789138"
                          data-ad-format="rectangle"></ins>
-                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                 </div>
             </div>
 
@@ -1458,7 +1447,6 @@
                          data-ad-client="ca-pub-1880946354382681"
                          data-ad-slot="1689789138"
                          data-ad-format="rectangle"></ins>
-                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                 </div>
             </div>
 
@@ -3219,7 +3207,38 @@
         });
         setTimeout(function() { staggerCards(document.getElementById('page-anasayfa')); }, 350);
 
-        console.log('[MuGöl v1.1] ✓ Tema | Grid/Liste | Favori | Bağlam Menüsü | Filtre | Kısayol Paneli');
+        /* ── Reklam Lazy Push: Sayfa active olduğunda reklamları yükle ── */
+        function pushAdsInPage(page) {
+            if (!page) return;
+            var ads = page.querySelectorAll('ins.adsbygoogle');
+            ads.forEach(function(ins) {
+                if (!ins.getAttribute('data-adsbygoogle-status')) {
+                    try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
+                }
+            });
+        }
+
+        /* Anasayfa reklamlarını sayfa yüklenince push et */
+        setTimeout(function() {
+            pushAdsInPage(document.getElementById('page-anasayfa'));
+        }, 800);
+
+        /* MutationObserver: herhangi bir page-section active olduğunda reklamları push et */
+        var _adObserver = new MutationObserver(function(mutations) {
+            mutations.forEach(function(m) {
+                if (m.type === 'attributes' && m.attributeName === 'class') {
+                    var el = m.target;
+                    if (el.classList.contains('page-section') && el.classList.contains('active')) {
+                        setTimeout(function() { pushAdsInPage(el); }, 300);
+                    }
+                }
+            });
+        });
+        document.querySelectorAll('.page-section').forEach(function(section) {
+            _adObserver.observe(section, { attributes: true, attributeFilter: ['class'] });
+        });
+
+                console.log('[MuGöl v1.1] ✓ Tema | Grid/Liste | Favori | Bağlam Menüsü | Filtre | Kısayol Paneli');
     })();
     </script>
 
