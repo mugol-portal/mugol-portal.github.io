@@ -140,14 +140,6 @@
 
     <!-- v3.0 — GÜNCELLENMİŞ TASARIM STİLLERİ -->
     <style>
-        .adsense-banner-wrap {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            padding: 8px 0;
-            background: transparent;
-        }
-
         /* ── AdSense Reklam Kutusu ── */
         .mg-ad-box {
             position: relative;
@@ -718,19 +710,6 @@
             </div>
         </div>
     </header>
-
-    <!-- Yatay AdSense Reklam Bandı -->
-    <div class="adsense-banner-wrap">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-1880946354382681"
-             data-ad-slot="1435965312"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>
-             (adsbygoogle = window.adsbygoogle ||[]).push({});
-        </script>
-    </div>
 
     <div id="searchModal" role="dialog" aria-modal="true" aria-label="Uygulama Arama" style="display:none; position:fixed; inset:0; z-index:99990; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px); align-items:flex-start; justify-content:center; padding-top:80px;">
         <div style="background:var(--bg-card); border-radius:20px; width:min(560px,95vw); box-shadow:0 30px 60px rgba(0,0,0,0.4); overflow:hidden; animation:fadeIn 0.25s ease;">
@@ -2240,7 +2219,7 @@
             if (localStorage.getItem('mugol-noads') === 'true') {
                 // Tüm reklam elementlerini anında gizle
                 var style = document.createElement('style');
-                style.textContent = '.adsense-banner-wrap, ins.adsbygoogle, #adblock-overlay { display: none !important; }';
+                style.textContent = 'ins.adsbygoogle, #adblock-overlay { display: none !important; }';
                 document.head.appendChild(style);
             }
         })();
