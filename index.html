@@ -823,6 +823,46 @@
                     </div>
                 </div>
 
+                <!-- ── SİTEYİ GÜNCELLE BUTONU ── -->
+                <div id="mgUpdateSection" style="margin-bottom:1.4rem;">
+                    <button id="mgUpdateBtn" aria-label="Siteyi Güncelle" title="Önbelleği temizle ve sayfayı yenile"
+                        style="
+                            display:flex; align-items:center; justify-content:center; gap:12px;
+                            width:100%; padding:17px 24px;
+                            background:linear-gradient(135deg,#4318ff 0%,#2979ff 50%,#00d2ff 100%);
+                            background-size:200% 200%;
+                            color:#fff; border:none; border-radius:18px;
+                            font-family:'Nunito',sans-serif; font-size:1.05rem; font-weight:900;
+                            cursor:pointer;
+                            box-shadow:0 8px 28px rgba(67,24,255,.45),
+                                       0 2px 8px rgba(0,210,255,.2),
+                                       inset 0 1px 0 rgba(255,255,255,.25);
+                            letter-spacing:.3px;
+                            transition:transform .22s cubic-bezier(.25,.8,.25,1),
+                                       box-shadow .22s ease,
+                                       filter .22s ease;
+                            position:relative; overflow:hidden;
+                        ">
+                        <!-- Parlama efekti -->
+                        <span style="
+                            position:absolute; inset:0;
+                            background:linear-gradient(105deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,0) 60%);
+                            pointer-events:none;
+                        "></span>
+                        <span style="
+                            display:flex; align-items:center; justify-content:center;
+                            width:34px; height:34px; border-radius:10px;
+                            background:rgba(255,255,255,.2);
+                            border:1.5px solid rgba(255,255,255,.3);
+                            flex-shrink:0;
+                        ">
+                            <i class="fas fa-sync-alt" id="mgUpdateIcon" aria-hidden="true" style="font-size:.95rem;"></i>
+                        </span>
+                        <span id="mgUpdateLabel" style="flex:1; text-align:center; margin-right:34px;">🔄 Siteyi Güncelle</span>
+                    </button>
+                </div>
+                <!-- ─────────────────────────────── -->
+
                 <!-- ── İSTATİSTİK ŞERİDİ ── -->
                 <div class="mg-stats" id="mgStats" aria-label="Portal istatistikleri">
                     <div class="mg-sc">
@@ -3250,7 +3290,87 @@
     /* Geçiş reklamı kaldırıldı — linkler doğrudan yeni sekmede açılır */
     </script>
 
-    <!-- Kısayol ipucu rozeti (masaüstünde köşede görünür) -->
+    <script>
+    /* ── SİTEYİ GÜNCELLE — Önbellek + SW Temizle + Hard Reload ── */
+    (function() {
+        var btn   = document.getElementById('mgUpdateBtn');
+        var icon  = document.getElementById('mgUpdateIcon');
+        var label = document.getElementById('mgUpdateLabel');
+        if (!btn) return;
+
+        /* Hover efekti */
+        btn.addEventListener('mouseenter', function() {
+            btn.style.transform = 'translateY(-3px)';
+            btn.style.boxShadow = '0 12px 32px rgba(67,24,255,.38)';
+        });
+        btn.addEventListener('mouseleave', function() {
+            btn.style.transform = '';
+            btn.style.boxShadow = '0 6px 20px rgba(67,24,255,.25)';
+        });
+
+        btn.addEventListener('click', function() {
+            if (btn.disabled) return;
+            btn.disabled = true;
+            btn.style.filter = 'brightness(.9)';
+
+            /* İkon döndür */
+            icon.style.transition = 'transform .6s linear';
+            icon.style.transform  = 'rotate(360deg)';
+            label.textContent = 'Güncelleniyor...';
+
+            /* Korunacak değerler (tema, görünüm modu vb.) */
+            var keep = {};
+            var keepKeys = ['mugol-theme', 'mugol-view-mode'];
+            keepKeys.forEach(function(k) {
+                var v = localStorage.getItem(k);
+                if (v !== null) keep[k] = v;
+            });
+
+            /* Tüm localStorage temizle */
+            try { localStorage.clear(); } catch(e) {}
+
+            /* Korunanları geri yaz */
+            Object.keys(keep).forEach(function(k) {
+                try { localStorage.setItem(k, keep[k]); } catch(e) {}
+            });
+
+            /* Session storage temizle */
+            try { sessionStorage.clear(); } catch(e) {}
+
+            /* Çerezleri temizle */
+            try {
+                document.cookie.split(';').forEach(function(c) {
+                    var name = c.trim().split('=')[0];
+                    if (name) {
+                        var d = new Date(0).toUTCString();
+                        document.cookie = name + '=;expires=' + d + ';path=/';
+                        document.cookie = name + '=;expires=' + d + ';path=/;domain=' + location.hostname;
+                    }
+                });
+            } catch(e) {}
+
+            /* Service Worker kaydını sil + Cache API temizle */
+            var swDone  = navigator.serviceWorker
+                ? navigator.serviceWorker.getRegistrations().then(function(regs) {
+                    return Promise.all(regs.map(function(r) { return r.unregister(); }));
+                  }).catch(function() { return Promise.resolve(); })
+                : Promise.resolve();
+
+            var cacheDone = (window.caches)
+                ? caches.keys().then(function(names) {
+                    return Promise.all(names.map(function(n) { return caches.delete(n); }));
+                  }).catch(function() { return Promise.resolve(); })
+                : Promise.resolve();
+
+            Promise.all([swDone, cacheDone]).then(function() {
+                /* Hard reload */
+                location.href = location.href.split('?')[0] + '?_v=' + Date.now();
+            });
+        });
+    })();
+    </script>
+
+
     <div class="mg-shortcut-hint" id="mgShortcutHint" title="Klavye kısayollarını göster" role="button" tabindex="0" aria-label="Klavye kısayolları">
         <span class="mg-sh-key">?</span>
         <span>Kısayollar</span>
