@@ -2892,10 +2892,6 @@
             <span>Yeni Sekmede Aç</span>
         </button>
         <div class="mg-ctx-sep" role="separator"></div>
-        <button class="mg-ctx-item" id="mgCtxFav" role="menuitem">
-            <span class="mg-ctx-icon" style="background:linear-gradient(135deg,#ef4444,#f97316)"><i class="fas fa-heart" aria-hidden="true"></i></span>
-            <span id="mgCtxFavLabel">Favorilere Ekle</span>
-        </button>
         <button class="mg-ctx-item" id="mgCtxCopy" role="menuitem">
             <span class="mg-ctx-icon" style="background:linear-gradient(135deg,#8b5cf6,#6366f1)"><i class="fas fa-link" aria-hidden="true"></i></span>
             <span>Bağlantıyı Kopyala</span>
@@ -3004,44 +3000,13 @@
         if (btnList) btnList.addEventListener('click', function() { applyView('list'); addRipple(this); });
 
         /* ─────────────────────────────────────────
-           3. FAVORİ BUTONU
-        ───────────────────────────────────────── */
-        var favorites = JSON.parse(localStorage.getItem('mugol-favorites') || '[]');
-
-        function addFavBtns() {
-            document.querySelectorAll('.app-card').forEach(function(card) {
-                if (card.querySelector('.mg-fav-btn')) return;
-                var href = card.getAttribute('href') || '';
-                var btn = document.createElement('button');
-                btn.className = 'mg-fav-btn' + (favorites.indexOf(href) !== -1 ? ' active' : '');
-                btn.setAttribute('aria-label', 'Favorilere Ekle / Çıkar');
-                btn.innerHTML = '<i class="fas fa-heart" aria-hidden="true"></i>';
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault(); e.stopPropagation();
-                    var idx = favorites.indexOf(href);
-                    if (idx === -1) { favorites.push(href); btn.classList.add('active'); if (typeof showToast === 'function') showToast('❤️ Favorilere eklendi'); }
-                    else            { favorites.splice(idx,1); btn.classList.remove('active'); if (typeof showToast === 'function') showToast('💔 Favorilerden çıkarıldı'); }
-                    localStorage.setItem('mugol-favorites', JSON.stringify(favorites));
-                    addRipple(btn);
-                });
-                card.appendChild(btn);
-            });
-        }
-        new MutationObserver(addFavBtns).observe(document.querySelector('.main-content') || document.body, { childList: true, subtree: true });
-        setTimeout(addFavBtns, 500);
-
-        /* ─────────────────────────────────────────
-           4. BAĞLAM MENÜSÜ (SAĞ TIK)
+           3. BAĞLAM MENÜSÜ (SAĞ TIK)
         ───────────────────────────────────────── */
         var ctxMenu     = document.getElementById('mgCtxMenu');
         var ctxTarget   = null;   /* tıklanan .app-card */
 
         function openCtx(card, x, y) {
             ctxTarget = card;
-            var href  = card.getAttribute('href') || '';
-            var isFav = favorites.indexOf(href) !== -1;
-            var lbl   = document.getElementById('mgCtxFavLabel');
-            if (lbl) lbl.textContent = isFav ? 'Favorilerden Çıkar' : 'Favorilere Ekle';
 
             ctxMenu.style.display = 'block';
             /* Ekran dışına taşmasını engelle */
@@ -3079,18 +3044,6 @@
         });
         document.getElementById('mgCtxNewTab').addEventListener('click', function() {
             if (ctxTarget) { var h = ctxTarget.getAttribute('href'); if (h) window.open(h, '_blank', 'noopener'); }
-            closeCtx();
-        });
-        document.getElementById('mgCtxFav').addEventListener('click', function() {
-            if (!ctxTarget) return closeCtx();
-            var href = ctxTarget.getAttribute('href') || '';
-            var idx  = favorites.indexOf(href);
-            if (idx === -1) { favorites.push(href); if (typeof showToast === 'function') showToast('❤️ Favorilere eklendi'); }
-            else            { favorites.splice(idx,1); if (typeof showToast === 'function') showToast('💔 Favorilerden çıkarıldı'); }
-            localStorage.setItem('mugol-favorites', JSON.stringify(favorites));
-            /* Favori butonunu güncelle */
-            var favBtn = ctxTarget.querySelector('.mg-fav-btn');
-            if (favBtn) favBtn.classList.toggle('active', favorites.indexOf(href) !== -1);
             closeCtx();
         });
         document.getElementById('mgCtxCopy').addEventListener('click', function() {
@@ -3278,7 +3231,7 @@
             _adObserver.observe(section, { attributes: true, attributeFilter: ['class'] });
         });
 
-                console.log('[MuGöl v1.1] ✓ Tema | Grid/Liste | Favori | Bağlam Menüsü | Filtre | Kısayol Paneli');
+                console.log('[MuGöl v1.1] ✓ Tema | Grid/Liste | Bağlam Menüsü | Filtre | Kısayol Paneli');
     })();
     </script>
 
@@ -3308,36 +3261,97 @@
             btn.style.boxShadow = '0 6px 20px rgba(67,24,255,.25)';
         });
 
-        btn.addEventListener('click', function() {
-            if (btn.disabled) return;
+        /* ── Onay Modal ── */
+        var confirmModal = document.createElement('div');
+        confirmModal.id = 'mgUpdateConfirmModal';
+        confirmModal.style.cssText = [
+            'display:none;position:fixed;inset:0;z-index:99999;',
+            'background:rgba(0,0,0,.65);backdrop-filter:blur(6px);',
+            '-webkit-backdrop-filter:blur(6px);',
+            'align-items:center;justify-content:center;padding:20px;'
+        ].join('');
+        confirmModal.innerHTML = [
+            '<div style="background:var(--bg-card,#18181b);border:1px solid rgba(255,255,255,.1);',
+            'border-radius:24px;padding:32px 28px;max-width:380px;width:100%;',
+            'box-shadow:0 24px 60px rgba(0,0,0,.6);text-align:center;">',
+
+            '<div style="font-size:2.4rem;margin-bottom:12px;">🔄</div>',
+
+            '<h3 style="font-size:1.15rem;font-weight:900;color:var(--text-main,#f8fafc);margin:0 0 10px;">',
+            'Siteyi Güncellemek İstediğinize Emin Misiniz?</h3>',
+
+            '<p style="font-size:.88rem;color:var(--text-muted,#94a3b8);line-height:1.6;margin:0 0 8px;">',
+            'Bu işlem sırasında aşağıdaki veriler temizlenecektir:</p>',
+
+            '<ul style="list-style:none;padding:0;margin:0 0 20px;text-align:left;',
+            'background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.18);',
+            'border-radius:14px;padding:14px 18px;">',
+            '<li style="color:#f87171;font-size:.84rem;padding:3px 0;">',
+            '⚠️ &nbsp;Giriş oturumu (yeniden giriş gerekir)</li>',
+            '<li style="color:#f87171;font-size:.84rem;padding:3px 0;">',
+            '⚠️ &nbsp;Uygulama önbelleği ve Service Worker</li>',
+            '<li style="color:#f87171;font-size:.84rem;padding:3px 0;">',
+            '⚠️ &nbsp;Çerezler ve geçici site verileri</li>',
+            '<li style="color:#94a3b8;font-size:.84rem;padding:3px 0;">',
+            '✅ &nbsp;Tema ve görünüm ayarları korunur</li>',
+            '</ul>',
+
+            '<div style="display:flex;gap:12px;justify-content:center;">',
+            '<button id="mgUpdateCancel" style="',
+            'flex:1;padding:12px 0;border-radius:14px;border:1px solid rgba(255,255,255,.12);',
+            'background:transparent;color:var(--text-muted,#94a3b8);font-size:.9rem;',
+            'font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;">',
+            '✕ &nbsp;Vazgeç</button>',
+
+            '<button id="mgUpdateConfirm" style="',
+            'flex:1;padding:12px 0;border-radius:14px;border:none;',
+            'background:linear-gradient(135deg,#4318ff,#6366f1);',
+            'color:#fff;font-size:.9rem;font-weight:700;cursor:pointer;',
+            'font-family:inherit;transition:all .2s;',
+            'box-shadow:0 6px 20px rgba(67,24,255,.3);">',
+            '✓ &nbsp;Onayla</button>',
+            '</div>',
+
+            '</div>'
+        ].join('');
+        document.body.appendChild(confirmModal);
+
+        /* Vazgeç */
+        confirmModal.addEventListener('click', function(e) {
+            if (e.target === confirmModal) confirmModal.style.display = 'none';
+        });
+        document.getElementById('mgUpdateCancel').addEventListener('mouseenter', function() {
+            this.style.background = 'rgba(255,255,255,.07)';
+            this.style.color = 'var(--text-main,#f8fafc)';
+        });
+        document.getElementById('mgUpdateCancel').addEventListener('mouseleave', function() {
+            this.style.background = 'transparent';
+            this.style.color = 'var(--text-muted,#94a3b8)';
+        });
+        document.getElementById('mgUpdateCancel').addEventListener('click', function() {
+            confirmModal.style.display = 'none';
+        });
+
+        /* Onayla — asıl işlem buraya taşındı */
+        document.getElementById('mgUpdateConfirm').addEventListener('click', function() {
+            confirmModal.style.display = 'none';
             btn.disabled = true;
             btn.style.filter = 'brightness(.9)';
-
-            /* İkon döndür */
             icon.style.transition = 'transform .6s linear';
             icon.style.transform  = 'rotate(360deg)';
             label.textContent = 'Güncelleniyor...';
 
-            /* Korunacak değerler (tema, görünüm modu vb.) */
             var keep = {};
             var keepKeys = ['mugol-theme', 'mugol-view-mode'];
             keepKeys.forEach(function(k) {
                 var v = localStorage.getItem(k);
                 if (v !== null) keep[k] = v;
             });
-
-            /* Tüm localStorage temizle */
             try { localStorage.clear(); } catch(e) {}
-
-            /* Korunanları geri yaz */
             Object.keys(keep).forEach(function(k) {
                 try { localStorage.setItem(k, keep[k]); } catch(e) {}
             });
-
-            /* Session storage temizle */
             try { sessionStorage.clear(); } catch(e) {}
-
-            /* Çerezleri temizle */
             try {
                 document.cookie.split(';').forEach(function(c) {
                     var name = c.trim().split('=')[0];
@@ -3348,25 +3362,27 @@
                     }
                 });
             } catch(e) {}
-
-            /* Service Worker kaydını sil + Cache API temizle */
-            var swDone  = navigator.serviceWorker
+            var swDone = navigator.serviceWorker
                 ? navigator.serviceWorker.getRegistrations().then(function(regs) {
                     return Promise.all(regs.map(function(r) { return r.unregister(); }));
                   }).catch(function() { return Promise.resolve(); })
                 : Promise.resolve();
-
             var cacheDone = (window.caches)
                 ? caches.keys().then(function(names) {
                     return Promise.all(names.map(function(n) { return caches.delete(n); }));
                   }).catch(function() { return Promise.resolve(); })
                 : Promise.resolve();
-
             Promise.all([swDone, cacheDone]).then(function() {
-                /* Hard reload */
                 location.href = location.href.split('?')[0] + '?_v=' + Date.now();
             });
         });
+
+        btn.addEventListener('click', function() {
+            if (btn.disabled) return;
+            /* Onay modalını göster */
+            confirmModal.style.display = 'flex';
+        });
+
     })();
     </script>
 
