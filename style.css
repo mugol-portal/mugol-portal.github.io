@@ -3454,6 +3454,34 @@ body.mg-list-view .app-card-footer {
 body.mg-list-view .app-card:hover {
     transform: translateX(4px) !important;
 }
+/* Tümü sayfası liste görünümü */
+body.mg-list-view .tumuu-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+}
+body.mg-list-view .app-card.tumuu-tile {
+    flex-direction: row !important;
+    min-height: 78px !important;
+    padding: 1rem 1.3rem !important;
+    gap: 14px !important;
+    align-items: center !important;
+    /* Tümü sayfasında kutu modunda kompakt görünüm için ek sıfırlama */
+}
+/* Tümü sayfası kutu görünümü — app-card ile aynı */
+.app-card.tumuu-tile {
+    display: flex;
+    flex-direction: column;
+    padding: 1.4rem 1.3rem;
+    min-height: 140px;
+    text-decoration: none;
+}
+.app-card.tumuu-tile .app-desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+}
 
 /* ─── RİPPLE EFEKTİ ─── */
 .mg-ripple {
@@ -4056,3 +4084,189 @@ kbd {
 kbd { box-shadow: 0 2px 0 var(--border-color), inset 0 1px 0 rgba(255,255,255,0.4) !important; }
 
 /* END — MUGÖL UI v2.0 */
+
+/* ════════════════════════════════════════════════════════════
+   GÖNDERİLER SAYFASI
+   ════════════════════════════════════════════════════════════ */
+
+.gonderiler-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.4rem;
+    padding-top: 4px;
+}
+
+/* GÖNDERI KARTI */
+.gond-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    overflow: hidden;
+    text-decoration: none;
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: transform 0.28s cubic-bezier(0.25,0.8,0.25,1),
+                box-shadow 0.28s ease,
+                border-color 0.28s ease;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    position: relative;
+}
+.gond-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gond-accent, var(--primary-color)), transparent);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+.gond-card:hover {
+    transform: translateY(-6px) scale(1.01);
+    border-color: color-mix(in srgb, var(--gond-accent, var(--primary-color)) 30%, transparent);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.1), 0 0 0 1px color-mix(in srgb, var(--gond-accent, var(--primary-color)) 15%, transparent);
+}
+.gond-card:hover::before { opacity: 1; }
+
+[data-theme="dark"] .gond-card {
+    background: linear-gradient(145deg, #1e293b, #182030);
+    border-color: rgba(255,255,255,0.06);
+}
+[data-theme="dark"] .gond-card:hover {
+    box-shadow: 0 16px 40px rgba(0,0,0,0.35), 0 0 0 1px color-mix(in srgb, var(--gond-accent, var(--primary-color)) 20%, transparent);
+}
+
+/* KART GÖVDE */
+.gond-card-body {
+    padding: 1.2rem 1.4rem 1.3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+}
+
+/* META SATIRI */
+.gond-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* PLATFORM ROZET */
+.gond-platform-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+.gond-platform-badge i { font-size: 0.68rem; }
+
+/* TAG */
+.gond-tag {
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    border: 1px solid var(--border-color);
+}
+
+/* BAŞLIK */
+.gond-title {
+    font-size: 1rem;
+    font-weight: 900;
+    color: var(--text-main);
+    margin: 0;
+    line-height: 1.35;
+    letter-spacing: -0.2px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.2s ease;
+}
+.gond-card:hover .gond-title { color: var(--gond-accent, var(--primary-color)); }
+
+/* AÇIKLAMA */
+.gond-desc {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    line-height: 1.6;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+}
+
+/* FOOTER */
+.gond-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-color);
+    margin-top: auto;
+    transition: border-color 0.2s ease;
+}
+.gond-card:hover .gond-footer { border-top-color: color-mix(in srgb, var(--gond-accent, var(--primary-color)) 15%, transparent); }
+
+.gond-date {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.gond-date i { font-size: 0.72rem; opacity: 0.7; }
+
+.gond-open {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--gond-accent, var(--primary-color));
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.gond-open i { font-size: 0.72rem; }
+.gond-card:hover .gond-open { opacity: 1; transform: translateX(0); }
+
+/* GÖNDERI BOŞ DURUM */
+.gonderiler-empty {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+/* FİLTRE BUTONU — hover */
+.gond-filter-btn:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+}
+
+/* MOBİL */
+@media (max-width: 768px) {
+    .gonderiler-grid {
+        grid-template-columns: 1fr;
+        gap: 1.1rem;
+    }
+}
+@media (max-width: 480px) {
+    .gond-card-body { padding: 1rem 1.1rem; }
+    .gond-title { font-size: 0.95rem; }
+}
+
+/* END — GÖNDERİLER */

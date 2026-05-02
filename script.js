@@ -130,6 +130,23 @@ navItems.forEach(item => {
     });
 });
 
+// ── Sidebar Menü Arama ──
+(function() {
+    var sidebarSearchInp = document.getElementById('mgSidebarSearch');
+    if (!sidebarSearchInp) return;
+    sidebarSearchInp.addEventListener('input', function() {
+        var q = this.value.trim().toLowerCase();
+        navItems.forEach(function(item) {
+            if (item.id === 'installAppBtn') return;
+            var title = (item.getAttribute('data-title') || item.querySelector('.nav-text')?.textContent || '').toLowerCase();
+            item.classList.toggle('mg-hidden', q !== '' && title.indexOf(q) === -1);
+        });
+    });
+    sidebarSearchInp.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') { this.value = ''; this.dispatchEvent(new Event('input')); }
+    });
+})();
+
 // =========================================================
 // 2. SİDEBAR KONTROLLERİ (Mobil & Masaüstü)
 // =========================================================
@@ -180,12 +197,25 @@ if (themeSwitch) {
 }
 
 const fontBtns = document.querySelectorAll('.font-btn');
+
+// Kaydedilmiş yazı boyutunu uygula
+(function() {
+    var savedSize = localStorage.getItem('mugol-font-size');
+    if (savedSize) {
+        document.documentElement.style.setProperty('--base-font-size', savedSize);
+        fontBtns.forEach(b => {
+            b.classList.toggle('active', b.getAttribute('data-size') === savedSize);
+        });
+    }
+})();
+
 fontBtns.forEach(btn => {
     const applyFont = () => {
         fontBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         const newSize = btn.getAttribute('data-size');
         document.documentElement.style.setProperty('--base-font-size', newSize);
+        localStorage.setItem('mugol-font-size', newSize);
     };
     btn.addEventListener('click', applyFont);
     btn.addEventListener('keydown', (e) => {
@@ -539,11 +569,49 @@ function openSearch() {
     if (searchModal) {
         searchModal.style.display = 'flex';
         searchInput.value = '';
+        renderSearchResults('');
         setTimeout(() => searchInput.focus(), 100);
     }
 }
 window.closeSearch = () => { if(searchModal) searchModal.style.display = 'none'; };
 if(document.getElementById('searchBtn')) document.getElementById('searchBtn').addEventListener('click', openSearch);
+
+// FAB arama butonu da aynı modalı açsın
+var mgFab = document.getElementById('mgFab');
+if (mgFab) mgFab.addEventListener('click', openSearch);
+
+function renderSearchResults(q) {
+    var resultsEl = document.getElementById('searchResults');
+    if (!resultsEl) return;
+    var trimQ = (q || '').trim().toLowerCase();
+    var list = trimQ
+        ? searchIndex.filter(item => item.name.toLowerCase().indexOf(trimQ) !== -1)
+        : searchIndex;
+    if (list.length === 0) {
+        resultsEl.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-muted);font-weight:700;">Sonuç bulunamadı.</div>';
+        return;
+    }
+    resultsEl.innerHTML = list.map(item => `
+        <div onclick="closeSearch();typeof openAppWithAd==='function'?openAppWithAd('${item.url}','${item.name.replace(/'/g,"\\'")}','${item.img}'):window.open('${item.url}','_blank','noopener,noreferrer')"
+             style="display:flex;align-items:center;gap:14px;padding:12px 10px;border-radius:14px;cursor:pointer;transition:background .15s;"
+             onmouseover="this.style.background='var(--bg-body)'" onmouseout="this.style.background='transparent'">
+            ${item.img ? `<img src="${item.img}" alt="" style="width:36px;height:36px;border-radius:10px;object-fit:cover;border:1px solid var(--border-color);">` : `<div style="width:36px;height:36px;border-radius:10px;background:var(--bg-body);display:flex;align-items:center;justify-content:center;"><i class="fas fa-th-large" style="color:var(--primary-color);font-size:1rem;"></i></div>`}
+            <span style="font-weight:800;color:var(--text-main);font-size:.95rem;">${item.name}</span>
+            <i class="fas fa-arrow-right" style="margin-left:auto;color:var(--text-muted);font-size:.8rem;"></i>
+        </div>`).join('');
+}
+
+if (searchInput) {
+    searchInput.addEventListener('input', function() {
+        renderSearchResults(this.value);
+    });
+    searchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            var first = document.querySelector('#searchResults [onclick]');
+            if (first) first.click();
+        }
+    });
+}
 
 document.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
@@ -556,12 +624,25 @@ document.addEventListener('keydown', (e) => {
 const savedColor = localStorage.getItem('mugol-primary-color');
 if (savedColor) document.documentElement.style.setProperty('--primary-color', savedColor);
 
+// Kaydedilmiş rengi aktif swatch'a yansıt
+(function() {
+    var sc = localStorage.getItem('mugol-primary-color');
+    if (sc) {
+        document.querySelectorAll('.color-swatch').forEach(function(sw) {
+            sw.classList.toggle('active', sw.getAttribute('data-color') === sc);
+        });
+    }
+})();
+
 document.querySelectorAll('.color-swatch').forEach(swatch => {
     swatch.addEventListener('click', () => {
         const color = swatch.getAttribute('data-color');
         document.documentElement.style.setProperty('--primary-color', color);
         localStorage.setItem('mugol-primary-color', color);
         _fbSetPref('color', color);
+        // Aktif swatch'ı güncelle
+        document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.remove('active'));
+        swatch.classList.add('active');
     });
 });
 
