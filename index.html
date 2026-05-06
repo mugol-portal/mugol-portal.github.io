@@ -800,7 +800,7 @@
         <main class="main-content" role="main">
             <div class="section-header">
                 <h2 class="section-title" id="sectionTitle">Ana Sayfa</h2>
-                <div class="mg-view-toggle" id="mgViewToggle" aria-label="Görünüm modu" title="Grid / Liste Görünümü">
+                <div class="mg-view-toggle" id="mgViewToggle" aria-label="Görünüm modu" title="Grid / Liste Görünümü" style="display:none!important;">
                     <button class="mg-vt-btn active" id="mgViewGrid" aria-label="Grid görünümü" aria-pressed="true">
                         <i class="fas fa-th-large" aria-hidden="true"></i>
                     </button>
@@ -868,7 +868,7 @@
                     <div class="mg-sc">
                         <div class="mg-si" style="background:linear-gradient(135deg,#4318ff,#6366f1)"><i class="fas fa-th-large"></i></div>
                         <div>
-                            <span class="mg-sv" id="mgStatApps">23</span>
+                            <span class="mg-sv" id="mgStatApps">23</span><!-- count:23 -->
                             <span class="mg-sl">Uygulama</span>
                         </div>
                     </div>
@@ -1016,7 +1016,16 @@
 
             <!-- SAYFA: TÜMÜ -->
             <div id="page-tumuu" class="page-section" role="region" aria-label="Tüm Uygulamalar">
-                <div class="tumuu-grid">
+                <!-- Görünüm Toggle -->
+                <div class="mg-view-toggle" role="group" aria-label="Görünüm seçimi">
+                    <button class="mg-vt-btn mg-vt-active" id="tumuuGridBtn" onclick="setViewMode('tumuu','grid')" aria-label="Kart görünümü" title="Kart">
+                        <i class="fas fa-th"></i><span>Kart</span>
+                    </button>
+                    <button class="mg-vt-btn" id="tumuuListBtn" onclick="setViewMode('tumuu','list')" aria-label="Liste görünümü" title="Liste">
+                        <i class="fas fa-list"></i><span>Liste</span>
+                    </button>
+                </div>
+                <div class="tumuu-grid" id="tumuuGrid">
 
                     <a href="https://mugol-portal.github.io/MuGol.bugun/" class="tumuu-tile" style="animation-delay:0s;">
                         <div class="tumuu-icon-wrap">
@@ -1194,7 +1203,11 @@
 
             <!-- SAYFA: GÜNLÜK -->
             <div id="page-gunluk" class="page-section" role="region" aria-label="Günlük Uygulamalar">
-                <div class="app-grid">
+                <div class="mg-view-toggle" role="group" aria-label="Görünüm seçimi">
+                    <button class="mg-vt-btn mg-vt-active" id="gunlukGridBtn" onclick="setViewMode('gunluk','grid')" aria-label="Kart görünümü"><i class="fas fa-th"></i><span>Kart</span></button>
+                    <button class="mg-vt-btn" id="gunlukListBtn" onclick="setViewMode('gunluk','list')" aria-label="Liste görünümü"><i class="fas fa-list"></i><span>Liste</span></button>
+                </div>
+                <div class="app-grid" id="gunlukGrid">
                     <a href="https://mugol-portal.github.io/MuGol.bugun/" class="app-card" style="animation-delay: 0s;">
                         <div class="app-card-header">
                             <img src="images/takvim.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Takvim&background=4318ff&color=fff&rounded=true&bold=true'">
@@ -1293,7 +1306,11 @@
 
             <!-- SAYFA: EĞİTİM -->
             <div id="page-egitim" class="page-section" role="region" aria-label="Eğitim Uygulamaları">
-                <div class="app-grid">
+                <div class="mg-view-toggle" role="group" aria-label="Görünüm seçimi">
+                    <button class="mg-vt-btn mg-vt-active" id="egitimGridBtn" onclick="setViewMode('egitim','grid')" aria-label="Kart görünümü"><i class="fas fa-th"></i><span>Kart</span></button>
+                    <button class="mg-vt-btn" id="egitimListBtn" onclick="setViewMode('egitim','list')" aria-label="Liste görünümü"><i class="fas fa-list"></i><span>Liste</span></button>
+                </div>
+                <div class="app-grid" id="egitimGrid">
                     <a href="https://mugol-portal.github.io/duygularin.sokagi/" class="app-card" style="animation-delay: 0s;">
                         <div class="app-card-header">
                             <img src="images/sokak.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Duygu&background=FF8B00&color=fff&rounded=true&bold=true'">
@@ -1404,7 +1421,11 @@
 
             <!-- SAYFA: ARAÇLAR -->
             <div id="page-araclar" class="page-section" role="region" aria-label="Araç Uygulamaları">
-                <div class="app-grid">
+                <div class="mg-view-toggle" role="group" aria-label="Görünüm seçimi">
+                    <button class="mg-vt-btn mg-vt-active" id="araclarGridBtn" onclick="setViewMode('araclar','grid')" aria-label="Kart görünümü"><i class="fas fa-th"></i><span>Kart</span></button>
+                    <button class="mg-vt-btn" id="araclarListBtn" onclick="setViewMode('araclar','list')" aria-label="Liste görünümü"><i class="fas fa-list"></i><span>Liste</span></button>
+                </div>
+                <div class="app-grid" id="araclarGrid">
                     <a href="https://mugol-portal.github.io/mugol.ekonomi/" class="app-card" style="animation-delay: 0s;">
                         <div class="app-card-header">
                             <img src="images/ekonomi.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Eko&background=00B8D9&color=fff&rounded=true&bold=true'">
@@ -1479,7 +1500,11 @@
 
             <!-- SAYFA: EĞLENCE -->
             <div id="page-eglence" class="page-section" role="region" aria-label="Eğlence Uygulamaları">
-                <div class="app-grid">
+                <div class="mg-view-toggle" role="group" aria-label="Görünüm seçimi">
+                    <button class="mg-vt-btn mg-vt-active" id="eglenceGridBtn" onclick="setViewMode('eglence','grid')" aria-label="Kart görünümü"><i class="fas fa-th"></i><span>Kart</span></button>
+                    <button class="mg-vt-btn" id="eglenceListBtn" onclick="setViewMode('eglence','list')" aria-label="Liste görünümü"><i class="fas fa-list"></i><span>Liste</span></button>
+                </div>
+                <div class="app-grid" id="eglenceGrid">
                     <a href="https://mugol-portal.github.io/Mugol.games/" class="app-card" style="animation-delay: 0s;">
                         <div class="app-card-header">
                             <img src="images/games.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Oyun&background=FF5630&color=fff&rounded=true&bold=true'">
@@ -1941,11 +1966,10 @@
                             </div>
                         </div>
 
-                        <div class="about-stats" aria-label="Platform İstatistikleri">
+                        <div class="about-stats about-stats--row" aria-label="Platform İstatistikleri">
                             <div class="stat-item">
                                 <i class="fas fa-rocket" aria-hidden="true"></i>
-                                <!-- Toplam uygulama sayısı 21 olarak güncellendi -->
-                                <div><strong aria-label="21">21</strong><span>Uygulama</span></div>
+                                <div><strong aria-label="23">23</strong><span>Uygulama</span></div>
                             </div>
                             <div class="stat-item">
                                 <i class="fas fa-layer-group" aria-hidden="true"></i>
@@ -3449,6 +3473,54 @@
                 });
             }
         }, 3000);
+    })();
+    </script>
+
+    <!-- ── Görünüm Toggle (Kart/Liste) ── -->
+    <script>
+    (function() {
+        /* Sayfa adı → {gridId, gridBtn, listBtn, storageKey} */
+        var pages = {
+            'tumuu':   { grid: 'tumuuGrid',   gBtn: 'tumuuGridBtn',   lBtn: 'tumuuListBtn',   key: 'mg-view-tumuu'   },
+            'gunluk':  { grid: 'gunlukGrid',  gBtn: 'gunlukGridBtn',  lBtn: 'gunlukListBtn',  key: 'mg-view-gunluk'  },
+            'egitim':  { grid: 'egitimGrid',  gBtn: 'egitimGridBtn',  lBtn: 'egitimListBtn',  key: 'mg-view-egitim'  },
+            'araclar': { grid: 'araclarGrid', gBtn: 'araclarGridBtn', lBtn: 'araclarListBtn', key: 'mg-view-araclar' },
+            'eglence': { grid: 'eglenceGrid', gBtn: 'eglenceGridBtn', lBtn: 'eglenceListBtn', key: 'mg-view-eglence' }
+        };
+
+        /* Tercihleri localStorage'dan yükle */
+        Object.keys(pages).forEach(function(page) {
+            var cfg = pages[page];
+            var saved = localStorage.getItem(cfg.key) || 'grid';
+            if (saved === 'list') {
+                var el = document.getElementById(cfg.grid);
+                if (el) el.classList.add('list-view');
+                var gb = document.getElementById(cfg.gBtn);
+                var lb = document.getElementById(cfg.lBtn);
+                if (gb) gb.classList.remove('mg-vt-active');
+                if (lb) lb.classList.add('mg-vt-active');
+            }
+        });
+
+        /* Global fonksiyon */
+        window.setViewMode = function(page, mode) {
+            var cfg = pages[page];
+            if (!cfg) return;
+            var el = document.getElementById(cfg.grid);
+            var gb = document.getElementById(cfg.gBtn);
+            var lb = document.getElementById(cfg.lBtn);
+            if (!el) return;
+            if (mode === 'list') {
+                el.classList.add('list-view');
+                if (gb) gb.classList.remove('mg-vt-active');
+                if (lb) lb.classList.add('mg-vt-active');
+            } else {
+                el.classList.remove('list-view');
+                if (gb) gb.classList.add('mg-vt-active');
+                if (lb) lb.classList.remove('mg-vt-active');
+            }
+            try { localStorage.setItem(cfg.key, mode); } catch(e) {}
+        };
     })();
     </script>
 

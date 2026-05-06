@@ -3415,58 +3415,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
     transform: scale(1.08);
 }
 
-/* ─── LİSTE GÖRÜNÜMÜ ─── */
-body.mg-list-view .app-grid {
-    grid-template-columns: 1fr !important;
-    gap: 10px !important;
-}
-body.mg-list-view .app-card {
-    flex-direction: row !important;
-    min-height: 78px !important;
-    padding: 1rem 1.3rem !important;
-    gap: 14px !important;
-    align-items: center !important;
-}
-body.mg-list-view .app-card-header {
-    flex: 0 0 auto;
-    gap: 12px;
-    min-width: 0;
-}
-body.mg-list-view .app-info {
-    display: flex; flex-direction: column;
-}
-body.mg-list-view .app-icon-img {
-    width: 46px !important; height: 46px !important;
-    border-radius: 13px !important;
-}
-body.mg-list-view .app-desc {
-    display: block !important;
-    flex: 1 !important;
-    -webkit-line-clamp: 1 !important;
-    font-size: 0.82rem !important;
-}
-body.mg-list-view .app-card-footer {
-    border-top: none !important;
-    padding-top: 0 !important;
-    margin-top: 0 !important;
-    flex-shrink: 0;
-}
-body.mg-list-view .app-card:hover {
-    transform: translateX(4px) !important;
-}
-/* Tümü sayfası liste görünümü */
-body.mg-list-view .tumuu-grid {
-    grid-template-columns: 1fr !important;
-    gap: 10px !important;
-}
-body.mg-list-view .app-card.tumuu-tile {
-    flex-direction: row !important;
-    min-height: 78px !important;
-    padding: 1rem 1.3rem !important;
-    gap: 14px !important;
-    align-items: center !important;
-    /* Tümü sayfasında kutu modunda kompakt görünüm için ek sıfırlama */
-}
+/* ─── LİSTE GÖRÜNÜMÜ (eski global — devre dışı, per-page toggle kullanılıyor) ─── */
 /* Tümü sayfası kutu görünümü — app-card ile aynı */
 .app-card.tumuu-tile {
     display: flex;
@@ -4270,3 +4219,197 @@ kbd { box-shadow: 0 2px 0 var(--border-color), inset 0 1px 0 rgba(255,255,255,0.
 }
 
 /* END — GÖNDERİLER */
+
+/* ══════════════════════════════════════════
+   GÖRÜNÜM TOGGLE BUTONU (Kart / Liste)
+   ══════════════════════════════════════════ */
+.mg-view-toggle {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+    align-items: center;
+}
+.mg-vt-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    border-radius: 12px;
+    border: 1.5px solid var(--border-color);
+    background: var(--bg-card);
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    font-weight: 800;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.mg-vt-btn i { font-size: 0.78rem; }
+.mg-vt-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-glow);
+}
+.mg-vt-btn.mg-vt-active {
+    background: linear-gradient(135deg, var(--primary-color), #00d2ff);
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(67,24,255,0.25);
+}
+
+/* ── Liste Görünümü — app-grid ── */
+.app-grid.list-view {
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+}
+/* Kart satır düzeni */
+.app-grid.list-view .app-card {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    padding: 9px 14px !important;
+    gap: 12px !important;
+    border-radius: 13px !important;
+    min-height: unset !important;
+}
+/* Header: ikon + isim yan yana, flex row */
+.app-grid.list-view .app-card-header {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    gap: 12px !important;
+    margin-bottom: 0 !important;
+}
+/* İkon */
+.app-grid.list-view .app-icon-img {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 10px !important;
+    flex-shrink: 0 !important;
+    object-fit: cover !important;
+}
+/* Uygulama adı */
+.app-grid.list-view .app-info {
+    flex: 1 !important;
+    min-width: 0 !important;
+}
+.app-grid.list-view .app-info h3 {
+    font-size: 0.87rem !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    margin: 0 !important;
+}
+/* Açıklama gizle */
+.app-grid.list-view .app-desc {
+    display: none !important;
+}
+/* Footer sağda — border kaldır, genişliği sıfırla */
+.app-grid.list-view .app-card-footer {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    width: auto !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    border-top: none !important;
+    flex-shrink: 0 !important;
+    gap: 0 !important;
+}
+.app-grid.list-view .app-tag {
+    display: none !important;
+}
+.app-grid.list-view .launch-btn {
+    padding: 5px 13px !important;
+    font-size: 0.75rem !important;
+}
+.app-grid.list-view .mg-badge {
+    top: 50% !important;
+    right: 62px !important;
+    transform: translateY(-50%) !important;
+}
+
+/* ── Liste Görünümü — tumuu-grid (Tümü sayfası) ── */
+.tumuu-grid.list-view {
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+}
+.tumuu-grid.list-view .tumuu-tile {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    padding: 9px 14px !important;
+    gap: 12px !important;
+    border-radius: 13px !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+}
+/* İkon wrap — sabit küçük boyut */
+.tumuu-grid.list-view .tumuu-icon-wrap {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    border-radius: 10px !important;
+    flex-shrink: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+}
+/* Resim içini doldursun */
+.tumuu-grid.list-view .tumuu-icon-wrap .tumuu-icon {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 0 !important;
+    object-fit: cover !important;
+}
+/* İsim etiketi */
+.tumuu-grid.list-view .tumuu-label {
+    flex: 1 !important;
+    text-align: left !important;
+    font-size: 0.87rem !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    margin: 0 !important;
+}
+/* Sağda mini ok ikonu */
+.tumuu-grid.list-view .tumuu-tile::after {
+    content: '\f054';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+/* ── About Stats — Tek Satır (mobil dahil) ── */
+.about-stats--row {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 10px !important;
+}
+.about-stats--row .stat-item {
+    flex: 1 !important;
+    flex-direction: column !important;
+    text-align: center !important;
+    justify-content: center !important;
+    padding: 1rem 0.6rem !important;
+    min-width: 0 !important;
+}
+.about-stats--row .stat-item i {
+    margin-bottom: 6px !important;
+    font-size: 1.6rem !important;
+}
+.about-stats--row .stat-item strong {
+    font-size: 1.6rem !important;
+}
+@media (max-width: 400px) {
+    .about-stats--row .stat-item strong { font-size: 1.2rem !important; }
+    .about-stats--row .stat-item i { font-size: 1.2rem !important; }
+}
+
+/* END — TOGGLE & LIST-VIEW */
