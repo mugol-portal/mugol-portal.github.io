@@ -776,12 +776,31 @@
                     </div>
                 </div>
 
-                <!-- ── SİTEYİ GÜNCELLE BUTONU ── -->
-                <div id="mgUpdateSection" style="margin-bottom:1.4rem;">
-                    <button id="mgUpdateBtn" aria-label="Siteyi Güncelle" title="Önbelleği temizle ve sayfayı yenile"
+                <!-- ── GÜNCELLEME YAP + TAM EKRAN BUTONLARI ── -->
+                <div id="mgUpdateSection" style="margin-bottom:1.4rem; display:flex; gap:10px;">
+                    <button id="mgFullscreenBtn" aria-label="Tam Ekran" title="Tam Ekran Modu"
+                        style="
+                            display:flex; align-items:center; justify-content:center; gap:8px;
+                            padding:17px 20px;
+                            background:var(--bg-card); border:1px solid var(--border-color);
+                            color:var(--text-main); border-radius:18px;
+                            font-family:'Nunito',sans-serif; font-size:1rem; font-weight:800;
+                            cursor:pointer; flex-shrink:0;
+                            box-shadow:0 4px 14px rgba(0,0,0,.07);
+                            transition:transform .22s cubic-bezier(.25,.8,.25,1),
+                                       box-shadow .22s ease,
+                                       background .2s;
+                            white-space:nowrap;
+                        "
+                        onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 22px rgba(67,24,255,.15)'"
+                        onmouseout="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(0,0,0,.07)'">
+                        <i class="fas fa-expand" id="mgFsIcon" style="font-size:.95rem;"></i>
+                        <span id="mgFsLabel">Tam Ekran</span>
+                    </button>
+                    <button id="mgUpdateBtn" aria-label="Güncelleme Yap" title="Önbelleği temizle ve sayfayı yenile"
                         style="
                             display:flex; align-items:center; justify-content:center; gap:12px;
-                            width:100%; padding:17px 24px;
+                            flex:1; padding:17px 24px;
                             background:linear-gradient(135deg,#4318ff 0%,#2979ff 50%,#00d2ff 100%);
                             background-size:200% 200%;
                             color:#fff; border:none; border-radius:18px;
@@ -811,7 +830,7 @@
                         ">
                             <i class="fas fa-sync-alt" id="mgUpdateIcon" aria-hidden="true" style="font-size:.95rem;"></i>
                         </span>
-                        <span id="mgUpdateLabel" style="flex:1; text-align:center; margin-right:34px;">🔄 Siteyi Güncelle</span>
+                        <span id="mgUpdateLabel" style="flex:1; text-align:center; margin-right:34px;">🔄 Güncelleme Yap</span>
                     </button>
                 </div>
                 <!-- ─────────────────────────────── -->
@@ -1521,10 +1540,36 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- ── TAM EKRAN AYARI ── -->
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <i class="fas fa-expand-arrows-alt" aria-hidden="true"></i>
+                            <div>
+                                <h4>Tam Ekran Modu</h4>
+                                <p>Portalı tam ekran olarak görüntülemek için butona tıklayın.</p>
+                            </div>
+                        </div>
+                        <button id="mgFullscreenBtnSettings" aria-label="Tam Ekran Modu"
+                            style="
+                                display:inline-flex; align-items:center; gap:8px;
+                                padding:10px 20px; border-radius:12px;
+                                background:linear-gradient(135deg,#4318ff,#6366f1);
+                                color:#fff; border:none; font-family:'Nunito',sans-serif;
+                                font-size:0.9rem; font-weight:800; cursor:pointer;
+                                box-shadow:0 4px 14px rgba(67,24,255,.3);
+                                transition:transform .2s,box-shadow .2s;
+                                white-space:nowrap;
+                            "
+                            onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 22px rgba(67,24,255,.45)'"
+                            onmouseout="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(67,24,255,.3)'">
+                            <i class="fas fa-expand" id="mgFsIconSettings"></i>
+                            <span id="mgFsLabelSettings">Tam Ekrana Geç</span>
+                        </button>
+                    </div>
+
                 </div>
             </div>
-
-            <!-- SAYFA: İLETİŞİM -->
             <div id="page-iletisim" class="page-section" role="region" aria-label="İletişim Bilgileri">
                 <div class="content-card premium-card" style="padding: 0; overflow: hidden; border: none;">
                     <div class="contact-split-layout">
@@ -2984,6 +3029,45 @@
     })();
     </script>
 
+    <!-- ── TAM EKRAN BUTONU FONKSİYONU ── -->
+    <script>
+    (function() {
+        function updateFsButtons() {
+            var isFs = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement);
+            var icon1 = document.getElementById('mgFsIcon');
+            var label1 = document.getElementById('mgFsLabel');
+            var icon2 = document.getElementById('mgFsIconSettings');
+            var label2 = document.getElementById('mgFsLabelSettings');
+            if (icon1) { icon1.className = isFs ? 'fas fa-compress' : 'fas fa-expand'; }
+            if (label1) { label1.textContent = isFs ? 'Küçült' : 'Tam Ekran'; }
+            if (icon2) { icon2.className = isFs ? 'fas fa-compress' : 'fas fa-expand'; }
+            if (label2) { label2.textContent = isFs ? 'Tam Ekrandan Çık' : 'Tam Ekrana Geç'; }
+        }
+        function toggleFullscreen() {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement) {
+                var el = document.documentElement;
+                if (el.requestFullscreen) el.requestFullscreen();
+                else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+                else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+                else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+                else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+            }
+        }
+        document.addEventListener('fullscreenchange', updateFsButtons);
+        document.addEventListener('webkitfullscreenchange', updateFsButtons);
+        document.addEventListener('mozfullscreenchange', updateFsButtons);
+
+        function bindFs(id) {
+            var btn = document.getElementById(id);
+            if (btn) btn.addEventListener('click', toggleFullscreen);
+        }
+        bindFs('mgFullscreenBtn');
+        bindFs('mgFullscreenBtnSettings');
+    })();
+    </script>
+
 
 
 
@@ -3027,7 +3111,7 @@
             '<div style="font-size:2.4rem;margin-bottom:12px;">🔄</div>',
 
             '<h3 style="font-size:1.15rem;font-weight:900;color:var(--text-main,#f8fafc);margin:0 0 10px;">',
-            'Siteyi Güncellemek İstediğinize Emin Misiniz?</h3>',
+            'Güncelleme Yapmak İstediğinize Emin Misiniz?</h3>',
 
             '<p style="font-size:.88rem;color:var(--text-muted,#94a3b8);line-height:1.6;margin:0 0 8px;">',
             'Bu işlem sırasında aşağıdaki veriler temizlenecektir:</p>',
