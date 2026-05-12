@@ -991,10 +991,7 @@ window.uyelikKoduIptal = function() {
     localStorage.removeItem('mugol-noads-kod');
     _fbSetPref('noads', null);
     _fbSetPref('noadsKod', null);
-    // Reklamları yeniden göster
-    document.querySelectorAll('.adsense-banner-wrap, ins.adsbygoogle').forEach(function(el) {
-        el.style.removeProperty('display');
-    });
+    // Reklamlar kaldırıldı
     refreshProfilUI();
     var msg = document.getElementById('uyelikKoduMsg');
     if (msg) {
@@ -1032,11 +1029,7 @@ var _NOADS_KODLAR = [
 ];
 
 function reklamlariGizle() {
-    document.querySelectorAll('.adsense-banner-wrap, ins.adsbygoogle, #ad-transition-modal, #adblock-overlay').forEach(function(el) {
-        el.style.setProperty('display','none','important');
-    });
-    var m = document.getElementById('ad-transition-modal');
-    if (m) { m.style.setProperty('display','none','important'); m.classList.remove('visible'); }
+    // Reklamlar kaldırıldı
 }
 if (userHasNoads(getActiveUser())) reklamlariGizle();
 
@@ -1083,8 +1076,7 @@ document.addEventListener('keydown', function(e) {
 
 // Adblock uyarı overlay'ini kapat
 window.closeAdblockWarning = function() {
-    var overlay = document.getElementById('adblock-overlay');
-    if (overlay) overlay.classList.remove('visible');
+    // Adblock overlay kaldırıldı
 };
 
 // Geçiş reklamını geç / kapat
