@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.mugolportal.app",
+    "sha256_cert_fingerprints": [
+      "0C:7E:26:ED:11:BD:0D:8C:42:B3:07:E4:27:34:70:57:C1:C3:DF:52:9F:4F:4B:62:04:35:FD:41:8C:CC:4B:4F"
+    ]
+  }
+}]
