@@ -321,8 +321,7 @@ function cancelToast() {
 if (toastCancelBtn) toastCancelBtn.addEventListener('click', cancelToast);
 
 function showRedirectToast(appName, url, logoSrc) {
-    // Geçiş ekranı kaldırıldı — direkt aç
-    if (url) _mgOpenUrl(url);
+    if (url) _mgOpenUrl(url, appName, logoSrc);
 }
 
 document.querySelectorAll('.app-card').forEach(card => {
@@ -1079,44 +1078,210 @@ window.closeAdblockWarning = function() {
     // Adblock overlay kaldırıldı
 };
 
-// Geçiş reklamını geç / kapat
-// Yardimci: senkron navigasyon (popup engeli olmaz)
-function _mgOpenUrl(url) {
-    if (!url) return;
-    var _a = document.createElement('a');
-    _a.href = url;
-    _a.target = '_blank';
-    _a.rel = 'noopener noreferrer';
-    _a.style.cssText = 'position:fixed;width:0;height:0;opacity:0;pointer-events:none;left:-9999px;';
-    document.body.appendChild(_a);
-    _a.click();
-    setTimeout(function() { if (_a.parentNode) _a.parentNode.removeChild(_a); }, 500);
-}
+// =========================================================
+// GEÇİŞ REKLAM MODALI — AdSense (ca-app-pub-1880946354382681/2331344971)
+// Tüm uygulama geçişlerinde gösterilir. noads aktifse atlanır.
+// =========================================================
+(function() {
+    'use strict';
 
-window.skipAd = function() {
-    var modal = document.getElementById('ad-transition-modal');
-    if (modal) {
-        modal.classList.remove('visible');
-        modal.style.display = 'none';
+    var AD_CLIENT  = 'ca-app-pub-1880946354382681';
+    var AD_SLOT    = '2331344971';
+    var AD_DELAY   = 5;   // reklamın gösterim süresi (saniye)
+    var _adTimer   = null;
+    var _adInterval= null;
+
+    /* --- Modal HTML'i oluştur ve body'e ekle --- */
+    function _buildAdModal() {
+        if (document.getElementById('mg-interstitial-overlay')) return;
+
+        var overlay = document.createElement('div');
+        overlay.id = 'mg-interstitial-overlay';
+        overlay.style.cssText = [
+            'display:none;position:fixed;inset:0;z-index:99999;',
+            'background:rgba(0,0,0,0.82);backdrop-filter:blur(6px);',
+            '-webkit-backdrop-filter:blur(6px);',
+            'align-items:center;justify-content:center;'
+        ].join('');
+
+        overlay.innerHTML = [
+            '<div id="mg-interstitial-box" style="',
+            'background:var(--bg-card,#fff);border-radius:24px;',
+            'width:min(92vw,420px);padding:0;overflow:hidden;',
+            'box-shadow:0 32px 80px rgba(0,0,0,0.45);',
+            'display:flex;flex-direction:column;',
+            'animation:mgAdFadeIn .35s cubic-bezier(.25,.8,.25,1) both;">',
+
+            /* Başlık */
+            '<div style="',
+            'background:linear-gradient(135deg,#4318ff,#6366f1);',
+            'padding:14px 20px;display:flex;align-items:center;gap:10px;">',
+            '<span id="mg-ad-logo" style="font-size:1.6rem;"></span>',
+            '<div style="flex:1;">',
+            '<div style="color:#fff;font-weight:900;font-size:1rem;line-height:1.2;" id="mg-ad-appname">Uygulama Açılıyor</div>',
+            '<div style="color:rgba(255,255,255,.7);font-size:.78rem;margin-top:2px;">Lütfen reklamı izleyin</div>',
+            '</div>',
+            '<div id="mg-ad-skip-wrap" style="',
+            'background:rgba(255,255,255,.18);border-radius:50px;',
+            'padding:6px 14px;color:#fff;font-weight:800;font-size:.85rem;',
+            'cursor:default;white-space:nowrap;user-select:none;" id="mg-ad-timer-badge">',
+            '<span id="mg-ad-sec">' + AD_DELAY + '</span>s</div>',
+            '</div>',
+
+            /* Reklam alanı */
+            '<div style="padding:16px;background:var(--bg-body,#f3f5f9);">',
+            '<ins class="adsbygoogle mg-interstitial-ins"',
+            ' style="display:block;width:100%;min-height:250px;"',
+            ' data-ad-client="' + AD_CLIENT + '"',
+            ' data-ad-slot="' + AD_SLOT + '"',
+            ' data-ad-format="auto"',
+            ' data-full-width-responsive="true"></ins>',
+            '</div>',
+
+            /* Alt bölüm */
+            '<div style="padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px;">',
+            '<span style="font-size:.75rem;color:var(--text-muted,#64748b);">Reklam · MuGöl PORTAL</span>',
+            '<button id="mg-ad-skip-btn" disabled style="',
+            'padding:9px 22px;border-radius:50px;border:none;',
+            'background:linear-gradient(135deg,#4318ff,#6366f1);',
+            'color:#fff;font-weight:800;font-size:.88rem;cursor:not-allowed;',
+            'font-family:inherit;opacity:.45;transition:all .25s;" ',
+            'onclick="window.mgSkipInterstitial()">Geç →</button>',
+            '</div>',
+
+            '</div>',
+
+            '<style>',
+            '@keyframes mgAdFadeIn{from{opacity:0;transform:scale(.93) translateY(20px)}to{opacity:1;transform:none}}',
+            '</style>'
+        ].join('');
+
+        document.body.appendChild(overlay);
     }
-    if (window._adPendingUrl) {
-        _mgOpenUrl(window._adPendingUrl);
-        window._adPendingUrl = null;
+
+    /* --- Reklamı yükle (push) --- */
+    function _pushAd() {
+        try {
+            var ins = document.querySelector('.mg-interstitial-ins');
+            if (ins && !ins.dataset.adsbygoogleStatus) {
+                (window.adsbygoogle = window.adsbygoogle || []).push({});
+            }
+        } catch(e) {}
     }
-};
 
-// Gecis reklami kaldırıldı — direkt ac
-window.startAdCountdown = function(url, appName, logoSrc) {
-    _mgOpenUrl(url);
-};
+    /* --- Geri sayım başlat --- */
+    function _startCountdown(onDone) {
+        var secEl  = document.getElementById('mg-ad-sec');
+        var skipBtn= document.getElementById('mg-ad-skip-btn');
+        var left   = AD_DELAY;
 
-// openAppWithAd: direkt aç
-window.openAppWithAd = function(url, appName, logoSrc) {
-    _mgOpenUrl(url);
-};
+        if (_adInterval) clearInterval(_adInterval);
+        if (_adTimer)    clearTimeout(_adTimer);
 
-// skipAd: artık kullanılmıyor ama çağrılırsa hata vermesin
-window.skipAd = function() {};
+        _adInterval = setInterval(function() {
+            left--;
+            if (secEl) secEl.textContent = left;
+            if (left <= 0) {
+                clearInterval(_adInterval);
+                if (skipBtn) {
+                    skipBtn.disabled = false;
+                    skipBtn.style.cursor   = 'pointer';
+                    skipBtn.style.opacity  = '1';
+                }
+            }
+        }, 1000);
+
+        _adTimer = setTimeout(function() {
+            /* 5 saniye sonra otomatik geç */
+            if (typeof onDone === 'function') onDone();
+        }, AD_DELAY * 1000 + 200);
+    }
+
+    /* --- Modalı göster --- */
+    function _showInterstitial(url, appName, logoSrc) {
+        _buildAdModal();
+
+        /* Başlık bilgilerini doldur */
+        var nameEl = document.getElementById('mg-ad-appname');
+        var logoEl = document.getElementById('mg-ad-logo');
+        if (nameEl) nameEl.textContent = appName || 'Uygulama';
+        if (logoEl) logoEl.textContent = logoSrc ? '' : '🚀';
+
+        /* Logo resimse göster */
+        if (logoSrc && logoEl) {
+            logoEl.innerHTML = '<img src="' + logoSrc + '" style="width:32px;height:32px;border-radius:8px;object-fit:cover;" onerror="this.parentNode.textContent=\'🚀\'">';
+        }
+
+        /* Geç butonunu sıfırla */
+        var skipBtn = document.getElementById('mg-ad-skip-btn');
+        var secEl   = document.getElementById('mg-ad-sec');
+        if (skipBtn) { skipBtn.disabled = true; skipBtn.style.opacity = '.45'; skipBtn.style.cursor = 'not-allowed'; }
+        if (secEl)   secEl.textContent = AD_DELAY;
+
+        /* Bekleyen URL'yi kaydet */
+        window._mgAdPendingUrl = url;
+
+        /* Modalı göster */
+        var overlay = document.getElementById('mg-interstitial-overlay');
+        if (overlay) { overlay.style.display = 'flex'; }
+
+        /* AdSense reklamını yükle */
+        _pushAd();
+
+        /* Geri sayım */
+        _startCountdown(function() {
+            window.mgSkipInterstitial();
+        });
+    }
+
+    /* --- Modalı kapat ve uygulamayı aç --- */
+    window.mgSkipInterstitial = function() {
+        if (_adInterval) clearInterval(_adInterval);
+        if (_adTimer)    clearTimeout(_adTimer);
+
+        var overlay = document.getElementById('mg-interstitial-overlay');
+        if (overlay) overlay.style.display = 'none';
+
+        var url = window._mgAdPendingUrl;
+        window._mgAdPendingUrl = null;
+        if (url) _mgOpenUrlDirect(url);
+    };
+
+    /* --- Yardımcı: URL'yi yeni sekmede aç (popup engelini aşan yöntem) --- */
+    function _mgOpenUrlDirect(url) {
+        if (!url) return;
+        var _a = document.createElement('a');
+        _a.href = url;
+        _a.target = '_blank';
+        _a.rel = 'noopener noreferrer';
+        _a.style.cssText = 'position:fixed;width:0;height:0;opacity:0;pointer-events:none;left:-9999px;';
+        document.body.appendChild(_a);
+        _a.click();
+        setTimeout(function() { if (_a.parentNode) _a.parentNode.removeChild(_a); }, 500);
+    }
+
+    /* ─── Ana geçiş fonksiyonu ─────────────────────────────── */
+    /* noads aktifse reklamı atla, yoksa göster              */
+    function _mgOpenUrl(url, appName, logoSrc) {
+        if (!url) return;
+        var user = (typeof getActiveUser === 'function') ? getActiveUser() : '';
+        var noads = (typeof userHasNoads === 'function') ? userHasNoads(user) : false;
+        if (noads) {
+            _mgOpenUrlDirect(url);
+        } else {
+            _showInterstitial(url, appName || 'Uygulama', logoSrc || '');
+        }
+    }
+
+    /* Global olarak yayınla */
+    window._mgOpenUrl = _mgOpenUrl;
+
+    /* --- Eski skipAd / startAdCountdown uyumluluğu --- */
+    window.skipAd = function() { window.mgSkipInterstitial(); };
+    window.startAdCountdown = function(url, appName, logoSrc) { _mgOpenUrl(url, appName, logoSrc); };
+    window.openAppWithAd    = function(url, appName, logoSrc) { _mgOpenUrl(url, appName, logoSrc); };
+
+})();
 
 
 // =========================================================

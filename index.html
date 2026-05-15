@@ -9,6 +9,11 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- ===== GOOGLE ADMOB ===== -->
+    <meta name="admob-app-id" content="ca-app-pub-1880946354382681~7565307045">
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-app-pub-1880946354382681"
+         crossorigin="anonymous"></script>
     <title>MuGöl PORTAL | Tüm Uygulamalar Bir Arada</title>
 
     <!-- ===== TEMEL SEO ===== -->
@@ -295,6 +300,25 @@
             background-clip: text;
             font-weight: 900 !important;
         }
+
+        /* ── AdMob Reklam Alanı ── */
+        .mg-admob-wrap {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            min-height: 60px;
+            margin: 4px 0;
+            border-radius: 16px;
+            overflow: hidden;
+            background: transparent;
+        }
+        .mg-admob-wrap ins.adsbygoogle {
+            display: block;
+            width: 100%;
+            border-radius: 16px;
+        }
     </style>
 
     <!-- ═══════════════════════════════════════════
@@ -567,6 +591,31 @@
         }
         @media(max-width:480px){
             #mgDrop{right:-8px;width:232px}
+        }
+
+        /* ═══ ADMOB BANNER ═══ */
+        #admob-banner-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 9000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-card, #fff);
+            border-top: 1px solid var(--border-color, rgba(0,0,0,0.08));
+            min-height: 50px;
+            box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+            pointer-events: auto;
+        }
+        #admob-banner-container ins,
+        #admob-banner-container > * {
+            display: block;
+        }
+        /* Ana içeriğe alt boşluk — banner üstüne kapanmasın */
+        .main-content {
+            padding-bottom: 60px !important;
         }
     </style>
 </head>
@@ -1004,6 +1053,17 @@
                         <span class="tumuu-label">Sismik Radar</span>
                     </a>
 
+                    <!-- ── AdMob Banner Reklam #1 (Tümü Grid) ── -->
+                    <div class="mg-admob-wrap" aria-label="Reklam">
+                        <ins class="adsbygoogle"
+                             style="display:block;width:100%;min-height:50px;"
+                             data-ad-client="ca-app-pub-1880946354382681"
+                             data-ad-slot="5865212560"
+                             data-ad-format="banner"
+                             data-full-width-responsive="true"></ins>
+                        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                    </div>
+
                     <a href="https://mugol-portal.github.io/alisverislistesi/" class="tumuu-tile" style="animation-delay:0.3s;">
                         <div class="tumuu-icon-wrap">
                             <img src="images/shopping.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Liste&background=00B8D9&color=fff&rounded=true&bold=true'">
@@ -1109,6 +1169,17 @@
                         <span class="tumuu-label">QR Kod Okuyucu</span>
                     </a>
 
+                    <!-- ── AdMob Banner Reklam #2 (Tümü Grid) ── -->
+                    <div class="mg-admob-wrap" aria-label="Reklam">
+                        <ins class="adsbygoogle"
+                             style="display:block;width:100%;min-height:50px;"
+                             data-ad-client="ca-app-pub-1880946354382681"
+                             data-ad-slot="5865212560"
+                             data-ad-format="banner"
+                             data-full-width-responsive="true"></ins>
+                        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                    </div>
+
                     <a href="https://mugol-portal.github.io/Mugol.games/" class="tumuu-tile" style="animation-delay:0.9s;">
                         <div class="tumuu-icon-wrap">
                             <img src="images/games.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Oyun&background=FF5630&color=fff&rounded=true&bold=true'">
@@ -1187,6 +1258,17 @@
                             <div class="launch-btn" aria-hidden="true"><span class="btn-label">Aç</span><i class="fas fa-arrow-right"></i></div>
                         </div>
                     </a>
+
+                    <!-- ── AdMob Banner Reklam (Günlük Grid) ── -->
+                    <div class="mg-admob-wrap" aria-label="Reklam">
+                        <ins class="adsbygoogle"
+                             style="display:block;width:100%;min-height:50px;"
+                             data-ad-client="ca-app-pub-1880946354382681"
+                             data-ad-slot="5865212560"
+                             data-ad-format="banner"
+                             data-full-width-responsive="true"></ins>
+                        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                    </div>
 
                     <a href="https://mugol-portal.github.io/mugol.saglik/" class="app-card" style="animation-delay: 0.4s;">
                         <div class="app-card-header">
@@ -1280,6 +1362,17 @@
                             <div class="launch-btn" aria-hidden="true"><span class="btn-label">Aç</span><i class="fas fa-arrow-right"></i></div>
                         </div>
                     </a>
+
+                    <!-- ── AdMob Banner Reklam (Eğitim Grid) ── -->
+                    <div class="mg-admob-wrap" aria-label="Reklam">
+                        <ins class="adsbygoogle"
+                             style="display:block;width:100%;min-height:50px;"
+                             data-ad-client="ca-app-pub-1880946354382681"
+                             data-ad-slot="5865212560"
+                             data-ad-format="banner"
+                             data-full-width-responsive="true"></ins>
+                        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                    </div>
 
                     <a href="https://mugol-portal.github.io/mugol.-edebiyat" class="app-card" style="animation-delay: 0.4s;">
                         <div class="app-card-header">
@@ -1385,6 +1478,17 @@
                             <div class="launch-btn" aria-hidden="true"><span class="btn-label">Aç</span><i class="fas fa-arrow-right"></i></div>
                         </div>
                     </a>
+
+                    <!-- ── AdMob Banner Reklam (Araçlar Grid) ── -->
+                    <div class="mg-admob-wrap" aria-label="Reklam">
+                        <ins class="adsbygoogle"
+                             style="display:block;width:100%;min-height:50px;"
+                             data-ad-client="ca-app-pub-1880946354382681"
+                             data-ad-slot="5865212560"
+                             data-ad-format="banner"
+                             data-full-width-responsive="true"></ins>
+                        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                    </div>
 
                     <a href="https://mugol-portal.github.io/ozgecmis/" class="app-card" style="animation-delay: 0.3s;">
                         <div class="app-card-header">
@@ -2079,8 +2183,11 @@
         </main>
     </div>
 
-
-
+    <!-- ═══ GOOGLE ADMOB BANNER ═══ -->
+    <div id="admob-banner-container" role="complementary" aria-label="Reklam">
+        <!-- Banner reklam buraya yüklenir -->
+    </div>
+    <!-- ════════════════════════════ -->
 
     <!-- NSosyal & Pinterest Pill Stilleri -->
     <style>
@@ -2112,6 +2219,66 @@
             height: 18px;
         }
     </style>
+    <!-- ═══ GOOGLE ADMOB BAŞLATMA ═══ -->
+    <script>
+    (function () {
+        'use strict';
+
+        /* ── AdMob Yapılandırması ── */
+        var ADMOB_CONFIG = {
+            appId:    'ca-app-pub-1880946354382681~7565307045',
+            bannerId: 'ca-app-pub-1880946354382681/5865212560',
+            isTesting: false   /* Canlı yayında false, test için true yapın */
+        };
+
+        /* ── Capacitor AdMob (WebView / Android uygulaması) ── */
+        function initCapacitorAdMob() {
+            if (typeof Capacitor === 'undefined') return false;
+            if (!Capacitor.Plugins || !Capacitor.Plugins.AdMob) return false;
+            var AdMob = Capacitor.Plugins.AdMob;
+            AdMob.initialize({ requestTrackingAuthorization: true })
+                .then(function () {
+                    return AdMob.showBanner({
+                        adId:      ADMOB_CONFIG.bannerId,
+                        adSize:    'BANNER',
+                        position:  'BOTTOM_CENTER',
+                        margin:    0,
+                        isTesting: ADMOB_CONFIG.isTesting
+                    });
+                })
+                .then(function () {
+                    /* Capacitor banner gösterildi — HTML banner gizle */
+                    var el = document.getElementById('admob-banner-container');
+                    if (el) el.style.display = 'none';
+                })
+                .catch(function (err) {
+                    console.warn('[AdMob] Capacitor banner hatası:', err);
+                });
+            return true;
+        }
+
+        /* ── Sayfa hazır olduğunda başlat ── */
+        function startAdMob() {
+            /* 1) Capacitor ortamı — native banner */
+            if (initCapacitorAdMob()) return;
+
+            /* 2) Normal web tarayıcı — banner container'ı göster */
+            /* AdMob web için desteklenmez; alan açık bırakılır */
+            var container = document.getElementById('admob-banner-container');
+            if (!container) return;
+            /* İsteğe bağlı: banner alanını tamamen gizlemek isterseniz: */
+            /* container.style.display = 'none'; */
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startAdMob);
+        } else {
+            startAdMob();
+        }
+    })();
+    </script>
+    <!-- ══════════════════════════════════ -->
+
         <!-- 🔥 FİREBASE SDK (Bulut Veritabanı) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
