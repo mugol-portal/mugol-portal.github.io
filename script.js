@@ -1085,7 +1085,7 @@ window.closeAdblockWarning = function() {
 (function() {
     'use strict';
 
-    var AD_CLIENT  = 'ca-app-pub-1880946354382681';
+    var AD_CLIENT  = 'ca-pub-1880946354382681';
     var AD_SLOT    = '2331344971';
     var AD_DELAY   = 5;   // reklamın gösterim süresi (saniye)
     var _adTimer   = null;
@@ -1116,6 +1116,12 @@ window.closeAdblockWarning = function() {
             '<div style="',
             'background:linear-gradient(135deg,#4318ff,#6366f1);',
             'padding:14px 20px;display:flex;align-items:center;gap:10px;">',
+            /* ← Geri butonu */
+            '<button onclick="window.mgCloseInterstitial()" style="',
+            'background:rgba(255,255,255,.18);border:none;border-radius:50%;',
+            'width:32px;height:32px;display:flex;align-items:center;justify-content:center;',
+            'color:#fff;font-size:1.1rem;cursor:pointer;flex-shrink:0;padding:0;',
+            'font-family:inherit;line-height:1;" aria-label="Geri">&#8592;</button>',
             '<span id="mg-ad-logo" style="font-size:1.6rem;"></span>',
             '<div style="flex:1;">',
             '<div style="color:#fff;font-weight:900;font-size:1rem;line-height:1.2;" id="mg-ad-appname">Uygulama Açılıyor</div>',
@@ -1169,34 +1175,6 @@ window.closeAdblockWarning = function() {
         } catch(e) {}
     }
 
-    /* --- Geri sayım başlat --- */
-    function _startCountdown(onDone) {
-        var secEl  = document.getElementById('mg-ad-sec');
-        var skipBtn= document.getElementById('mg-ad-skip-btn');
-        var left   = AD_DELAY;
-
-        if (_adInterval) clearInterval(_adInterval);
-        if (_adTimer)    clearTimeout(_adTimer);
-
-        _adInterval = setInterval(function() {
-            left--;
-            if (secEl) secEl.textContent = left;
-            if (left <= 0) {
-                clearInterval(_adInterval);
-                if (skipBtn) {
-                    skipBtn.disabled = false;
-                    skipBtn.style.cursor   = 'pointer';
-                    skipBtn.style.opacity  = '1';
-                }
-            }
-        }, 1000);
-
-        _adTimer = setTimeout(function() {
-            /* 5 saniye sonra otomatik geç */
-            if (typeof onDone === 'function') onDone();
-        }, AD_DELAY * 1000 + 200);
-    }
-
     /* --- Modalı göster --- */
     function _showInterstitial(url, appName, logoSrc) {
         _buildAdModal();
@@ -1228,16 +1206,30 @@ window.closeAdblockWarning = function() {
         /* AdSense reklamını yükle */
         _pushAd();
 
-        /* Geri sayım */
-        _startCountdown(function() {
-            window.mgSkipInterstitial();
-        });
+        /* Geri sayım — otomatik geçmez, sadece "Geç" aktif olur */
+        _startCountdown();
+
+        /* Android geri tuşu: modalı kapat, URL'ye gitme */
+        history.pushState({ mgAd: true }, '');
+        window._mgBackHandler = function(e) {
+            var overlay = document.getElementById('mg-interstitial-overlay');
+            if (overlay && overlay.style.display !== 'none') {
+                window.mgCloseInterstitial();
+            }
+        };
+        window.addEventListener('popstate', window._mgBackHandler);
     }
 
     /* --- Modalı kapat ve uygulamayı aç --- */
     window.mgSkipInterstitial = function() {
         if (_adInterval) clearInterval(_adInterval);
         if (_adTimer)    clearTimeout(_adTimer);
+
+        /* Geri tuşu listener'ını temizle */
+        if (window._mgBackHandler) {
+            window.removeEventListener('popstate', window._mgBackHandler);
+            window._mgBackHandler = null;
+        }
 
         var overlay = document.getElementById('mg-interstitial-overlay');
         if (overlay) overlay.style.display = 'none';
@@ -1247,26 +1239,87 @@ window.closeAdblockWarning = function() {
         if (url) _mgOpenUrlDirect(url);
     };
 
-    /* --- Yardımcı: URL'yi yeni sekmede aç (popup engelini aşan yöntem) --- */
+    /* --- Modalı kapat, URL'ye gitme (geri tuşu) --- */
+    window.mgCloseInterstitial = function() {
+        if (_adInterval) clearInterval(_adInterval);
+        if (_adTimer)    clearTimeout(_adTimer);
+
+        if (window._mgBackHandler) {
+            window.removeEventListener('popstate', window._mgBackHandler);
+            window._mgBackHandler = null;
+        }
+
+        var overlay = document.getElementById('mg-interstitial-overlay');
+        if (overlay) overlay.style.display = 'none';
+        window._mgAdPendingUrl = null;
+    };
+
+    /* --- Yardımcı: URL'yi aç — TWA/WebView'da aynı pencerede, tarayıcıda yeni sekme --- */
     function _mgOpenUrlDirect(url) {
         if (!url) return;
-        var _a = document.createElement('a');
-        _a.href = url;
-        _a.target = '_blank';
-        _a.rel = 'noopener noreferrer';
-        _a.style.cssText = 'position:fixed;width:0;height:0;opacity:0;pointer-events:none;left:-9999px;';
-        document.body.appendChild(_a);
-        _a.click();
-        setTimeout(function() { if (_a.parentNode) _a.parentNode.removeChild(_a); }, 500);
+        /* TWA / Capacitor: location.href ile aynı WebView'da aç (popup engeli yok) */
+        var isApp = window.matchMedia('(display-mode: standalone)').matches
+                 || window.matchMedia('(display-mode: fullscreen)').matches
+                 || (typeof Capacitor !== 'undefined')
+                 || (document.referrer || '').indexOf('android-app://') === 0;
+        if (isApp) {
+            window.location.href = url;
+        } else {
+            /* Normal web tarayıcısı: yeni sekme */
+            var _a = document.createElement('a');
+            _a.href = url;
+            _a.target = '_blank';
+            _a.rel = 'noopener noreferrer';
+            _a.style.cssText = 'position:fixed;width:0;height:0;opacity:0;pointer-events:none;left:-9999px;';
+            document.body.appendChild(_a);
+            _a.click();
+            setTimeout(function() { if (_a.parentNode) _a.parentNode.removeChild(_a); }, 500);
+        }
+    }
+
+    /* ─── Geri sayım: süre bitince sadece "Geç" aktif olur, otomatik geçmez ─── */
+    function _startCountdown(onDone) {
+        var secEl  = document.getElementById('mg-ad-sec');
+        var skipBtn= document.getElementById('mg-ad-skip-btn');
+        var left   = AD_DELAY;
+
+        if (_adInterval) clearInterval(_adInterval);
+        if (_adTimer)    clearTimeout(_adTimer);
+
+        _adInterval = setInterval(function() {
+            left--;
+            if (secEl) secEl.textContent = left;
+            if (left <= 0) {
+                clearInterval(_adInterval);
+                /* Süre doldu → sadece "Geç" butonunu aktif et, otomatik geçme */
+                if (skipBtn) {
+                    skipBtn.disabled = false;
+                    skipBtn.style.cursor  = 'pointer';
+                    skipBtn.style.opacity = '1';
+                }
+                var badge = document.getElementById('mg-ad-skip-wrap');
+                if (badge) badge.textContent = '✓ Geçebilirsiniz';
+            }
+        }, 1000);
+        /* _adTimer intentionally NOT set — kullanıcı "Geç" e basana kadar bekle */
+    }
+
+    /* ─── TWA / Uygulama mı, Web tarayıcı mı? ─── */
+    function _isInTWA() {
+        return window.matchMedia('(display-mode: standalone)').matches
+            || window.matchMedia('(display-mode: fullscreen)').matches
+            || (typeof Capacitor !== 'undefined')
+            || (document.referrer || '').indexOf('android-app://') === 0;
     }
 
     /* ─── Ana geçiş fonksiyonu ─────────────────────────────── */
-    /* noads aktifse reklamı atla, yoksa göster              */
+    /* TWA'da AdMob kendi halleder → direkt geç                */
+    /* Web tarayıcıda → 5sn AdSense modalı göster             */
     function _mgOpenUrl(url, appName, logoSrc) {
         if (!url) return;
-        var user = (typeof getActiveUser === 'function') ? getActiveUser() : '';
+        var user  = (typeof getActiveUser === 'function') ? getActiveUser() : '';
         var noads = (typeof userHasNoads === 'function') ? userHasNoads(user) : false;
-        if (noads) {
+        if (noads || _isInTWA()) {
             _mgOpenUrlDirect(url);
         } else {
             _showInterstitial(url, appName || 'Uygulama', logoSrc || '');
