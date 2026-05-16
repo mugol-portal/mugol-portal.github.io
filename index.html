@@ -873,25 +873,8 @@
                     </div>
                 </div>
 
-                <!-- ── GÜNCELLEME YAP + TAM EKRAN BUTONLARI ── -->
-                <!-- ── TAM EKRAN + 5 YILDIZ + PLAY STORE ── -->
+                <!-- ── 5 YILDIZ + PLAY STORE ── -->
                 <div id="mgUpdateSection" style="margin-bottom:1.4rem; display:flex; gap:10px; flex-wrap:wrap; align-items:stretch;">
-                    <button id="mgFullscreenBtn" aria-label="Tam Ekran" title="Tam Ekran Modu"
-                        style="
-                            display:flex; align-items:center; justify-content:center; gap:6px;
-                            padding:14px 16px;
-                            background:var(--bg-card); border:1px solid var(--border-color);
-                            color:var(--text-main); border-radius:16px;
-                            font-family:'Nunito',sans-serif; font-size:.85rem; font-weight:800;
-                            cursor:pointer; flex-shrink:0; white-space:nowrap;
-                            box-shadow:0 4px 14px rgba(0,0,0,.07);
-                            transition:transform .22s cubic-bezier(.25,.8,.25,1), box-shadow .22s ease;
-                        "
-                        onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 22px rgba(67,24,255,.15)'"
-                        onmouseout="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(0,0,0,.07)'">
-                        <i class="fas fa-expand" id="mgFsIcon" style="font-size:.9rem;"></i>
-                        <span id="mgFsLabel">Tam Ekran</span>
-                    </button>
                     <!-- 5 YILDIZ VER BUTONU -->
                     <button id="mgRateBtn" aria-label="Play Store'da 5 Yıldız Ver" title="Bizi Play Store'da değerlendirin"
                         style="
@@ -911,18 +894,26 @@
                         <i class="fas fa-star" style="font-size:.95rem;flex-shrink:0;"></i>
                         <span>5 Yıldız Ver</span>
                     </button>
-                    <!-- PLAY STORE İNDİR BADGE -->
+                    <!-- PLAY STORE İNDİR BUTONU -->
                     <a href="https://play.google.com/store/apps/details?id=com.mugol.portal"
                        target="_blank" rel="noopener" aria-label="Google Play'den İndir"
                        title="Google Play'den İndir"
-                       style="display:flex; align-items:center; flex-shrink:0; border-radius:16px;
-                              overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,.18);
-                              transition:transform .22s ease, box-shadow .22s ease;"
-                       onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 10px 26px rgba(0,0,0,.3)'"
-                       onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(0,0,0,.18)'">
-                        <img src="google-play-badge.png" alt="Get it on Google Play"
-                             style="height:52px; width:auto; display:block;"
-                             onerror="this.parentElement.style.cssText+='background:#000;padding:0 14px;';this.style.display='none';this.parentElement.innerHTML='<span style=\'display:flex;align-items:center;gap:8px;padding:14px 16px;background:#000;color:#fff;font-size:.82rem;font-weight:800;font-family:Nunito,sans-serif;\'><i class=\'fab fa-google-play\'></i>Google Play</span>'">
+                       style="
+                           display:flex; align-items:center; justify-content:center; gap:10px;
+                           flex:1; padding:14px 20px;
+                           background:linear-gradient(135deg,#01875f 0%,#00c853 100%);
+                           color:#fff; border-radius:16px; text-decoration:none;
+                           font-family:'Nunito',sans-serif; font-size:.92rem; font-weight:900;
+                           white-space:nowrap;
+                           box-shadow:0 8px 24px rgba(1,135,95,.42), inset 0 1px 0 rgba(255,255,255,.2);
+                           transition:transform .22s cubic-bezier(.25,.8,.25,1), box-shadow .22s ease;
+                           position:relative; overflow:hidden;
+                       "
+                       onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 30px rgba(1,135,95,.58)'"
+                       onmouseout="this.style.transform='';this.style.boxShadow='0 8px 24px rgba(1,135,95,.42)'">
+                        <span style="position:absolute;inset:0;background:linear-gradient(105deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,0) 60%);pointer-events:none;"></span>
+                        <i class="fab fa-google-play" style="font-size:1.1rem;flex-shrink:0;"></i>
+                        <span>Google Play'den İndir</span>
                     </a>
                 </div>
                 <!-- ─────────────────────────────── -->
