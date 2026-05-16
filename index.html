@@ -823,6 +823,9 @@
                 <li class="nav-item" role="menuitem" tabindex="0" data-target="page-gizlilik" data-title="Gizlilik Politikası">
                     <i class="fas fa-shield-alt" aria-hidden="true"></i> <span class="nav-text">Gizlilik</span>
                 </li>
+                <li class="nav-item" role="menuitem" tabindex="0" data-target="page-indir" data-title="İndir">
+                    <i class="fas fa-download" aria-hidden="true"></i> <span class="nav-text">İndir</span>
+                </li>
 
                 <li class="nav-divider" role="separator" aria-hidden="true"></li>
                 <li class="nav-item nav-item--profil" role="menuitem" tabindex="0" data-target="page-profil" data-title="Profilim">
@@ -830,9 +833,8 @@
                     <span class="nav-text">Profil</span>
                 </li>
                 
-                <li class="nav-item install-app-btn" role="button" tabindex="0" id="installAppBtn" style="display: none; margin-top: 15px;">
-                    <i class="fas fa-download" aria-hidden="true"></i> <span class="nav-text">Uygulamayı İndir</span>
-                </li>
+                <!-- PWA installAppBtn — script.js uyumluluğu için gizli bırakıldı -->
+                <li id="installAppBtn" style="display:none;" aria-hidden="true"></li>
             </ul>
 
             <div class="sidebar-profile" aria-hidden="true">
@@ -872,7 +874,8 @@
                 </div>
 
                 <!-- ── GÜNCELLEME YAP + TAM EKRAN BUTONLARI ── -->
-                <div id="mgUpdateSection" style="margin-bottom:1.4rem; display:flex; gap:10px;">
+                <!-- ── TAM EKRAN + 5 YILDIZ + PLAY STORE ── -->
+                <div id="mgUpdateSection" style="margin-bottom:1.4rem; display:flex; gap:10px; flex-wrap:wrap; align-items:stretch;">
                     <button id="mgFullscreenBtn" aria-label="Tam Ekran" title="Tam Ekran Modu"
                         style="
                             display:flex; align-items:center; justify-content:center; gap:6px;
@@ -889,39 +892,38 @@
                         <i class="fas fa-expand" id="mgFsIcon" style="font-size:.9rem;"></i>
                         <span id="mgFsLabel">Tam Ekran</span>
                     </button>
-                    <button id="mgUpdateBtn" aria-label="Güncelleme Yap" title="Önbelleği temizle ve sayfayı yenile"
-                        style="
-                            display:flex; align-items:center; justify-content:center; gap:10px;
-                            flex:1; padding:14px 18px;
-                            background:linear-gradient(135deg,#4318ff 0%,#2979ff 50%,#00d2ff 100%);
-                            color:#fff; border:none; border-radius:16px;
-                            font-family:'Nunito',sans-serif; font-size:.95rem; font-weight:900;
-                            cursor:pointer; white-space:nowrap; overflow:hidden;
-                            box-shadow:0 8px 28px rgba(67,24,255,.45), inset 0 1px 0 rgba(255,255,255,.25);
-                            transition:transform .22s cubic-bezier(.25,.8,.25,1), box-shadow .22s ease;
-                            position:relative;
-                        ">
-                        <span style="position:absolute;inset:0;background:linear-gradient(105deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,0) 60%);pointer-events:none;"></span>
-                        <i class="fas fa-sync-alt" id="mgUpdateIcon" aria-hidden="true" style="font-size:1rem;flex-shrink:0;"></i>
-                        <span id="mgUpdateLabel">Güncelleme Yap</span>
-                    </button>
-                    <!-- PLAY STORE PUAN BUTONU -->
+                    <!-- 5 YILDIZ VER BUTONU -->
                     <button id="mgRateBtn" aria-label="Play Store'da 5 Yıldız Ver" title="Bizi Play Store'da değerlendirin"
                         style="
                             display:flex; align-items:center; justify-content:center; gap:8px;
-                            padding:14px 16px;
+                            flex:1; padding:14px 18px;
                             background:linear-gradient(135deg,#f59e0b 0%,#FF8B00 100%);
                             color:#fff; border:none; border-radius:16px;
-                            font-family:'Nunito',sans-serif; font-size:.85rem; font-weight:800;
-                            cursor:pointer; flex-shrink:0; white-space:nowrap;
-                            box-shadow:0 8px 22px rgba(245,158,11,.40);
+                            font-family:'Nunito',sans-serif; font-size:.92rem; font-weight:900;
+                            cursor:pointer; white-space:nowrap;
+                            box-shadow:0 8px 24px rgba(245,158,11,.42), inset 0 1px 0 rgba(255,255,255,.2);
                             transition:transform .22s cubic-bezier(.25,.8,.25,1), box-shadow .22s ease;
+                            position:relative; overflow:hidden;
                         "
-                        onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 28px rgba(245,158,11,.55)'"
-                        onmouseout="this.style.transform='';this.style.boxShadow='0 8px 22px rgba(245,158,11,.40)'">
-                        <i class="fas fa-star" style="font-size:.9rem;"></i>
-                        <span>5 Yıldız</span>
+                        onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 30px rgba(245,158,11,.58)'"
+                        onmouseout="this.style.transform='';this.style.boxShadow='0 8px 24px rgba(245,158,11,.42)'">
+                        <span style="position:absolute;inset:0;background:linear-gradient(105deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,0) 60%);pointer-events:none;"></span>
+                        <i class="fas fa-star" style="font-size:.95rem;flex-shrink:0;"></i>
+                        <span>5 Yıldız Ver</span>
                     </button>
+                    <!-- PLAY STORE İNDİR BADGE -->
+                    <a href="https://play.google.com/store/apps/details?id=com.mugol.portal"
+                       target="_blank" rel="noopener" aria-label="Google Play'den İndir"
+                       title="Google Play'den İndir"
+                       style="display:flex; align-items:center; flex-shrink:0; border-radius:16px;
+                              overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,.18);
+                              transition:transform .22s ease, box-shadow .22s ease;"
+                       onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 10px 26px rgba(0,0,0,.3)'"
+                       onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(0,0,0,.18)'">
+                        <img src="google-play-badge.png" alt="Get it on Google Play"
+                             style="height:52px; width:auto; display:block;"
+                             onerror="this.parentElement.style.cssText+='background:#000;padding:0 14px;';this.style.display='none';this.parentElement.innerHTML='<span style=\'display:flex;align-items:center;gap:8px;padding:14px 16px;background:#000;color:#fff;font-size:.82rem;font-weight:800;font-family:Nunito,sans-serif;\'><i class=\'fab fa-google-play\'></i>Google Play</span>'">
+                    </a>
                 </div>
                 <!-- ─────────────────────────────── -->
 
@@ -1717,6 +1719,34 @@
                         </button>
                     </div>
 
+                    <!-- ── GÜNCELLEME YAP AYARI ── -->
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <i class="fas fa-sync-alt" aria-hidden="true"></i>
+                            <div>
+                                <h4>Güncelleme Yap</h4>
+                                <p>Önbelleği temizleyerek portalı en güncel sürümüne günceller.</p>
+                            </div>
+                        </div>
+                        <button id="mgUpdateBtn" aria-label="Güncelleme Yap" title="Önbelleği temizle ve sayfayı yenile"
+                            style="
+                                display:inline-flex; align-items:center; gap:8px;
+                                padding:10px 20px; border-radius:12px;
+                                background:linear-gradient(135deg,#4318ff 0%,#2979ff 50%,#00d2ff 100%);
+                                color:#fff; border:none; font-family:'Nunito',sans-serif;
+                                font-size:0.9rem; font-weight:800; cursor:pointer;
+                                box-shadow:0 4px 14px rgba(67,24,255,.3);
+                                transition:transform .2s,box-shadow .2s;
+                                white-space:nowrap; position:relative; overflow:hidden;
+                            "
+                            onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 22px rgba(67,24,255,.45)'"
+                            onmouseout="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(67,24,255,.3)'">
+                            <span style="position:absolute;inset:0;background:linear-gradient(105deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,0) 60%);pointer-events:none;"></span>
+                            <i class="fas fa-sync-alt" id="mgUpdateIcon" aria-hidden="true"></i>
+                            <span id="mgUpdateLabel">Güncelleme Yap</span>
+                        </button>
+                    </div>
+
                 </div>
             </div>
             <div id="page-iletisim" class="page-section" role="region" aria-label="İletişim Bilgileri">
@@ -2205,6 +2235,171 @@
                 </div>
 
             </div>
+
+            <!-- SAYFA: İNDİR -->
+            <div id="page-indir" class="page-section" role="region" aria-label="İndir">
+
+                <!-- Başlık kartı -->
+                <div class="content-card premium-card" style="text-align:center; padding:2.4rem 1.8rem 2rem; margin-bottom:1.2rem;">
+                    <div style="width:72px;height:72px;background:linear-gradient(135deg,#4318ff,#00d2ff);border-radius:20px;
+                                display:inline-flex;align-items:center;justify-content:center;margin-bottom:1.2rem;
+                                box-shadow:0 12px 28px rgba(67,24,255,0.28);">
+                        <i class="fas fa-download" style="font-size:2rem;color:#fff;"></i>
+                    </div>
+                    <h2 style="font-size:1.7rem;font-weight:900;color:var(--text-main);margin:0 0 0.5rem;">MuGöl PORTAL'ı İndir</h2>
+                    <p style="color:var(--text-muted);font-size:.95rem;font-weight:600;max-width:420px;margin:0 auto;line-height:1.6;">
+                        Uygulamayı cihazına ekleyerek internet olmadan da kullanabilirsin.
+                    </p>
+                </div>
+
+                <!-- Google Play Store Kartı -->
+                <div class="content-card" style="margin-bottom:1.2rem;">
+                    <div style="display:flex;align-items:center;gap:14px;margin-bottom:1.2rem;">
+                        <div style="width:48px;height:48px;border-radius:14px;background:#000;
+                                    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+                                    box-shadow:0 4px 14px rgba(0,0,0,.25);">
+                            <i class="fab fa-google-play" style="color:#fff;font-size:1.3rem;"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight:900;font-size:1.05rem;color:var(--text-main);">Google Play Store</div>
+                            <div style="font-size:.83rem;color:var(--text-muted);font-weight:600;">Android cihazlar için resmi uygulama</div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;">
+                        <!-- Play Store badge butonu -->
+                        <a href="https://play.google.com/store/apps/details?id=com.mugol.portal"
+                           target="_blank" rel="noopener" aria-label="Google Play'den İndir"
+                           style="display:inline-block;border-radius:14px;overflow:hidden;flex-shrink:0;
+                                  box-shadow:0 6px 20px rgba(0,0,0,.22);
+                                  transition:transform .22s cubic-bezier(.25,.8,.25,1),box-shadow .22s ease;"
+                           onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 14px 32px rgba(0,0,0,.32)'"
+                           onmouseout="this.style.transform='';this.style.boxShadow='0 6px 20px rgba(0,0,0,.22)'">
+                            <img src="google-play-badge.png" alt="Get it on Google Play"
+                                 style="height:58px;width:auto;display:block;"
+                                 onerror="this.parentElement.innerHTML='<span style=\'display:inline-flex;align-items:center;gap:10px;padding:14px 22px;background:#000;border-radius:14px;color:#fff;font-size:.95rem;font-weight:800;font-family:Nunito,sans-serif;\'><i class=\'fab fa-google-play\' style=\'font-size:1.2rem;\'></i>Google Play\'den İndir</span>'">
+                        </a>
+
+                        <!-- Özellikler -->
+                        <div style="display:flex;flex-direction:column;gap:6px;">
+                            <span style="display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:var(--text-muted);">
+                                <i class="fas fa-check-circle" style="color:#10b981;"></i> Otomatik güncellemeler
+                            </span>
+                            <span style="display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:var(--text-muted);">
+                                <i class="fas fa-check-circle" style="color:#10b981;"></i> Android 8.0+ desteklenir
+                            </span>
+                            <span style="display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:var(--text-muted);">
+                                <i class="fas fa-check-circle" style="color:#10b981;"></i> Ücretsiz
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PWA Kartı -->
+                <div class="content-card" style="margin-bottom:1.2rem;">
+                    <div style="display:flex;align-items:center;gap:14px;margin-bottom:1.2rem;">
+                        <div style="width:48px;height:48px;border-radius:14px;
+                                    background:linear-gradient(135deg,#4318ff,#00d2ff);
+                                    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+                                    box-shadow:0 4px 14px rgba(67,24,255,.3);">
+                            <i class="fas fa-mobile-alt" style="color:#fff;font-size:1.3rem;"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight:900;font-size:1.05rem;color:var(--text-main);">
+                                Uygulamayı Yükle <span style="font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:20px;
+                                    background:linear-gradient(135deg,#4318ff,#00d2ff);color:#fff;margin-left:6px;vertical-align:middle;">PWA</span>
+                            </div>
+                            <div style="font-size:.83rem;color:var(--text-muted);font-weight:600;">Tüm tarayıcılar &amp; platformlar için</div>
+                        </div>
+                    </div>
+
+                    <!-- Durum alanı -->
+                    <div id="mgPwaStatus" style="padding:14px 16px;border-radius:14px;margin-bottom:14px;
+                                                   background:rgba(67,24,255,.06);border:1.5px solid rgba(67,24,255,.15);
+                                                   display:flex;align-items:center;gap:12px;">
+                        <i class="fas fa-info-circle" style="color:var(--primary-color);font-size:1.1rem;flex-shrink:0;"></i>
+                        <span id="mgPwaStatusText" style="font-size:.87rem;font-weight:700;color:var(--text-main);line-height:1.5;">
+                            Tarayıcı yükleme desteği kontrol ediliyor...
+                        </span>
+                    </div>
+
+                    <!-- PWA Yükle Butonu -->
+                    <button id="mgPwaInstallBtn"
+                        style="display:flex;align-items:center;justify-content:center;gap:10px;
+                               width:100%;padding:16px;border:none;border-radius:16px;
+                               background:linear-gradient(135deg,#4318ff 0%,#2979ff 50%,#00d2ff 100%);
+                               color:#fff;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:900;
+                               cursor:pointer;box-shadow:0 8px 26px rgba(67,24,255,.42),inset 0 1px 0 rgba(255,255,255,.2);
+                               transition:transform .22s cubic-bezier(.25,.8,.25,1),box-shadow .22s ease;
+                               position:relative;overflow:hidden;"
+                        onmouseover="if(!this.disabled){this.style.transform='translateY(-2px)';this.style.boxShadow='0 14px 32px rgba(67,24,255,.55)'}"
+                        onmouseout="this.style.transform='';this.style.boxShadow='0 8px 26px rgba(67,24,255,.42)'">
+                        <span style="position:absolute;inset:0;background:linear-gradient(105deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,0) 60%);pointer-events:none;"></span>
+                        <i class="fas fa-download" id="mgPwaBtnIcon" style="font-size:1.05rem;flex-shrink:0;"></i>
+                        <span id="mgPwaBtnText">Uygulamayı Yükle</span>
+                    </button>
+
+                    <!-- Özellikler listesi -->
+                    <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                        <span style="display:flex;align-items:center;gap:6px;font-size:.78rem;font-weight:700;color:var(--text-muted);">
+                            <i class="fas fa-wifi" style="color:#4318ff;font-size:.85rem;"></i> Çevrimdışı çalışır
+                        </span>
+                        <span style="display:flex;align-items:center;gap:6px;font-size:.78rem;font-weight:700;color:var(--text-muted);">
+                            <i class="fas fa-bolt" style="color:#4318ff;font-size:.85rem;"></i> Hızlı açılır
+                        </span>
+                        <span style="display:flex;align-items:center;gap:6px;font-size:.78rem;font-weight:700;color:var(--text-muted);">
+                            <i class="fas fa-home" style="color:#4318ff;font-size:.85rem;"></i> Ana ekrana eklenir
+                        </span>
+                        <span style="display:flex;align-items:center;gap:6px;font-size:.78rem;font-weight:700;color:var(--text-muted);">
+                            <i class="fas fa-shield-alt" style="color:#4318ff;font-size:.85rem;"></i> Güvenli (HTTPS)
+                        </span>
+                    </div>
+
+                    <!-- Manuel adımlar (PWA desteklenmiyorsa görünür) -->
+                    <div id="mgPwaManual" style="display:none;margin-top:14px;padding:14px 16px;
+                                                  border-radius:14px;background:rgba(245,158,11,.07);
+                                                  border:1.5px solid rgba(245,158,11,.2);">
+                        <div style="font-weight:800;font-size:.88rem;color:var(--text-main);margin-bottom:8px;">
+                            <i class="fas fa-hand-point-right" style="color:#f59e0b;"></i> Manuel Kurulum
+                        </div>
+                        <div style="font-size:.82rem;color:var(--text-muted);font-weight:600;line-height:1.7;">
+                            <b style="color:var(--text-main);">Chrome/Android:</b> Tarayıcı menüsü → "Ana ekrana ekle"<br>
+                            <b style="color:var(--text-main);">Safari/iOS:</b> Paylaş <i class="fas fa-share-alt"></i> → "Ana Ekrana Ekle"<br>
+                            <b style="color:var(--text-main);">Edge/Chrome PC:</b> Adres çubuğundaki ⊕ simgesi
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Karşılaştırma kartı -->
+                <div class="content-card">
+                    <h3 style="font-size:1rem;font-weight:900;color:var(--text-main);margin:0 0 1rem;
+                                display:flex;align-items:center;gap:8px;">
+                        <i class="fas fa-balance-scale" style="color:var(--primary-color);"></i> Hangisini Seçmeliyim?
+                    </h3>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                        <div style="padding:14px;border-radius:14px;background:rgba(0,0,0,.03);border:1.5px solid rgba(0,0,0,.06);">
+                            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                                <i class="fab fa-google-play" style="color:#4CAF50;font-size:1.2rem;"></i>
+                                <b style="font-size:.88rem;color:var(--text-main);">Play Store</b>
+                            </div>
+                            <div style="font-size:.78rem;color:var(--text-muted);font-weight:600;line-height:1.7;">
+                                ✅ Bildirim desteği<br>✅ Arka planda çalışır<br>✅ Otomatik güncelleme<br>📱 Yalnızca Android
+                            </div>
+                        </div>
+                        <div style="padding:14px;border-radius:14px;background:rgba(67,24,255,.04);border:1.5px solid rgba(67,24,255,.1);">
+                            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                                <i class="fas fa-mobile-alt" style="color:#4318ff;font-size:1.2rem;"></i>
+                                <b style="font-size:.88rem;color:var(--text-main);">PWA</b>
+                            </div>
+                            <div style="font-size:.78rem;color:var(--text-muted);font-weight:600;line-height:1.7;">
+                                ✅ Her platformda<br>✅ Kurulum gerekmez<br>✅ Düşük depolama<br>🌐 iOS + Android + PC
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- / SAYFA: İNDİR -->
 
         </main>
     </div>
@@ -3589,7 +3784,7 @@
                 <div style="position:relative;z-index:1;">
                     <div style="font-size:3.5rem;margin-bottom:8px;">⭐</div>
                     <h3 style="font-size:1.25rem;font-weight:900;color:#fff;margin:0 0 6px;">
-                        MuGöl'ü Seviyor Musun?
+                        MuGöl PORTAL'ı Seviyor Musun?
                     </h3>
                     <p style="font-size:.88rem;color:rgba(255,255,255,.88);font-weight:600;margin:0;line-height:1.5;">
                         Play Store'da 5 yıldız vererek destek olabilirsin!
@@ -3817,6 +4012,113 @@
         }
 
         console.log('[MuGöl] ✓ Paylaş & Puan modülleri yüklendi');
+    })();
+    </script>
+
+    <!-- ── PWA İNDİR SAYFASI — YÜKLEME MANTIĞI ── -->
+    <script>
+    (function() {
+        'use strict';
+
+        var deferredPrompt = null;
+        var pwaInstallBtn  = document.getElementById('mgPwaInstallBtn');
+        var pwaStatusEl    = document.getElementById('mgPwaStatus');
+        var pwaStatusText  = document.getElementById('mgPwaStatusText');
+        var pwaManual      = document.getElementById('mgPwaManual');
+        var pwaBtnIcon     = document.getElementById('mgPwaBtnIcon');
+        var pwaBtnText     = document.getElementById('mgPwaBtnText');
+
+        /* Durum güncelleme yardımcısı */
+        function setStatus(type, msg) {
+            if (!pwaStatusEl || !pwaStatusText) return;
+            var colors = {
+                info:    { bg: 'rgba(67,24,255,.06)',  border: 'rgba(67,24,255,.15)',  icon: 'var(--primary-color)' },
+                success: { bg: 'rgba(16,185,129,.07)', border: 'rgba(16,185,129,.2)',  icon: '#10b981' },
+                warning: { bg: 'rgba(245,158,11,.07)', border: 'rgba(245,158,11,.2)',  icon: '#f59e0b' },
+                done:    { bg: 'rgba(16,185,129,.07)', border: 'rgba(16,185,129,.2)',  icon: '#10b981' }
+            };
+            var c = colors[type] || colors.info;
+            pwaStatusEl.style.background = c.bg;
+            pwaStatusEl.style.borderColor = c.border;
+            pwaStatusEl.querySelector('i').style.color = c.icon;
+            pwaStatusText.textContent = msg;
+        }
+
+        /* Zaten yüklüyse kontrol et */
+        function isInstalled() {
+            return window.matchMedia('(display-mode: standalone)').matches
+                || window.navigator.standalone === true;
+        }
+
+        if (isInstalled()) {
+            setStatus('done', '✅ Uygulama zaten cihazına yüklü! Ana ekrandan açabilirsin.');
+            if (pwaInstallBtn) {
+                pwaInstallBtn.disabled = true;
+                pwaInstallBtn.style.opacity = '.6';
+                pwaInstallBtn.style.cursor = 'default';
+                if (pwaBtnIcon) pwaBtnIcon.className = 'fas fa-check-circle';
+                if (pwaBtnText) pwaBtnText.textContent = 'Zaten Yüklü';
+            }
+        }
+
+        /* beforeinstallprompt — otomatik yükleme diyaloğu */
+        window.addEventListener('beforeinstallprompt', function(e) {
+            e.preventDefault();
+            deferredPrompt = e;
+            setStatus('success', '🎉 Bu uygulama cihazına yüklenebilir! Butona tıkla.');
+            if (pwaManual) pwaManual.style.display = 'none';
+        });
+
+        /* Yükleme tamamlandı */
+        window.addEventListener('appinstalled', function() {
+            deferredPrompt = null;
+            setStatus('done', '✅ Uygulama başarıyla yüklendi! Ana ekrandan açabilirsin.');
+            if (pwaInstallBtn) {
+                pwaInstallBtn.disabled = true;
+                pwaInstallBtn.style.opacity = '.6';
+                if (pwaBtnIcon) pwaBtnIcon.className = 'fas fa-check-circle';
+                if (pwaBtnText) pwaBtnText.textContent = 'Yüklendi!';
+            }
+            if (typeof window._mgToast === 'function') window._mgToast('✅ Uygulama yüklendi!');
+        });
+
+        /* PWA butonu tıklama */
+        if (pwaInstallBtn) {
+            pwaInstallBtn.addEventListener('click', function() {
+                if (isInstalled()) return;
+
+                if (deferredPrompt) {
+                    /* Otomatik diyalog */
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then(function(res) {
+                        if (res.outcome === 'accepted') {
+                            setStatus('done', '✅ Harika! Uygulama yükleniyor...');
+                            if (pwaBtnIcon) pwaBtnIcon.className = 'fas fa-spinner fa-spin';
+                            if (pwaBtnText) pwaBtnText.textContent = 'Yükleniyor...';
+                        } else {
+                            setStatus('warning', 'ℹ️ Yükleme iptal edildi. İstediğin zaman tekrar deneyebilirsin.');
+                        }
+                        deferredPrompt = null;
+                    });
+                } else {
+                    /* Manuel yönlendirme */
+                    if (pwaManual) pwaManual.style.display = 'block';
+                    setStatus('warning', '⚠️ Tarayıcın otomatik kurulumu desteklemiyor. Aşağıdaki adımları takip et.');
+                }
+            });
+        }
+
+        /* Sayfa açıldığında deferredPrompt yoksa manuel talimatı göster */
+        setTimeout(function() {
+            if (!deferredPrompt && !isInstalled()) {
+                if (pwaStatusText && pwaStatusText.textContent.indexOf('kontrol') !== -1) {
+                    setStatus('warning', '⚠️ Tarayıcın otomatik kurulumu desteklemiyor. Aşağıdaki manuel adımları takip edebilirsin.');
+                    if (pwaManual) pwaManual.style.display = 'block';
+                }
+            }
+        }, 1800);
+
+        console.log('[MuGöl] ✓ PWA İndir sayfası yüklendi');
     })();
     </script>
 
