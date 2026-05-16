@@ -162,6 +162,7 @@
             border-bottom: 1px solid rgba(150, 150, 150, 0.1);
             box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04), inset 0 -1px 0 rgba(255,255,255,0.06);
             z-index: 1000 !important;
+            overflow: visible !important;
         }
         /* Header tuşlarının tıklanabilir olması için */
         .header-right,
@@ -169,6 +170,17 @@
         .header-right #mgAvatar {
             position: relative;
             z-index: 1001;
+        }
+        /* Header logo küçük ekranda sığsın */
+        .logo-area span {
+            font-size: clamp(0.85rem, 3vw, 1.1rem) !important;
+            white-space: nowrap;
+        }
+        /* Avatar küçük ekranlarda daha kompakt */
+        @media (max-width: 400px) {
+            #mgAvatar { width:36px !important; height:36px !important; font-size:.8rem !important; }
+            .header-right { gap:4px !important; }
+            .hamburger-btn { width:36px !important; height:36px !important; font-size:.9rem !important; }
         }
 
         /* ── Category Card v3 ── */
@@ -217,7 +229,7 @@
 
         /* ── Welcome Banner v3 ── */
         .welcome-banner--compact {
-            border-radius: 22px;
+            border-radius: 20px;
             background: linear-gradient(135deg, #4318ff 0%, #2979ff 40%, #00b4d8 80%, #00d2ff 100%) !important;
             background-size: 300% 300% !important;
             border: none !important;
@@ -228,11 +240,12 @@
             flex-direction: column !important;
             align-items: flex-start !important;
             flex-wrap: nowrap !important;
-            gap: 12px !important;
+            gap: 10px !important;
             overflow: hidden !important;
             box-sizing: border-box !important;
-            padding: 1.5rem 1.4rem !important;
-            margin-bottom: 1.4rem !important;
+            width: 100% !important;
+            padding: 1.2rem 1.1rem !important;
+            margin-bottom: 1.2rem !important;
         }
         .welcome-banner--compact .welcome-text {
             width: 100%;
@@ -240,11 +253,12 @@
         }
         .welcome-banner--compact h1 {
             color: #ffffff !important;
-            font-size: 1.6rem !important;
+            font-size: clamp(1.2rem, 4.5vw, 1.6rem) !important;
             font-weight: 900;
             line-height: 1.25;
             white-space: normal !important;
             max-width: 100%;
+            margin: 0 0 4px !important;
         }
         .welcome-banner--compact p,
         .welcome-banner--compact .time,
@@ -252,8 +266,9 @@
             color: #ffffff !important;
         }
         .welcome-banner--compact p {
-            font-size: 0.93rem !important;
+            font-size: clamp(.82rem, 2.8vw, .93rem) !important;
             opacity: 0.92;
+            margin: 0 !important;
         }
         .welcome-banner--compact .datetime {
             background: rgba(255, 255, 255, 0.18) !important;
@@ -265,16 +280,16 @@
             min-width: 0 !important;
             text-align: left !important;
             box-sizing: border-box !important;
-            padding: 14px 18px !important;
-            border-radius: 16px !important;
+            padding: 12px 16px !important;
+            border-radius: 14px !important;
         }
         .welcome-banner--compact .time {
-            font-size: 2.2rem !important;
+            font-size: clamp(1.7rem, 6vw, 2.2rem) !important;
             font-weight: 900;
             line-height: 1;
         }
         .welcome-banner--compact .date {
-            font-size: 0.88rem !important;
+            font-size: clamp(.78rem, 2.5vw, .88rem) !important;
             margin-top: 4px;
         }
 
@@ -465,8 +480,8 @@
         /* ── İstatistik Şeridi ── */
         .mg-stats{
             display:grid;
-            grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-            gap:12px; margin-bottom:1.8rem;
+            grid-template-columns:repeat(3, 1fr);
+            gap:10px; margin-bottom:1.8rem;
         }
         .mg-sc{
             background:var(--bg-card); border:1px solid var(--border-color);
@@ -592,11 +607,20 @@
 
         /* ── Responsive ── */
         @media(max-width:768px){
-            .mg-stats{grid-template-columns:repeat(2,1fr);gap:10px}
-            .mg-sc{padding:.85rem .95rem;gap:10px}
-            .mg-sv{font-size:1.2rem}
+            .mg-stats{grid-template-columns:repeat(3,1fr);gap:8px}
+            .mg-sc{padding:.75rem .7rem;gap:8px}
+            .mg-sv{font-size:1.1rem}
+            .mg-sl{font-size:.62rem}
+            .mg-si{width:34px;height:34px;border-radius:10px;font-size:.85rem}
             #mgFab{bottom:76px;right:18px}
             #mgDrop{width:248px}
+        }
+        @media(max-width:360px){
+            .mg-stats{grid-template-columns:repeat(3,1fr);gap:6px}
+            .mg-sc{padding:.6rem .5rem;gap:6px;border-radius:13px}
+            .mg-sv{font-size:1rem}
+            .mg-sl{font-size:.58rem;letter-spacing:0}
+            .mg-si{width:30px;height:30px;font-size:.75rem}
         }
         @media(max-width:480px){
             #mgDrop{right:-8px;width:232px}
@@ -625,6 +649,14 @@
         /* Ana içeriğe alt boşluk — banner üstüne kapanmasın */
         .main-content {
             padding-bottom: 60px !important;
+            overflow-x: hidden !important;
+            box-sizing: border-box !important;
+        }
+        /* Tüm sayfa bölümleri ekran dışına taşmasın */
+        .page-section {
+            width: 100% !important;
+            box-sizing: border-box !important;
+            overflow-x: hidden !important;
         }
     </style>
 </head>
@@ -675,7 +707,7 @@
                 <span>MuGöl<span style="color:var(--primary-color)">PORTAL</span></span>
             </div>
         </div>
-        <div class="header-right" style="margin-left:auto; display:flex; align-items:center; gap:10px; position:relative;">
+        <div class="header-right" style="margin-left:auto; display:flex; align-items:center; gap:6px; position:relative; flex-shrink:0;">
             <button class="hamburger-btn" id="searchBtn" aria-label="Uygulama Ara" title="Uygulama Ara (Ctrl+K)">
                 <i class="fas fa-search" aria-hidden="true"></i>
             </button>
@@ -838,57 +870,35 @@
                 <div id="mgUpdateSection" style="margin-bottom:1.4rem; display:flex; gap:10px;">
                     <button id="mgFullscreenBtn" aria-label="Tam Ekran" title="Tam Ekran Modu"
                         style="
-                            display:flex; align-items:center; justify-content:center; gap:8px;
-                            padding:17px 20px;
+                            display:flex; align-items:center; justify-content:center; gap:6px;
+                            padding:14px 16px;
                             background:var(--bg-card); border:1px solid var(--border-color);
-                            color:var(--text-main); border-radius:18px;
-                            font-family:'Nunito',sans-serif; font-size:1rem; font-weight:800;
-                            cursor:pointer; flex-shrink:0;
+                            color:var(--text-main); border-radius:16px;
+                            font-family:'Nunito',sans-serif; font-size:.85rem; font-weight:800;
+                            cursor:pointer; flex-shrink:0; white-space:nowrap;
                             box-shadow:0 4px 14px rgba(0,0,0,.07);
-                            transition:transform .22s cubic-bezier(.25,.8,.25,1),
-                                       box-shadow .22s ease,
-                                       background .2s;
-                            white-space:nowrap;
+                            transition:transform .22s cubic-bezier(.25,.8,.25,1), box-shadow .22s ease;
                         "
                         onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 22px rgba(67,24,255,.15)'"
                         onmouseout="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(0,0,0,.07)'">
-                        <i class="fas fa-expand" id="mgFsIcon" style="font-size:.95rem;"></i>
+                        <i class="fas fa-expand" id="mgFsIcon" style="font-size:.9rem;"></i>
                         <span id="mgFsLabel">Tam Ekran</span>
                     </button>
                     <button id="mgUpdateBtn" aria-label="Güncelleme Yap" title="Önbelleği temizle ve sayfayı yenile"
                         style="
-                            display:flex; align-items:center; justify-content:center; gap:12px;
-                            flex:1; padding:17px 24px;
+                            display:flex; align-items:center; justify-content:center; gap:10px;
+                            flex:1; padding:14px 18px;
                             background:linear-gradient(135deg,#4318ff 0%,#2979ff 50%,#00d2ff 100%);
-                            background-size:200% 200%;
-                            color:#fff; border:none; border-radius:18px;
-                            font-family:'Nunito',sans-serif; font-size:1.05rem; font-weight:900;
-                            cursor:pointer;
-                            box-shadow:0 8px 28px rgba(67,24,255,.45),
-                                       0 2px 8px rgba(0,210,255,.2),
-                                       inset 0 1px 0 rgba(255,255,255,.25);
-                            letter-spacing:.3px;
-                            transition:transform .22s cubic-bezier(.25,.8,.25,1),
-                                       box-shadow .22s ease,
-                                       filter .22s ease;
-                            position:relative; overflow:hidden;
+                            color:#fff; border:none; border-radius:16px;
+                            font-family:'Nunito',sans-serif; font-size:.95rem; font-weight:900;
+                            cursor:pointer; white-space:nowrap; overflow:hidden;
+                            box-shadow:0 8px 28px rgba(67,24,255,.45), inset 0 1px 0 rgba(255,255,255,.25);
+                            transition:transform .22s cubic-bezier(.25,.8,.25,1), box-shadow .22s ease;
+                            position:relative;
                         ">
-                        <!-- Parlama efekti -->
-                        <span style="
-                            position:absolute; inset:0;
-                            background:linear-gradient(105deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,0) 60%);
-                            pointer-events:none;
-                        "></span>
-                        <span style="
-                            display:flex; align-items:center; justify-content:center;
-                            width:34px; height:34px; border-radius:10px;
-                            background:rgba(255,255,255,.2);
-                            border:1.5px solid rgba(255,255,255,.3);
-                            flex-shrink:0;
-                        ">
-                            <i class="fas fa-sync-alt" id="mgUpdateIcon" aria-hidden="true" style="font-size:.95rem;"></i>
-                        </span>
-                        <span id="mgUpdateLabel" style="flex:1; text-align:center; margin-right:34px;">🔄 Güncelleme Yap</span>
+                        <span style="position:absolute;inset:0;background:linear-gradient(105deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,0) 60%);pointer-events:none;"></span>
+                        <i class="fas fa-sync-alt" id="mgUpdateIcon" aria-hidden="true" style="font-size:1rem;flex-shrink:0;"></i>
+                        <span id="mgUpdateLabel">Güncelleme Yap</span>
                     </button>
                 </div>
                 <!-- ─────────────────────────────── -->
@@ -2292,6 +2302,8 @@
     <!-- GİRİŞ / KAYIT SİSTEMİ (ayrı dosya: auth.js) -->
     <script src="auth.js"></script>
     <script src="script.js"></script>
+    <!-- BİLDİRİM SİSTEMİ (ayrı dosya: notifications.js) -->
+    <script src="notifications.js"></script>
 
     <!-- ═══════════════════════════════════════════════════════
          PORTAL İYİLEŞTİRMELERİ v2.0 — JS
@@ -2709,72 +2721,8 @@
            10. AYARLAR — GENİŞLETİLMİŞ RENK SEÇİCİ
         ──────────────────────────────────── */
         function initColorCard() {
-            var page = document.getElementById('page-ayarlar');
-            if (!page || document.getElementById('mgColorCard')) return;
-
-            var colors = [
-                { n: 'Mor (Varsayılan)', l: '#4318ff', d: '#6366f1' },
-                { n: 'Okyanus',          l: '#0052CC', d: '#3b82f6' },
-                { n: 'Zümrüt',          l: '#00875A', d: '#10b981' },
-                { n: 'Güneş',           l: '#FF8B00', d: '#f59e0b' },
-                { n: 'Ateş',            l: '#DE350B', d: '#ef4444' },
-                { n: 'Pembe',           l: '#bf015e', d: '#ec4899' },
-                { n: 'Deniz',           l: '#0284c7', d: '#38bdf8' },
-                { n: 'Fıstık',          l: '#65a30d', d: '#84cc16' }
-            ];
-
-            var card = document.createElement('div');
-            card.id = 'mgColorCard';
-            card.className = 'content-card';
-            card.style.marginTop = '1.5rem';
-
-            var swatchHtml = colors.map(function (c) {
-                var isDark  = document.documentElement.getAttribute('data-theme') === 'dark';
-                var val     = isDark ? c.d : c.l;
-                var cur     = localStorage.getItem('mugol-primary-color') || '';
-                var active  = cur === val || cur === c.l || cur === c.d;
-                return '<button title="' + c.n + '" aria-label="' + c.n + '" data-light="' + c.l + '" data-dark="' + c.d + '"' +
-                    ' style="width:34px;height:34px;border-radius:50%;cursor:pointer;' +
-                    'border:' + (active ? '3px solid var(--text-main)' : '2px solid transparent') + ';' +
-                    'background:' + val + ';box-shadow:0 4px 10px rgba(0,0,0,.18);' +
-                    'transition:transform .2s,box-shadow .2s;outline-offset:3px;" ' +
-                    (active ? 'style="transform:scale(1.18)"' : '') + '></button>';
-            }).join('');
-
-            card.innerHTML =
-                '<div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">' +
-                    '<span style="width:32px;height:32px;border-radius:9px;background:var(--primary-glow);color:var(--primary-color);display:inline-flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;"><i class="fas fa-palette"></i></span>' +
-                    '<div><div style="font-size:1rem;font-weight:900;color:var(--text-main);">Genişletilmiş Renk Paleti</div>' +
-                    '<div style="font-size:.82rem;color:var(--text-muted);font-weight:600;margin-top:2px;">8 vurgu rengi arasından seçin</div></div>' +
-                '</div>' +
-                '<div id="mgColorSwatches" style="display:flex;flex-wrap:wrap;gap:10px;" role="group" aria-label="Renk seçimi">' +
-                swatchHtml + '</div>';
-
-            var firstCard = page.querySelector('.content-card');
-            if (firstCard) firstCard.after(card);
-            else page.appendChild(card);
-
-            card.querySelectorAll('button[data-light]').forEach(function (sw) {
-                sw.addEventListener('click', function () {
-                    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-                    var color  = isDark ? this.getAttribute('data-dark') : this.getAttribute('data-light');
-                    document.documentElement.style.setProperty('--primary-color', color);
-                    localStorage.setItem('mugol-primary-color', color);
-                    if (typeof _fbSetPref === 'function') _fbSetPref('color', color);
-                    /* Mevcut .color-swatch'ları da sync et */
-                    document.querySelectorAll('.color-swatch').forEach(function (cs) {
-                        cs.classList.toggle('active', cs.getAttribute('data-color') === color);
-                    });
-                    /* Görsel güncelleme */
-                    card.querySelectorAll('button[data-light]').forEach(function (s) {
-                        s.style.border = '2px solid transparent';
-                        s.style.transform = 'scale(1)';
-                    });
-                    this.style.border = '3px solid var(--text-main)';
-                    this.style.transform = 'scale(1.18)';
-                    showToast('🎨 Renk güncellendi!');
-                });
-            });
+            /* Genişletilmiş renk paleti devre dışı bırakıldı */
+            return;
         }
 
         /* Ayarlar sayfasına tıklayınca kartı oluştur */
@@ -3357,48 +3305,127 @@
             confirmModal.style.display = 'none';
         });
 
+        /* ── Güncelleme Animasyon Overlay ── */
+        var updateOverlay = document.createElement('div');
+        updateOverlay.id = 'mgUpdateOverlay';
+        updateOverlay.style.cssText = [
+            'display:none;position:fixed;inset:0;z-index:999999;',
+            'background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);',
+            'align-items:center;justify-content:center;flex-direction:column;gap:24px;',
+            'font-family:"Nunito",sans-serif;'
+        ].join('');
+        updateOverlay.innerHTML = [
+            /* Dönen halka */
+            '<div style="position:relative;width:100px;height:100px;">',
+              '<svg viewBox="0 0 100 100" style="width:100%;height:100%;animation:mgURotate 1.2s linear infinite;">',
+                '<circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="8"/>',
+                '<circle cx="50" cy="50" r="42" fill="none" stroke="url(#mgUGrad)" stroke-width="8"',
+                '  stroke-linecap="round" stroke-dasharray="80 185"/>',
+                '<defs><linearGradient id="mgUGrad" x1="0%" y1="0%" x2="100%" y2="100%">',
+                '  <stop offset="0%" stop-color="#4318ff"/>',
+                '  <stop offset="100%" stop-color="#00d2ff"/>',
+                '</linearGradient></defs>',
+              '</svg>',
+              '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">',
+                '<i class="fas fa-sync-alt" style="font-size:1.5rem;color:#fff;animation:mgUSpin 1.2s linear infinite;"></i>',
+              '</div>',
+            '</div>',
+            /* Metin */
+            '<div style="text-align:center;">',
+              '<div id="mgUOverlayTitle" style="font-size:1.3rem;font-weight:900;color:#fff;letter-spacing:.3px;">Güncelleniyor...</div>',
+              '<div id="mgUOverlaySub" style="font-size:.88rem;color:rgba(255,255,255,.6);font-weight:600;margin-top:8px;">Önbellek temizleniyor</div>',
+            '</div>',
+            /* İlerleme çubugu */
+            '<div style="width:260px;height:5px;background:rgba(255,255,255,.12);border-radius:99px;overflow:hidden;">',
+              '<div id="mgUBar" style="height:100%;width:0%;border-radius:99px;',
+              'background:linear-gradient(90deg,#4318ff,#00d2ff);',
+              'transition:width .4s ease;"></div>',
+            '</div>',
+            /* Adım mesajları */
+            '<div id="mgUStep" style="font-size:.8rem;color:rgba(255,255,255,.4);font-weight:700;letter-spacing:.4px;"></div>',
+        ].join('');
+        document.body.appendChild(updateOverlay);
+
+        /* Animasyon keyframe'leri */
+        var uStyle = document.createElement('style');
+        uStyle.textContent = [
+            '@keyframes mgURotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}',
+            '@keyframes mgUSpin{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}',
+            '@keyframes mgUFadeIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}',
+        ].join('');
+        document.head.appendChild(uStyle);
+
+        function _doUpdateAnimation(onDone) {
+            updateOverlay.style.display = 'flex';
+            updateOverlay.style.animation = 'mgUFadeIn .3s ease both';
+
+            var uBar   = document.getElementById('mgUBar');
+            var uSub   = document.getElementById('mgUOverlaySub');
+            var uStep  = document.getElementById('mgUStep');
+
+            var steps = [
+                { pct: 20,  sub: 'Önbellek temizleniyor',          step: '1/4' },
+                { pct: 45,  sub: 'Service Worker kaldırılıyor',     step: '2/4' },
+                { pct: 70,  sub: 'Cache API temizleniyor',          step: '3/4' },
+                { pct: 90,  sub: 'Yeni versiyon yükleniyor',        step: '4/4' },
+                { pct: 100, sub: '✅ Güncelleme tamamlandı!',       step: '' },
+            ];
+
+            var si = 0;
+            function runStep() {
+                if (si >= steps.length) { setTimeout(onDone, 400); return; }
+                var s = steps[si++];
+                if (uBar)  uBar.style.width  = s.pct + '%';
+                if (uSub)  uSub.textContent  = s.sub;
+                if (uStep) uStep.textContent = s.step ? 'Adım ' + s.step : '';
+                setTimeout(runStep, si < steps.length ? 520 : 700);
+            }
+            runStep();
+        }
+
         /* Onayla — asıl işlem buraya taşındı */
         document.getElementById('mgUpdateConfirm').addEventListener('click', function() {
             confirmModal.style.display = 'none';
             btn.disabled = true;
-            btn.style.filter = 'brightness(.9)';
-            icon.style.transition = 'transform .6s linear';
-            icon.style.transform  = 'rotate(360deg)';
-            label.textContent = 'Güncelleniyor...';
 
-            var keep = {};
-            var keepKeys = ['mugol-theme', 'mugol-view-mode'];
-            keepKeys.forEach(function(k) {
-                var v = localStorage.getItem(k);
-                if (v !== null) keep[k] = v;
-            });
-            try { localStorage.clear(); } catch(e) {}
-            Object.keys(keep).forEach(function(k) {
-                try { localStorage.setItem(k, keep[k]); } catch(e) {}
-            });
-            try { sessionStorage.clear(); } catch(e) {}
-            try {
-                document.cookie.split(';').forEach(function(c) {
-                    var name = c.trim().split('=')[0];
-                    if (name) {
-                        var d = new Date(0).toUTCString();
-                        document.cookie = name + '=;expires=' + d + ';path=/';
-                        document.cookie = name + '=;expires=' + d + ';path=/;domain=' + location.hostname;
-                    }
+            /* Güncelleme animasyonunu başlat */
+            _doUpdateAnimation(function() {
+                /* Önce temaları koru */
+                var keep = {};
+                var keepKeys = ['mugol-theme', 'mugol-view-mode'];
+                keepKeys.forEach(function(k) {
+                    var v = localStorage.getItem(k);
+                    if (v !== null) keep[k] = v;
                 });
-            } catch(e) {}
-            var swDone = navigator.serviceWorker
-                ? navigator.serviceWorker.getRegistrations().then(function(regs) {
-                    return Promise.all(regs.map(function(r) { return r.unregister(); }));
-                  }).catch(function() { return Promise.resolve(); })
-                : Promise.resolve();
-            var cacheDone = (window.caches)
-                ? caches.keys().then(function(names) {
-                    return Promise.all(names.map(function(n) { return caches.delete(n); }));
-                  }).catch(function() { return Promise.resolve(); })
-                : Promise.resolve();
-            Promise.all([swDone, cacheDone]).then(function() {
-                location.href = location.href.split('?')[0] + '?_v=' + Date.now();
+                try { localStorage.clear(); } catch(e) {}
+                Object.keys(keep).forEach(function(k) {
+                    try { localStorage.setItem(k, keep[k]); } catch(e) {}
+                });
+                /* mugol-portal-visited sıfırla → güncelleme sonrası splash ÇIKSİN */
+                try { sessionStorage.clear(); } catch(e) {}
+                try {
+                    document.cookie.split(';').forEach(function(c) {
+                        var name = c.trim().split('=')[0];
+                        if (name) {
+                            var d = new Date(0).toUTCString();
+                            document.cookie = name + '=;expires=' + d + ';path=/';
+                            document.cookie = name + '=;expires=' + d + ';path=/;domain=' + location.hostname;
+                        }
+                    });
+                } catch(e) {}
+                var swDone = navigator.serviceWorker
+                    ? navigator.serviceWorker.getRegistrations().then(function(regs) {
+                        return Promise.all(regs.map(function(r) { return r.unregister(); }));
+                      }).catch(function() { return Promise.resolve(); })
+                    : Promise.resolve();
+                var cacheDone = (window.caches)
+                    ? caches.keys().then(function(names) {
+                        return Promise.all(names.map(function(n) { return caches.delete(n); }));
+                      }).catch(function() { return Promise.resolve(); })
+                    : Promise.resolve();
+                Promise.all([swDone, cacheDone]).then(function() {
+                    location.href = location.href.split('?')[0] + '?_v=' + Date.now();
+                });
             });
         });
 

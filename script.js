@@ -370,18 +370,38 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     const label = document.getElementById('splashProgressLabel');
     const splash = document.getElementById('splash-screen');
 
-    // Oturum açıksa VEYA hatırlanan kullanıcı varsa splash'i tamamen atla
+    // ── Güncelleme URL'si varsa (mgUpdateBtn sonrası) ziyaret bayrağı zaten sessionStorage.clear ile silindi
+    // _v parametresi varsa bu güncelleme reload'u → splash göster, bayrağı sıfırla
+    const isUpdateReload = location.search.indexOf('_v=') !== -1;
+    if (isUpdateReload) {
+        sessionStorage.removeItem('mugol-portal-visited');
+    }
+
+    // ── Geri tuşuyla mı gelindi? (performance.navigation veya sessionStorage flag)
+    const isBackNav = (
+        !isUpdateReload && (
+            (performance && performance.navigation && performance.navigation.type === 2) ||
+            sessionStorage.getItem('mugol-portal-visited') === '1'
+        )
+    );
+
+    // ── Oturum açıksa VEYA hatırlanan kullanıcı VEYA geri tuşuyla gelindiyse splash'i atla
     const activeSession = sessionStorage.getItem('mugol-session');
     const rememberedUser = localStorage.getItem('mugol-remember-user');
-    if (activeSession || rememberedUser) {
-        // Yeni sekmede session yoksa localStorage'dan otomatik geri yükle
+
+    if ((activeSession || rememberedUser || isBackNav) && !isUpdateReload) {
         if (rememberedUser && !activeSession) {
             sessionStorage.setItem('mugol-session', rememberedUser);
         }
         if (splash) splash.classList.add('hidden');
         if (typeof MugolAuth !== 'undefined') MugolAuth.checkAuth();
+        // Ziyaret bayrağını kaydet
+        sessionStorage.setItem('mugol-portal-visited', '1');
         return;
     }
+
+    // İlk ziyareti kaydet — sonraki geri tuşlarında splash gösterilmez
+    sessionStorage.setItem('mugol-portal-visited', '1');
 
     const labels =['Sistem Başlatılıyor...', 'Uygulamalar Hazırlanıyor...', 'Son Ayarlar...', 'Hoş Geldiniz!'];
     let progress = 0;
@@ -402,15 +422,13 @@ document.querySelectorAll('.category-card').forEach(catCard => {
         if (progress >= 100) {
             clearInterval(interval);
             
-            // DÜZELTME: Splash bitmeden 200ms önce Auth kontrolü yapılır
-            // Böylece portal arayüzü asla görünmez (Flash sorunu çözüldü)
             if (typeof MugolAuth !== 'undefined') {
                 MugolAuth.checkAuth();
             }
 
             setTimeout(() => {
                 if (splash) {
-                    splash.style.opacity = '0'; // Yumuşak geçiş
+                    splash.style.opacity = '0';
                     setTimeout(() => {
                         splash.classList.add('hidden');
                     }, 400);
