@@ -1317,13 +1317,8 @@ window.closeAdblockWarning = function() {
     /* Web tarayıcıda → 5sn AdSense modalı göster             */
     function _mgOpenUrl(url, appName, logoSrc) {
         if (!url) return;
-        var user  = (typeof getActiveUser === 'function') ? getActiveUser() : '';
-        var noads = (typeof userHasNoads === 'function') ? userHasNoads(user) : false;
-        if (noads || _isInTWA()) {
-            _mgOpenUrlDirect(url);
-        } else {
-            _showInterstitial(url, appName || 'Uygulama', logoSrc || '');
-        }
+        /* Geçiş reklamı devre dışı — direkt geç */
+        _mgOpenUrlDirect(url);
     }
 
     /* Global olarak yayınla */
