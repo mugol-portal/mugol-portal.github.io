@@ -1,0 +1,89 @@
+{
+  "name": "MuGöl PORTAL",
+  "short_name": "MuGöl PORTAL",
+  "description": "Tüm uygulamalarınıza tek noktadan erişin",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#1a2942",
+  "theme_color": "#1e3a5f",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "./screenshot.png",
+      "sizes": "540x720",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Namaz Vakitleri",
+      "short_name": "Namaz",
+      "description": "Günlük namaz vakitlerini görüntüle",
+      "url": "https://mugol-portal.github.io/mugol.imsak-vakti/",
+      "icons": [
+        {
+          "src": "./images/imsak.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Hava Durumu",
+      "short_name": "Hava",
+      "description": "Anlık hava durumu bilgisi",
+      "url": "https://mugol-portal.github.io/mugol.havadurumu/",
+      "icons": [
+        {
+          "src": "./images/hava.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Takvim & Saat",
+      "short_name": "Takvim",
+      "description": "Tarih, saat ve takvim bilgisi",
+      "url": "https://mugol-portal.github.io/MuGol.bugun/",
+      "icons": [
+        {
+          "src": "./images/takvim.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Ekonomi & Döviz",
+      "short_name": "Ekonomi",
+      "description": "Güncel döviz ve piyasa verileri",
+      "url": "https://mugol-portal.github.io/mugol.ekonomi/",
+      "icons": [
+        {
+          "src": "./images/ekonomi.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "categories": ["education", "productivity", "utilities"],
+  "lang": "tr",
+  "dir": "ltr"
+}
