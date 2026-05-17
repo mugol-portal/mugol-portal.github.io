@@ -1214,6 +1214,11 @@
 
         <button id="scrollTopBtn" aria-label="Sayfanın Başına Dön" title="Yukarı Çık"><i class="fas fa-arrow-up" aria-hidden="true"></i></button>
 
+        <!-- YENİLE BUTONU — sadece mobilde görünür -->
+        <button id="mgRefreshBtn" aria-label="Sayfayı Yenile" title="Yenile">
+            <i class="fas fa-rotate-right" aria-hidden="true"></i>
+        </button>
+
         <main class="main-content" role="main">
             <div class="section-header">
                 <h2 class="section-title" id="sectionTitle">Ana Sayfa</h2>
@@ -5021,6 +5026,727 @@
         console.log('[MuGöl] ✓ Alt menü (Bottom Nav) yüklendi');
     })();
     </script>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     MOBİL GELİŞTİRMELER v2.0 — Sıfırdan yazıldı, mevcut kod korundu
+     • Ripple efekti           • Sayfa geçiş animasyonu
+     • Haptic feedback         • İstatistik sayaç animasyonu
+     • Toast bildirim sistemi  • Kaydırma jestleri (swipe)
+     • Pull-to-refresh         • Gelişmiş bottom nav
+     • Hızlı erişim iyileştirmeleri
+     ═══════════════════════════════════════════════════════════════ -->
+<style id="mg-mobile-enhance-css">
+
+/* ── 1. SAYFA GEÇİŞ ANİMASYONU ── */
+.page-section {
+    animation: none !important;
+    transition: opacity 0.22s ease, transform 0.22s ease !important;
+}
+.page-section.mg-page-enter {
+    animation: mgPageIn 0.28s cubic-bezier(0.25,0.8,0.25,1) both !important;
+}
+@keyframes mgPageIn {
+    from { opacity:0; transform:translateY(10px); }
+    to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── 2. RİPPLE EFEKTİ ── */
+.mg-ripple-host { position:relative; overflow:hidden; }
+.mg-ripple-wave {
+    position:absolute; border-radius:50%;
+    background:rgba(255,255,255,0.28);
+    transform:scale(0); animation:mgRipple 0.55s linear;
+    pointer-events:none; z-index:9999;
+}
+[data-theme="dark"] .mg-ripple-wave { background:rgba(255,255,255,0.15); }
+.app-card .mg-ripple-wave,
+.category-card .mg-ripple-wave,
+.tumuu-tile .mg-ripple-wave { background:rgba(67,24,255,0.1); }
+@keyframes mgRipple {
+    to { transform:scale(4); opacity:0; }
+}
+
+/* ── 3. GELİŞMİŞ KART DOKUNUŞ ── */
+@media (max-width:992px) {
+    .app-card:active, .category-card:active, .tumuu-tile:active {
+        transform: scale(0.96) !important;
+        transition: transform 0.1s ease !important;
+    }
+    .mg-bn-item:active { transform: scale(0.92) !important; opacity:1 !important; }
+    .qa-chip:active { transform: scale(0.94) !important; }
+}
+
+/* ── 4. TOAST BİLDİRİM SİSTEMİ ── */
+#mg-toast-container {
+    position:fixed; bottom:90px; left:50%; transform:translateX(-50%);
+    z-index:99999; display:flex; flex-direction:column;
+    align-items:center; gap:10px; pointer-events:none;
+    width: min(360px, 90vw);
+}
+.mg-toast {
+    display:flex; align-items:center; gap:12px;
+    padding:13px 18px; border-radius:14px;
+    background:var(--bg-card);
+    border:1px solid var(--border-color);
+    box-shadow:0 8px 30px rgba(0,0,0,0.18);
+    font-size:.88rem; font-weight:700; color:var(--text-main);
+    font-family:'Nunito',sans-serif;
+    animation:mgToastIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+    pointer-events:auto; width:100%;
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+}
+.mg-toast.mg-toast-out {
+    animation:mgToastOut 0.25s ease both;
+}
+.mg-toast-icon {
+    width:32px; height:32px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:.9rem; flex-shrink:0; color:#fff;
+}
+.mg-toast-icon.success { background:linear-gradient(135deg,#10b981,#059669); }
+.mg-toast-icon.info    { background:linear-gradient(135deg,#4318ff,#00d2ff); }
+.mg-toast-icon.warn    { background:linear-gradient(135deg,#f59e0b,#FF8B00); }
+.mg-toast-icon.error   { background:linear-gradient(135deg,#ef4444,#dc2626); }
+@keyframes mgToastIn  { from{opacity:0;transform:translateY(16px) scale(.92)} to{opacity:1;transform:translateY(0) scale(1)} }
+@keyframes mgToastOut { from{opacity:1;transform:translateY(0) scale(1)} to{opacity:0;transform:translateY(-10px) scale(.95)} }
+
+/* ── 5. PULL TO REFRESH GÖSTERGESİ ── */
+#mg-ptr {
+    position:fixed; top:0; left:50%; transform:translateX(-50%) translateY(-60px);
+    width:42px; height:42px; border-radius:50%;
+    background:var(--bg-card); border:1px solid var(--border-color);
+    box-shadow:0 8px 24px rgba(0,0,0,0.15);
+    display:flex; align-items:center; justify-content:center;
+    z-index:9999; transition:transform 0.25s ease, opacity 0.25s ease;
+    opacity:0;
+}
+#mg-ptr.mg-ptr-pulling { transform:translateX(-50%) translateY(70px); opacity:1; }
+#mg-ptr.mg-ptr-refreshing {
+    transform:translateX(-50%) translateY(70px); opacity:1;
+}
+#mg-ptr.mg-ptr-refreshing i { animation:mgSpin 0.8s linear infinite; }
+@keyframes mgSpin { to { transform:rotate(360deg); } }
+#mg-ptr i { color:var(--primary-color); font-size:1rem; }
+
+/* ── 6. GELİŞMİŞ ALT MENÜ AKTİF DURUMU ── */
+@media (max-width:992px) {
+    .mg-bn-item.active {
+        box-shadow: 0 -2px 16px color-mix(in srgb, var(--primary-color) 20%, transparent) !important;
+    }
+    .mg-bn-item.active .mg-bn-pi-icon {
+        box-shadow: 0 4px 12px color-mix(in srgb, var(--primary-color) 35%, transparent) !important;
+    }
+}
+
+/* ── 7. GELİŞMİŞ HIZLI ERİŞİM ŞERİDİ ── */
+.quick-access-strip {
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+}
+.qa-chip {
+    scroll-snap-align: start;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+.qa-chip:active {
+    transform: scale(0.93) !important;
+}
+
+/* ── 8. GELİŞMİŞ WELCOME BANNER ── */
+@media (max-width:992px) {
+    .welcome-banner--compact {
+        background: linear-gradient(135deg, #4318ff, #6366f1, #00b4d8, #00d2ff) !important;
+        background-size: 400% 400% !important;
+        animation: mgBannerGrad 8s ease infinite !important;
+    }
+    @keyframes mgBannerGrad {
+        0%   { background-position: 0% 50%; }
+        50%  { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+}
+
+/* ── 9. SPLASH LOADING DOĞAL DURAKLAR ── */
+.splash-progress-bar {
+    transition: width 0.3s ease !important;
+}
+
+/* ── 10. İSTATİSTİK ANİMASYON ── */
+.mg-sv.mg-counting {
+    transition: none;
+}
+@keyframes mgCountPop {
+    0%   { transform:scale(1); }
+    50%  { transform:scale(1.18); }
+    100% { transform:scale(1); }
+}
+.mg-sv.mg-pop { animation: mgCountPop 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+
+/* ── 11. TUMUU TİLE GELİŞTİRME ── */
+@media (max-width:992px) {
+    .tumuu-tile {
+        transition: transform 0.18s ease, box-shadow 0.18s ease !important;
+    }
+    .tumuu-tile:active {
+        transform: scale(0.93) !important;
+    }
+}
+
+/* ── 12. KAYDIRMA KISAYOLU (SWIPE PANEL) ── */
+#mgBnPanel {
+    touch-action: pan-y;
+}
+
+/* ── 13. FLOATING SCROLL-TOP BUTONU MOBİL ── */
+@media (max-width:992px) {
+    #scrollTopBtn {
+        bottom: 85px !important;
+        right: 16px !important;
+        width: 46px !important;
+        height: 46px !important;
+    }
+}
+
+/* ── 14. AYARLAR SAYFASI MOBİL İYİLEŞTİRME ── */
+@media (max-width:600px) {
+    .setting-info { gap: 10px !important; }
+    .setting-info i {
+        width: 36px !important; height: 36px !important;
+        border-radius: 10px !important; font-size: .85rem !important;
+    }
+}
+
+/* ── 15. MOBİL ARAMA MODAL ── */
+@media (max-width:992px) {
+    #searchModal {
+        padding-top: 0 !important;
+        align-items: flex-end !important;
+    }
+    #searchModal > div {
+        border-radius: 24px 24px 0 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    #searchResults { max-height: 55vh !important; }
+}
+
+/* ── 16. BOTTOM SHEET DRAG HANDLE ANİMASYON ── */
+.mg-bn-panel-handle {
+    transition: width 0.2s ease, background 0.2s ease;
+}
+#mgBnPanel.bn-visible .mg-bn-panel-handle {
+    width: 48px;
+    background: var(--primary-color);
+    opacity: 0.5;
+}
+
+/* ── 17. TUMUU GRİD MOBİL SCROLL SNAP ── */
+@media (max-width:600px) {
+    .mg-rs {
+        scroll-snap-type: x proximity;
+    }
+    .mg-chip { scroll-snap-align: start; }
+}
+
+/* ── 18. APP-TAG DOKUNUŞ ── */
+.app-tag { cursor: default; user-select: none; }
+
+/* ── 19. GELİŞMİŞ NOTA / İSTATİSTİK KARTI ── */
+.mg-sc { cursor: default; }
+
+/* ── 20. CATEGORY CARD MOBİL ── */
+@media (max-width:600px) {
+    .category-card {
+        padding: 14px !important;
+    }
+    .cat-icon-wrap {
+        width: 44px !important; height: 44px !important;
+        border-radius: 14px !important; font-size: 1.1rem !important;
+    }
+    .cat-info h3 { font-size: 1rem !important; }
+    .cat-info p  { font-size: 0.75rem !important; }
+    .cat-count   { font-size: 0.72rem !important; }
+}
+
+/* ── 21. FAB BUTONU ── */
+#mgFab {
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), 
+                box-shadow 0.25s ease, 
+                opacity 0.25s ease !important;
+}
+#mgFab:active { transform: scale(0.9) !important; }
+
+/* ── 22. DARK MODE BOTTOM NAV ── */
+[data-theme="dark"] #mgBottomNav {
+    border-top: 1px solid rgba(255,255,255,0.06) !important;
+}
+[data-theme="dark"] .mg-bn-item {
+    background: rgba(30,41,59,0.8) !important;
+    border-color: rgba(255,255,255,0.06) !important;
+}
+[data-theme="dark"] .mg-bn-item.active {
+    background: var(--accent-gradient) !important;
+    border-color: transparent !important;
+}
+
+/* ── 23. DAHA FAZLA PANEL SWIPE HANDLE ── */
+.mg-bn-panel-handle { cursor: grab; }
+.mg-bn-panel-handle:active { cursor: grabbing; }
+
+/* ── 24. STAT KART HOVER MOBİL ── */
+@media (max-width:992px) {
+    .mg-sc:active {
+        transform: scale(0.96) !important;
+    }
+}
+
+/* ── 25. PROGRESS BARINDEKİ BAŞARI RENK DEĞİŞİMİ ── */
+#splashProgressBar {
+    background: linear-gradient(90deg, #4318ff, #00d2ff) !important;
+}
+
+/* ── 27. YENİLE BUTONU — sadece mobil ── */
+#mgRefreshBtn {
+    display: none;
+}
+@media (max-width: 992px) {
+    #mgRefreshBtn {
+        display: flex;
+        position: fixed;
+        bottom: 145px;
+        right: 18px;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        color: var(--primary-color);
+        font-size: 1rem;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        z-index: 800;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.3s ease;
+        opacity: 0.85;
+    }
+    #mgRefreshBtn:active {
+        transform: scale(0.88) !important;
+        opacity: 1;
+    }
+    #mgRefreshBtn:hover {
+        opacity: 1;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+    }
+    #mgRefreshBtn.mg-spinning i {
+        animation: mgSpin 0.7s linear infinite;
+    }
+    /* scrollTopBtn'un hemen altında konumlan */
+    #scrollTopBtn {
+        bottom: 200px !important;
+    }
+}
+/* Pull-to-refresh → JS ile yönetiliyor */
+
+</style>
+
+<div id="mg-toast-container" aria-live="polite" aria-atomic="true"></div>
+<div id="mg-ptr" aria-hidden="true"><i class="fas fa-rotate-right"></i></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   MOBİL GELİŞTİRMELER v2.0 — JAVASCRIPT
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+    'use strict';
+
+    /* ────────────────────────────────────────
+       1. TOAST BİLDİRİM SİSTEMİ
+    ──────────────────────────────────────── */
+    window.mgToast = function(msg, type, duration) {
+        type     = type     || 'info';
+        duration = duration || 3000;
+        var icons = { success:'fa-check', info:'fa-circle-info', warn:'fa-triangle-exclamation', error:'fa-xmark' };
+        var container = document.getElementById('mg-toast-container');
+        if (!container) return;
+        var toast = document.createElement('div');
+        toast.className = 'mg-toast';
+        toast.setAttribute('role', 'alert');
+        toast.innerHTML =
+            '<div class="mg-toast-icon ' + type + '"><i class="fas ' + (icons[type]||icons.info) + '"></i></div>' +
+            '<span>' + msg + '</span>';
+        container.appendChild(toast);
+        var timer = setTimeout(function() {
+            toast.classList.add('mg-toast-out');
+            setTimeout(function() { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 280);
+        }, duration);
+        toast.addEventListener('click', function() {
+            clearTimeout(timer);
+            toast.classList.add('mg-toast-out');
+            setTimeout(function() { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 280);
+        });
+    };
+
+    /* ────────────────────────────────────────
+       2. HAPTİK GERİ BİLDİRİM
+    ──────────────────────────────────────── */
+    function haptic(pattern) {
+        try {
+            if (navigator.vibrate) navigator.vibrate(pattern || 8);
+        } catch(e) {}
+    }
+
+    /* ────────────────────────────────────────
+       3. RİPPLE EFEKTİ
+    ──────────────────────────────────────── */
+    function addRipple(el, e) {
+        var rect  = el.getBoundingClientRect();
+        var size  = Math.max(rect.width, rect.height) * 1.5;
+        var x     = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left - size / 2;
+        var y     = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top  - size / 2;
+        var wave  = document.createElement('span');
+        wave.className = 'mg-ripple-wave';
+        wave.style.cssText = 'width:' + size + 'px;height:' + size + 'px;left:' + x + 'px;top:' + y + 'px;';
+        el.appendChild(wave);
+        setTimeout(function() { if (wave.parentNode) wave.parentNode.removeChild(wave); }, 600);
+    }
+
+    function initRipples() {
+        var selectors = [
+            '.app-card', '.category-card', '.tumuu-tile', '.mg-bn-item',
+            '.mg-bn-panel-item', '.qa-chip', '.mg-chip', '.mg-sc',
+            '.mgd-btn', '#mgRateBtn', '.launch-btn'
+        ];
+        selectors.forEach(function(sel) {
+            document.querySelectorAll(sel).forEach(function(el) {
+                if (el._mgRipple) return;
+                el._mgRipple = true;
+                el.classList.add('mg-ripple-host');
+
+                var _tx = 0, _ty = 0, _te = null;
+
+                el.addEventListener('touchstart', function(e) {
+                    _tx = e.touches[0].clientX;
+                    _ty = e.touches[0].clientY;
+                    _te = e;
+                }, { passive: true });
+
+                el.addEventListener('touchend', function(e) {
+                    if (!_te) return;
+                    var dx = Math.abs(e.changedTouches[0].clientX - _tx);
+                    var dy = Math.abs(e.changedTouches[0].clientY - _ty);
+                    /* Sadece gerçek tap ise (8px'den az hareket) */
+                    if (dx < 8 && dy < 8) {
+                        addRipple(this, _te);
+                        haptic(6);
+                    }
+                    _te = null;
+                }, { passive: true });
+            });
+        });
+    }
+
+    /* ────────────────────────────────────────
+       4. SAYFA GEÇİŞ ANİMASYONU (OVERRIDE)
+    ──────────────────────────────────────── */
+    var _origActivateMenu = null;
+    function patchActivateMenu() {
+        if (typeof activateMenu !== 'function') return;
+        if (_origActivateMenu) return;
+        _origActivateMenu = activateMenu;
+        window.activateMenu = function(item) {
+            var targetId = item.getAttribute('data-target');
+            var nextPage = targetId ? document.getElementById(targetId) : null;
+            if (nextPage && !nextPage.classList.contains('active')) {
+                nextPage.classList.add('mg-page-enter');
+                setTimeout(function() { nextPage.classList.remove('mg-page-enter'); }, 320);
+            }
+            _origActivateMenu.call(this, item);
+            setTimeout(function() {
+                var mc = document.querySelector('.main-content');
+                if (mc) mc.scrollTo({ top:0, behavior:'smooth' });
+            }, 50);
+        };
+    }
+
+    /* ────────────────────────────────────────
+       5. İSTATİSTİK SAYAÇ ANİMASYONU
+    ──────────────────────────────────────── */
+    function animateCounter(el, target, duration) {
+        var start    = 0;
+        var startTs  = null;
+        var numTarget = parseInt(target) || 0;
+        if (numTarget === 0 || isNaN(numTarget)) return;
+        function step(ts) {
+            if (!startTs) startTs = ts;
+            var progress = Math.min((ts - startTs) / duration, 1);
+            var eased    = 1 - Math.pow(1 - progress, 3);
+            var current  = Math.floor(eased * numTarget);
+            el.textContent = current;
+            if (progress < 1) { requestAnimationFrame(step); }
+            else {
+                el.textContent = numTarget;
+                el.classList.add('mg-pop');
+                setTimeout(function() { el.classList.remove('mg-pop'); }, 400);
+            }
+        }
+        requestAnimationFrame(step);
+    }
+
+    function initStatCounters() {
+        var statsEl = document.getElementById('mgStats');
+        if (!statsEl || statsEl._mgCounted) return;
+        var obs = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting && !statsEl._mgCounted) {
+                    statsEl._mgCounted = true;
+                    statsEl.querySelectorAll('.mg-sv').forEach(function(sv) {
+                        var val = parseInt(sv.textContent);
+                        if (!isNaN(val) && val > 0) animateCounter(sv, val, 900);
+                    });
+                    obs.disconnect();
+                }
+            });
+        }, { threshold:0.3 });
+        obs.observe(statsEl);
+    }
+
+    /* ────────────────────────────────────────
+       6. SWIPE İLE PANEL KAPATMA
+    ──────────────────────────────────────── */
+    function initSwipePanel() {
+        var panel    = document.getElementById('mgBnPanel');
+        var overlay  = document.getElementById('mgBnOverlay');
+        var inner    = document.getElementById('mgBnPanelInner');
+        if (!panel || !inner) return;
+
+        var startY = 0, startX = 0;
+
+        inner.addEventListener('touchstart', function(e) {
+            startY = e.touches[0].clientY;
+            startX = e.touches[0].clientX;
+        }, { passive:true });
+
+        inner.addEventListener('touchend', function(e) {
+            var dy = e.changedTouches[0].clientY - startY;
+            var dx = Math.abs(e.changedTouches[0].clientX - startX);
+            /* Aşağı kaydırma (60px+) ve yatay kaydırma değilse kapat */
+            if (dy > 60 && dx < 40) {
+                haptic([6, 20, 6]);
+                /* Mevcut closePanel varsa kullan */
+                if (overlay) overlay.click();
+            }
+        }, { passive:true });
+    }
+
+    /* ────────────────────────────────────────
+       7. PULL TO REFRESH — DEVRE DIŞI
+    ──────────────────────────────────────── */
+    function initPullToRefresh() { /* devre dışı bırakıldı */ }
+
+    /* ────────────────────────────────────────
+       8. BOTTOM NAV İÇİN HAP TİC
+    ──────────────────────────────────────── */
+    function initNavHaptic() {
+        document.querySelectorAll('.mg-bn-item, .mg-bn-panel-item').forEach(function(btn) {
+            var _tx = 0, _ty = 0;
+            btn.addEventListener('touchstart', function(e) {
+                _tx = e.touches[0].clientX;
+                _ty = e.touches[0].clientY;
+            }, { passive: true });
+            btn.addEventListener('touchend', function(e) {
+                var dx = Math.abs(e.changedTouches[0].clientX - _tx);
+                var dy = Math.abs(e.changedTouches[0].clientY - _ty);
+                if (dx < 8 && dy < 8) haptic(8);
+            }, { passive: true });
+        });
+    }
+
+    /* ────────────────────────────────────────
+       9. APP KART LAUNCH BTN İYİLEŞTİRME
+    ──────────────────────────────────────── */
+    function initLaunchBtns() {
+        document.querySelectorAll('.app-card').forEach(function(card) {
+            var lb = card.querySelector('.launch-btn');
+            if (!lb) return;
+            lb.setAttribute('aria-hidden', 'false');
+        });
+    }
+
+    /* ────────────────────────────────────────
+       10. DAHA FAZLA BUTONUNA ROZET EKLEMEYİ GÜNCELLEŞTİR
+    ──────────────────────────────────────── */
+    function initMoreBtnBadge() {
+        var moreBtn = document.getElementById('mgBnMore');
+        if (!moreBtn) return;
+        /* Panel'de aktif öğe varsa küçük bir badge göster */
+        var obs = new MutationObserver(function() {
+            var panel = document.getElementById('mgBnPanel');
+            if (!panel) return;
+            var hasActive = !!panel.querySelector('.mg-bn-panel-item.active');
+            var badge = moreBtn.querySelector('.mg-more-badge');
+            if (hasActive && !badge) {
+                var b = document.createElement('span');
+                b.className = 'mg-more-badge';
+                b.style.cssText = 'position:absolute;top:4px;right:4px;width:8px;height:8px;' +
+                    'border-radius:50%;background:var(--primary-color);' +
+                    'border:2px solid var(--bg-sidebar);pointer-events:none;';
+                moreBtn.appendChild(b);
+            } else if (!hasActive && badge) {
+                badge.remove();
+            }
+        });
+        obs.observe(document.body, { attributes:true, subtree:true, attributeFilter:['class'] });
+    }
+
+    /* ────────────────────────────────────────
+       11. KATEGORİ KARTI KLAVYESİ (ERİŞİLEBİLİRLİK)
+    ──────────────────────────────────────── */
+    function initCategoryCards() {
+        document.querySelectorAll('.category-card[role="button"]').forEach(function(card) {
+            card.setAttribute('tabindex', '0');
+            card.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    card.click();
+                }
+            });
+        });
+    }
+
+    /* ────────────────────────────────────────
+       12. SCROOL RESTORE — SAYFA DEĞİŞİMİNDE
+    ──────────────────────────────────────── */
+    function initScrollRestore() {
+        var pageScrolls = {};
+        var mc = document.querySelector('.main-content');
+        if (!mc) return;
+
+        document.querySelectorAll('.nav-item[data-target]').forEach(function(item) {
+            item.addEventListener('click', function() {
+                var cur = document.querySelector('.page-section.active');
+                if (cur) pageScrolls[cur.id] = mc.scrollTop;
+                var targetId = item.getAttribute('data-target');
+                setTimeout(function() {
+                    var saved = pageScrolls[targetId];
+                    mc.scrollTo({ top: saved || 0, behavior:'instant' });
+                }, 60);
+            });
+        });
+    }
+
+    /* ────────────────────────────────────────
+       13. YÜKLEME TAMAMLANMA TOAST'I
+    ──────────────────────────────────────── */
+    function showWelcomeHint() {
+        /* Splash ekranı kapandıktan 1sn sonra küçük bir ipucu göster */
+        setTimeout(function() {
+            var splash = document.getElementById('splash');
+            if (splash && (splash.style.display === 'none' || splash.style.opacity === '0')) {
+                /* Kullanıcı daha önce gördüyse gösterme */
+                if (localStorage.getItem('mg-welcome-hint')) return;
+                localStorage.setItem('mg-welcome-hint', '1');
+                mgToast('💡 Alt menüyü yukarı kaydırarak tüm uygulamalara ulaş!', 'info', 4500);
+            }
+        }, 3500);
+    }
+
+    /* ────────────────────────────────────────
+       14. ORTAK BAŞLATICI
+    ──────────────────────────────────────── */
+    function boot() {
+        initRipples();
+        initStatCounters();
+        initSwipePanel();
+        initPullToRefresh();
+        initNavHaptic();
+        initLaunchBtns();
+        initMoreBtnBadge();
+        initCategoryCards();
+        initScrollRestore();
+        showWelcomeHint();
+
+        /* activateMenu patch — biraz gecikmeyle (script.js yüklenmesini bekle) */
+        setTimeout(patchActivateMenu, 300);
+
+        /* Dinamik içerik sonrası ripple yenile (nav değişince) */
+        document.querySelectorAll('.nav-item[data-target]').forEach(function(item) {
+            item.addEventListener('click', function() {
+                setTimeout(initRipples, 200);
+            });
+        });
+
+        /* Bottom nav butonları için tap kontrolü */
+        document.querySelectorAll('.mg-bn-item, .mg-bn-panel-item').forEach(function(btn) {
+            if (btn._mgBnRipple) return;
+            btn._mgBnRipple = true;
+            var _tx = 0, _ty = 0, _te = null;
+            btn.addEventListener('touchstart', function(e) {
+                _tx = e.touches[0].clientX; _ty = e.touches[0].clientY; _te = e;
+            }, { passive: true });
+            btn.addEventListener('touchend', function(e) {
+                if (!_te) return;
+                var dx = Math.abs(e.changedTouches[0].clientX - _tx);
+                var dy = Math.abs(e.changedTouches[0].clientY - _ty);
+                if (dx < 8 && dy < 8) addRipple(this, _te);
+                _te = null;
+            }, { passive: true });
+        });
+
+        console.log('[MuGöl] ✓ Mobil geliştirmeler v2.0 yüklendi');
+
+        /* ── YENİLE BUTONU ── */
+        var refreshBtn = document.getElementById('mgRefreshBtn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', function() {
+                refreshBtn.classList.add('mg-spinning');
+                haptic([10, 30, 10]);
+                setTimeout(function() { location.reload(); }, 400);
+            });
+        }
+
+        /* ── NATIVE PULL-TO-REFRESH ENGELLE (scroll kırmadan) ──
+           body.scrollTop, window.pageYOffset ve window.scrollY'nin
+           tamamını kontrol ederek doğru konumu buluyoruz.               */
+        (function() {
+            var lastY = 0;
+
+            function getScrollTop() {
+                /* Önce asıl kaydırılan elementi (.main-content) kontrol et */
+                var mc = document.querySelector('.main-content');
+                if (mc && mc.scrollTop > 0) return mc.scrollTop;
+                /* WebView / Safari / Chrome farklılıkları için hepsini dene */
+                return window.pageYOffset
+                    || window.scrollY
+                    || document.body.scrollTop
+                    || document.documentElement.scrollTop
+                    || 0;
+            }
+
+            document.addEventListener('touchstart', function(e) {
+                lastY = e.touches[0].clientY;
+            }, { passive: true });
+
+            document.addEventListener('touchmove', function(e) {
+                var currentY = e.touches[0].clientY;
+                var atTop    = getScrollTop() <= 0;
+                var pullDown = currentY > lastY; /* parmak aşağı = yenile hareketi */
+                if (atTop && pullDown) {
+                    e.preventDefault(); /* yalnızca bu durumda engelle */
+                }
+                lastY = currentY; /* her harekette güncelle */
+            }, { passive: false });
+        })();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+    } else {
+        boot();
+    }
+})();
+</script>
 
 </body>
 </html>
