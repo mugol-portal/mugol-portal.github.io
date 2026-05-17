@@ -5,21 +5,19 @@
 (function(){
   "use strict";
   function isTWA(){
-    // 1. TWA — android-app:// referrer (en kesin)
     if(document.referrer && document.referrer.indexOf("android-app://")===0) return true;
-    // 2. Standalone / fullscreen display mode (TWA veya PWA)
     try{
       if(window.matchMedia("(display-mode: standalone)").matches) return true;
       if(window.matchMedia("(display-mode: fullscreen)").matches) return true;
     }catch(e){}
-    // 3. iOS standalone
     if(window.navigator.standalone===true) return true;
-    // 4. Android WebView user-agent (wv etiketi)
     var ua=navigator.userAgent||"";
     if(/Android/.test(ua)&&/wv/.test(ua)) return true;
     return false;
   }
-  var target = isTWA() ? "index-mobil.html" : "index-web.html";
+  var target = isTWA()
+    ? "mobil/index-mobil.html"
+    : "web/index-web.html";
   window.location.replace(target+(window.location.search||"")+(window.location.hash||""));
 })();
 </script>
