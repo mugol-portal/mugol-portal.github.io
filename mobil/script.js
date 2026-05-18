@@ -441,65 +441,7 @@ document.querySelectorAll('.category-card').forEach(catCard => {
 // DİĞER TÜM SCRIPT.JS FONKSİYONLARIN (Menü, Toast, PWA vb.) BURADA DEVAM ETMELİ...
 
 // =========================================================
-// 9. AŞAĞI ÇEKME YENİLE (PULL TO REFRESH)
-// =========================================================
-(function () {
-    const ptrIndicator = document.getElementById('ptr-indicator');
-    const ptrLabel = document.getElementById('ptr-label');
-    if (!mainContent || !ptrIndicator) return;
-
-    let startY = 0, currentY = 0, pulling = false, refreshing = false;
-    const THRESHOLD = 80, MAX_PULL = 130;
-
-    mainContent.addEventListener('touchstart', (e) => {
-        // scrollTop > 5: bazi telefonlarda "sifir" pozisyonu tam 0 degil
-        if (mainContent.scrollTop > 5) return;
-        startY = e.touches[0].clientY;
-        currentY = startY; // Baslangicta esitle; yanlis diff hesabi onlenir
-        pulling = true;
-    }, { passive: true });
-
-    mainContent.addEventListener('touchmove', (e) => {
-        if (!pulling || refreshing) return;
-        currentY = e.touches[0].clientY;
-        const diff = Math.min(currentY - startY, MAX_PULL);
-        // Asagi cekme degil VEYA scroll baslamissa pull'u iptal et
-        if (diff <= 0 || mainContent.scrollTop > 5) {
-            pulling = false;
-            ptrIndicator.style.height = '0';
-            ptrIndicator.classList.remove('visible', 'ready');
-            return;
-        }
-
-        const height = Math.min(diff * 0.6, 75);
-        ptrIndicator.style.height = height + 'px';
-        ptrIndicator.classList.toggle('visible', diff > 20);
-        ptrIndicator.classList.toggle('ready', diff >= THRESHOLD);
-
-        if (ptrLabel) {
-            const isEng = localStorage.getItem('mugol-lang') === 'en';
-            ptrLabel.textContent = diff >= THRESHOLD 
-                ? (isEng ? 'Release to refresh' : 'Bırakın, yenilensin') 
-                : (isEng ? 'Pull to refresh' : 'Yenilemek için çekin');
-        }
-    }, { passive: true });
-
-    mainContent.addEventListener('touchend', () => {
-        if (!pulling || refreshing) return;
-        pulling = false;
-        const diff = currentY - startY;
-        if (diff >= THRESHOLD) {
-            refreshing = true;
-            ptrIndicator.classList.add('refreshing');
-            const isEng = localStorage.getItem('mugol-lang') === 'en';
-            if (ptrLabel) ptrLabel.textContent = isEng ? 'Refreshing...' : 'Yenileniyor...';
-            setTimeout(() => { location.reload(); }, 1000);
-        } else {
-            ptrIndicator.style.height = '0';
-            ptrIndicator.classList.remove('visible', 'ready');
-        }
-    }, { passive: true });
-})();
+// 9. AŞAĞI ÇEKME YENİLE — DEVRE DIŞI
 
 // =========================================================
 // 10. BİLDİRİM SİSTEMİ
