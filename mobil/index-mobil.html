@@ -155,6 +155,11 @@
     #mgBottomNav .mg-bn-item:not(.active):active i {
         transform: none !important;
     }
+    /* Daha Fazla buton — ::before sıfırla, ::after kullan */
+    #mgBnMore .mg-bn-pi-icon::before { display: none !important; }
+    #mgBnMore i { transform: none !important; }
+    /* İndir butonu — ana sayfada */
+    #mgHomeBtnIndir { font-family: 'Nunito', sans-serif; }
     </style>
 
     <!-- v3.0 — GÜNCELLENMİŞ TASARIM STİLLERİ -->
@@ -1266,27 +1271,25 @@
                         <i class="fas fa-star" style="font-size:.95rem;flex-shrink:0;"></i>
                         <span>5 Yıldız Ver</span>
                     </button>
-                    <!-- PLAY STORE İNDİR BUTONU -->
-                    <a href="https://play.google.com/store/apps/details?id=com.mugol.portal"
-                       target="_blank" rel="noopener" aria-label="Google Play'den İndir"
-                       title="Google Play'den İndir"
+                    <!-- İNDİR SEKME BUTONU -->
+                    <button id="mgHomeBtnIndir" onclick="(function(){var mi=document.querySelector('[data-target=&quot;page-indir&quot;]');if(!mi)mi=document.querySelector('.nav-item[data-target=&quot;page-indir&quot;]');if(mi){mi.click();}else{var bnItems=document.querySelectorAll('.mg-bn-panel-item');bnItems.forEach(function(b){if(b.getAttribute('data-target')==='page-indir')b.click();});}})();" aria-label="İndir Sayfasına Git" title="İndir"
                        style="
                            display:flex; align-items:center; justify-content:center; gap:10px;
                            flex:1; padding:14px 20px;
-                           background:linear-gradient(135deg,#01875f 0%,#00c853 100%);
-                           color:#fff; border-radius:16px; text-decoration:none;
+                           background:linear-gradient(135deg,#16a34a 0%,#22c55e 100%);
+                           color:#fff; border:none; border-radius:16px;
                            font-family:'Nunito',sans-serif; font-size:.92rem; font-weight:900;
-                           white-space:nowrap;
-                           box-shadow:0 8px 24px rgba(1,135,95,.42), inset 0 1px 0 rgba(255,255,255,.2);
+                           white-space:nowrap; cursor:pointer;
+                           box-shadow:0 8px 24px rgba(22,163,74,.42), inset 0 1px 0 rgba(255,255,255,.2);
                            transition:transform .22s cubic-bezier(.25,.8,.25,1), box-shadow .22s ease;
                            position:relative; overflow:hidden;
                        "
-                       onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 30px rgba(1,135,95,.58)'"
-                       onmouseout="this.style.transform='';this.style.boxShadow='0 8px 24px rgba(1,135,95,.42)'">
+                       onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 30px rgba(22,163,74,.58)'"
+                       onmouseout="this.style.transform='';this.style.boxShadow='0 8px 24px rgba(22,163,74,.42)'">
                         <span style="position:absolute;inset:0;background:linear-gradient(105deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,0) 60%);pointer-events:none;"></span>
-                        <i class="fab fa-google-play" style="font-size:1.1rem;flex-shrink:0;"></i>
-                        <span>Google Play'den İndir</span>
-                    </a>
+                        <i class="fas fa-download" style="font-size:1rem;flex-shrink:0;"></i>
+                        <span>İndir</span>
+                    </button>
                 </div>
                 <!-- ─────────────────────────────── -->
 
@@ -2626,35 +2629,39 @@
                         <div>
                             <div style="font-weight:900;font-size:1.05rem;color:var(--text-main);">Google Play Store</div>
                             <div style="font-size:.83rem;color:var(--text-muted);font-weight:600;">Android cihazlar için resmi uygulama</div>
+                            <div style="margin-top:5px;">
+                                <span style="display:inline-flex;align-items:center;gap:4px;font-size:.78rem;font-weight:800;color:#10b981;">
+                                    <i class="fab fa-android" style="font-size:.95rem;"></i> Android
+                                </span>
+                            </div>
                         </div>
                     </div>
 
-                    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;">
-                        <!-- Play Store badge butonu -->
-                        <a href="https://play.google.com/store/apps/details?id=com.mugol.portal"
-                           target="_blank" rel="noopener" aria-label="Google Play'den İndir"
-                           style="display:inline-block;border-radius:14px;overflow:hidden;flex-shrink:0;
-                                  box-shadow:0 6px 20px rgba(0,0,0,.22);
-                                  transition:transform .22s cubic-bezier(.25,.8,.25,1),box-shadow .22s ease;"
-                           onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 14px 32px rgba(0,0,0,.32)'"
-                           onmouseout="this.style.transform='';this.style.boxShadow='0 6px 20px rgba(0,0,0,.22)'">
-                            <img src="../google-play-badge.png" alt="Get it on Google Play"
-                                 style="height:58px;width:auto;display:block;"
-                                 onerror="this.parentElement.innerHTML='<span style=\'display:inline-flex;align-items:center;gap:10px;padding:14px 22px;background:#000;border-radius:14px;color:#fff;font-size:.95rem;font-weight:800;font-family:Nunito,sans-serif;\'><i class=\'fab fa-google-play\' style=\'font-size:1.2rem;\'></i>Google Play\'den İndir</span>'">
-                        </a>
+                    <!-- Play Store Butonu -->
+                    <a href="https://play.google.com/store/apps/details?id=com.mugol.portal"
+                       target="_blank" rel="noopener" aria-label="Google Play'den İndir"
+                       style="display:inline-flex;align-items:center;gap:10px;padding:14px 22px;
+                              background:#000;border-radius:14px;color:#fff;font-size:.95rem;font-weight:800;
+                              font-family:'Nunito',sans-serif;text-decoration:none;
+                              box-shadow:0 6px 20px rgba(0,0,0,.22);margin-bottom:14px;
+                              transition:transform .22s cubic-bezier(.25,.8,.25,1),box-shadow .22s ease;"
+                       onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 14px 32px rgba(0,0,0,.32)'"
+                       onmouseout="this.style.transform='';this.style.boxShadow='0 6px 20px rgba(0,0,0,.22)'">
+                        <i class="fab fa-google-play" style="font-size:1.2rem;"></i>
+                        Google Play'den İndir
+                    </a>
 
-                        <!-- Özellikler -->
-                        <div style="display:flex;flex-direction:column;gap:6px;">
-                            <span style="display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:var(--text-muted);">
-                                <i class="fas fa-check-circle" style="color:#10b981;"></i> Otomatik güncellemeler
-                            </span>
-                            <span style="display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:var(--text-muted);">
-                                <i class="fas fa-check-circle" style="color:#10b981;"></i> Android 8.0+ desteklenir
-                            </span>
-                            <span style="display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:var(--text-muted);">
-                                <i class="fas fa-check-circle" style="color:#10b981;"></i> Ücretsiz
-                            </span>
-                        </div>
+                    <!-- Özellikler -->
+                    <div style="display:flex;flex-direction:column;gap:6px;">
+                        <span style="display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:var(--text-muted);">
+                            <i class="fas fa-check-circle" style="color:#10b981;"></i> Otomatik güncellemeler
+                        </span>
+                        <span style="display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:var(--text-muted);">
+                            <i class="fas fa-check-circle" style="color:#10b981;"></i> Android 8.0+ desteklenir
+                        </span>
+                        <span style="display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:var(--text-muted);">
+                            <i class="fas fa-check-circle" style="color:#10b981;"></i> Ücretsiz
+                        </span>
                     </div>
                 </div>
 
@@ -2672,17 +2679,23 @@
                                 Uygulamayı Yükle <span style="font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:20px;
                                     background:linear-gradient(135deg,#4318ff,#00d2ff);color:#fff;margin-left:6px;vertical-align:middle;">PWA</span>
                             </div>
-                            <div style="font-size:.83rem;color:var(--text-muted);font-weight:600;">Tüm tarayıcılar &amp; platformlar için</div>
+                            <div style="font-size:.80rem;color:var(--text-muted);font-weight:700;display:inline-flex;align-items:center;gap:5px;flex-wrap:wrap;">
+                                <i class="fab fa-apple" style="font-size:.9rem;"></i> iOS
+                                <span style="opacity:.4;">&nbsp;·&nbsp;</span>
+                                <i class="fab fa-android" style="font-size:.9rem;color:#10b981;"></i> Android
+                                <span style="opacity:.4;">&nbsp;·&nbsp;</span>
+                                <i class="fab fa-windows" style="font-size:.9rem;color:#0078d4;"></i> Windows
+                            </div>
                         </div>
                     </div>
 
                     <!-- Durum alanı -->
                     <div id="mgPwaStatus" style="padding:14px 16px;border-radius:14px;margin-bottom:14px;
-                                                   background:rgba(67,24,255,.06);border:1.5px solid rgba(67,24,255,.15);
-                                                   display:flex;align-items:center;gap:12px;">
-                        <i class="fas fa-info-circle" style="color:var(--primary-color);font-size:1.1rem;flex-shrink:0;"></i>
+                                                   background:rgba(245,158,11,.09);border:1.5px solid rgba(245,158,11,.25);
+                                                   display:flex;align-items:flex-start;gap:12px;">
+                        <i class="fas fa-info-circle" style="color:#f59e0b;font-size:1.1rem;flex-shrink:0;margin-top:1px;"></i>
                         <span id="mgPwaStatusText" style="font-size:.87rem;font-weight:700;color:var(--text-main);line-height:1.5;">
-                            Tarayıcı yükleme desteği kontrol ediliyor...
+                            ⚠️ Tarayıcın otomatik kurulumu desteklemiyor.<br>Aşağıdaki manuel adımları takip edebilirsin.
                         </span>
                     </div>
 
@@ -4547,7 +4560,7 @@
             <span>Tümü</span>
         </button>
         <button class="mg-bn-item mg-bn-more" id="mgBnMore" aria-label="Daha Fazla" aria-haspopup="true" aria-expanded="false">
-            <span class="mg-bn-pi-icon"><img src="logo.png" alt="MuGöl" class="mg-bn-more-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><span class="mg-bn-more-fallback" style="display:none;"><i class="fas fa-grip"></i></span></span>
+            <span class="mg-bn-pi-icon mg-bn-more-circle"><img src="logo.png" alt="MuGöl" class="mg-bn-more-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><span class="mg-bn-more-fallback" style="display:none;"><i class="fas fa-grip"></i></span></span>
             <span>Daha Fazla</span>
         </button>
         <button class="mg-bn-item" data-target="page-gunluk" data-title="Günlük" aria-label="Günlük">
