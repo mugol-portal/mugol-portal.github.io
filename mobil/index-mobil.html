@@ -638,11 +638,18 @@
             #mgDrop{width:248px}
         }
         @media(max-width:360px){
-            .mg-stats{grid-template-columns:repeat(3,1fr);gap:6px}
-            .mg-sc{padding:.6rem .5rem;gap:6px;border-radius:13px}
-            .mg-sv{font-size:1rem}
-            .mg-sl{font-size:.58rem;letter-spacing:0}
-            .mg-si{width:30px;height:30px;font-size:.75rem}
+            .mg-stats{grid-template-columns:repeat(3,1fr);gap:4px}
+            .mg-sc{padding:.55rem .4rem;gap:5px;border-radius:11px;min-width:0}
+            .mg-sv{font-size:.9rem;letter-spacing:-.3px}
+            .mg-sl{font-size:.55rem;letter-spacing:0;white-space:nowrap}
+            .mg-si{width:28px;height:28px;font-size:.7rem;flex-shrink:0}
+        }
+        @media(max-width:320px){
+            .mg-stats{grid-template-columns:repeat(3,1fr);gap:3px}
+            .mg-sc{padding:.45rem .35rem;gap:4px}
+            .mg-sv{font-size:.85rem}
+            .mg-sl{font-size:.5rem}
+            .mg-si{width:24px;height:24px;font-size:.65rem}
         }
         @media(max-width:480px){
             #mgDrop{right:-8px;width:232px}
@@ -687,6 +694,12 @@
          Taşma, donma, hamburger gizleme
          ═══════════════════════════════════════════ -->
     <style>
+        /* ── 0. GLOBAL TAŞMA ENGELİ — TÜM EKRANLAR ──
+           html ve body'de yatay taşma kapalı tutulur. */
+        html {
+            overflow-x: hidden !important;
+        }
+
         /* ── 1. BODY SCROLL SORUNU ──
            body: overflow-y: hidden scroll'u kesiyor,
            mobilde main-content scroll edemiyor. Düzelt. */
@@ -695,12 +708,14 @@
                 overflow-y: auto !important;
                 overflow-x: hidden !important;
                 -webkit-overflow-scrolling: touch !important;
+                width: 100% !important;
             }
             /* Layout yüksekliği serbest bırak */
             .layout {
                 height: auto !important;
                 min-height: calc(100vh - var(--header-height));
                 overflow: visible !important;
+                overflow-x: hidden !important;
             }
             /* Main content scroll serbest */
             .main-content {
@@ -722,10 +737,12 @@
         }
 
         /* ── 3. TAŞMA KORUMA — genel ── */
+        /* Tüm ekran boyutlarında yatay taşma engelle */
+        html, body {
+            overflow-x: hidden !important;
+            max-width: 100% !important;
+        }
         @media (max-width: 992px) {
-            * {
-                max-width: 100vw;
-            }
             /* Yatay scroll yaratan sabit genişlikli öğeler */
             .content-card,
             .welcome-banner,
@@ -740,12 +757,22 @@
                 box-sizing: border-box !important;
                 max-width: 100% !important;
                 overflow-x: hidden !important;
+                width: 100% !important;
             }
             /* İçerik sayfaları */
             .page-section {
                 box-sizing: border-box !important;
                 max-width: 100% !important;
                 overflow-x: hidden !important;
+                width: 100% !important;
+            }
+            /* Genel kapsayıcılar */
+            .main-content,
+            .layout,
+            .content-card,
+            .section-content {
+                overflow-x: hidden !important;
+                box-sizing: border-box !important;
             }
             /* Pill linkleri sarılsın */
             .contact-pill-links {
@@ -755,7 +782,18 @@
             table {
                 display: block;
                 overflow-x: auto;
+                max-width: 100%;
                 -webkit-overflow-scrolling: touch;
+            }
+            /* İframe ve embed içerik */
+            iframe, embed, object, video {
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+            /* Resimler taşmasın */
+            img {
+                max-width: 100% !important;
+                height: auto !important;
             }
         }
 
@@ -2851,8 +2889,8 @@
         var vcEl = document.getElementById('mgStatVisit');
         if (vcEl) animCount(vcEl, vc);
 
-        /* Uygulama sayısı */
-        var appCnt = document.querySelectorAll('.app-card').length;
+        /* Uygulama sayısı — tumuu-grid'deki benzersiz kartları say */
+        var appCnt = document.querySelectorAll('#tumuuGrid .tumuu-tile').length;
         var apEl = document.getElementById('mgStatApps');
         if (apEl && appCnt > 0) animCount(apEl, appCnt);
 
@@ -5062,6 +5100,21 @@
     'use strict';
 
     /* ────────────────────────────────────────
+       0. UYGULAMA SAYISI — DİNAMİK HESAPLA
+    ──────────────────────────────────────── */
+    function updateAppCount() {
+        var el = document.getElementById('mgStatApps');
+        if (!el) return;
+        /* tumuu-grid içindeki gerçek uygulama kartlarını say
+           (admob wrapper'larını hariç tut) */
+        var tiles = document.querySelectorAll('#tumuuGrid .tumuu-tile');
+        var count = tiles.length;
+        if (count > 0) {
+            el.textContent = count;
+        }
+    }
+
+    /* ────────────────────────────────────────
        1. TOAST BİLDİRİM SİSTEMİ
     ──────────────────────────────────────── */
     window.mgToast = function(msg, type, duration) {
@@ -5357,6 +5410,7 @@
     ──────────────────────────────────────── */
     function boot() {
         initRipples();
+        updateAppCount();   /* ← uygulama sayısını DOM'dan oku, sonra animasyon */
         initStatCounters();
         initSwipePanel();
         initPullToRefresh();
