@@ -323,35 +323,105 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     // İlk ziyareti kaydet — sonraki geri tuşlarında splash gösterilmez
     sessionStorage.setItem('mugol-portal-visited', '1');
 
-    const labels =['Sistem Başlatılıyor...', 'Uygulamalar Hazırlanıyor...', 'Son Ayarlar...', 'Hoş Geldiniz!'];
-    let progress = 0;
-    let labelIdx = 0;
+    const labels = ['Sistem Başlatılıyor...', 'Uygulamalar Hazırlanıyor...', 'Son Ayarlar...', 'Hoş Geldiniz!'];
 
-    const interval = setInterval(() => {
-        progress += Math.random() * 4 + 2;
-        if (progress > 100) progress = 100;
-        
-        if (bar) bar.style.width = progress + '%';
-        
-        const newLabelIdx = Math.min(Math.floor(progress / 33), labels.length - 1);
-        if (newLabelIdx !== labelIdx) {
-            labelIdx = newLabelIdx;
-            if (label) label.textContent = labels[labelIdx];
-        }
+    // ── Açılış müziğini çal
+    const splashAudio = new Audio('mugol_acilis.mp3');
+    splashAudio.preload = 'auto';
 
-        if (progress >= 100) {
-            clearInterval(interval);
+    // Splash'i kapatma fonksiyonu
+    function closeSplash() {
+        if (bar) bar.style.width = '100%';
+        if (label) label.textContent = 'Hoş Geldiniz!';
+        setTimeout(() => {
+            if (splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.classList.add('hidden');
+                }, 400);
+            }
+        }, 200);
+    }
 
-            setTimeout(() => {
-                if (splash) {
-                    splash.style.opacity = '0';
-                    setTimeout(() => {
-                        splash.classList.add('hidden');
-                    }, 400);
+    // Müzik süresiyle senkronize progress bar
+    function startProgressWithAudio(duration) {
+        let progress = 0;
+        let labelIdx = 0;
+        const totalMs = duration * 1000;
+        const startTime = Date.now();
+
+        const interval = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            progress = Math.min((elapsed / totalMs) * 100, 99);
+
+            if (bar) bar.style.width = progress + '%';
+
+            const newLabelIdx = Math.min(Math.floor(progress / 33), labels.length - 1);
+            if (newLabelIdx !== labelIdx) {
+                labelIdx = newLabelIdx;
+                if (label) label.textContent = labels[labelIdx];
+            }
+
+            if (elapsed >= totalMs) {
+                clearInterval(interval);
+            }
+        }, 80);
+    }
+
+    // Müzik yüklenince süresini al ve başlat
+    splashAudio.addEventListener('loadedmetadata', function () {
+        startProgressWithAudio(splashAudio.duration);
+    });
+
+    // Müzik bitince splash kapat
+    splashAudio.addEventListener('ended', function () {
+        closeSplash();
+    });
+
+    // Müzik yüklenemezse veya hata olursa eski davranışla devam et
+    splashAudio.addEventListener('error', function () {
+        let progress = 0;
+        let labelIdx = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 4 + 2;
+            if (progress > 100) progress = 100;
+            if (bar) bar.style.width = progress + '%';
+            const newLabelIdx = Math.min(Math.floor(progress / 33), labels.length - 1);
+            if (newLabelIdx !== labelIdx) {
+                labelIdx = newLabelIdx;
+                if (label) label.textContent = labels[labelIdx];
+            }
+            if (progress >= 100) {
+                clearInterval(interval);
+                closeSplash();
+            }
+        }, 120);
+    });
+
+    // Müziği oynat
+    const playPromise = splashAudio.play();
+    if (playPromise !== undefined) {
+        playPromise.catch(function () {
+            // Tarayıcı autoplay'e izin vermezse: kullanıcı etkileşimi beklenmeden
+            // eski ilerleme animasyonu ile devam et
+            let progress = 0;
+            let labelIdx = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 4 + 2;
+                if (progress > 100) progress = 100;
+                if (bar) bar.style.width = progress + '%';
+                const newLabelIdx = Math.min(Math.floor(progress / 33), labels.length - 1);
+                if (newLabelIdx !== labelIdx) {
+                    labelIdx = newLabelIdx;
+                    if (label) label.textContent = labels[labelIdx];
                 }
-            }, 200);
-        }
-    }, 120);
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    closeSplash();
+                }
+            }, 120);
+        });
+    }
 })();
 
 // DİĞER TÜM SCRIPT.JS FONKSİYONLARIN (Menü, Toast, PWA vb.) BURADA DEVAM ETMELİ...
