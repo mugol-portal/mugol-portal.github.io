@@ -328,6 +328,35 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     let progress = 0;
     let labelIdx = 0;
 
+    // ── Müzik & progress senkronizasyonu ──
+    let progressDone = false;
+    let audioDone    = false;
+
+    const audio = document.getElementById('splashAudio');
+
+    function tryHideSplash() {
+        if (!progressDone || !audioDone) return;
+        if (splash) {
+            splash.style.opacity = '0';
+            setTimeout(() => { splash.classList.add('hidden'); }, 400);
+        }
+    }
+
+    // Müziği çal; başlamazsa (otoplay engeli vs.) audioDone=true yap
+    if (audio) {
+        audio.volume = 0.85;
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(() => { audioDone = true; tryHideSplash(); });
+        }
+        audio.addEventListener('ended', () => { audioDone = true; tryHideSplash(); });
+        // Yüklenemezse de geç kalma
+        audio.addEventListener('error',  () => { audioDone = true; tryHideSplash(); });
+    } else {
+        // Element bulunamazsa müzik bekleme
+        audioDone = true;
+    }
+
     const interval = setInterval(() => {
         progress += Math.random() * 4 + 2;
         if (progress > 100) progress = 100;
@@ -342,15 +371,8 @@ document.querySelectorAll('.category-card').forEach(catCard => {
 
         if (progress >= 100) {
             clearInterval(interval);
-            
-            setTimeout(() => {
-                if (splash) {
-                    splash.style.opacity = '0';
-                    setTimeout(() => {
-                        splash.classList.add('hidden');
-                    }, 400);
-                }
-            }, 200);
+            progressDone = true;
+            tryHideSplash(); // Müzik de bittiyse kapanır, bitmemişse bekler
         }
     }, 120);
 })();
