@@ -1,83 +1,11 @@
 // =========================================================
-// FIREBASE VERİ YARDIMCILARI
-// auth.js'deki _db ve _fbReady değişkenlerini kullanır
+// FIREBASE YARDIMCILARI — Kullanıcı sistemi kaldırıldı, stub
 // =========================================================
-function _fbGetUser() {
-    return sessionStorage.getItem('mugol-session') ||
-           localStorage.getItem('mugol-remember-user') || null;
-}
-
-function _fbSafePath(user) {
-    // Firebase path için özel karakterleri temizle
-    return (user || '').replace(/[.#$\[\]]/g, '_');
-}
-
-function _fbSetPref(field, value) {
-    var user = _fbGetUser();
-    if (!user || typeof _fbReady === 'undefined' || !_fbReady || !_db) return;
-    var ref = _db.ref('mugol/prefs/' + _fbSafePath(user) + '/' + field);
-    if (value === null || value === undefined) {
-        ref.remove().catch(function(e) { console.warn('[MuGöl DB] Silme hatası:', e.message); });
-    } else {
-        ref.set(value).catch(function(e) { console.warn('[MuGöl DB] Yazma hatası:', e.message); });
-    }
-}
-
-function _fbLoadPrefs(callback) {
-    var user = _fbGetUser();
-    if (!user || typeof _fbReady === 'undefined' || !_fbReady || !_db) {
-        if (callback) callback(null); return;
-    }
-    _db.ref('mugol/prefs/' + _fbSafePath(user)).once('value')
-        .then(function(snap) { if (callback) callback(snap.val() || {}); })
-        .catch(function(e) {
-            console.warn('[MuGöl DB] Yükleme hatası:', e.message);
-            if (callback) callback(null);
-        });
-}
-
-function _fbApplyPrefs(prefs) {
-    if (!prefs) return;
-    var user = _fbGetUser();
-    // Tema
-    if (prefs.theme) {
-        document.documentElement.setAttribute('data-theme', prefs.theme);
-        localStorage.setItem('mugol-theme', prefs.theme);
-        var ts = document.getElementById('themeSwitch');
-        if (ts) ts.checked = prefs.theme === 'dark';
-    }
-    // Renk
-    if (prefs.color) {
-        document.documentElement.style.setProperty('--primary-color', prefs.color);
-        localStorage.setItem('mugol-primary-color', prefs.color);
-    }
-    // Dil
-    if (prefs.lang) {
-        localStorage.setItem('mugol-lang', prefs.lang);
-        if (typeof applyLanguage === 'function') applyLanguage(prefs.lang);
-    }
-    // Bildirim okuma geçmişi
-    if (prefs.readNotifs && Array.isArray(prefs.readNotifs)) {
-        localStorage.setItem('mugol-read-notifs', JSON.stringify(prefs.readNotifs));
-        if (typeof readNotifs !== 'undefined') {
-            readNotifs = prefs.readNotifs;
-        }
-    }
-    // Reklamsız durum
-    if (user && prefs.noads) {
-        localStorage.setItem('mugol-noads-' + user, prefs.noads);
-    }
-    if (user && prefs.noadsKod) {
-        localStorage.setItem('mugol-noads-kod-' + user, prefs.noadsKod);
-    }
-    // Giriş zamanı (varsa koru, yoksa yaz)
-    if (user && prefs.loginTime) {
-        var ltKey = 'mugol-login-time-' + user;
-        if (!localStorage.getItem(ltKey)) {
-            localStorage.setItem(ltKey, prefs.loginTime);
-        }
-    }
-}
+function _fbGetUser()          { return null; }
+function _fbSafePath(u)        { return ''; }
+function _fbSetPref()          {}
+function _fbLoadPrefs(cb)      { if (cb) cb(null); }
+function _fbApplyPrefs()       {}
 
 // =========================================================
 // DEĞİŞKENLER VE DOM ELEMENTLERİ
@@ -385,17 +313,9 @@ document.querySelectorAll('.category-card').forEach(catCard => {
         )
     );
 
-    // ── Oturum açıksa VEYA hatırlanan kullanıcı VEYA geri tuşuyla gelindiyse splash'i atla
-    const activeSession = sessionStorage.getItem('mugol-session');
-    const rememberedUser = localStorage.getItem('mugol-remember-user');
-
-    if ((activeSession || rememberedUser || isBackNav) && !isUpdateReload) {
-        if (rememberedUser && !activeSession) {
-            sessionStorage.setItem('mugol-session', rememberedUser);
-        }
+    // ── Geri tuşuyla gelindiyse splash'i atla
+    if (isBackNav && !isUpdateReload) {
         if (splash) splash.classList.add('hidden');
-        if (typeof MugolAuth !== 'undefined') MugolAuth.checkAuth();
-        // Ziyaret bayrağını kaydet
         sessionStorage.setItem('mugol-portal-visited', '1');
         return;
     }
@@ -421,10 +341,6 @@ document.querySelectorAll('.category-card').forEach(catCard => {
 
         if (progress >= 100) {
             clearInterval(interval);
-            
-            if (typeof MugolAuth !== 'undefined') {
-                MugolAuth.checkAuth();
-            }
 
             setTimeout(() => {
                 if (splash) {
@@ -661,64 +577,26 @@ if (installAppBtn) {
 // PROFİL SAYFASI — KULLANICI BİLGİLERİ & ÇIKIŞ
 // =========================================================
 
-// --- Yardımcı: aktif kullanıcıyı döndür ---
-function getActiveUser() {
-    return sessionStorage.getItem('mugol-session') ||
-           localStorage.getItem('mugol-remember-user') || '';
+// --- Yardımcı: aktif kullanıcıyı döndür (kullanıcı sistemi yok) ---
+function getActiveUser() { return ''; }
+
+// --- Reklamsız kontrol (kullanıcıya bağlı değil, global) ---
+function noadsKey()    { return 'mugol-noads'; }
+function noadsKodKey() { return 'mugol-noads-kod'; }
+function userHasNoads() {
+    return localStorage.getItem('mugol-noads') === 'true';
+}
+function userNoadsKod() {
+    return localStorage.getItem('mugol-noads-kod') || '';
 }
 
-// --- Yardımcı: kullanıcıya özel noads key ---
-function noadsKey(user) {
-    return user ? 'mugol-noads-' + user : 'mugol-noads';
-}
-function noadsKodKey(user) {
-    return user ? 'mugol-noads-kod-' + user : 'mugol-noads-kod';
-}
-function userHasNoads(user) {
-    if (!user) return false;
-    // Per-user key (yeni sistem)
-    if (localStorage.getItem(noadsKey(user)) === 'true') return true;
-    // Eski global key — sadece aynı kullanıcıysa say
-    var savedUser = localStorage.getItem('mugol-remember-user');
-    return (savedUser === user) && localStorage.getItem('mugol-noads') === 'true';
-}
-function userNoadsKod(user) {
-    if (!user) return '';
-    return localStorage.getItem(noadsKodKey(user)) ||
-           (localStorage.getItem('mugol-remember-user') === user ? localStorage.getItem('mugol-noads-kod') : '') || '';
-}
-
-// --- Giriş/çıkış zamanını kaydet ---
-function kaydetGirisZamani(user) {
-    if (!user) return;
-    var key = 'mugol-login-time-' + user;
-    if (!localStorage.getItem(key)) {
-        var _loginTs = new Date().toISOString();
-        localStorage.setItem(key, _loginTs);
-        _fbSetPref('loginTime', _loginTs);
-    }
-    sessionStorage.setItem('mugol-session-start', Date.now());
-}
+// --- Yardımcı: Tarih formatla ---
 function formatTarih(isoStr) {
     if (!isoStr) return '—';
     try {
         var d = new Date(isoStr);
         return d.toLocaleDateString('tr-TR', {day:'2-digit',month:'long',year:'numeric'});
     } catch(e) { return '—'; }
-}
-function formatOturumSuresi() {
-    var start = parseInt(sessionStorage.getItem('mugol-session-start') || '0');
-    if (!start) return '—';
-    var diff = Math.floor((Date.now() - start) / 1000);
-    if (diff < 60) return diff + ' saniye';
-    if (diff < 3600) return Math.floor(diff/60) + ' dakika';
-    return Math.floor(diff/3600) + ' saat ' + Math.floor((diff%3600)/60) + ' dk';
-}
-
-// --- Yardımcı: isim → avatar rengi ---
-function avatarColor(name) {
-    var palette = ['#6366f1','#ec4899','#f59e0b','#10b981','#3b82f6','#8b5cf6','#ef4444','#00b4d8'];
-    return palette[(name ? name.length : 0) % palette.length];
 }
 
 // --- Yardımcı: profil mesaj kutusu ---
@@ -744,88 +622,17 @@ function showProfilMsg(el, type, text) {
     el._msgTimer = setTimeout(function() { el.style.display = 'none'; }, 3500);
 }
 
-// --- Profil UI'yı kullanıcı bilgileriyle doldur ---
+// --- Profil UI'yı doldur (kullanıcı sistemi yok) ---
 function refreshProfilUI() {
-    var user    = getActiveUser();
-    var display = user || 'Misafir';
-    var initial = display.charAt(0).toUpperCase();
-    var color   = avatarColor(display);
-    var isMisafir = display.startsWith('Misafir_') || display === 'Misafir';
-    var noads   = userHasNoads(user);
+    var noads = userHasNoads('__global__');
 
-    // Sidebar küçük avatar
-    var sidebarAvatar = document.getElementById('sidebarProfilAvatar');
-    if (sidebarAvatar) {
-        sidebarAvatar.textContent = initial;
-        sidebarAvatar.style.background = 'linear-gradient(135deg,' + color + ',#00d2ff)';
-    }
-
-    // Sidebar alt kart — kullanıcı adı + plan
-    var sidebarProfileAvatar = document.querySelector('.sidebar-profile-avatar');
-    if (sidebarProfileAvatar) sidebarProfileAvatar.textContent = initial;
-    var sidebarName = document.getElementById('sidebarProfileName');
-    if (sidebarName) sidebarName.textContent = display;
+    // Sidebar
     var sidebarPlan = document.getElementById('sidebarProfilePlan');
     if (sidebarPlan) {
-        if (noads) {
-            sidebarPlan.innerHTML = '<i class="fas fa-star" style="color:#f59e0b;font-size:0.65rem;"></i> Reklamsız Plan';
-            sidebarPlan.style.color = '#f59e0b';
-        } else if (isMisafir) {
-            sidebarPlan.innerHTML = '<i class="fas fa-bolt" style="font-size:0.65rem;"></i> Misafir';
-            sidebarPlan.style.color = '';
-        } else {
-            sidebarPlan.innerHTML = 'Ücretsiz Plan';
-            sidebarPlan.style.color = '';
-        }
-    }
-
-    // Büyük avatar
-    var bigAvatar = document.getElementById('profilAvatarBig');
-    if (bigAvatar) { bigAvatar.textContent = initial; bigAvatar.style.background = 'linear-gradient(135deg,' + color + ',#00d2ff)'; }
-
-    // Kullanıcı adı alanları
-    var usernameEl = document.getElementById('profilUsername');
-    if (usernameEl) usernameEl.textContent = display;
-    var infoUsernameEl = document.getElementById('profilInfoUsername');
-    if (infoUsernameEl) infoUsernameEl.textContent = display;
-
-    // Rozet
-    var badgeEl = document.getElementById('profilBadge');
-    if (badgeEl) {
-        if (isMisafir) {
-            badgeEl.innerHTML = '<i class="fas fa-bolt"></i> Misafir';
-            badgeEl.style.cssText = 'background:rgba(255,171,0,0.2);border:1px solid rgba(255,171,0,0.35);color:#d97706;';
-        } else if (noads) {
-            badgeEl.innerHTML = '<i class="fas fa-star"></i> Premium Üye';
-            badgeEl.style.cssText = 'background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.35);color:#d97706;';
-        } else {
-            badgeEl.innerHTML = '<i class="fas fa-check-circle"></i> Kayıtlı Üye';
-            badgeEl.style.cssText = '';
-        }
-    }
-
-    // Katılım tarihi
-    var joinedEl = document.getElementById('profilJoinedText');
-    if (joinedEl) {
-        if (!user) {
-            joinedEl.textContent = 'Lütfen giriş yapın';
-        } else {
-            var loginTime = localStorage.getItem('mugol-login-time-' + user);
-            joinedEl.textContent = loginTime
-                ? ('Kayıt: ' + formatTarih(loginTime))
-                : 'MuGöl PORTAL üyesi';
-        }
-    }
-
-    // Oturum süresi
-    var oturumEl = document.getElementById('profilOturumSuresi');
-    if (oturumEl) oturumEl.textContent = user ? formatOturumSuresi() : '—';
-
-    // Son giriş tarihi (ayrı alan)
-    var sonGirisEl = document.getElementById('profilSonGiris');
-    if (sonGirisEl) {
-        var lt = user ? localStorage.getItem('mugol-login-time-' + user) : null;
-        sonGirisEl.textContent = lt ? formatTarih(lt) : '—';
+        sidebarPlan.innerHTML = noads
+            ? '<i class="fas fa-star" style="color:#f59e0b;font-size:0.65rem;"></i> Reklamsız Plan'
+            : 'Sürüm 2.0.0';
+        sidebarPlan.style.color = noads ? '#f59e0b' : '';
     }
 
     // Üyelik tipi
@@ -833,11 +640,29 @@ function refreshProfilUI() {
     if (tipEl) {
         tipEl.innerHTML = noads
             ? 'Reklamsız Plan <span class="reklamlama-badge"><i class="fas fa-star"></i> Aktif</span>'
-            : (isMisafir ? 'Misafir (Sınırlı)' : 'Ücretsiz Plan');
+            : 'Ücretsiz Plan';
     }
 
+    // Rozet
+    var badgeEl = document.getElementById('profilBadge');
+    if (badgeEl) {
+        if (noads) {
+            badgeEl.innerHTML = '<i class="fas fa-star"></i> Premium Üye';
+            badgeEl.style.cssText = 'background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.35);color:#d97706;';
+        } else {
+            badgeEl.innerHTML = '<i class="fas fa-user"></i> Kullanıcı';
+            badgeEl.style.cssText = '';
+        }
+    }
+
+    // Profil içeriğini her zaman göster (giriş daveti gizle)
+    var girisPanel  = document.getElementById('profil-giris-daveti');
+    var icerikPanel = document.getElementById('profil-icerik');
+    if (girisPanel)  girisPanel.style.display = 'none';
+    if (icerikPanel) icerikPanel.style.display = '';
+
     // Üyelik kodu input + iptal butonu
-    var aktifKod = user ? userNoadsKod(user) : '';
+    var aktifKod = localStorage.getItem('mugol-noads-kod') || '';
     var koduInp  = document.getElementById('uyelikKoduInput');
     var kodIptalBtn = document.getElementById('uyelikKoduIptalBtn');
     if (koduInp) {
@@ -852,105 +677,20 @@ function refreshProfilUI() {
         }
     }
     if (kodIptalBtn) {
-        kodIptalBtn.style.display = (aktifKod && user) ? 'inline-flex' : 'none';
+        kodIptalBtn.style.display = aktifKod ? 'inline-flex' : 'none';
     }
-
-    // Şifre değiştir kartını misafirde gizle
-    var passCard = document.getElementById('profilPassCard');
-    if (passCard) passCard.style.display = isMisafir ? 'none' : '';
-
-    // Giriş daveti / profil içeriği göster-gizle
-    var girisPanel  = document.getElementById('profil-giris-daveti');
-    var icerikPanel = document.getElementById('profil-icerik');
-    var girisYapildi = !!(sessionStorage.getItem('mugol-session') || localStorage.getItem('mugol-remember-user'));
-    if (girisPanel)  girisPanel.style.display  = girisYapildi ? 'none' : '';
-    if (icerikPanel) icerikPanel.style.display = girisYapildi ? ''     : 'none';
 }
 
-// --- Şifre göster/gizle ---
-window.toggleProfilPass = function(id, btn) {
-    var inp = document.getElementById(id);
-    if (!inp) return;
-    inp.type = inp.type === 'password' ? 'text' : 'password';
-    var icon = btn.querySelector('i');
-    if (icon) icon.className = inp.type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
-};
-
-// --- Şifre değiştir ---
-window.changeProfilPassword = function() {
-    var curPass = document.getElementById('profil-cur-pass');
-    var newPass = document.getElementById('profil-new-pass');
-    var msgEl   = document.getElementById('profil-pass-msg');
-    if (!curPass || !newPass || !msgEl) return;
-
-    var user = getActiveUser();
-    if (!user) { showProfilMsg(msgEl, 'error', '⚠️ Oturum açık değil.'); return; }
-    if (!curPass.value) { showProfilMsg(msgEl, 'error', '⚠️ Mevcut şifreyi girin.'); return; }
-    if (!newPass.value || newPass.value.length < 6) {
-        showProfilMsg(msgEl, 'error', '⚠️ Yeni şifre en az 6 karakter olmalı.'); return;
-    }
-
-    var curVal = curPass.value;
-    var newVal = newPass.value;
-
-    function _doPassChange(users) {
-        try {
-            if (users[user] !== curVal) {
-                showProfilMsg(msgEl, 'error', '❌ Mevcut şifre yanlış!'); return;
-            }
-            users[user] = newVal;
-            // Hem cache/localStorage hem Firebase'e yaz
-            if (typeof _saveUsersToCloud === 'function') {
-                _saveUsersToCloud(users);
-            } else {
-                localStorage.setItem('mugol-users', JSON.stringify(users));
-            }
-            curPass.value = '';
-            newPass.value = '';
-            showProfilMsg(msgEl, 'success', '✅ Şifreniz başarıyla güncellendi!');
-        } catch(e) {
-            showProfilMsg(msgEl, 'error', '❌ Bir hata oluştu, tekrar deneyin.');
-        }
-    }
-
-    // Firebase'den güncel kullanıcı listesini al
-    if (typeof _loadUsersFromCloud === 'function') {
-        showProfilMsg(msgEl, 'success', '⏳ Doğrulanıyor...');
-        _loadUsersFromCloud(function(latestUsers) {
-            _doPassChange(latestUsers || {});
-        });
-    } else {
-        try {
-            var users = JSON.parse(localStorage.getItem('mugol-users') || '{}');
-            _doPassChange(users);
-        } catch(e) {
-            showProfilMsg(msgEl, 'error', '❌ Bir hata oluştu, tekrar deneyin.');
-        }
-    }
-};
-
-// --- Çıkış yap ---
+// --- Çıkış yap (kullanıcı sistemi yok — ana sayfaya döner) ---
 window.profilLogout = function() {
-    sessionStorage.removeItem('mugol-session');
-    sessionStorage.removeItem('mugol-session-start');
-    localStorage.removeItem('mugol-remember-user');
-    refreshProfilUI();
     var homeNav = document.querySelector('.nav-item[data-target="page-anasayfa"]');
     if (homeNav) homeNav.click();
 };
 
 // --- Üyelik kodunu iptal et ---
 window.uyelikKoduIptal = function() {
-    var user = getActiveUser();
-    if (!user) return;
-    localStorage.removeItem(noadsKey(user));
-    localStorage.removeItem(noadsKodKey(user));
-    // Eski global keyleri de temizle (aynı kullanıcıysa)
     localStorage.removeItem('mugol-noads');
     localStorage.removeItem('mugol-noads-kod');
-    _fbSetPref('noads', null);
-    _fbSetPref('noadsKod', null);
-    // Reklamlar kaldırıldı
     refreshProfilUI();
     var msg = document.getElementById('uyelikKoduMsg');
     if (msg) {
@@ -965,12 +705,6 @@ function _bindProfilNav() {
     var _profilNavItem = document.querySelector('.nav-item[data-target="page-profil"]');
     if (_profilNavItem) _profilNavItem.addEventListener('click', refreshProfilUI);
     refreshProfilUI();
-    setTimeout(refreshProfilUI, 1800);
-    // Oturum süresi göstergesini her dakika güncelle
-    setInterval(function() {
-        var oturumEl = document.getElementById('profilOturumSuresi');
-        if (oturumEl) oturumEl.textContent = formatOturumSuresi();
-    }, 60000);
 }
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', _bindProfilNav);
@@ -990,7 +724,7 @@ var _NOADS_KODLAR = [
 function reklamlariGizle() {
     // Reklamlar kaldırıldı
 }
-if (userHasNoads(getActiveUser())) reklamlariGizle();
+if (userHasNoads()) reklamlariGizle();
 
 window.uyelikKoduKontrol = function() {
     var inp = document.getElementById('uyelikKoduInput');
@@ -1003,16 +737,12 @@ window.uyelikKoduKontrol = function() {
                 : 'background:rgba(239,68,68,0.10);border:1px solid rgba(239,68,68,0.25);color:#ef4444;');
         msg.textContent = yazi;
     }
-    var user = getActiveUser();
-    if (userHasNoads(user)) { goster('success','✅ Kod zaten aktif! Reklamlar kapalı.'); return; }
+    if (userHasNoads()) { goster('success','✅ Kod zaten aktif! Reklamlar kapalı.'); return; }
     var girilen = inp.value.trim().toUpperCase();
     if (!girilen) { goster('error','⚠️ Lütfen bir kod girin.'); return; }
-    if (!user) { goster('error','⚠️ Kodu aktive etmek için giriş yapmalısınız.'); return; }
     if (_NOADS_KODLAR.indexOf(girilen) !== -1) {
-        localStorage.setItem(noadsKey(user), 'true');
-        localStorage.setItem(noadsKodKey(user), girilen);
-        _fbSetPref('noads', 'true');
-        _fbSetPref('noadsKod', girilen);
+        localStorage.setItem('mugol-noads', 'true');
+        localStorage.setItem('mugol-noads-kod', girilen);
         reklamlariGizle();
         refreshProfilUI();
         inp.disabled = true; inp.style.opacity = '0.6';
@@ -1291,42 +1021,6 @@ window.closeAdblockWarning = function() {
 
 })();
 
-
-// =========================================================
-// GİRİŞ SONRASI & SAYFA AÇILIŞINDA FİREBASE TERCİHLERİ YÜKLE
-// refreshProfilUI her login sonrası çağrıldığı için buraya eklendi
-// =========================================================
-(function () {
-    var _origRefreshProfil = window.refreshProfilUI;
-    window.refreshProfilUI = function () {
-        if (_origRefreshProfil) _origRefreshProfil.apply(this, arguments);
-        // Login olduktan sonra Firebase'den güncel tercihleri çek
-        setTimeout(function () {
-            _fbLoadPrefs(function (prefs) {
-                _fbApplyPrefs(prefs);
-                // Reklam durumunu yenile
-                if (typeof userHasNoads === 'function' && typeof reklamlariGizle === 'function') {
-                    if (userHasNoads(_fbGetUser())) reklamlariGizle();
-                }
-                if (typeof refreshProfilUI !== 'undefined' && window._profilUIRefreshed !== true) {
-                    window._profilUIRefreshed = true;
-                    // Profil UI verilerini güncelle (noads badge vb.)
-                    var tipEl = document.getElementById('profilUyelikTipi');
-                    var badgeEl = document.getElementById('profilBadge');
-                    if (_origRefreshProfil) _origRefreshProfil.apply(this, arguments);
-                    window._profilUIRefreshed = false;
-                }
-            });
-        }, 300);
-    };
-
-    // Sayfa açılışında da yükle (hatırlanan kullanıcı varsa)
-    setTimeout(function () {
-        if (_fbGetUser()) {
-            _fbLoadPrefs(function (prefs) { _fbApplyPrefs(prefs); });
-        }
-    }, 1200);
-})();
 
 // =========================================================
 // 15. MuGöl GAMES ENTEGRASYONU

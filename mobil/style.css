@@ -4516,3 +4516,110 @@ button.mg-bn-item:last-child {
     display: block !important;
 }
 
+
+/* ══════════════════════════════════════════════════
+   ALT MENÜ — DAHA FAZLA BUTONU KORUMA v3.1
+   HTML içindeki .mg-bn-more inline stillerini
+   dışarıdan gelen !important'lardan korur
+══════════════════════════════════════════════════ */
+
+/* Diğer butonlar — temiz */
+#mgBottomNav .mg-bn-item:not(.mg-bn-more),
+.mg-bottom-nav .mg-bn-item:not(.mg-bn-more) {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: var(--text-muted) !important;
+}
+#mgBottomNav .mg-bn-item.active:not(.mg-bn-more),
+.mg-bottom-nav .mg-bn-item.active:not(.mg-bn-more) {
+    background: var(--accent-gradient) !important;
+    color: #fff !important;
+    border-color: transparent !important;
+}
+
+/* ── DAHA FAZLA — mavi yuvarlak çıkıntılı buton ── */
+/* HTML'deki .mg-bn-more stillerini dışarıdan gelen
+   #mgBnMore ve nth-child(3) kurallarından koru      */
+
+/* İkon kutusu — logo göster */
+.mg-bn-more .mg-bn-pi-icon {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    border-radius: 50% !important;
+    background: rgba(255,255,255,0.20) !important;
+    box-shadow: none !important;
+    border: none !important;
+    transform: none !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* nth-child(3) genel kurallarını .mg-bn-more için sıfırla */
+.mg-bottom-nav .mg-bn-item.mg-bn-more .mg-bn-pi-icon,
+#mgBottomNav .mg-bn-item.mg-bn-more .mg-bn-pi-icon {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50% !important;
+    background: rgba(255,255,255,0.20) !important;
+    box-shadow: none !important;
+    transform: none !important;
+    border: none !important;
+}
+
+/* İkon gradient + fill sıfırla — logo görünsün */
+.mg-bn-more i,
+.mg-bn-more .mg-bn-more-fallback i,
+#mgBnMore i {
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+    transform: none !important;
+    font-size: 1.1rem !important;
+}
+
+/* Logo resmi */
+.mg-bn-more-logo {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 50% !important;
+    display: block !important;
+}
+
+/* Label gizle (HTML'deki gibi) */
+.mg-bn-more > span:last-child {
+    display: none !important;
+}
+
+/* nth-child span kuralını geç */
+.mg-bottom-nav .mg-bn-item.mg-bn-more > span:last-child,
+#mgBottomNav .mg-bn-item.mg-bn-more > span:last-child {
+    display: none !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+/* Aktif/panel-open durumu */
+.mg-bn-more.panel-open .mg-bn-more-logo {
+    display: none !important;
+}
+.mg-bn-more.panel-open .mg-bn-more-fallback {
+    display: flex !important;
+}
+
+/* padding düzeltme — içerik banner tarafından örtülmesin */
+@media (max-width: 992px) {
+    .main-content  { padding-bottom: 80px !important; }
+    #scrollTopBtn  { bottom: 76px !important; }
+    #mgFab         { bottom: 78px !important; }
+}
+
