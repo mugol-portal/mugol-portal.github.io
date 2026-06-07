@@ -4623,3 +4623,1862 @@ button.mg-bn-item:last-child {
     #mgFab         { bottom: 78px !important; }
 }
 
+
+/* =========================================================
+   ✨ DESIGN ENHANCEMENTS — Visual polish overlay (non-breaking)
+   ========================================================= */
+:root {
+    --primary-color: #5b21ff;
+    --primary-hover: #4318ff;
+    --primary-glow: rgba(91, 33, 255, 0.18);
+    --accent-gradient: linear-gradient(135deg, #5b21ff 0%, #06b6d4 50%, #00d2ff 100%);
+    --mesh-gradient: 
+        radial-gradient(at 20% 20%, rgba(91, 33, 255, 0.10) 0px, transparent 50%),
+        radial-gradient(at 80% 0%,  rgba(0, 210, 255, 0.10) 0px, transparent 50%),
+        radial-gradient(at 0% 50%,  rgba(236, 72, 153, 0.06) 0px, transparent 50%),
+        radial-gradient(at 80% 80%, rgba(16, 185, 129, 0.06) 0px, transparent 50%);
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.04);
+    --shadow: 0 6px 16px -4px rgba(15, 23, 42, 0.06), 0 12px 32px -8px rgba(91, 33, 255, 0.08);
+    --shadow-hover: 0 20px 40px -12px rgba(91, 33, 255, 0.22), 0 8px 20px -6px rgba(6, 182, 212, 0.10);
+    --header-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 8px 28px -10px rgba(15, 23, 42, 0.08);
+    --radius: 22px;
+    --radius-sm: 14px;
+}
+
+[data-theme="dark"] {
+    --primary-color: #818cf8;
+    --primary-hover: #a5b4fc;
+    --primary-glow: rgba(129, 140, 248, 0.20);
+    --accent-gradient: linear-gradient(135deg, #818cf8 0%, #22d3ee 100%);
+    --bg-body: #060912;
+    --bg-card: #111827;
+    --bg-sidebar: #0b1120;
+    --bg-header: rgba(11, 17, 32, 0.72);
+}
+
+/* Richer body background — animated mesh */
+body {
+    background-image: var(--mesh-gradient) !important;
+    background-attachment: fixed;
+}
+[data-theme="dark"] body {
+    background-image:
+        radial-gradient(at 20% 20%, rgba(129, 140, 248, 0.10) 0px, transparent 50%),
+        radial-gradient(at 80% 0%,  rgba(34, 211, 238, 0.08) 0px, transparent 50%),
+        radial-gradient(at 0% 80%,  rgba(168, 85, 247, 0.06) 0px, transparent 50%) !important;
+}
+
+/* Header — crisper glass */
+.header {
+    backdrop-filter: blur(28px) saturate(200%);
+    -webkit-backdrop-filter: blur(28px) saturate(200%);
+    border-bottom: 1px solid color-mix(in oklab, var(--border-color) 70%, transparent);
+}
+
+/* Logo gradient text */
+.logo-area {
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.6px;
+}
+
+/* Sidebar nav refinements */
+.nav-item {
+    transition: transform .25s cubic-bezier(.2,.8,.2,1), background .25s ease, color .25s ease, box-shadow .25s ease;
+}
+.nav-item:hover {
+    background: linear-gradient(90deg, var(--primary-glow), transparent);
+    transform: translateX(6px);
+}
+.nav-item.active {
+    background: linear-gradient(90deg, var(--primary-glow), color-mix(in oklab, var(--primary-glow) 40%, transparent));
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--primary-color) 18%, transparent);
+}
+.nav-item.active::before {
+    background: var(--accent-gradient);
+    box-shadow: 0 0 12px var(--primary-glow);
+}
+
+/* Cards — softer, lifted */
+.card, .widget, .module-card, .app-card, .info-card, .stat-card {
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid color-mix(in oklab, var(--border-color) 80%, transparent);
+    transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease, border-color .35s ease;
+}
+.card:hover, .widget:hover, .module-card:hover, .app-card:hover, .info-card:hover, .stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+    border-color: color-mix(in oklab, var(--primary-color) 25%, transparent);
+}
+
+/* Buttons — modern gradient primary */
+button, .btn, .button {
+    transition: transform .2s ease, box-shadow .25s ease, filter .2s ease;
+}
+.btn-primary, button.primary, .primary-btn {
+    background: var(--accent-gradient) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: 0 8px 20px -6px var(--primary-glow);
+}
+.btn-primary:hover, button.primary:hover, .primary-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.06) saturate(1.1);
+    box-shadow: 0 14px 28px -8px var(--primary-glow);
+}
+
+/* Sidebar profile avatar — glow */
+.sidebar-profile-avatar {
+    background: var(--accent-gradient);
+    box-shadow: 0 8px 20px -6px var(--primary-glow), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+/* Install button — softer modern orange */
+.install-app-btn {
+    background: linear-gradient(135deg, #FB7185 0%, #F97316 100%) !important;
+    box-shadow: 0 10px 24px -6px rgba(249, 115, 22, 0.35) !important;
+    border-radius: var(--radius-sm) !important;
+}
+
+/* Scrollbar accent */
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, color-mix(in oklab, var(--primary-color) 40%, transparent), color-mix(in oklab, var(--primary-color) 20%, transparent));
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-gradient);
+}
+
+/* Focus ring — softer */
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--primary-color) 70%, transparent);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 4px var(--primary-glow);
+}
+
+/* Hamburger button — glassy hover */
+.hamburger-btn:hover {
+    background: var(--primary-glow);
+    color: var(--primary-color);
+    box-shadow: 0 6px 16px -6px var(--primary-glow);
+}
+
+/* Typography tightening on headings */
+h1, h2, h3, .menu-title, .logo-area {
+    letter-spacing: -0.02em;
+}
+
+/* Subtle animated gradient on .active nav indicator */
+@keyframes mugol-shimmer {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.7; }
+}
+.nav-item.active::before { animation: mugol-shimmer 2.4s ease-in-out infinite; }
+
+/* Smooth page entrance for main-content */
+.main-content > * {
+    animation: mugol-fade-up .5s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes mugol-fade-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================================
+   🌙 DARK MODE FIXES + POLISH v2  (yüksek özgüllük)
+   ========================================================= */
+html[data-theme="dark"] {
+    --bg-body:      #07091a !important;
+    --bg-header:    rgba(10, 14, 32, 0.85) !important;
+    --bg-sidebar:   #0a0f24 !important;
+    --bg-card:      #0f1530 !important;
+    --text-main:    #f1f5ff !important;
+    --text-muted:   #9aa3c0 !important;
+    --border-color: rgba(129, 140, 248, 0.14) !important;
+    --primary-color: #818cf8 !important;
+    --primary-hover: #a5b4fc !important;
+    --primary-glow:  rgba(129, 140, 248, 0.22) !important;
+    --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #22d3ee 100%) !important;
+}
+
+html[data-theme="dark"] body {
+    background-color: #07091a !important;
+    background-image:
+        radial-gradient(ellipse 70% 50% at 15% 0%,  rgba(99, 102, 241, 0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 45% at 90% 20%, rgba(34, 211, 238, 0.10) 0%, transparent 55%),
+        radial-gradient(ellipse 70% 50% at 50% 110%, rgba(139, 92, 246, 0.12) 0%, transparent 60%) !important;
+    color: #f1f5ff !important;
+}
+
+html[data-theme="dark"] .header {
+    background: rgba(10, 14, 32, 0.82) !important;
+    border-bottom: 1px solid rgba(129, 140, 248, 0.14) !important;
+    box-shadow: 0 8px 28px -10px rgba(0, 0, 0, 0.6) !important;
+}
+
+html[data-theme="dark"] .sidebar {
+    background: rgba(10, 15, 36, 0.92) !important;
+    border-right: 1px solid rgba(129, 140, 248, 0.10) !important;
+}
+
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .widget,
+html[data-theme="dark"] .module-card,
+html[data-theme="dark"] .app-card,
+html[data-theme="dark"] .info-card,
+html[data-theme="dark"] .stat-card {
+    background: linear-gradient(180deg, rgba(20, 26, 56, 0.95), rgba(15, 21, 48, 0.95)) !important;
+    border: 1px solid rgba(129, 140, 248, 0.12) !important;
+    box-shadow: 0 8px 24px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+}
+
+html[data-theme="dark"] .card:hover,
+html[data-theme="dark"] .widget:hover,
+html[data-theme="dark"] .module-card:hover,
+html[data-theme="dark"] .app-card:hover,
+html[data-theme="dark"] .info-card:hover,
+html[data-theme="dark"] .stat-card:hover {
+    border-color: rgba(129, 140, 248, 0.35) !important;
+    box-shadow: 0 20px 40px -12px rgba(99, 102, 241, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+    transform: translateY(-4px);
+}
+
+/* Section title — okunaklı, parlak gradient */
+html[data-theme="dark"] .section-title {
+    background: linear-gradient(135deg, #ffffff 0%, #c7d2fe 60%, #818cf8 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    text-shadow: none !important;
+    filter: drop-shadow(0 2px 8px rgba(99, 102, 241, 0.25));
+}
+
+/* Logo metni — daha canlı */
+html[data-theme="dark"] .logo-area {
+    background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+/* Üst ikonlar */
+html[data-theme="dark"] .hamburger-btn,
+html[data-theme="dark"] .header button {
+    color: #e2e8ff !important;
+}
+html[data-theme="dark"] .hamburger-btn:hover,
+html[data-theme="dark"] .header button:hover {
+    background: rgba(129, 140, 248, 0.18) !important;
+    color: #c7d2fe !important;
+}
+
+/* Nav item dark */
+html[data-theme="dark"] .nav-item {
+    color: #b4bdd8 !important;
+}
+html[data-theme="dark"] .nav-item:hover {
+    background: linear-gradient(90deg, rgba(129, 140, 248, 0.18), transparent) !important;
+    color: #ffffff !important;
+}
+html[data-theme="dark"] .nav-item.active {
+    background: linear-gradient(90deg, rgba(129, 140, 248, 0.25), rgba(129, 140, 248, 0.05)) !important;
+    color: #ffffff !important;
+    box-shadow: inset 0 0 0 1px rgba(129, 140, 248, 0.30) !important;
+}
+
+/* Scrollbar dark */
+html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(129, 140, 248, 0.5), rgba(34, 211, 238, 0.3)) !important;
+}
+
+/* Inputlar */
+html[data-theme="dark"] input,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select {
+    background: rgba(15, 21, 48, 0.7) !important;
+    border-color: rgba(129, 140, 248, 0.18) !important;
+    color: #f1f5ff !important;
+}
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder { color: #6b7295 !important; }
+html[data-theme="dark"] input:focus,
+html[data-theme="dark"] textarea:focus,
+html[data-theme="dark"] select:focus {
+    border-color: rgba(129, 140, 248, 0.6) !important;
+    box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.18) !important;
+}
+
+/* Modal/popup yüzeyleri */
+html[data-theme="dark"] .modal,
+html[data-theme="dark"] .popup,
+html[data-theme="dark"] .dropdown,
+html[data-theme="dark"] .menu-popup {
+    background: linear-gradient(180deg, #0f1530, #0a0f24) !important;
+    border: 1px solid rgba(129, 140, 248, 0.14) !important;
+    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* =========================================================
+   ✨ EXTRA UI POLISH — both themes
+   ========================================================= */
+
+/* Header iç boşluk — mobilde daha rahat */
+@media (max-width: 768px) {
+    .header { padding: 0 1rem !important; }
+}
+
+/* Buton tıklama hissi */
+button:active, .btn:active, .nav-item:active { transform: scale(0.97) !important; }
+
+/* Bottom navbar (mobil) parlatma */
+[class*="bottom-nav"], [class*="bottombar"], .mobile-nav-bottom {
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+}
+html[data-theme="dark"] [class*="bottom-nav"],
+html[data-theme="dark"] [class*="bottombar"],
+html[data-theme="dark"] .mobile-nav-bottom {
+    background: rgba(8, 11, 26, 0.85) !important;
+    border-top: 1px solid rgba(129, 140, 248, 0.12) !important;
+}
+
+/* Linklerin hover efekti */
+a { transition: color .2s ease, opacity .2s ease; }
+
+/* Selection rengi */
+::selection { background: rgba(129, 140, 248, 0.35); color: inherit; }
+
+/* Reduced motion uyumu */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+    }
+}
+
+/* =========================================================
+   📱 MOBILE APP POLISH v3 — iOS/Android-grade finish
+   Mevcut işlevselliği korur, sadece görsel iyileştirir
+   ========================================================= */
+
+:root {
+    --safe-top:    env(safe-area-inset-top, 0px);
+    --safe-bot:    env(safe-area-inset-bottom, 0px);
+    --safe-left:   env(safe-area-inset-left, 0px);
+    --safe-right:  env(safe-area-inset-right, 0px);
+    --app-radius:  20px;
+    --app-radius-lg: 28px;
+    --app-shadow-card: 0 12px 32px -16px rgba(15, 23, 42, 0.18), 0 2px 6px -2px rgba(15, 23, 42, 0.06);
+}
+
+html, body { overscroll-behavior-y: contain; }
+html { touch-action: manipulation; }
+body { -webkit-touch-callout: none; }
+
+/* ───── HEADER — iOS/Android navigation bar feel ───── */
+@media (max-width: 900px) {
+    .header {
+        height: calc(64px + var(--safe-top)) !important;
+        padding: var(--safe-top) 1rem 0 !important;
+        backdrop-filter: blur(30px) saturate(200%);
+        -webkit-backdrop-filter: blur(30px) saturate(200%);
+    }
+    .layout {
+        margin-top: calc(64px + var(--safe-top)) !important;
+        height: calc(100dvh - 64px - var(--safe-top)) !important;
+    }
+    .main-content {
+        padding: 1.25rem 1rem calc(120px + var(--safe-bot)) !important;
+    }
+    .logo-area { font-size: 1.25rem !important; letter-spacing: -0.4px !important; }
+    .logo-area img { width: 30px !important; height: 30px !important; }
+}
+
+/* ───── BOTTOM NAV — Modern app tab bar ───── */
+#mgBottomNav {
+    backdrop-filter: blur(28px) saturate(200%) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
+    padding-bottom: calc(8px + var(--safe-bot)) !important;
+    box-shadow:
+        0 -10px 30px -10px rgba(15, 23, 42, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+    border-top: 1px solid color-mix(in oklab, var(--border-color) 60%, transparent) !important;
+}
+html[data-theme="dark"] #mgBottomNav {
+    background: rgba(8, 11, 26, 0.85) !important;
+    box-shadow:
+        0 -10px 30px -10px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+    border-top: 1px solid rgba(129, 140, 248, 0.14) !important;
+}
+
+#mgBottomNav .mg-bn-item {
+    transition: transform .25s cubic-bezier(.2,.8,.2,1), color .25s ease !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
+#mgBottomNav .mg-bn-item:active { transform: scale(0.9) !important; }
+#mgBottomNav .mg-bn-item.active { color: var(--primary-color) !important; }
+#mgBottomNav .mg-bn-item.active .mg-bn-pi-icon {
+    background: var(--accent-gradient) !important;
+    color: #fff !important;
+    box-shadow: 0 8px 18px -6px var(--primary-glow), inset 0 1px 0 rgba(255,255,255,0.25) !important;
+    transform: translateY(-2px) scale(1.06);
+}
+#mgBottomNav .mg-bn-pi-icon {
+    transition: transform .3s cubic-bezier(.34, 1.56, .64, 1), background .3s ease, box-shadow .3s ease !important;
+}
+
+/* "Daha Fazla" merkez butonu — FAB feel */
+#mgBottomNav .mg-bn-more .mg-bn-more-circle {
+    background: var(--accent-gradient) !important;
+    box-shadow:
+        0 14px 30px -8px var(--primary-glow),
+        0 4px 10px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+    border: 3px solid var(--bg-body) !important;
+    transition: transform .3s cubic-bezier(.34, 1.56, .64, 1) !important;
+}
+#mgBottomNav .mg-bn-more:active .mg-bn-more-circle { transform: scale(0.92) rotate(8deg) !important; }
+#mgBottomNav .mg-bn-more:hover .mg-bn-more-circle { transform: scale(1.06) !important; }
+
+/* "Daha Fazla" panel — Bottom sheet */
+#mgBnPanelInner {
+    border-radius: 28px 28px 0 0 !important;
+    padding-bottom: calc(20px + var(--safe-bot)) !important;
+    box-shadow: 0 -30px 60px -20px rgba(0, 0, 0, 0.3) !important;
+}
+.mg-bn-panel-handle {
+    width: 40px !important; height: 5px !important; border-radius: 999px !important;
+    background: color-mix(in oklab, var(--text-muted) 40%, transparent) !important;
+    margin: 12px auto 16px !important;
+}
+.mg-bn-panel-item {
+    border-radius: var(--app-radius) !important;
+    transition: transform .25s cubic-bezier(.2,.8,.2,1), background .25s ease !important;
+}
+.mg-bn-panel-item:active { transform: scale(0.94) !important; }
+
+/* ───── FAB ───── */
+#mgFab {
+    width: 52px !important; height: 52px !important;
+    background: var(--accent-gradient) !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 50% !important;
+    box-shadow: 0 14px 30px -8px var(--primary-glow), 0 6px 14px rgba(0, 0, 0, 0.15) !important;
+    bottom: calc(96px + var(--safe-bot)) !important;
+    transition: transform .25s cubic-bezier(.34, 1.56, .64, 1), box-shadow .25s ease !important;
+}
+#mgFab:active { transform: scale(0.9) !important; }
+#mgFab:hover { transform: translateY(-3px) scale(1.05) !important; }
+
+/* ───── KARTLAR — Mobile-first, sıkı ve şık ───── */
+@media (max-width: 768px) {
+    .card, .widget, .module-card, .app-card, .info-card, .stat-card {
+        border-radius: var(--app-radius) !important;
+        padding: 1.1rem !important;
+        box-shadow: var(--app-shadow-card) !important;
+    }
+    .section-title { font-size: 1.4rem !important; }
+    h1 { font-size: 1.7rem !important; }
+    h2 { font-size: 1.35rem !important; }
+}
+
+/* Welcome banner kartı — daha şık */
+.welcome-banner, [class*="welcome"] {
+    border-radius: var(--app-radius-lg) !important;
+    background:
+        radial-gradient(ellipse at top right, rgba(255, 255, 255, 0.18), transparent 60%),
+        var(--accent-gradient) !important;
+    color: #fff !important;
+    box-shadow: 0 20px 50px -16px var(--primary-glow), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+    border: none !important;
+    position: relative;
+    overflow: hidden;
+}
+.welcome-banner::before, [class*="welcome"]::before {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(circle at 15% 110%, rgba(255,255,255,0.18), transparent 50%);
+    pointer-events: none;
+}
+
+/* Action butonlar (5 Yıldız Ver, İndir, Yenile) — daha pillowy */
+.action-buttons button, .quick-actions button, [class*="action-btn"] {
+    border-radius: var(--app-radius) !important;
+    padding: 14px 18px !important;
+    font-weight: 800 !important;
+    box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+    transition: transform .2s ease, box-shadow .25s ease, filter .2s ease !important;
+}
+.action-buttons button:active, .quick-actions button:active, [class*="action-btn"]:active {
+    transform: scale(0.96) !important;
+}
+
+/* Stat kartlar (13 Uygulama, 4 Kategori, 1 Ziyaretim) — mini kartlar */
+.stat-card, [class*="stat-"], .info-pill {
+    background: color-mix(in oklab, var(--bg-card) 92%, transparent) !important;
+    border-radius: var(--app-radius) !important;
+}
+html[data-theme="dark"] .stat-card,
+html[data-theme="dark"] [class*="stat-"],
+html[data-theme="dark"] .info-pill {
+    background: linear-gradient(180deg, rgba(20, 26, 56, 0.95), rgba(15, 21, 48, 0.95)) !important;
+}
+
+/* ───── SCROLL — momentum + skeleton smoothness ───── */
+.main-content {
+    -webkit-overflow-scrolling: touch !important;
+    scroll-behavior: smooth !important;
+    overscroll-behavior: contain !important;
+}
+
+/* ───── RIPPLE-LIKE TAP feedback ───── */
+button, .nav-item, .mg-bn-item, .mg-bn-panel-item, .card, .app-card {
+    position: relative;
+}
+
+/* ───── SİSTEM YAZI TİPİ TUTARLILIĞI ───── */
+input, textarea, select, button {
+    font: inherit;
+}
+
+/* ───── SPLASH / WELCOME ekran daha modern ───── */
+.splash-title h1 {
+    background: var(--accent-gradient) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    letter-spacing: -1px !important;
+    filter: drop-shadow(0 4px 20px var(--primary-glow));
+}
+
+/* ───── Sayfa geçiş animasyonu ───── */
+@keyframes mugol-app-slide {
+    from { opacity: 0; transform: translateY(12px) scale(0.99); }
+    to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+[id^="page-"] {
+    animation: mugol-app-slide .35s cubic-bezier(.2,.8,.2,1) both;
+}
+
+/* ───── PULL-TO-REFRESH şerit daha estetik ───── */
+#ptr-indicator {
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* ───── İKONLAR — mini badge yumuşatma ───── */
+.app-card i, .module-card i, .nav-item i {
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.app-card:active i, .module-card:active i { transform: scale(0.9) rotate(-3deg); }
+
+/* ───── KOYU MOD bottom sheet ───── */
+html[data-theme="dark"] #mgBnPanelInner {
+    background: linear-gradient(180deg, #0f1530 0%, #0a0f24 100%) !important;
+    border-top: 1px solid rgba(129, 140, 248, 0.16) !important;
+}
+
+/* ───── SECTION title önündeki bar daha şık ───── */
+.section-title::before {
+    border-radius: 999px !important;
+    width: 5px !important;
+    background: var(--accent-gradient) !important;
+    box-shadow: 0 4px 14px var(--primary-glow) !important;
+}
+
+/* ───── Avatar (MG) header butonu glow ───── */
+.user-avatar, .profile-avatar, [class*="header-avatar"] {
+    background: var(--accent-gradient) !important;
+    color: #fff !important;
+    box-shadow: 0 6px 16px -4px var(--primary-glow), inset 0 1px 0 rgba(255,255,255,0.25) !important;
+    border: 2px solid color-mix(in oklab, var(--bg-card) 70%, transparent) !important;
+}
+
+
+/* =========================================================
+   🛠 SCROLL FIX v2 — ana içerik kaydırma garantisi
+   ========================================================= */
+.layout { min-height: 0 !important; }
+.main-content {
+    min-height: 0 !important;
+    height: 100% !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: contain !important;
+}
+@media (max-width: 900px) {
+    .main-content {
+        /* Alt nav + FAB + safe-area için bol nefes alanı */
+        padding-bottom: calc(140px + var(--safe-bot, 0px)) !important;
+    }
+    /* Tablo / geniş içerik mobilde taşmasın */
+    .main-content table { display: block; overflow-x: auto; max-width: 100%; }
+}
+
+/* Çift kaydırma çubuğunu engelle */
+html, body { height: 100%; }
+body { overflow: hidden !important; }
+
+/* =========================================================
+   ✨ EXTRA POLISH v2 — kaliteli mobil his
+   ========================================================= */
+.card, .widget, .module-card, .app-card, .info-card, .stat-card {
+    transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease, border-color .25s ease;
+}
+.card:hover, .widget:hover, .module-card:hover, .app-card:hover, .info-card:hover {
+    transform: translateY(-2px);
+}
+.card:active, .app-card:active, .module-card:active, .info-card:active {
+    transform: scale(0.985);
+}
+
+/* İnce, modern scrollbar */
+.main-content::-webkit-scrollbar { width: 8px; }
+.main-content::-webkit-scrollbar-track { background: transparent; }
+.main-content::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--text-muted) 35%, transparent);
+    border-radius: 999px;
+}
+.main-content::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in oklab, var(--primary-color) 60%, transparent);
+}
+
+/* Focus ring — erişilebilirlik */
+:where(button, a, [role="button"], input, textarea, select):focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+    border-radius: 12px;
+}
+
+/* Image güvenliği */
+img { max-width: 100%; height: auto; }
+
+/* =========================================================
+   ✦ TASARIM RAFİNESİ — v3.1 (CSS-only, mevcut yapıyı bozmaz)
+   Eklenen tek dosya: style.css sonuna iliştirilmiş override katmanı.
+   Renk paleti korunur (mor #4318ff). Kart/buton/input/chip/badge
+   görsellikleri premium seviyeye yükseltilir.
+   ========================================================= */
+
+:root {
+    /* Daha zengin gölge & radius ölçeği */
+    --radius-xs: 10px;
+    --radius-md: 18px;
+    --radius-lg: 28px;
+    --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-soft: 0 4px 14px -4px rgba(15, 23, 42, 0.08), 0 2px 6px -2px rgba(15, 23, 42, 0.04);
+    --shadow-elevated: 0 18px 40px -16px rgba(67, 24, 255, 0.18), 0 8px 18px -10px rgba(15, 23, 42, 0.08);
+    --shadow-focus: 0 0 0 4px rgba(67, 24, 255, 0.18);
+    --ring-primary: 0 0 0 1.5px rgba(67, 24, 255, 0.35);
+    --gradient-soft: linear-gradient(135deg, rgba(67,24,255,0.06) 0%, rgba(0,210,255,0.06) 100%);
+    --gradient-border: linear-gradient(135deg, rgba(67,24,255,0.35), rgba(0,210,255,0.35));
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+[data-theme="dark"] {
+    --shadow-xs: 0 1px 2px rgba(0,0,0,0.4);
+    --shadow-soft: 0 4px 14px -4px rgba(0,0,0,0.5), 0 2px 6px -2px rgba(0,0,0,0.35);
+    --shadow-elevated: 0 20px 44px -16px rgba(0,0,0,0.6), 0 0 28px -4px rgba(99,102,241,0.18);
+    --shadow-focus: 0 0 0 4px rgba(99,102,241,0.28);
+    --gradient-soft: linear-gradient(135deg, rgba(99,102,241,0.10) 0%, rgba(14,165,233,0.08) 100%);
+    --gradient-border: linear-gradient(135deg, rgba(99,102,241,0.45), rgba(14,165,233,0.45));
+}
+
+/* ── KARTLAR ─────────────────────────────────────────── */
+.app-card,
+.module-card,
+.category-card,
+.content-card,
+.info-card,
+.stat-card,
+.widget,
+.gond-card,
+.uyelik-kodu-card,
+.premium-card,
+.about-founder-card,
+.profil-hero-card {
+    border-radius: var(--radius-lg) !important;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.35s var(--ease-out),
+                box-shadow 0.35s var(--ease-out),
+                border-color 0.35s var(--ease-out),
+                background 0.35s var(--ease-out);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+/* Kartların üzerinde ince üst aydınlık çizgisi (premium hissi) */
+.app-card::before,
+.module-card::before,
+.category-card::before,
+.gond-card::before,
+.widget::before,
+.premium-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent);
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: 1;
+}
+[data-theme="dark"] .app-card::before,
+[data-theme="dark"] .module-card::before,
+[data-theme="dark"] .category-card::before,
+[data-theme="dark"] .gond-card::before,
+[data-theme="dark"] .widget::before,
+[data-theme="dark"] .premium-card::before {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.10), transparent);
+}
+
+.app-card:hover,
+.module-card:hover,
+.category-card:hover,
+.content-card:hover,
+.info-card:hover,
+.widget:hover,
+.gond-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-elevated);
+    border-color: color-mix(in oklab, var(--primary-color) 35%, var(--border-color));
+}
+
+.app-card:active,
+.module-card:active,
+.category-card:active,
+.gond-card:active {
+    transform: translateY(-1px) scale(0.995);
+    transition-duration: 0.12s;
+}
+
+/* App ikonu — yumuşak parıltı */
+.app-icon-img {
+    transition: transform 0.4s var(--ease-spring), filter 0.4s var(--ease-out);
+}
+.app-card:hover .app-icon-img,
+.module-card:hover .app-icon-img {
+    transform: scale(1.08) rotate(-2deg);
+    filter: drop-shadow(0 10px 18px rgba(67,24,255,0.25));
+}
+
+/* ── BUTONLAR ────────────────────────────────────────── */
+.btn,
+.button,
+.primary-btn,
+.btn-primary,
+.launch-btn,
+.submit-btn,
+.install-app-btn,
+.gond-filter-btn,
+.font-btn,
+.lang-btn,
+.mg-vt-btn,
+.uyelik-kodu-btn,
+.profil-logout-btn,
+.toast-cancel-btn {
+    border-radius: 999px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    transition: transform 0.2s var(--ease-out),
+                box-shadow 0.25s var(--ease-out),
+                background 0.25s var(--ease-out),
+                color 0.25s var(--ease-out),
+                border-color 0.25s var(--ease-out);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn:hover,
+.button:hover,
+.primary-btn:hover,
+.btn-primary:hover,
+.launch-btn:hover,
+.submit-btn:hover,
+.install-app-btn:hover,
+.gond-filter-btn:hover,
+.uyelik-kodu-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -10px rgba(67, 24, 255, 0.45);
+}
+
+.btn:active,
+.button:active,
+.primary-btn:active,
+.btn-primary:active,
+.launch-btn:active,
+.submit-btn:active,
+.install-app-btn:active {
+    transform: translateY(0) scale(0.97);
+    transition-duration: 0.1s;
+}
+
+/* Primary buton — gradient + parıltı */
+.primary-btn,
+.btn-primary,
+.launch-btn,
+.submit-btn,
+.install-app-btn,
+.uyelik-kodu-btn {
+    background-image: var(--accent-gradient);
+    color: #fff !important;
+    border: none;
+    box-shadow: 0 8px 18px -6px rgba(67, 24, 255, 0.45),
+                inset 0 1px 0 rgba(255,255,255,0.25);
+}
+
+/* Üzerine gelince yüzey üstünden geçen parıltı */
+.primary-btn::after,
+.btn-primary::after,
+.launch-btn::after,
+.submit-btn::after,
+.install-app-btn::after,
+.uyelik-kodu-btn::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg,
+        transparent 30%,
+        rgba(255,255,255,0.35) 50%,
+        transparent 70%);
+    transform: translateX(-120%);
+    transition: transform 0.7s var(--ease-out);
+    pointer-events: none;
+}
+.primary-btn:hover::after,
+.btn-primary:hover::after,
+.launch-btn:hover::after,
+.submit-btn:hover::after,
+.install-app-btn:hover::after,
+.uyelik-kodu-btn:hover::after {
+    transform: translateX(120%);
+}
+
+/* Outline / ghost butonlar */
+.gond-filter-btn,
+.font-btn,
+.lang-btn,
+.toast-cancel-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+}
+.gond-filter-btn:hover,
+.font-btn:hover,
+.lang-btn:hover {
+    background: var(--gradient-soft);
+    border-color: color-mix(in oklab, var(--primary-color) 40%, var(--border-color));
+    color: var(--primary-color);
+}
+.gond-filter-btn.active,
+.font-btn.active,
+.lang-btn.active {
+    background: var(--accent-gradient);
+    color: #fff !important;
+    border-color: transparent;
+    box-shadow: 0 6px 14px -6px rgba(67,24,255,0.5);
+}
+
+/* Klavye fokus halkası — erişilebilirlik */
+.btn:focus-visible,
+.button:focus-visible,
+.primary-btn:focus-visible,
+.btn-primary:focus-visible,
+.launch-btn:focus-visible,
+.submit-btn:focus-visible,
+.install-app-btn:focus-visible,
+.gond-filter-btn:focus-visible,
+.font-btn:focus-visible,
+.lang-btn:focus-visible,
+.nav-item:focus-visible,
+.hamburger-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-focus);
+}
+
+/* ── INPUT / FORM ────────────────────────────────────── */
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+textarea,
+select,
+.mg-fb-input {
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border-color);
+    background: var(--bg-card);
+    color: var(--text-main);
+    transition: border-color 0.2s var(--ease-out),
+                box-shadow 0.2s var(--ease-out),
+                background 0.2s var(--ease-out);
+}
+input:focus,
+textarea:focus,
+select:focus,
+.mg-fb-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-focus);
+}
+input::placeholder,
+textarea::placeholder { color: var(--text-muted); opacity: 0.75; }
+
+/* ── BADGE / CHIP / TAG ──────────────────────────────── */
+.app-card-badge,
+.mg-badge,
+.profil-badge,
+.founder-role-badge,
+.gond-platform-badge,
+.version-badge,
+.reklamlama-badge {
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    font-size: 0.72rem;
+    padding: 4px 10px;
+    background: var(--gradient-soft);
+    color: var(--primary-color);
+    border: 1px solid color-mix(in oklab, var(--primary-color) 25%, transparent);
+    backdrop-filter: blur(6px);
+}
+
+.mg-chip,
+.qa-chip,
+.app-tag,
+.gond-tag {
+    border-radius: 999px;
+    padding: 5px 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: all 0.2s var(--ease-out);
+}
+.mg-chip:hover,
+.qa-chip:hover,
+.app-tag:hover,
+.gond-tag:hover {
+    color: var(--primary-color);
+    border-color: color-mix(in oklab, var(--primary-color) 40%, var(--border-color));
+    background: var(--gradient-soft);
+    transform: translateY(-1px);
+}
+
+/* ── SECTION BAŞLIKLARI ───────────────────────────── */
+.section-header,
+.app-card-header,
+.gond-card-body > h3 {
+    letter-spacing: -0.01em;
+}
+
+/* ── SİDEBAR NAV-ITEM ────────────────────────────── */
+.nav-item {
+    border-radius: 14px;
+    transition: background 0.25s var(--ease-out),
+                color 0.25s var(--ease-out),
+                transform 0.2s var(--ease-out);
+    position: relative;
+}
+.nav-item:hover {
+    background: var(--gradient-soft);
+    color: var(--primary-color);
+}
+.nav-item.active {
+    background: var(--accent-gradient);
+    color: #fff;
+    box-shadow: 0 8px 18px -8px rgba(67,24,255,0.5);
+}
+.nav-item.active::before {
+    content: "";
+    position: absolute;
+    left: -10px; top: 50%;
+    width: 4px; height: 60%;
+    transform: translateY(-50%);
+    background: var(--primary-color);
+    border-radius: 4px;
+    box-shadow: 0 0 12px var(--primary-color);
+}
+
+/* ── HEADER ──────────────────────────────────────── */
+.header {
+    backdrop-filter: blur(18px) saturate(160%);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--header-shadow);
+}
+
+/* ── MODAL / TOAST ──────────────────────────────── */
+.modal {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-elevated), 0 0 0 1px var(--border-color);
+}
+
+/* ── ERİŞİLEBİLİRLİK & HAREKETİ AZALT ─────────── */
+@media (prefers-reduced-motion: reduce) {
+    .app-card, .module-card, .category-card, .widget, .gond-card,
+    .btn, .button, .primary-btn, .btn-primary, .launch-btn,
+    .submit-btn, .install-app-btn, .nav-item, .app-icon-img {
+        transition: none !important;
+        animation: none !important;
+    }
+    .primary-btn::after, .btn-primary::after,
+    .launch-btn::after, .submit-btn::after,
+    .install-app-btn::after { display: none; }
+}
+
+/* ── SCROLLBAR İNCELTME ───────────────────────── */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--primary-color) 35%, transparent);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in oklab, var(--primary-color) 60%, transparent);
+    background-clip: padding-box;
+}
+
+/* ✦ TASARIM RAFİNESİ SON ✦ */
+
+/* =========================================================
+   v4.0 — GELİŞTİRİLMİŞ KUTU & BUTON TASARIMI
+   ========================================================= */
+
+/* ── Uygulama Kartları: Derin Gölge + İnce Kenar ── */
+.app-card {
+    border-radius: 22px !important;
+    border: 1px solid rgba(67, 24, 255, 0.07) !important;
+    box-shadow:
+        0 1px 3px rgba(0,0,0,0.04),
+        0 4px 16px rgba(67,24,255,0.06),
+        0 0 0 1px rgba(255,255,255,0.6) inset !important;
+    background: linear-gradient(160deg,
+        rgba(255,255,255,1) 0%,
+        rgba(248,250,255,0.98) 100%
+    ) !important;
+    transition:
+        transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+        box-shadow 0.3s ease,
+        border-color 0.3s ease !important;
+}
+
+[data-theme="dark"] .app-card {
+    background: linear-gradient(160deg,
+        rgba(30, 41, 59, 1) 0%,
+        rgba(22, 30, 50, 0.98) 100%
+    ) !important;
+    border-color: rgba(99, 102, 241, 0.1) !important;
+    box-shadow:
+        0 1px 3px rgba(0,0,0,0.3),
+        0 4px 20px rgba(0,0,0,0.25),
+        0 0 0 1px rgba(255,255,255,0.04) inset !important;
+}
+
+.app-card:hover {
+    transform: translateY(-6px) !important;
+    border-color: rgba(67, 24, 255, 0.18) !important;
+    box-shadow:
+        0 2px 4px rgba(0,0,0,0.04),
+        0 12px 36px rgba(67,24,255,0.14),
+        0 0 0 1px rgba(67,24,255,0.06) inset !important;
+}
+
+[data-theme="dark"] .app-card:hover {
+    border-color: rgba(99, 102, 241, 0.35) !important;
+    box-shadow:
+        0 2px 4px rgba(0,0,0,0.3),
+        0 16px 40px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(99, 102, 241, 0.15) inset !important;
+}
+
+/* ── App Card — İkon Güçlendirildi ── */
+.app-icon-img {
+    border-radius: 18px !important;
+    border: 1.5px solid rgba(0,0,0,0.06) !important;
+    box-shadow:
+        0 3px 8px rgba(0,0,0,0.1),
+        0 1px 3px rgba(0,0,0,0.06) !important;
+}
+
+[data-theme="dark"] .app-icon-img {
+    border-color: rgba(255,255,255,0.08) !important;
+}
+
+.app-card:hover .app-icon-img {
+    transform: scale(1.1) rotate(-4deg) !important;
+    box-shadow:
+        0 8px 20px rgba(67,24,255,0.22),
+        0 0 0 4px rgba(67,24,255,0.08) !important;
+    border-color: rgba(67,24,255,0.15) !important;
+}
+
+/* ── App Card Footer — Daha Zarif Alt Çizgi ── */
+.app-card-footer {
+    border-top: 1px solid rgba(67,24,255,0.06) !important;
+    padding-top: 14px !important;
+    margin-top: auto;
+}
+
+[data-theme="dark"] .app-card-footer {
+    border-top-color: rgba(255,255,255,0.07) !important;
+}
+
+/* ── App Başlık — Bolder Yazı ── */
+.app-card-title {
+    font-size: 1.05rem !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.2px !important;
+    line-height: 1.3 !important;
+}
+
+/* ── Launch Butonu — Yükseltildi ── */
+.launch-btn {
+    height: 36px !important;
+    padding: 0 16px !important;
+    border-radius: 50px !important;
+    font-size: 0.8rem !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.2px !important;
+    background: rgba(67,24,255,0.08) !important;
+    color: var(--primary-color) !important;
+    border: 1.5px solid rgba(67,24,255,0.14) !important;
+    box-shadow: 0 2px 6px rgba(67,24,255,0.08) !important;
+    gap: 6px !important;
+    transition:
+        background 0.22s ease,
+        color 0.22s ease,
+        border-color 0.22s ease,
+        box-shadow 0.22s ease,
+        transform 0.22s cubic-bezier(0.25,0.8,0.25,1) !important;
+}
+
+.launch-btn:hover {
+    transform: scale(1.04) !important;
+}
+
+.app-card:hover .launch-btn {
+    background: linear-gradient(135deg, #4318ff, #00c6fb) !important;
+    background-size: 200% auto !important;
+    animation: launchShimmer 2s linear infinite !important;
+    color: #fff !important;
+    border-color: transparent !important;
+    box-shadow: 0 5px 18px rgba(67,24,255,0.38) !important;
+}
+
+@keyframes launchShimmer {
+    0%   { background-position: 0% center; }
+    100% { background-position: 200% center; }
+}
+
+.launch-btn i {
+    font-size: 0.74rem !important;
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+
+.app-card:hover .launch-btn i {
+    transform: translateX(4px) !important;
+}
+
+/* ── Kategori Kartları: Daha Zengin ── */
+.category-card {
+    border-radius: 22px !important;
+    padding: 1.5rem 1.6rem !important;
+    border: 1px solid rgba(67,24,255,0.07) !important;
+    background: linear-gradient(160deg,
+        rgba(255,255,255,1) 0%,
+        rgba(249,250,255,0.98) 100%
+    ) !important;
+    box-shadow:
+        0 1px 3px rgba(0,0,0,0.04),
+        0 4px 14px rgba(67,24,255,0.06) !important;
+    transition:
+        transform 0.28s cubic-bezier(0.25,0.8,0.25,1),
+        box-shadow 0.28s ease,
+        border-color 0.28s ease !important;
+}
+
+[data-theme="dark"] .category-card {
+    background: linear-gradient(160deg,
+        rgba(30,41,59,1) 0%,
+        rgba(22,30,50,0.98) 100%
+    ) !important;
+    border-color: rgba(99,102,241,0.1) !important;
+    box-shadow:
+        0 1px 3px rgba(0,0,0,0.3),
+        0 4px 16px rgba(0,0,0,0.2) !important;
+}
+
+.category-card:hover {
+    transform: translateY(-5px) !important;
+    border-color: rgba(67,24,255,0.2) !important;
+    box-shadow:
+        0 2px 4px rgba(0,0,0,0.04),
+        0 14px 36px rgba(67,24,255,0.13) !important;
+}
+
+[data-theme="dark"] .category-card:hover {
+    border-color: rgba(99,102,241,0.35) !important;
+    box-shadow:
+        0 2px 4px rgba(0,0,0,0.3),
+        0 14px 36px rgba(0,0,0,0.4) !important;
+}
+
+/* ── Kategori İkon Sarma ── */
+.cat-icon-wrap {
+    border-radius: 18px !important;
+    width: 58px !important;
+    height: 58px !important;
+    box-shadow:
+        0 6px 18px rgba(0,0,0,0.18),
+        0 2px 6px rgba(0,0,0,0.1),
+        inset 0 1px 0 rgba(255,255,255,0.2) !important;
+}
+
+.category-card:hover .cat-icon-wrap {
+    transform: scale(1.12) rotate(-7deg) !important;
+    box-shadow:
+        0 10px 28px rgba(0,0,0,0.22),
+        0 4px 10px rgba(0,0,0,0.12),
+        inset 0 1px 0 rgba(255,255,255,0.25) !important;
+}
+
+/* ── Kategori Count Badge ── */
+.cat-count {
+    padding: 5px 13px !important;
+    border-radius: 50px !important;
+    font-size: 0.72rem !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.3px !important;
+    border: 1.5px solid rgba(67,24,255,0.15) !important;
+    background: rgba(67,24,255,0.08) !important;
+    box-shadow: 0 2px 8px rgba(67,24,255,0.1) !important;
+    transition: all 0.22s ease !important;
+}
+
+.category-card:hover .cat-count {
+    background: var(--primary-color) !important;
+    color: #fff !important;
+    border-color: transparent !important;
+    box-shadow: 0 4px 14px rgba(67,24,255,0.35) !important;
+    transform: scale(1.05) !important;
+}
+
+/* ── Tümü Tile: Yükseltildi ── */
+.tumuu-tile {
+    border-radius: 20px !important;
+    border: 1px solid rgba(67,24,255,0.07) !important;
+    background: linear-gradient(160deg,
+        rgba(255,255,255,1) 0%,
+        rgba(249,250,255,0.98) 100%
+    ) !important;
+    padding: 18px 8px 16px !important;
+    box-shadow:
+        0 1px 3px rgba(0,0,0,0.04),
+        0 3px 10px rgba(67,24,255,0.05) !important;
+    transition:
+        transform 0.25s cubic-bezier(0.25,0.8,0.25,1),
+        box-shadow 0.25s ease,
+        border-color 0.25s ease !important;
+}
+
+[data-theme="dark"] .tumuu-tile {
+    background: linear-gradient(160deg,
+        rgba(30,41,59,1) 0%,
+        rgba(22,30,50,0.98) 100%
+    ) !important;
+    border-color: rgba(99,102,241,0.09) !important;
+    box-shadow:
+        0 1px 3px rgba(0,0,0,0.25),
+        0 3px 10px rgba(0,0,0,0.15) !important;
+}
+
+.tumuu-tile:hover {
+    transform: translateY(-5px) scale(1.03) !important;
+    border-color: rgba(67,24,255,0.28) !important;
+    box-shadow:
+        0 2px 4px rgba(0,0,0,0.06),
+        0 14px 30px rgba(67,24,255,0.14) !important;
+}
+
+[data-theme="dark"] .tumuu-tile:hover {
+    border-color: rgba(99,102,241,0.35) !important;
+    box-shadow:
+        0 2px 4px rgba(0,0,0,0.3),
+        0 14px 30px rgba(0,0,0,0.4) !important;
+}
+
+/* ── Tümü İkon Wrap ── */
+.tumuu-icon-wrap {
+    width: 64px !important;
+    height: 64px !important;
+    border-radius: 18px !important;
+    box-shadow:
+        0 5px 16px rgba(0,0,0,0.12),
+        0 2px 5px rgba(0,0,0,0.08),
+        inset 0 1px 0 rgba(255,255,255,0.15) !important;
+    background: linear-gradient(135deg, var(--bg-body), rgba(255,255,255,0.8)) !important;
+    border: 1px solid rgba(0,0,0,0.05) !important;
+}
+
+[data-theme="dark"] .tumuu-icon-wrap {
+    background: linear-gradient(135deg, #1e293b, #252f45) !important;
+    border-color: rgba(255,255,255,0.06) !important;
+}
+
+.tumuu-tile:hover .tumuu-icon-wrap {
+    transform: scale(1.14) rotate(6deg) !important;
+    box-shadow:
+        0 10px 26px rgba(67,24,255,0.2),
+        0 4px 10px rgba(0,0,0,0.1),
+        inset 0 1px 0 rgba(255,255,255,0.2) !important;
+}
+
+/* ── Tümü Label ── */
+.tumuu-label {
+    font-size: 0.73rem !important;
+    font-weight: 900 !important;
+    color: var(--text-main) !important;
+    line-height: 1.35 !important;
+    letter-spacing: -0.1px !important;
+}
+
+/* ── Content Card: Rafine ── */
+.content-card {
+    border-radius: 22px !important;
+    box-shadow:
+        0 1px 4px rgba(0,0,0,0.04),
+        0 6px 24px rgba(67,24,255,0.06) !important;
+    border: 1px solid rgba(67,24,255,0.07) !important;
+    background: linear-gradient(160deg,
+        rgba(255,255,255,1) 0%,
+        rgba(249,250,255,0.99) 100%
+    ) !important;
+}
+
+[data-theme="dark"] .content-card {
+    background: linear-gradient(160deg,
+        rgba(30,41,59,1) 0%,
+        rgba(22,30,50,0.99) 100%
+    ) !important;
+    border-color: rgba(99,102,241,0.1) !important;
+    box-shadow:
+        0 1px 4px rgba(0,0,0,0.3),
+        0 6px 24px rgba(0,0,0,0.2) !important;
+}
+
+/* ── İstatistik Kartları ── */
+.mg-sc {
+    border-radius: 18px !important;
+    border: 1px solid rgba(67,24,255,0.08) !important;
+    background: linear-gradient(160deg,
+        rgba(255,255,255,0.96) 0%,
+        rgba(248,250,255,0.94) 100%
+    ) !important;
+    box-shadow:
+        0 1px 3px rgba(0,0,0,0.04),
+        0 4px 16px rgba(67,24,255,0.07),
+        inset 0 1px 0 rgba(255,255,255,0.9) !important;
+}
+
+[data-theme="dark"] .mg-sc {
+    background: linear-gradient(160deg,
+        rgba(25,36,57,0.95) 0%,
+        rgba(20,28,50,0.92) 100%
+    ) !important;
+    border-color: rgba(99,102,241,0.1) !important;
+    box-shadow:
+        0 1px 3px rgba(0,0,0,0.25),
+        0 4px 16px rgba(0,0,0,0.2) !important;
+}
+
+/* ── İkon Kutu (stats) ── */
+.mg-si {
+    border-radius: 14px !important;
+    box-shadow:
+        0 4px 12px rgba(0,0,0,0.2),
+        inset 0 1px 0 rgba(255,255,255,0.25) !important;
+}
+
+/* ── Hızlı Erişim Chip ── */
+.qa-chip {
+    border-radius: 50px !important;
+    border: 1.5px solid rgba(67,24,255,0.1) !important;
+    background: linear-gradient(135deg,
+        rgba(255,255,255,0.98) 0%,
+        rgba(249,250,255,0.96) 100%
+    ) !important;
+    box-shadow:
+        0 2px 8px rgba(67,24,255,0.07),
+        inset 0 1px 0 rgba(255,255,255,0.9) !important;
+    font-weight: 800 !important;
+    transition:
+        transform 0.22s cubic-bezier(0.25,0.8,0.25,1),
+        box-shadow 0.22s ease,
+        border-color 0.22s ease !important;
+}
+
+[data-theme="dark"] .qa-chip {
+    background: linear-gradient(135deg,
+        rgba(25,36,57,0.95) 0%,
+        rgba(20,28,50,0.92) 100%
+    ) !important;
+    border-color: rgba(99,102,241,0.12) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+}
+
+.qa-chip:hover {
+    transform: translateY(-3px) !important;
+    border-color: rgba(67,24,255,0.28) !important;
+    box-shadow:
+        0 8px 22px rgba(67,24,255,0.14),
+        inset 0 1px 0 rgba(255,255,255,0.95) !important;
+}
+
+.qa-icon {
+    border-radius: 50% !important;
+    width: 30px !important;
+    height: 30px !important;
+    box-shadow:
+        0 3px 10px rgba(0,0,0,0.2),
+        inset 0 1px 0 rgba(255,255,255,0.25) !important;
+}
+
+/* ── Submit Buton ── */
+.submit-btn {
+    border-radius: 16px !important;
+    background: linear-gradient(135deg, #4318ff, #6366f1, #00c6fb) !important;
+    background-size: 200% auto !important;
+    box-shadow:
+        0 8px 24px rgba(67,24,255,0.35),
+        inset 0 1px 0 rgba(255,255,255,0.18) !important;
+    letter-spacing: 0.2px !important;
+    transition:
+        transform 0.22s cubic-bezier(0.25,0.8,0.25,1),
+        box-shadow 0.22s ease !important;
+    animation: submitShimmer 4s ease infinite !important;
+}
+
+@keyframes submitShimmer {
+    0%   { background-position: 0% center; }
+    50%  { background-position: 100% center; }
+    100% { background-position: 0% center; }
+}
+
+.submit-btn:hover {
+    transform: translateY(-3px) scale(1.01) !important;
+    box-shadow:
+        0 14px 36px rgba(67,24,255,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.2) !important;
+    filter: none !important;
+}
+
+.submit-btn:active {
+    transform: translateY(1px) scale(0.99) !important;
+    box-shadow: 0 4px 14px rgba(67,24,255,0.3) !important;
+}
+
+/* ── Hero Banner Butonları ── */
+.mg-hero-btn-primary {
+    border-radius: 14px !important;
+    background: linear-gradient(135deg, #3b12e8, #5b5cf6) !important;
+    box-shadow:
+        0 6px 20px rgba(67,24,255,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.2) !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.1px !important;
+    transition:
+        transform 0.22s cubic-bezier(0.25,0.8,0.25,1),
+        box-shadow 0.22s ease !important;
+}
+
+.mg-hero-btn-primary:hover,
+.mg-hero-btn-primary:active {
+    transform: translateY(-3px) !important;
+    box-shadow:
+        0 12px 28px rgba(67,24,255,0.55),
+        inset 0 1px 0 rgba(255,255,255,0.25) !important;
+}
+
+.mg-hero-btn-secondary {
+    border-radius: 14px !important;
+    font-weight: 800 !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    transition:
+        background 0.22s ease,
+        border-color 0.22s ease,
+        transform 0.22s ease !important;
+}
+
+.mg-hero-btn-secondary:hover,
+.mg-hero-btn-secondary:active {
+    transform: translateY(-2px) !important;
+}
+
+/* ── Toggle Butonları ── */
+.mg-vt-btn {
+    border-radius: 50px !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.2px !important;
+    border: 1.5px solid var(--border-color) !important;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s cubic-bezier(0.25,0.8,0.25,1) !important;
+}
+
+.mg-vt-btn:hover {
+    transform: scale(1.04) !important;
+}
+
+.mg-vt-btn.mg-vt-active,
+.mg-vt-btn.active {
+    background: linear-gradient(135deg, #4318ff, #00c6fb) !important;
+    border-color: transparent !important;
+    color: #fff !important;
+    box-shadow: 0 4px 14px rgba(67,24,255,0.3) !important;
+}
+
+/* ── Font / Lang Butonları ── */
+.font-btn,
+.lang-btn {
+    transition:
+        background 0.18s ease,
+        color 0.18s ease !important;
+}
+
+.font-btn.active,
+.lang-btn.active {
+    background: var(--primary-color) !important;
+    color: #fff !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.18) !important;
+}
+
+/* ── İndir Butonu (Ana Sayfa) ── */
+#mgHomeBtnIndir {
+    border-radius: 14px !important;
+    box-shadow:
+        0 6px 20px rgba(22,163,74,0.35),
+        inset 0 1px 0 rgba(255,255,255,0.2) !important;
+    transition:
+        transform 0.22s cubic-bezier(0.25,0.8,0.25,1),
+        box-shadow 0.22s ease !important;
+    font-weight: 900 !important;
+}
+
+#mgHomeBtnIndir:hover {
+    transform: translateY(-3px) scale(1.02) !important;
+    box-shadow:
+        0 12px 28px rgba(22,163,74,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.25) !important;
+}
+
+/* ── İnstall App Butonu ── */
+.install-app-btn {
+    border-radius: 14px !important;
+    box-shadow:
+        0 8px 22px rgba(255,86,48,0.32),
+        inset 0 1px 0 rgba(255,255,255,0.18) !important;
+    transition:
+        transform 0.22s cubic-bezier(0.25,0.8,0.25,1),
+        box-shadow 0.22s ease,
+        filter 0.22s ease !important;
+}
+
+.install-app-btn:hover {
+    transform: translateY(-3px) scale(1.02) !important;
+    box-shadow:
+        0 14px 30px rgba(255,86,48,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.22) !important;
+    filter: brightness(1.06) !important;
+}
+
+/* ── Bottom Nav Item: Yükseltildi ── */
+.mg-bn-item {
+    border-radius: 18px !important;
+    background: rgba(248,250,255,0.9) !important;
+    border: 1px solid rgba(67,24,255,0.07) !important;
+    box-shadow:
+        0 1px 4px rgba(0,0,0,0.04),
+        inset 0 1px 0 rgba(255,255,255,0.8) !important;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease !important;
+}
+
+.mg-bn-item.active {
+    background: var(--accent-gradient) !important;
+    border-color: transparent !important;
+    box-shadow:
+        0 4px 14px rgba(67,24,255,0.32),
+        inset 0 1px 0 rgba(255,255,255,0.2) !important;
+}
+
+[data-theme="dark"] .mg-bn-item {
+    background: rgba(22,33,58,0.85) !important;
+    border-color: rgba(99,102,241,0.1) !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3) !important;
+}
+
+[data-theme="dark"] .mg-bn-item.active {
+    box-shadow:
+        0 4px 14px rgba(99,102,241,0.35),
+        inset 0 1px 0 rgba(255,255,255,0.12) !important;
+}
+
+/* ── Mg Recent Chip ── */
+.mg-chip {
+    background: linear-gradient(135deg,
+        rgba(255,255,255,0.98) 0%,
+        rgba(249,250,255,0.96) 100%
+    ) !important;
+    border: 1px solid rgba(67,24,255,0.09) !important;
+    box-shadow:
+        0 2px 8px rgba(67,24,255,0.07),
+        inset 0 1px 0 rgba(255,255,255,0.9) !important;
+    border-radius: 50px !important;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease !important;
+}
+
+[data-theme="dark"] .mg-chip {
+    background: linear-gradient(135deg,
+        rgba(25,36,57,0.95) 0%,
+        rgba(20,28,50,0.92) 100%
+    ) !important;
+    border-color: rgba(99,102,241,0.1) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+}
+
+.mg-chip:hover {
+    transform: translateY(-3px) !important;
+    border-color: rgba(67,24,255,0.25) !important;
+    box-shadow:
+        0 8px 22px rgba(67,24,255,0.13),
+        inset 0 1px 0 rgba(255,255,255,0.95) !important;
+}
+
+/* ── Header Butonları (Avatar, Hamburger) ── */
+#mgAvatar {
+    border-radius: 14px !important;
+    box-shadow:
+        0 4px 16px rgba(67,24,255,0.28),
+        inset 0 1px 0 rgba(255,255,255,0.2) !important;
+}
+
+#mgAvatar:hover {
+    transform: scale(1.1) rotate(-4deg) !important;
+    box-shadow:
+        0 8px 24px rgba(67,24,255,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.25) !important;
+}
+
+.hamburger-btn {
+    border-radius: 13px !important;
+    border: 1.5px solid rgba(67,24,255,0.1) !important;
+    background: rgba(67,24,255,0.06) !important;
+    box-shadow: 0 2px 8px rgba(67,24,255,0.08) !important;
+    transition:
+        background 0.2s ease,
+        transform 0.22s cubic-bezier(0.25,0.8,0.25,1),
+        box-shadow 0.2s ease !important;
+}
+
+.hamburger-btn:hover {
+    background: rgba(67,24,255,0.12) !important;
+    box-shadow: 0 4px 14px rgba(67,24,255,0.18) !important;
+    transform: scale(1.08) !important;
+}
+
+[data-theme="dark"] .hamburger-btn {
+    background: rgba(99,102,241,0.1) !important;
+    border-color: rgba(99,102,241,0.15) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25) !important;
+}
+
+/* ── FAB Butonu ── */
+#mgFab {
+    border-radius: 16px !important;
+    box-shadow:
+        0 8px 24px rgba(67,24,255,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.2) !important;
+}
+
+#mgFab:hover {
+    transform: scale(1.12) rotate(-6deg) !important;
+    box-shadow:
+        0 14px 34px rgba(67,24,255,0.55),
+        inset 0 1px 0 rgba(255,255,255,0.25) !important;
+}
+
+/* ── Dropdown (Profil) ── */
+#mgDrop {
+    border-radius: 22px !important;
+    box-shadow:
+        0 24px 64px rgba(0,0,0,0.18),
+        0 8px 24px rgba(0,0,0,0.08),
+        0 0 0 1px rgba(67,24,255,0.06) !important;
+    border: 1px solid rgba(67,24,255,0.08) !important;
+}
+
+[data-theme="dark"] #mgDrop {
+    box-shadow:
+        0 24px 64px rgba(0,0,0,0.5),
+        0 8px 24px rgba(0,0,0,0.3) !important;
+    border-color: rgba(99,102,241,0.12) !important;
+}
+
+.mgd-btn {
+    border-radius: 12px !important;
+    transition:
+        background 0.15s ease,
+        transform 0.15s ease !important;
+}
+
+.mgd-btn:hover {
+    transform: translateX(4px) !important;
+}
+
+.mgd-btn i {
+    border-radius: 10px !important;
+    width: 32px !important;
+    height: 32px !important;
+}
+
+/* ── Yenile Butonu ── */
+#mgRefreshBtn {
+    border-radius: 14px !important;
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease !important;
+}
+
+#mgRefreshBtn:hover {
+    transform: scale(1.08) !important;
+    box-shadow: 0 6px 18px rgba(67,24,255,0.22) !important;
+}
+
+/* ── Splash Screen Butonları ── */
+#splash-skip-btn,
+[id*="splashBtn"],
+[id*="splash"] button {
+    border-radius: 50px !important;
+    box-shadow: 0 4px 14px rgba(67,24,255,0.25) !important;
+}
+
+/* ── Portal Kartları (Ana sayfa grid) ── */
+.mg-portal-card {
+    border-radius: 20px !important;
+    border: 1px solid rgba(67,24,255,0.07) !important;
+    background: linear-gradient(160deg,
+        rgba(255,255,255,0.98) 0%,
+        rgba(248,250,255,0.96) 100%
+    ) !important;
+    box-shadow:
+        0 1px 3px rgba(0,0,0,0.04),
+        0 3px 10px rgba(67,24,255,0.06) !important;
+    transition:
+        transform 0.25s cubic-bezier(0.25,0.8,0.25,1),
+        box-shadow 0.25s ease,
+        border-color 0.25s ease !important;
+}
+
+[data-theme="dark"] .mg-portal-card {
+    background: linear-gradient(160deg,
+        rgba(30,41,59,0.98) 0%,
+        rgba(22,30,50,0.96) 100%
+    ) !important;
+    border-color: rgba(99,102,241,0.09) !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25), 0 3px 10px rgba(0,0,0,0.15) !important;
+}
+
+.mg-portal-card:hover {
+    transform: translateY(-5px) scale(1.03) !important;
+    border-color: rgba(67,24,255,0.22) !important;
+    box-shadow:
+        0 2px 4px rgba(0,0,0,0.06),
+        0 14px 30px rgba(67,24,255,0.14) !important;
+}
+
+/* ── Toast Butonu ── */
+.toast-cancel-btn {
+    border-radius: 12px !important;
+    transition:
+        background 0.18s ease,
+        transform 0.18s cubic-bezier(0.25,0.8,0.25,1) !important;
+}
+
+.toast-cancel-btn:hover {
+    transform: scale(1.06) !important;
+    background: rgba(239,68,68,0.18) !important;
+}
+
+/* ── Input Alanları ── */
+.form-control {
+    border-radius: 16px !important;
+    border: 1.5px solid var(--border-color) !important;
+    box-shadow: inset 0 1px 4px rgba(0,0,0,0.04) !important;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow:
+        0 0 0 4px rgba(67,24,255,0.1),
+        0 4px 12px rgba(67,24,255,0.08),
+        inset 0 1px 4px rgba(0,0,0,0.02) !important;
+}
+
+/* ── Search Input (Sidebar) ── */
+.mg-ss-wrap input {
+    border-radius: 14px !important;
+    border: 1.5px solid var(--border-color) !important;
+    box-shadow: inset 0 1px 4px rgba(0,0,0,0.04) !important;
+}
+
+.mg-ss-wrap input:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow:
+        0 0 0 3px rgba(67,24,255,0.1),
+        inset 0 1px 4px rgba(0,0,0,0.02) !important;
+}
+
+/* ── Responsive: Mobilde gölgeler hafifletildi ── */
+@media (max-width: 992px) {
+    .app-card {
+        box-shadow:
+            0 1px 4px rgba(0,0,0,0.05),
+            0 3px 12px rgba(67,24,255,0.07) !important;
+    }
+
+    .tumuu-tile,
+    .category-card {
+        box-shadow:
+            0 1px 4px rgba(0,0,0,0.05),
+            0 3px 10px rgba(67,24,255,0.06) !important;
+    }
+
+    .mg-sc {
+        box-shadow:
+            0 1px 3px rgba(0,0,0,0.05),
+            0 2px 10px rgba(67,24,255,0.06) !important;
+    }
+}

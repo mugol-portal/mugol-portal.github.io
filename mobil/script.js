@@ -124,6 +124,15 @@ if (themeSwitch) {
     });
 }
 
+// ── Açılış Müziği Toggle ──
+const musicSwitch = document.getElementById('musicSwitch');
+if (musicSwitch) {
+    musicSwitch.checked = localStorage.getItem('mugol-acilis-muzik') !== 'kapali';
+    musicSwitch.addEventListener('change', (e) => {
+        localStorage.setItem('mugol-acilis-muzik', e.target.checked ? 'acik' : 'kapali');
+    });
+}
+
 const fontBtns = document.querySelectorAll('.font-btn');
 
 // Kaydedilmiş yazı boyutunu uygula
@@ -159,9 +168,13 @@ fontBtns.forEach(btn => {
 // =========================================================
 function updateDateTime() {
     const now = new Date();
-    const timeString = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    const s = String(now.getSeconds()).padStart(2, '0');
     const timeEl = document.getElementById('timeDisplay');
-    if (timeEl && timeEl.textContent !== timeString) timeEl.textContent = timeString;
+    const secEl  = document.getElementById('secondDisplay');
+    if (timeEl) timeEl.textContent = h + ':' + m;
+    if (secEl)  secEl.textContent  = ':' + s;
 
     const options = { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' };
     const dateString = now.toLocaleDateString('tr-TR', options);
@@ -325,9 +338,11 @@ document.querySelectorAll('.category-card').forEach(catCard => {
 
     const labels = ['Sistem Başlatılıyor...', 'Uygulamalar Hazırlanıyor...', 'Son Ayarlar...', 'Hoş Geldiniz!'];
 
-    // ── Açılış müziğini çal
+    // ── Açılış müziğini çal (ayardan kapalıysa çalma)
+    const musicEnabled = localStorage.getItem('mugol-acilis-muzik') !== 'kapali';
     const splashAudio = new Audio('mugol_acilis.mp3');
     splashAudio.preload = 'auto';
+    if (!musicEnabled) { splashAudio.volume = 0; }
 
     // Splash'i kapatma fonksiyonu
     function closeSplash() {
