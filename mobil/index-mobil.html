@@ -399,23 +399,35 @@
             font-weight: 900 !important;
         }
 
-        /* ── AdMob Reklam Alanı ── */
+        /* ── AdSense Reklam Alanı (MuGöl GAMES stili) ── */
         .mg-admob-wrap {
             grid-column: 1 / -1;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             width: 100%;
             min-height: 60px;
-            margin: 4px 0;
-            border-radius: 16px;
+            margin: 10px 0;
+            border-radius: 14px;
             overflow: hidden;
-            background: transparent;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .mg-admob-wrap .mg-admob-label {
+            color: #334155;
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
         }
         .mg-admob-wrap ins.adsbygoogle {
             display: block;
             width: 100%;
-            border-radius: 16px;
+            border-radius: 10px;
         }
 
     </style>
@@ -3186,6 +3198,7 @@ body {
 
                     <!-- ── AdSense Banner Reklam #1 (Tümü Grid) ── -->
                     <div class="mg-admob-wrap" aria-label="Reklam">
+                        <span class="mg-admob-label">Reklam</span>
                         <ins class="adsbygoogle"
                              style="display:block;width:100%;min-height:50px;"
                              data-ad-client="ca-pub-1880946354382681"
@@ -3337,6 +3350,7 @@ body {
 
                     <!-- ── AdSense Banner Reklam #2 (Tümü Grid) ── -->
                     <div class="mg-admob-wrap" aria-label="Reklam">
+                        <span class="mg-admob-label">Reklam</span>
                         <ins class="adsbygoogle"
                              style="display:block;width:100%;min-height:50px;"
                              data-ad-client="ca-pub-1880946354382681"
@@ -3427,6 +3441,7 @@ body {
 
                     <!-- ── AdSense Banner Reklam (Günlük Grid) ── -->
                     <div class="mg-admob-wrap" aria-label="Reklam">
+                        <span class="mg-admob-label">Reklam</span>
                         <ins class="adsbygoogle"
                              style="display:block;width:100%;min-height:50px;"
                              data-ad-client="ca-pub-1880946354382681"
@@ -3531,6 +3546,7 @@ body {
 
                     <!-- ── AdSense Banner Reklam (Eğitim Grid) ── -->
                     <div class="mg-admob-wrap" aria-label="Reklam">
+                        <span class="mg-admob-label">Reklam</span>
                         <ins class="adsbygoogle"
                              style="display:block;width:100%;min-height:50px;"
                              data-ad-client="ca-pub-1880946354382681"
@@ -3647,6 +3663,7 @@ body {
 
                     <!-- ── AdSense Banner Reklam (Araçlar Grid) ── -->
                     <div class="mg-admob-wrap" aria-label="Reklam">
+                        <span class="mg-admob-label">Reklam</span>
                         <ins class="adsbygoogle"
                              style="display:block;width:100%;min-height:50px;"
                              data-ad-client="ca-pub-1880946354382681"
