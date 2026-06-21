@@ -854,7 +854,7 @@ window.closeAdblockWarning = function() {
 };
 
 // =========================================================
-// GEÇİŞ REKLAM MODALI — AdSense (ca-app-pub-1880946354382681/2331344971)
+// GEÇİŞ REKLAM MODALI — AdSense (ca-pub-1880946354382681/2331344971)
 // Tüm uygulama geçişlerinde gösterilir. noads aktifse atlanır.
 // =========================================================
 (function() {
