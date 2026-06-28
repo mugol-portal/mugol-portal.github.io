@@ -124,6 +124,15 @@ if (themeSwitch) {
     });
 }
 
+// ── Açılış Müziği Toggle ──
+const musicSwitch = document.getElementById('musicSwitch');
+if (musicSwitch) {
+    musicSwitch.checked = localStorage.getItem('mugol-acilis-muzik') !== 'kapali';
+    musicSwitch.addEventListener('change', (e) => {
+        localStorage.setItem('mugol-acilis-muzik', e.target.checked ? 'acik' : 'kapali');
+    });
+}
+
 const fontBtns = document.querySelectorAll('.font-btn');
 
 // Kaydedilmiş yazı boyutunu uygula
@@ -159,9 +168,13 @@ fontBtns.forEach(btn => {
 // =========================================================
 function updateDateTime() {
     const now = new Date();
-    const timeString = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    const s = String(now.getSeconds()).padStart(2, '0');
     const timeEl = document.getElementById('timeDisplay');
-    if (timeEl && timeEl.textContent !== timeString) timeEl.textContent = timeString;
+    const secEl  = document.getElementById('secondDisplay');
+    if (timeEl) timeEl.textContent = h + ':' + m;
+    if (secEl)  secEl.textContent  = ':' + s;
 
     const options = { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' };
     const dateString = now.toLocaleDateString('tr-TR', options);
@@ -313,8 +326,7 @@ document.querySelectorAll('.category-card').forEach(catCard => {
         )
     );
 
-    // ── Oturum açıksa VEYA hatırlanan kullanıcı VEYA geri tuşuyla gelindiyse splash'i atla
-    // Geri tuşuyla gelindiyse splash'i atla
+    // ── Geri tuşuyla gelindiyse splash'i atla
     if (isBackNav && !isUpdateReload) {
         if (splash) splash.classList.add('hidden');
         sessionStorage.setItem('mugol-portal-visited', '1');
@@ -324,57 +336,107 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     // İlk ziyareti kaydet — sonraki geri tuşlarında splash gösterilmez
     sessionStorage.setItem('mugol-portal-visited', '1');
 
-    const labels =['Sistem Başlatılıyor...', 'Uygulamalar Hazırlanıyor...', 'Son Ayarlar...', 'Hoş Geldiniz!'];
-    let progress = 0;
-    let labelIdx = 0;
+    const labels = ['Sistem Başlatılıyor...', 'Uygulamalar Hazırlanıyor...', 'Son Ayarlar...', 'Hoş Geldiniz!'];
 
-    // ── Müzik & progress senkronizasyonu ──
-    let progressDone = false;
-    let audioDone    = false;
+    // ── Açılış müziğini çal (ayardan kapalıysa çalma)
+    const musicEnabled = localStorage.getItem('mugol-acilis-muzik') !== 'kapali';
+    const splashAudio = new Audio('mugol_acilis.mp3');
+    splashAudio.preload = 'auto';
+    if (!musicEnabled) { splashAudio.volume = 0; }
 
-    const audio = document.getElementById('splashAudio');
-
-    function tryHideSplash() {
-        if (!progressDone || !audioDone) return;
-        if (splash) {
-            splash.style.opacity = '0';
-            setTimeout(() => { splash.classList.add('hidden'); }, 400);
-        }
+    // Splash'i kapatma fonksiyonu
+    function closeSplash() {
+        if (bar) bar.style.width = '100%';
+        if (label) label.textContent = 'Hoş Geldiniz!';
+        setTimeout(() => {
+            if (splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.classList.add('hidden');
+                }, 400);
+            }
+        }, 200);
     }
 
-    // Müziği çal; başlamazsa (otoplay engeli vs.) audioDone=true yap
-    if (audio) {
-        audio.volume = 0.85;
-        const playPromise = audio.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(() => { audioDone = true; tryHideSplash(); });
-        }
-        audio.addEventListener('ended', () => { audioDone = true; tryHideSplash(); });
-        // Yüklenemezse de geç kalma
-        audio.addEventListener('error',  () => { audioDone = true; tryHideSplash(); });
-    } else {
-        // Element bulunamazsa müzik bekleme
-        audioDone = true;
+    // Müzik süresiyle senkronize progress bar
+    function startProgressWithAudio(duration) {
+        let progress = 0;
+        let labelIdx = 0;
+        const totalMs = duration * 1000;
+        const startTime = Date.now();
+
+        const interval = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            progress = Math.min((elapsed / totalMs) * 100, 99);
+
+            if (bar) bar.style.width = progress + '%';
+
+            const newLabelIdx = Math.min(Math.floor(progress / 33), labels.length - 1);
+            if (newLabelIdx !== labelIdx) {
+                labelIdx = newLabelIdx;
+                if (label) label.textContent = labels[labelIdx];
+            }
+
+            if (elapsed >= totalMs) {
+                clearInterval(interval);
+            }
+        }, 80);
     }
 
-    const interval = setInterval(() => {
-        progress += Math.random() * 4 + 2;
-        if (progress > 100) progress = 100;
-        
-        if (bar) bar.style.width = progress + '%';
-        
-        const newLabelIdx = Math.min(Math.floor(progress / 33), labels.length - 1);
-        if (newLabelIdx !== labelIdx) {
-            labelIdx = newLabelIdx;
-            if (label) label.textContent = labels[labelIdx];
-        }
+    // Müzik yüklenince süresini al ve başlat
+    splashAudio.addEventListener('loadedmetadata', function () {
+        startProgressWithAudio(splashAudio.duration);
+    });
 
-        if (progress >= 100) {
-            clearInterval(interval);
-            progressDone = true;
-            tryHideSplash(); // Müzik de bittiyse kapanır, bitmemişse bekler
-        }
-    }, 120);
+    // Müzik bitince splash kapat
+    splashAudio.addEventListener('ended', function () {
+        closeSplash();
+    });
+
+    // Müzik yüklenemezse veya hata olursa eski davranışla devam et
+    splashAudio.addEventListener('error', function () {
+        let progress = 0;
+        let labelIdx = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 4 + 2;
+            if (progress > 100) progress = 100;
+            if (bar) bar.style.width = progress + '%';
+            const newLabelIdx = Math.min(Math.floor(progress / 33), labels.length - 1);
+            if (newLabelIdx !== labelIdx) {
+                labelIdx = newLabelIdx;
+                if (label) label.textContent = labels[labelIdx];
+            }
+            if (progress >= 100) {
+                clearInterval(interval);
+                closeSplash();
+            }
+        }, 120);
+    });
+
+    // Müziği oynat
+    const playPromise = splashAudio.play();
+    if (playPromise !== undefined) {
+        playPromise.catch(function () {
+            // Tarayıcı autoplay'e izin vermezse: kullanıcı etkileşimi beklenmeden
+            // eski ilerleme animasyonu ile devam et
+            let progress = 0;
+            let labelIdx = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 4 + 2;
+                if (progress > 100) progress = 100;
+                if (bar) bar.style.width = progress + '%';
+                const newLabelIdx = Math.min(Math.floor(progress / 33), labels.length - 1);
+                if (newLabelIdx !== labelIdx) {
+                    labelIdx = newLabelIdx;
+                    if (label) label.textContent = labels[labelIdx];
+                }
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    closeSplash();
+                }
+            }, 120);
+        });
+    }
 })();
 
 // DİĞER TÜM SCRIPT.JS FONKSİYONLARIN (Menü, Toast, PWA vb.) BURADA DEVAM ETMELİ...
@@ -613,7 +675,7 @@ function userNoadsKod() {
     return localStorage.getItem('mugol-noads-kod') || '';
 }
 
-// --- Giriş/çıkış zamanını kaydet ---
+// --- Yardımcı: Tarih formatla ---
 function formatTarih(isoStr) {
     if (!isoStr) return '—';
     try {
@@ -647,9 +709,9 @@ function showProfilMsg(el, type, text) {
 
 // --- Profil UI'yı doldur (kullanıcı sistemi yok) ---
 function refreshProfilUI() {
-    var noads = userHasNoads();
+    var noads = userHasNoads('__global__');
 
-    // Sidebar plan
+    // Sidebar
     var sidebarPlan = document.getElementById('sidebarProfilePlan');
     if (sidebarPlan) {
         sidebarPlan.innerHTML = noads
@@ -678,7 +740,7 @@ function refreshProfilUI() {
         }
     }
 
-    // Giriş daveti gizle, içeriği göster
+    // Profil içeriğini her zaman göster (giriş daveti gizle)
     var girisPanel  = document.getElementById('profil-giris-daveti');
     var icerikPanel = document.getElementById('profil-icerik');
     if (girisPanel)  girisPanel.style.display = 'none';
@@ -792,7 +854,7 @@ window.closeAdblockWarning = function() {
 };
 
 // =========================================================
-// GEÇİŞ REKLAM MODALI — AdSense (ca-app-pub-1880946354382681/2331344971)
+// GEÇİŞ REKLAM MODALI — AdSense (ca-pub-1880946354382681/2331344971)
 // Tüm uygulama geçişlerinde gösterilir. noads aktifse atlanır.
 // =========================================================
 (function() {
@@ -1043,8 +1105,6 @@ window.closeAdblockWarning = function() {
     window.openAppWithAd    = function(url, appName, logoSrc) { _mgOpenUrl(url, appName, logoSrc); };
 
 })();
-
-
 
 
 // =========================================================

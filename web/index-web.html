@@ -12,7 +12,7 @@
     <!-- ===== GOOGLE ADMOB ===== -->
     <meta name="admob-app-id" content="ca-app-pub-1880946354382681~7565307045">
     <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-app-pub-1880946354382681"
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1880946354382681"
          crossorigin="anonymous"></script>
     <title>MuGöl PORTAL | Tüm Uygulamalar Bir Arada</title>
 
@@ -30,7 +30,7 @@
     <meta property="og:url" content="https://mugol-portal.github.io/">
     <meta property="og:title" content="MuGöl PORTAL | Tüm Uygulamalar Bir Arada">
     <meta property="og:description" content="Takvim, hava durumu, ekonomi, eğitim, sağlık ve daha fazlası. MuGöl PORTAL ile tüm dijital araçlarınıza tek yerden ulaşın.">
-    <meta property="og:image" content="https://mugol-portal.github.io/web/logo.png">
+    <meta property="og:image" content="https://mugol-portal.github.io/logo.png">
     <meta property="og:image:width" content="512">
     <meta property="og:image:height" content="512">
     <meta property="og:image:alt" content="MuGöl PORTAL Logo">
@@ -42,7 +42,7 @@
     <meta name="twitter:url" content="https://mugol-portal.github.io/">
     <meta name="twitter:title" content="MuGöl PORTAL | Tüm Uygulamalar Bir Arada">
     <meta name="twitter:description" content="Takvim, hava durumu, ekonomi, eğitim, sağlık ve daha fazlası. Tüm dijital araçlarınıza tek yerden ulaşın.">
-    <meta name="twitter:image" content="https://mugol-portal.github.io/web/logo.png">
+    <meta name="twitter:image" content="https://mugol-portal.github.io/logo.png">
 
     <!-- PWA Meta Etiketleri -->
     <meta name="theme-color" content="#4318ff">
@@ -103,804 +103,43 @@
     
 
     <!-- İKON FALLBACK — FA yüklenemezse emoji/unicode ikonlar göster -->
-    <style id="mg-icon-fallback">
-    /* FA yüklenene kadar boşluk bırak */
-    .nav-item i,
-    .setting-info i,
-    .section-title i,
-    button i { min-width: 1.1em; display: inline-block; }
-
-    /* FA font ailesi tanımı — local yedek */
-    @font-face {
-        font-family: "Font Awesome 6 Free";
-        font-style: normal;
-        font-weight: 900;
-        font-display: block;
-        src: url("https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/webfonts/fa-solid-900.woff2") format("woff2"),
-             url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2") format("woff2"),
-             url("https://use.fontawesome.com/releases/v6.4.0/webfonts/fa-solid-900.woff2") format("woff2");
-    }
-    @font-face {
-        font-family: "Font Awesome 6 Free";
-        font-style: normal;
-        font-weight: 400;
-        font-display: block;
-        src: url("https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/webfonts/fa-regular-400.woff2") format("woff2"),
-             url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-regular-400.woff2") format("woff2");
-    }
-    @font-face {
-        font-family: "Font Awesome 6 Brands";
-        font-style: normal;
-        font-weight: 400;
-        font-display: block;
-        src: url("https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/webfonts/fa-brands-400.woff2") format("woff2"),
-             url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.woff2") format("woff2");
-    }
-    </style>
 
     <link rel="stylesheet" href="style.css">
 
     <!-- v3.0 — GÜNCELLENMİŞ TASARIM STİLLERİ -->
-    <style>
-        
-
-        /* ── Kısayol rozeti — sadece masaüstünde görünsün ── */
-        .mg-shortcut-hint {
-            display: none !important;
-        }
-        @media (min-width: 1024px) {
-            .mg-shortcut-hint {
-                display: flex !important;
-            }
-        }
-
-        /* ── Glassmorphism Header v3 ── */
-        .header {
-            backdrop-filter: blur(28px) saturate(200%) !important;
-            -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
-            background-color: color-mix(in srgb, var(--bg-header) 92%, transparent) !important;
-            border-bottom: 1px solid rgba(150, 150, 150, 0.1);
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04), inset 0 -1px 0 rgba(255,255,255,0.06);
-            z-index: 1000 !important;
-            overflow: visible !important;
-        }
-        /* Header tuşlarının tıklanabilir olması için */
-        .header-right,
-        .header-right button,
-        .header-right #mgAvatar {
-            position: relative;
-            z-index: 1001;
-        }
-        /* Header logo küçük ekranda sığsın */
-        .logo-area span {
-            font-size: clamp(0.85rem, 3vw, 1.1rem) !important;
-            white-space: nowrap;
-        }
-        /* Avatar küçük ekranlarda daha kompakt */
-        @media (max-width: 400px) {
-            #mgAvatar { width:36px !important; height:36px !important; font-size:.8rem !important; }
-            .header-right { gap:4px !important; }
-            .hamburger-btn { width:36px !important; height:36px !important; font-size:.9rem !important; }
-        }
-
-        /* ── Category Card v3 ── */
-        .category-card {
-            border-radius: 20px;
-            transition: transform 0.28s cubic-bezier(0.25, 0.8, 0.25, 1),
-                        box-shadow 0.28s ease,
-                        border-color 0.28s ease !important;
-            border: 1px solid var(--border-color);
-        }
-        .category-card:hover {
-            /* Azaltıldı: -7→-4 px — üste taşma önlendi */
-            transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(67, 24, 255, 0.1), 0 4px 12px rgba(0,0,0,0.05);
-            border-color: rgba(67, 24, 255, 0.22);
-        }
-        .category-card .cat-icon-wrap {
-            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
-                        box-shadow 0.3s ease;
-        }
-        .category-card:hover .cat-icon-wrap {
-            transform: scale(1.12) rotate(-6deg);
-            filter: brightness(1.05) drop-shadow(0 6px 12px rgba(67,24,255,0.25));
-        }
-
-        /* ── App Card v3 ── */
-        .app-card {
-            border-radius: 20px;
-            /* Transition tek eksende — daha öngörülebilir */
-            transition: transform 0.28s cubic-bezier(0.25, 0.8, 0.25, 1),
-                        box-shadow 0.28s ease,
-                        border-color 0.28s ease !important;
-            border: 1px solid var(--border-color);
-            overflow: hidden;        /* İç taşma engellendi */
-        }
-        [data-theme="dark"] .app-card,
-        [data-theme="dark"] .category-card {
-            border-color: rgba(255, 255, 255, 0.07);
-        }
-        .app-card:hover {
-            /* Azaltıldı: -8→-5 px, scale kaldırıldı — taşma durdu */
-            transform: translateY(-5px);
-            box-shadow: 0 14px 36px rgba(67, 24, 255, 0.12), 0 4px 12px rgba(0,0,0,0.05);
-            border-color: rgba(67, 24, 255, 0.22);
-        }
-
-        /* ── Welcome Banner v3 ── */
-        .welcome-banner--compact {
-            border-radius: 20px;
-            background: linear-gradient(135deg, #4318ff 0%, #2979ff 40%, #00b4d8 80%, #00d2ff 100%) !important;
-            background-size: 300% 300% !important;
-            border: none !important;
-            box-shadow: 0 12px 32px rgba(67, 24, 255, 0.28),
-                        0 2px 8px rgba(0,210,255,0.18),
-                        inset 0 1px 0 rgba(255,255,255,0.2) !important;
-            color: #ffffff !important;
-            flex-direction: column !important;
-            align-items: flex-start !important;
-            flex-wrap: nowrap !important;
-            gap: 10px !important;
-            overflow: hidden !important;
-            box-sizing: border-box !important;
-            width: 100% !important;
-            padding: 1.2rem 1.1rem !important;
-            margin-bottom: 1.2rem !important;
-        }
-        .welcome-banner--compact .welcome-text {
-            width: 100%;
-            min-width: 0;
-        }
-        .welcome-banner--compact h1 {
-            color: #ffffff !important;
-            font-size: clamp(1.2rem, 4.5vw, 1.6rem) !important;
-            font-weight: 900;
-            line-height: 1.25;
-            white-space: normal !important;
-            max-width: 100%;
-            margin: 0 0 4px !important;
-        }
-        .welcome-banner--compact p,
-        .welcome-banner--compact .time,
-        .welcome-banner--compact .date {
-            color: #ffffff !important;
-        }
-        .welcome-banner--compact p {
-            font-size: clamp(.82rem, 2.8vw, .93rem) !important;
-            opacity: 0.92;
-            margin: 0 !important;
-        }
-        .welcome-banner--compact .datetime {
-            background: rgba(255, 255, 255, 0.18) !important;
-            backdrop-filter: blur(20px) saturate(180%) !important;
-            -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-            border: 1px solid rgba(255, 255, 255, 0.3) !important;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.3) !important;
-            width: 100% !important;
-            min-width: 0 !important;
-            text-align: left !important;
-            box-sizing: border-box !important;
-            padding: 12px 16px !important;
-            border-radius: 14px !important;
-        }
-        .welcome-banner--compact .time {
-            font-size: clamp(1.7rem, 6vw, 2.2rem) !important;
-            font-weight: 900;
-            line-height: 1;
-        }
-        .welcome-banner--compact .date {
-            font-size: clamp(.78rem, 2.5vw, .88rem) !important;
-            margin-top: 4px;
-        }
-
-        /* ── İletişim Butonları v3 ── */
-        .contact-pill-links a {
-            transition: all 0.28s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
-        }
-        .contact-pill-links a:hover {
-            transform: translateY(-3px) scale(1.03) !important;
-            box-shadow: 0 10px 28px rgba(67, 24, 255, 0.38) !important;
-        }
-
-        /* ── Tumuu Grid — Çok Kolon (Geniş Ekran) ── */
-        @media (min-width: 900px) {
-            .tumuu-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 14px; }
-        }
-        @media (min-width: 1200px) {
-            .tumuu-grid { grid-template-columns: repeat(5, 1fr) !important; }
-        }
-
-        /* ── Performans ipuçları ── */
-        .app-card, .category-card, .tumuu-tile, .launch-btn {
-            will-change: transform;
-        }
-
-        /* ── Versiyon Rozeti ── */
-        .sidebar-profile-info span {
-            background: linear-gradient(90deg, var(--primary-color), #00d2ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 900 !important;
-        }
-
-        /* ── AdMob Reklam Alanı ── */
-        .mg-admob-wrap {
-            grid-column: 1 / -1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            min-height: 60px;
-            margin: 4px 0;
-            border-radius: 16px;
-            overflow: hidden;
-            background: transparent;
-        }
-        .mg-admob-wrap ins.adsbygoogle {
-            display: block;
-            width: 100%;
-            border-radius: 16px;
-        }
-
-    </style>
 
     <!-- ═══════════════════════════════════════════
          PORTAL İYİLEŞTİRMELERİ v2.0 — CSS
          Orijinal stil.css dokunulmaz, sadece genişler
     ═══════════════════════════════════════════════ -->
-    <style id="mg-improvements-css">
 
-        /* ── Scroll Progress Bar ── */
-        #mgScrollProgress {
-            position:fixed; top:0; left:0; height:3px; width:0%;
-            background:linear-gradient(90deg,#4318ff,#00d2ff,#4318ff);
-            background-size:200% auto;
-            animation:mgProgressShimmer 2.4s linear infinite;
-            z-index:99999; border-radius:0 3px 3px 0;
-            pointer-events:none; transition:width .1s linear;
-        }
-        @keyframes mgProgressShimmer{0%{background-position:0 center}100%{background-position:200% center}}
-
-        /* ── Mini Toast ── */
-        #mgMiniToast{
-            position:fixed; bottom:26px; left:50%;
-            transform:translateX(-50%) translateY(14px);
-            background:var(--text-main); color:var(--bg-card);
-            padding:10px 22px; border-radius:50px;
-            font-size:.875rem; font-weight:800; font-family:'Nunito',sans-serif;
-            box-shadow:0 8px 24px rgba(0,0,0,.18); z-index:99998;
-            opacity:0; transition:opacity .25s,transform .25s;
-            pointer-events:none; white-space:nowrap;
-        }
-        #mgMiniToast.mg-show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-        /* ── FAB Hızlı Arama ── */
-        #mgFab{
-            position:fixed; bottom:88px; right:26px;
-            width:46px; height:46px; border-radius:14px;
-            background:var(--accent-gradient); color:#fff; border:none;
-            cursor:pointer; display:flex; align-items:center; justify-content:center;
-            font-size:1.05rem;
-            box-shadow:0 8px 22px rgba(67,24,255,.38);
-            z-index:799; opacity:0; pointer-events:none;
-            transition:transform .3s cubic-bezier(.34,1.56,.64,1),
-                        box-shadow .3s,opacity .25s;
-        }
-        #mgFab.mg-fab-on{opacity:1;pointer-events:auto}
-        #mgFab:hover{transform:scale(1.12) rotate(-6deg);box-shadow:0 14px 32px rgba(67,24,255,.5)}
-        #mgFab:active{transform:scale(.95)}
-
-        /* ── Header Avatar ── */
-        #mgAvatar{
-            width:42px; height:42px; border-radius:13px;
-            background:var(--accent-gradient); color:#fff; border:none;
-            cursor:pointer; display:flex; align-items:center; justify-content:center;
-            font-size:.9rem; font-weight:900; font-family:'Nunito',sans-serif;
-            box-shadow:0 4px 14px var(--primary-glow); flex-shrink:0;
-            transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;
-            position:relative; letter-spacing:-.3px;
-        }
-        #mgAvatar:hover{transform:scale(1.1) rotate(-4deg);box-shadow:0 8px 22px var(--primary-glow)}
-        #mgAvatar .mg-dot{
-            position:absolute; bottom:-2px; right:-2px;
-            width:10px; height:10px; border-radius:50%;
-            background:#10b981; border:2px solid var(--bg-header);
-        }
-        #mgAvatar .mg-dot.guest{background:#94a3b8}
-
-        /* ── Profil Dropdown ── */
-        #mgDrop{
-            position:absolute; top:calc(100% + 14px); right:0;
-            width:272px; background:var(--bg-card);
-            border-radius:20px; border:1px solid var(--border-color);
-            box-shadow:0 24px 60px rgba(0,0,0,.16),0 8px 20px rgba(0,0,0,.07);
-            z-index:600; overflow:hidden; display:none;
-            animation:mgDropIn .22s cubic-bezier(.34,1.56,.64,1);
-        }
-        #mgDrop.mg-open{display:block}
-        @keyframes mgDropIn{from{opacity:0;transform:translateY(-10px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
-        .mgd-head{
-            padding:16px 18px 14px;
-            background:linear-gradient(135deg,var(--primary-color),#00d2ff);
-            display:flex; align-items:center; gap:13px;
-        }
-        .mgd-av{
-            width:44px; height:44px; border-radius:13px;
-            background:rgba(255,255,255,.22); color:#fff;
-            display:flex; align-items:center; justify-content:center;
-            font-size:1.05rem; font-weight:900; flex-shrink:0;
-            border:2px solid rgba(255,255,255,.35); font-family:'Nunito',sans-serif;
-        }
-        .mgd-name{font-size:.93rem;font-weight:900;color:#fff;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .mgd-role{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.8);display:block;margin-top:2px}
-        .mgd-body{padding:8px 8px 10px}
-        .mgd-btn{
-            display:flex; align-items:center; gap:11px;
-            padding:10px 11px; border-radius:12px; color:var(--text-main);
-            font-size:.87rem; font-weight:700; cursor:pointer;
-            border:none; background:transparent; width:100%;
-            font-family:'Nunito',sans-serif; transition:background .15s; text-align:left;
-        }
-        .mgd-btn:hover{background:var(--bg-body)}
-        .mgd-btn i{
-            width:29px; height:29px; border-radius:9px;
-            background:var(--primary-glow); color:var(--primary-color);
-            display:flex; align-items:center; justify-content:center;
-            font-size:.8rem; flex-shrink:0;
-        }
-        .mgd-btn.red{color:#ef4444}
-        .mgd-btn.red i{background:rgba(239,68,68,.1);color:#ef4444}
-        .mgd-sep{height:1px;background:var(--border-color);margin:3px 11px}
-
-        /* ── Sidebar Arama ── */
-        .mg-ss-wrap{
-            position:relative; margin-bottom:1.1rem; flex-shrink:0;
-        }
-        .mg-ss-wrap input{
-            width:100%; height:42px; padding:0 14px 0 38px;
-            border:1.5px solid var(--border-color); border-radius:13px;
-            background:var(--bg-body); color:var(--text-main);
-            font-size:.86rem; font-weight:700; font-family:'Nunito',sans-serif;
-            outline:none; box-sizing:border-box;
-            transition:border-color .2s,box-shadow .2s;
-        }
-        .mg-ss-wrap input:focus{
-            border-color:var(--primary-color);
-            box-shadow:0 0 0 3px var(--primary-glow);
-        }
-        .mg-ss-wrap input::placeholder{color:var(--text-muted);font-weight:600}
-        .mg-ss-icon{
-            position:absolute; left:12px; top:50%; transform:translateY(-50%);
-            color:var(--text-muted); font-size:.78rem; pointer-events:none;
-        }
-        .sidebar.collapsed .mg-ss-wrap{display:none}
-        .nav-item.mg-hidden{display:none!important}
-
-        /* ── İstatistik Şeridi ── */
-        .mg-stats{
-            display:grid;
-            grid-template-columns:repeat(3, 1fr);
-            gap:10px; margin-bottom:1.8rem;
-        }
-        .mg-sc{
-            background:var(--bg-card); border:1px solid var(--border-color);
-            border-radius:17px; padding:1rem 1.1rem;
-            display:flex; align-items:center; gap:12px;
-            transition:transform .25s ease,box-shadow .25s ease;
-            position:relative; overflow:hidden;
-        }
-        .mg-sc::before{
-            content:''; position:absolute; inset:0;
-            background:linear-gradient(135deg,rgba(255,255,255,.05) 0%,transparent 60%);
-            pointer-events:none;
-        }
-        .mg-sc:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.07)}
-        [data-theme="dark"] .mg-sc:hover{box-shadow:0 10px 28px rgba(0,0,0,.35)}
-        .mg-si{
-            width:42px; height:42px; border-radius:13px;
-            display:flex; align-items:center; justify-content:center;
-            font-size:1.05rem; color:#fff; flex-shrink:0;
-            box-shadow:0 4px 12px rgba(0,0,0,.2);
-        }
-        .mg-sv{font-size:1.4rem;font-weight:900;color:var(--text-main);line-height:1;display:block;letter-spacing:-.5px}
-        .mg-sl{font-size:.72rem;font-weight:800;color:var(--text-muted);display:block;margin-top:3px;text-transform:uppercase;letter-spacing:.4px}
-        .mg-slive{
-            font-size:.68rem;font-weight:800;margin-top:3px;display:inline-block;
-            padding:2px 7px;border-radius:20px;
-            background:rgba(16,185,129,.12);color:#10b981;
-        }
-
-        /* ── Son Açılanlar ── */
-        .mg-recent{margin-bottom:1.8rem}
-        .mg-rh{display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem}
-        .mg-rt{font-size:.92rem;font-weight:900;color:var(--text-main);display:flex;align-items:center;gap:8px}
-        .mg-rt i{color:var(--primary-color);font-size:.85rem}
-        .mg-rclear{
-            background:none;border:none;font-size:.75rem;font-weight:700;
-            color:var(--text-muted);cursor:pointer;padding:3px 8px;border-radius:8px;
-            font-family:'Nunito',sans-serif;transition:color .2s,background .2s;
-        }
-        .mg-rclear:hover{color:#ef4444;background:rgba(239,68,68,.08)}
-        .mg-rs{
-            display:flex;gap:9px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;
-        }
-        .mg-rs::-webkit-scrollbar{display:none}
-        .mg-chip{
-            display:flex;align-items:center;gap:9px;
-            padding:7px 13px 7px 7px;background:var(--bg-card);
-            border:1px solid var(--border-color);border-radius:50px;
-            cursor:pointer;text-decoration:none;flex-shrink:0;white-space:nowrap;max-width:175px;
-            transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease;
-        }
-        .mg-chip:hover{
-            transform:translateY(-2px);
-            box-shadow:0 8px 20px rgba(67,24,255,.12);
-            border-color:rgba(67,24,255,.22);
-        }
-        [data-theme="dark"] .mg-chip:hover{box-shadow:0 8px 20px rgba(0,0,0,.3)}
-        .mg-ci{
-            width:28px;height:28px;border-radius:9px;overflow:hidden;
-            background:var(--bg-body);border:1px solid var(--border-color);
-            flex-shrink:0;display:flex;align-items:center;justify-content:center;
-        }
-        .mg-ci img{width:100%;height:100%;object-fit:cover}
-        .mg-cl{font-size:.8rem;font-weight:800;color:var(--text-main);overflow:hidden;text-overflow:ellipsis}
-        .mg-rempty{font-size:.84rem;color:var(--text-muted);font-weight:600;padding:6px 0}
-
-        /* ── Kart Rozeti ── */
-        .mg-badge{
-            position:absolute;top:12px;right:12px;
-            font-size:.61rem;font-weight:900;padding:3px 9px;
-            border-radius:20px;color:#fff;letter-spacing:.5px;
-            text-transform:uppercase;z-index:3;pointer-events:none;
-            animation:mgBadgePop .4s cubic-bezier(.34,1.56,.64,1) both;
-        }
-        @keyframes mgBadgePop{from{transform:scale(0) rotate(-12deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
-        .mg-badge.new{background:linear-gradient(135deg,#FF5630,#FF8B00);box-shadow:0 3px 10px rgba(255,86,48,.35)}
-        .mg-badge.hot{background:linear-gradient(135deg,#ef4444,#f59e0b);box-shadow:0 3px 10px rgba(239,68,68,.3)}
-        .mg-badge.star{background:linear-gradient(135deg,#6366f1,#0ea5e9);box-shadow:0 3px 10px rgba(99,102,241,.3)}
-
-        /* ── Collapsed Tooltip ── */
-        .sidebar.collapsed .nav-item[data-title]{position:relative}
-        .sidebar.collapsed .nav-item[data-title]::after{
-            content:attr(data-title);position:absolute;
-            left:calc(100% + 14px);top:50%;transform:translateY(-50%);
-            background:var(--text-main);color:var(--bg-card);
-            font-size:.78rem;font-weight:800;padding:5px 12px;border-radius:10px;
-            white-space:nowrap;pointer-events:none;opacity:0;z-index:200;
-            box-shadow:0 4px 12px rgba(0,0,0,.15);transition:opacity .15s;
-            font-family:'Nunito',sans-serif;
-        }
-        .sidebar.collapsed .nav-item[data-title]:hover::after{opacity:1}
-
-        /* ── FIX: Sidebar alt profil kartı görünürlüğü ── */
-        .sidebar {
-            display: flex !important;
-            flex-direction: column !important;
-        }
-        .sidebar .nav-menu {
-            flex: 1 1 auto;
-            overflow-y: auto;
-            overflow-x: hidden;
-            /* Scrollbar daraltılsın ki sidebar-profile görünsün */
-            padding-bottom: 4px;
-        }
-        .sidebar-profile {
-            flex-shrink: 0 !important;
-            margin-top: auto !important;
-            /* Sınır çizgisi ekle, net görünsün */
-            border-top: 1px solid var(--border-color) !important;
-            padding: 12px 16px !important;
-            display: flex !important;
-            align-items: center !important;
-            gap: 10px !important;
-            min-height: 56px !important;
-        }
-        .sidebar.collapsed .sidebar-profile {
-            justify-content: center !important;
-            padding: 10px 8px !important;
-        }
-        .sidebar.collapsed .sidebar-profile-info {
-            display: none !important;
-        }
-
-        /* ── Responsive ── */
-        @media(max-width:768px){
-            .mg-stats{grid-template-columns:repeat(3,1fr);gap:8px}
-            .mg-sc{padding:.75rem .7rem;gap:8px}
-            .mg-sv{font-size:1.1rem}
-            .mg-sl{font-size:.62rem}
-            .mg-si{width:34px;height:34px;border-radius:10px;font-size:.85rem}
-            #mgFab{bottom:76px;right:18px}
-            #mgDrop{width:248px}
-        }
-        @media(max-width:360px){
-            .mg-stats{grid-template-columns:repeat(3,1fr);gap:6px}
-            .mg-sc{padding:.6rem .5rem;gap:6px;border-radius:13px}
-            .mg-sv{font-size:1rem}
-            .mg-sl{font-size:.58rem;letter-spacing:0}
-            .mg-si{width:30px;height:30px;font-size:.75rem}
-        }
-        @media(max-width:480px){
-            #mgDrop{right:-8px;width:232px}
-        }
-
-        /* ═══ ADMOB BANNER ═══ */
-        #admob-banner-container {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            z-index: 9000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg-card, #fff);
-            border-top: 1px solid var(--border-color, rgba(0,0,0,0.08));
-            min-height: 50px;
-            box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
-            pointer-events: auto;
-        }
-        #admob-banner-container ins,
-        #admob-banner-container > * {
-            display: block;
-        }
-        /* Ana içeriğe alt boşluk — banner üstüne kapanmasın */
-        .main-content {
-            padding-bottom: 60px !important;
-            overflow-x: hidden !important;
-            box-sizing: border-box !important;
-        }
-        /* Tüm sayfa bölümleri ekran dışına taşmasın */
-        .page-section {
-            width: 100% !important;
-            box-sizing: border-box !important;
-            overflow-x: hidden !important;
-        }
-    </style>
+    <!-- ═══════════════════════════════════════════
+         MOBİL DÜZELTMELER — v1.0
+         Taşma, donma, hamburger gizleme
+         ═══════════════════════════════════════════ -->
 
     <!-- ═══════════════════════════════════════════
          MENÜ YENİ TASARIM — v4.0
          ═══════════════════════════════════════════ -->
-    <style>
-        /* ── SIDEBAR ARKA PLAN & ÇERÇEVE ── */
-        .sidebar {
-            background: linear-gradient(180deg,
-                var(--bg-sidebar) 0%,
-                color-mix(in srgb, var(--bg-sidebar) 97%, var(--primary-color)) 100%
-            ) !important;
-            border-right: 1px solid var(--border-color) !important;
-            padding: 1.4rem 1rem 1.2rem !important;
-            gap: 0 !important;
-        }
-        [data-theme="dark"] .sidebar {
-            background: linear-gradient(180deg, #0f172a 0%, #0d1526 100%) !important;
-        }
 
-        /* ── MENÜ BAŞLIĞI ── */
-        .menu-title {
-            font-size: 0.68rem !important;
-            letter-spacing: 3px !important;
-            padding-left: 14px !important;
-            margin-bottom: 0.8rem !important;
-            opacity: 0.45 !important;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 900 !important;
-        }
+    <!-- ═══════════════════════════════════════════
+         ARAYÜZ GELİŞTİRMELERİ v3.0
+    ═══════════════════════════════════════════ -->
 
-        /* ── SİDEBAR ARAMA KUTUSU ── */
-        .mg-ss-wrap {
-            margin-bottom: 1rem !important;
-        }
-        .mg-ss-wrap input {
-            height: 40px !important;
-            border-radius: 12px !important;
-            background: color-mix(in srgb, var(--bg-body) 80%, transparent) !important;
-            border: 1.5px solid var(--border-color) !important;
-            font-size: 0.84rem !important;
-            padding-left: 36px !important;
-            transition: all 0.22s ease !important;
-        }
-        .mg-ss-wrap input:focus {
-            border-color: var(--primary-color) !important;
-            box-shadow: 0 0 0 3px var(--primary-glow) !important;
-            background: var(--bg-card) !important;
-        }
+    <!-- HIZLI ERİŞİM SCROLL + İKON DÜZELTMESİ v4.1 -->
 
-        /* ── NAV MENÜ CONTAINER ── */
-        .nav-menu {
-            gap: 3px !important;
-        }
+<!-- ═══════════════════════════════════════════════════
+     MuGöl PORTAL — GÜVENLİ TASARIM POLİSHİ v4.1
+     Sadece renk, gölge, border-radius geliştirmeleri.
+     Font, layout, z-index, display değiştirilmez.
+════════════════════════════════════════════════════ -->
 
-        /* ── NAV ITEM TEMEL ── */
-        .nav-item {
-            padding: 10px 13px !important;
-            border-radius: 12px !important;
-            gap: 12px !important;
-            font-size: 0.9rem !important;
-            font-weight: 700 !important;
-            color: var(--text-muted) !important;
-            position: relative !important;
-            overflow: hidden !important;
-            transition: all 0.18s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
-            border: 1px solid transparent !important;
-        }
-
-        /* Hover state */
-        .nav-item:hover {
-            background: color-mix(in srgb, var(--primary-color) 8%, transparent) !important;
-            color: var(--primary-color) !important;
-            transform: translateX(3px) !important;
-            border-color: color-mix(in srgb, var(--primary-color) 15%, transparent) !important;
-        }
-        .nav-item:hover i {
-            transform: scale(1.15) !important;
-            color: var(--primary-color) !important;
-        }
-
-        /* ── AKTİF İTEM — gradient pill ── */
-        .nav-item.active {
-            background: var(--accent-gradient) !important;
-            color: #fff !important;
-            font-weight: 800 !important;
-            border-color: transparent !important;
-            box-shadow: 0 6px 20px color-mix(in srgb, var(--primary-color) 35%, transparent) !important;
-            transform: none !important;
-        }
-        .nav-item.active::before {
-            display: none !important;
-        }
-        .nav-item.active i {
-            color: rgba(255,255,255,0.95) !important;
-            transform: none !important;
-        }
-        .nav-item.active .nav-text {
-            color: #fff !important;
-        }
-
-        /* ── İKON KUTUSU ── */
-        .nav-item i {
-            font-size: 1rem !important;
-            width: 22px !important;
-            text-align: center !important;
-            flex-shrink: 0 !important;
-            transition: all 0.22s ease !important;
-            color: inherit !important;
-        }
-
-        /* ── AYIRICI ── */
-        .nav-divider {
-            margin: 8px 10px !important;
-            background: linear-gradient(90deg, transparent, var(--border-color), transparent) !important;
-            height: 1px !important;
-            border: none !important;
-            opacity: 0.8 !important;
-        }
-
-        /* ── PROFİL NAV İTEM ── */
-        .nav-item--profil {
-            background: color-mix(in srgb, var(--primary-color) 6%, transparent) !important;
-            border: 1.5px solid color-mix(in srgb, var(--primary-color) 15%, transparent) !important;
-            margin-top: 2px !important;
-        }
-        .nav-item--profil:hover {
-            background: color-mix(in srgb, var(--primary-color) 12%, transparent) !important;
-            border-color: color-mix(in srgb, var(--primary-color) 28%, transparent) !important;
-        }
-        .nav-item--profil.active {
-            background: var(--accent-gradient) !important;
-            border-color: transparent !important;
-            box-shadow: 0 6px 20px color-mix(in srgb, var(--primary-color) 35%, transparent) !important;
-        }
-        .nav-profil-avatar {
-            width: 26px !important;
-            height: 26px !important;
-            border-radius: 8px !important;
-            font-size: 0.72rem !important;
-        }
-
-        /* ── ALT PROFİL BÖLÜMÜ ── */
-        .sidebar-profile {
-            padding-top: 1rem !important;
-            margin-top: auto !important;
-            border-top: 1px solid var(--border-color) !important;
-            gap: 10px !important;
-        }
-        .sidebar-profile-avatar {
-            width: 38px !important;
-            height: 38px !important;
-            border-radius: 11px !important;
-            font-size: 0.9rem !important;
-            box-shadow: 0 4px 14px color-mix(in srgb, var(--primary-color) 30%, transparent) !important;
-        }
-        .sidebar-profile-info strong {
-            font-size: 0.88rem !important;
-        }
-
-        /* ── COLLAPSED SIDEBAR DÜZELTME ── */
-        .sidebar.collapsed .nav-item {
-            padding: 14px 0 !important;
-            justify-content: center !important;
-            border-radius: 12px !important;
-        }
-        .sidebar.collapsed .nav-item.active {
-            box-shadow: 0 4px 14px color-mix(in srgb, var(--primary-color) 30%, transparent) !important;
-        }
-
-        /* ── GENEL SIDEBAR SCROLL ── */
-        .sidebar::-webkit-scrollbar { width: 3px; }
-        .sidebar::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 10px;
-        }
-        .sidebar::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-color);
-        }
-
-        /* ── AYARLAR ÖNCESİ AYIRICI ── */
-        .nav-divider--settings {
-            margin: 6px 10px !important;
-            background: linear-gradient(90deg, transparent, var(--border-color), transparent) !important;
-            position: relative !important;
-        }
-
-        /* ── İNDİR BUTONU — YEŞİL ── */
-        .nav-item--indir {
-            color: #16a34a !important;
-            background: rgba(22, 163, 74, 0.07) !important;
-            border: 1px solid rgba(22, 163, 74, 0.18) !important;
-        }
-        .nav-item--indir i {
-            color: #16a34a !important;
-        }
-        .nav-item--indir:hover {
-            background: rgba(22, 163, 74, 0.14) !important;
-            color: #15803d !important;
-            border-color: rgba(22, 163, 74, 0.32) !important;
-            transform: translateX(3px) !important;
-        }
-        .nav-item--indir:hover i {
-            color: #15803d !important;
-            transform: scale(1.15) !important;
-        }
-        .nav-item--indir.active {
-            background: linear-gradient(135deg, #16a34a, #22c55e) !important;
-            color: #fff !important;
-            border-color: transparent !important;
-            box-shadow: 0 6px 20px rgba(22, 163, 74, 0.35) !important;
-        }
-        .nav-item--indir.active i {
-            color: #fff !important;
-        }
-        [data-theme="dark"] .nav-item--indir {
-            background: rgba(22, 163, 74, 0.1) !important;
-            border-color: rgba(22, 163, 74, 0.2) !important;
-        }
-
-        /* ── MOBİL: OVERLAY MENÜ GELİŞTİRME ── */
-        @media (max-width: 768px) {
-            .sidebar {
-                box-shadow: 4px 0 32px rgba(0,0,0,0.12) !important;
-                border-right: none !important;
-            }
-            [data-theme="dark"] .sidebar {
-                box-shadow: 4px 0 32px rgba(0,0,0,0.5) !important;
-            }
-        }
-    </style>
 </head>
 <body>
 
     <!-- ═══ İYİLEŞTİRME ELEMENTLERİ ═══ -->
     <div id="mgScrollProgress" aria-hidden="true"></div>
     <div id="mgMiniToast" aria-live="polite" role="status"></div>
-    <button id="mgFab" aria-label="Hızlı Arama (Ctrl+K)" title="Hızlı Arama">
-        <i class="fas fa-search" aria-hidden="true"></i>
-    </button>
     <!-- ════════════════════════════════ -->
 
     <div id="ptr-indicator" aria-hidden="true">
@@ -911,7 +150,6 @@
     </div>
 
     <div id="splash-screen" role="presentation">
-        <audio id="splashAudio" src="mugol_acilis.mp3" preload="auto" aria-hidden="true"></audio>
         <div class="splash-particles" id="splashParticles"></div>
         <div class="splash-logo-wrap">
             <div class="splash-icon-ring">
@@ -937,7 +175,7 @@
                 <i class="fas fa-bars" aria-hidden="true"></i>
             </button>
             <div class="logo-area" aria-label="Ana Sayfa">
-                <img src="logo.png" alt="" style="height: 40px; border-radius: 8px; object-fit: contain;" aria-hidden="true">
+                <img src="logo.png" alt="" style="height: 40px; max-height: 40px; max-width: 40px; border-radius: 8px; object-fit: contain;" aria-hidden="true" onerror="this.style.display='none'">
                 <span>MuGöl<span style="color:var(--primary-color)">PORTAL</span></span>
             </div>
         </div>
@@ -955,10 +193,21 @@
                 <i class="fas fa-share-alt" aria-hidden="true"></i>
             </button>
 
-            <!-- TEMA TOGGLE BUTONU -->
-            <button class="hamburger-btn mg-theme-toggle" id="headerThemeToggle" aria-label="Tema Değiştir" title="Temayı Değiştir">
-                <i class="fas fa-moon" id="headerThemeIcon"></i>
+            <!-- YENİLE BUTONU -->
+            <button class="hamburger-btn" id="mgRefreshBtn" aria-label="Sayfayı Yenile" title="Yenile" onclick="this.querySelector('i').style.transition='transform 0.4s';this.querySelector('i').style.transform='rotate(360deg)';setTimeout(function(){location.reload();},350);">
+                <i class="fas fa-rotate-right" aria-hidden="true" style="transition:transform 0.4s;"></i>
             </button>
+
+            <!-- TEMA SEÇİCİ BUTONU -->
+            <button class="hamburger-btn mg-theme-toggle" id="headerThemeToggle" aria-label="Tema Seç" title="Tema Seç" aria-haspopup="dialog" aria-expanded="false">
+                <i class="fas fa-palette" id="headerThemeIcon"></i>
+            </button>
+
+            <!-- TEMA PANELİ -->
+            <div id="mgThemePanel" role="dialog" aria-label="Tema Seçici" aria-modal="true" style="display:none;position:absolute;top:calc(100% + 10px);right:0;z-index:9999;background:var(--bg-card);border:1px solid var(--border-color);border-radius:18px;padding:14px;box-shadow:0 20px 60px rgba(0,0,0,0.18),0 4px 16px rgba(0,0,0,0.08);min-width:200px;backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);">
+                <div style="font-size:.7rem;font-weight:900;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px;padding:0 2px;"><i class="fas fa-palette" style="margin-right:5px;"></i>Tema Seç</div>
+                <div id="mgThemeOptions" style="display:grid;grid-template-columns:1fr 1fr;gap:7px;"></div>
+            </div>
 
             <!-- KULLANICI AVATAR BUTONU -->
             <button id="mgAvatar" aria-label="Profil menüsü" aria-haspopup="menu" aria-expanded="false">
@@ -1073,7 +322,7 @@
             </div>
         </aside>
 
-        <button id="scrollTopBtn" aria-label="Sayfanın Başına Dön" title="Yukarı Çık"><i class="fas fa-arrow-up" aria-hidden="true"></i></button>
+
 
         <main class="main-content" role="main">
             <div class="section-header">
@@ -1090,108 +339,38 @@
 
             <!-- SAYFA: ANA SAYFA -->
             <div id="page-anasayfa" class="page-section active" role="region" aria-labelledby="sectionTitle">
-                <div class="welcome-banner welcome-banner--compact">
-                    <div class="welcome-text">
-                        <h1 id="welcomeTitle">Hoş Geldiniz! 👋</h1>
-                        <p id="welcomeDesc">MuGöl PORTAL sistemine giriş yaptınız.</p>
-                    </div>
-                    <div class="datetime" aria-live="polite">
-                        <div class="time" id="timeDisplay">00:00</div>
-                        <div class="date" id="dateDisplay">Yükleniyor...</div>
-                    </div>
-                </div>
 
-                <!-- ── 5 YILDIZ + PLAY STORE ── -->
-                <div id="mgUpdateSection" style="margin-bottom:1.4rem; display:flex; gap:10px; flex-wrap:wrap; align-items:stretch;">
-                    <!-- 5 YILDIZ VER BUTONU -->
-                    <button id="mgRateBtn" aria-label="Play Store'da 5 Yıldız Ver" title="Bizi Play Store'da değerlendirin"
-                        style="
-                            display:flex; align-items:center; justify-content:center; gap:8px;
-                            flex:1; padding:14px 18px;
-                            background:linear-gradient(135deg,#f59e0b 0%,#FF8B00 100%);
-                            color:#fff; border:none; border-radius:16px;
-                            font-family:'Nunito',sans-serif; font-size:.92rem; font-weight:900;
-                            cursor:pointer; white-space:nowrap;
-                            box-shadow:0 8px 24px rgba(245,158,11,.42), inset 0 1px 0 rgba(255,255,255,.2);
-                            transition:transform .22s cubic-bezier(.25,.8,.25,1), box-shadow .22s ease;
-                            position:relative; overflow:hidden;
-                        "
-                        onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 30px rgba(245,158,11,.58)'"
-                        onmouseout="this.style.transform='';this.style.boxShadow='0 8px 24px rgba(245,158,11,.42)'">
-                        <span style="position:absolute;inset:0;background:linear-gradient(105deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,0) 60%);pointer-events:none;"></span>
-                        <i class="fas fa-star" style="font-size:.95rem;flex-shrink:0;"></i>
-                        <span>5 Yıldız Ver</span>
-                    </button>
-                    <!-- İNDİR SEKME BUTONU -->
-                    <button onclick="(function(){var mi=document.querySelector('.nav-item[data-target=&quot;page-indir&quot;]');if(mi)mi.click();})();" aria-label="İndir Sayfasına Git" title="İndir"
-                       style="
-                           display:flex; align-items:center; justify-content:center; gap:10px;
-                           flex:1; padding:14px 20px;
-                           background:linear-gradient(135deg,#16a34a 0%,#22c55e 100%);
-                           color:#fff; border:none; border-radius:16px;
-                           font-family:'Nunito',sans-serif; font-size:.92rem; font-weight:900;
-                           white-space:nowrap; cursor:pointer;
-                           box-shadow:0 8px 24px rgba(22,163,74,.42), inset 0 1px 0 rgba(255,255,255,.2);
-                           transition:transform .22s cubic-bezier(.25,.8,.25,1), box-shadow .22s ease;
-                           position:relative; overflow:hidden;
-                       "
-                       onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 30px rgba(22,163,74,.58)'"
-                       onmouseout="this.style.transform='';this.style.boxShadow='0 8px 24px rgba(22,163,74,.42)'">
-                        <span style="position:absolute;inset:0;background:linear-gradient(105deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,0) 60%);pointer-events:none;"></span>
-                        <i class="fas fa-download" style="font-size:1rem;flex-shrink:0;"></i>
-                        <span>İndir</span>
-                    </button>
-                </div>
-
-                <!-- ── YENİLE BUTONU ── -->
-                <button onclick="location.reload();" aria-label="Sayfayı Yenile" title="Yenile"
-                    style="
-                        display:flex; align-items:center; justify-content:center; gap:8px;
-                        width:100%; padding:13px 18px; margin-bottom:1.4rem;
-                        background:linear-gradient(135deg,#0ea5e9 0%,#06b6d4 100%);
-                        color:#fff; border:none; border-radius:16px;
-                        font-family:'Nunito',sans-serif; font-size:.88rem; font-weight:800;
-                        cursor:pointer;
-                        box-shadow:0 8px 24px rgba(14,165,233,.38), inset 0 1px 0 rgba(255,255,255,.2);
-                        transition:transform .22s cubic-bezier(.25,.8,.25,1), box-shadow .22s ease;
-                        position:relative; overflow:hidden;
-                    "
-                    onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 30px rgba(14,165,233,.55)'"
-                    onmouseout="this.style.transform='';this.style.boxShadow='0 8px 24px rgba(14,165,233,.38)'">
-                    <span style="position:absolute;inset:0;background:linear-gradient(105deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,0) 60%);pointer-events:none;"></span>
-                    <i class="fas fa-rotate-right" style="font-size:.9rem;flex-shrink:0;"></i>
-                    <span>Yenile</span>
-                </button>
-                <!-- ─────────────────────────────── -->
-
-                <!-- ── İSTATİSTİK ŞERİDİ ── -->
-                <div class="mg-stats" id="mgStats" aria-label="Portal istatistikleri">
-                    <div class="mg-sc">
-                        <div class="mg-si" style="background:linear-gradient(135deg,#4318ff,#6366f1)"><i class="fas fa-th-large"></i></div>
-                        <div>
-                            <span class="mg-sv" id="mgStatApps">28</span><!-- count:28 -->
-                            <span class="mg-sl">Uygulama</span>
-                        </div>
+                <!-- ── HERO BANNER (resim tasarımı) ── -->
+                <div class="mg-hero-banner" aria-label="MuGöl Portal Hoş Geldiniz">
+                    <div class="mg-hero-badge">
+                        <i class="fas fa-bolt" aria-hidden="true"></i> V3.0 YAYINDA
                     </div>
-                    <div class="mg-sc">
-                        <div class="mg-si" style="background:linear-gradient(135deg,#f59e0b,#FF8B00)"><i class="fas fa-folder-open"></i></div>
-                        <div>
-                            <span class="mg-sv">4</span>
-                            <span class="mg-sl">Kategori</span>
-                        </div>
-                    </div>
-
-                    <div class="mg-sc">
-                        <div class="mg-si" style="background:linear-gradient(135deg,#FF5630,#f59e0b)"><i class="fas fa-bolt"></i></div>
-                        <div>
-                            <span class="mg-sv" id="mgStatVisit">1</span>
-                            <span class="mg-sl">Ziyaretim</span>
-                        </div>
+                    <h1 class="mg-hero-title">
+                        Tüm uygulamalarınız <span class="mg-hero-accent">tek bir portalda.</span>
+                    </h1>
+                    <p class="mg-hero-desc">
+                        Takvim, hava durumu, ekonomi, deprem takibi, namaz vakitleri ve daha fazlası —
+                        hepsi MuGöl PORTAL'da bir tık uzaklıkta.
+                    </p>
+                    <div class="mg-hero-actions">
+                        <button class="mg-hero-btn-primary" onclick="(function(){var mi=document.querySelector('[data-target=&quot;page-tumuu&quot;]');if(mi)mi.click();})();" aria-label="Tüm uygulamaları keşfet">
+                            Keşfetmeye Başla <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                        </button>
+                        <button class="mg-hero-btn-secondary" onclick="(function(){var mi=document.querySelector('[data-target=&quot;page-ayarlar&quot;]');if(mi)mi.click();})();" aria-label="Tercihler sayfasına git">
+                            <i class="fas fa-sliders-h" aria-hidden="true"></i> Tercihler
+                        </button>
+                        <button class="mg-hero-btn-secondary" onclick="(function(){var mi=document.querySelector('[data-target=&quot;page-indir&quot;]');if(mi)mi.click();})();" aria-label="İndir sayfasına git" style="color:#16a34a; border-color:rgba(22,163,74,0.3); background:rgba(22,163,74,0.07);">
+                            <i class="fas fa-download" aria-hidden="true"></i> İndir
+                        </button>
                     </div>
                 </div>
 
-                <!-- ── SON AÇILANLAR ── -->
-                <div class="mg-recent" id="mgRecent">
+                <!-- ── UYGULAMALAR GRID BAŞLIĞI (gizlendi) ── -->
+
+                <!-- ── PORTAL GRID (kaldırıldı) ── -->
+
+                <!-- ── SON AÇILANLAR (gizli tutuluyor ama JS uyumluluğu için bırakıldı) ── -->
+                <div class="mg-recent" id="mgRecent" style="display:none;">
                     <div class="mg-rh">
                         <span class="mg-rt"><i class="fas fa-history" aria-hidden="true"></i> Son Açılanlar</span>
                         <button class="mg-rclear" id="mgRClear" aria-label="Geçmişi temizle">Temizle</button>
@@ -1200,33 +379,169 @@
                         <span class="mg-rempty">Henüz uygulama açmadınız.</span>
                     </div>
                 </div>
-                <!-- Hızlı Erişim Şeridi -->
-                <div class="quick-access-strip" role="navigation" aria-label="Hızlı Erişim">
-                    <a href="https://mugol-portal.github.io/MuGol.bugun/" class="qa-chip" target="_blank">
-                        <span class="qa-icon" style="background:linear-gradient(135deg,#4318ff,#00d2ff)"><i class="fas fa-calendar-day"></i></span>
-                        <span>Takvim</span>
-                    </a>
-                    <a href="https://mugol-portal.github.io/mugol.havadurumu/" class="qa-chip" target="_blank">
-                        <span class="qa-icon" style="background:linear-gradient(135deg,#FFAB00,#FF8B00)"><i class="fas fa-cloud-sun"></i></span>
-                        <span>Hava</span>
-                    </a>
-                    <a href="https://mugol-portal.github.io/mugol.haber/" class="qa-chip" target="_blank">
-                        <span class="qa-icon" style="background:linear-gradient(135deg,#FF5630,#E31A1A)"><i class="fas fa-newspaper"></i></span>
-                        <span>Haber</span>
-                    </a>
-                    <a href="https://mugol-portal.github.io/mugol.ekonomi/" class="qa-chip" target="_blank">
-                        <span class="qa-icon" style="background:linear-gradient(135deg,#00B8D9,#0052CC)"><i class="fas fa-chart-line"></i></span>
-                        <span>Ekonomi</span>
-                    </a>
-                    <a href="https://mugol-portal.github.io/deprem/" class="qa-chip" target="_blank">
-                        <span class="qa-icon" style="background:linear-gradient(135deg,#E31A1A,#7f1d1d)"><i class="fas fa-wave-square"></i></span>
-                        <span>Deprem</span>
-                    </a>
-                    <a href="https://mugol-portal.github.io/mugol.imsak-vakti/" class="qa-chip" target="_blank">
-                        <span class="qa-icon" style="background:linear-gradient(135deg,#36B37E,#064e3b)"><i class="fas fa-mosque"></i></span>
-                        <span>Namaz</span>
-                    </a>
+
+                <!-- JS uyumluluğu için gizli stat elementleri -->
+                <div style="display:none;">
+                    <span id="mgStatVisit">1</span>
                 </div>
+                <!-- ── HIZLI ERİŞİM ŞERİDİ v4 — Düzeltilmiş Kaydırma ── -->
+
+                <!-- Saat & Tarih Widget -->
+                <div class="mg-clock-widget" id="mgClockWidget">
+                    <div class="mg-cw-left">
+                        <div class="mg-cw-time" id="mgHomeTime">--:--</div>
+                        <div class="mg-cw-date" id="mgHomeDate">Yükleniyor...</div>
+                    </div>
+                    <div class="mg-cw-right">
+                        <div class="mg-cw-icon"><i class="fas fa-clock"></i></div>
+                        <span class="mg-cw-pill" id="mgHomeGreet">Merhaba</span>
+                    </div>
+                </div>
+
+                <!-- Hızlı Erişim Şeridi v4 -->
+                <div class="mg-qa-section">
+                    <div class="mg-qa-header">
+                        <span class="mg-qa-title">Hızlı Erişim</span>
+                        <button class="mg-qa-see-all"
+                            onclick="(function(){var mi=document.querySelector('[data-target=&quot;page-tumuu&quot;]');if(mi)mi.click();})();"
+                            aria-label="Tüm uygulamaları gör">
+                            Tümünü Gör →
+                        </button>
+                    </div>
+                    <div class="mg-qa-scroll" role="list" aria-label="Hızlı erişim uygulamaları">
+                        <a href="https://mugol-portal.github.io/MuGol.bugun/" class="mg-qa-card" target="_blank" role="listitem">
+                            <span class="mg-qa-icon" style="background:linear-gradient(135deg,#4318ff,#6366f1)"><i class="fas fa-calendar-day"></i></span>
+                            <span class="mg-qa-label">Takvim</span>
+                        </a>
+                        <a href="https://mugol-portal.github.io/mugol.havadurumu/" class="mg-qa-card" target="_blank" role="listitem">
+                            <span class="mg-qa-icon" style="background:linear-gradient(135deg,#FFAB00,#FF8B00)"><i class="fas fa-cloud-sun"></i></span>
+                            <span class="mg-qa-label">Hava</span>
+                        </a>
+                        <a href="https://mugol-portal.github.io/mugol.haber/" class="mg-qa-card" target="_blank" role="listitem">
+                            <span class="mg-qa-icon" style="background:linear-gradient(135deg,#FF5630,#E31A1A)"><i class="fas fa-newspaper"></i></span>
+                            <span class="mg-qa-label">Haber</span>
+                        </a>
+                        <a href="https://mugol-portal.github.io/mugol.ekonomi/" class="mg-qa-card" target="_blank" role="listitem">
+                            <span class="mg-qa-icon" style="background:linear-gradient(135deg,#00B8D9,#0052CC)"><i class="fas fa-chart-line"></i></span>
+                            <span class="mg-qa-label">Ekonomi</span>
+                        </a>
+                        <a href="https://mugol-portal.github.io/deprem/" class="mg-qa-card" target="_blank" role="listitem">
+                            <span class="mg-qa-icon" style="background:linear-gradient(135deg,#E31A1A,#7f1d1d)"><i class="fas fa-wave-square"></i></span>
+                            <span class="mg-qa-label">Deprem</span>
+                        </a>
+                        <a href="https://mugol-portal.github.io/mugol.imsak-vakti/" class="mg-qa-card" target="_blank" role="listitem">
+                            <span class="mg-qa-icon" style="background:linear-gradient(135deg,#36B37E,#064e3b)"><i class="fas fa-mosque"></i></span>
+                            <span class="mg-qa-label">Namaz</span>
+                        </a>
+                        <a href="https://mugol-portal.github.io/mugol.saglik/" class="mg-qa-card" target="_blank" role="listitem">
+                            <span class="mg-qa-icon" style="background:linear-gradient(135deg,#36B37E,#10b981)"><i class="fas fa-heartbeat"></i></span>
+                            <span class="mg-qa-label">Sağlık</span>
+                        </a>
+                        <a href="https://mugol-portal.github.io/education/" class="mg-qa-card" target="_blank" role="listitem">
+                            <span class="mg-qa-new" aria-label="Yeni"></span>
+                            <span class="mg-qa-icon" style="background:linear-gradient(135deg,#FF8B00,#FFD000)"><i class="fas fa-graduation-cap"></i></span>
+                            <span class="mg-qa-label">Eğitim</span>
+                        </a>
+                        <a href="https://mugol-portal.github.io/hesapmakinesi/" class="mg-qa-card" target="_blank" role="listitem">
+                            <span class="mg-qa-icon" style="background:linear-gradient(135deg,#6554C0,#8b5cf6)"><i class="fas fa-calculator"></i></span>
+                            <span class="mg-qa-label">Hesap</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- ── YENİ ÖZELLİKLER BLOĞU ── -->
+
+
+                <!-- Önerilen Uygulamalar — Günlük Değişir -->
+                <div class="mg-section-label" style="margin-top:6px;">
+                    <span class="mg-section-label-text">Önerilen</span>
+                </div>
+
+                <div id="mgOnerilenContainer"></div>
+
+                <script>
+                (function() {
+                    var APPS = [
+                        { href:'https://mugol-portal.github.io/deprem/',         color:'#E31A1A', color2:'#7f1d1d',  icon:'fa-wave-square',    title:'Sismik Radar',       sub:'Son depremleri anlık takip et',           badge:'red',   label:'Canlı'   },
+                        { href:'https://mugol-portal.github.io/mugol.ekonomi/',  color:'#00B8D9', color2:'#0052CC',  icon:'fa-chart-line',     title:'MuGöl Ekonomi',      sub:'Döviz, altın ve piyasa verileri',         badge:'blue',  label:'Yeni'    },
+                        { href:'https://mugol-portal.github.io/mugol.imsak-vakti/', color:'#36B37E', color2:'#064e3b', icon:'fa-mosque',       title:'Namaz Vakitleri',    sub:'Günlük imsak ve namaz takibi',            badge:'green', label:'Güncel'  },
+                        { href:'https://mugol-portal.github.io/mugol.havadurumu/', color:'#FFAB00', color2:'#FF8B00',  icon:'fa-cloud-sun',    title:'MuGöl Hava Durumu',  sub:'Anlık hava durumu ve tahminler',          badge:'blue',  label:'Canlı'   },
+                        { href:'https://mugol-portal.github.io/mugol.haber/',    color:'#FF5630', color2:'#E31A1A',  icon:'fa-newspaper',      title:'MuGöl Haber',        sub:'Güncel haberler ve son dakika',           badge:'red',   label:'Canlı'   },
+                        { href:'https://mugol-portal.github.io/mugol.saglik/',   color:'#36B37E', color2:'#10b981',  icon:'fa-heartbeat',      title:'MuGöl Sağlık',       sub:'Sağlık verileri ve takip araçları',       badge:'green', label:'Güncel'  },
+                        { href:'https://mugol-portal.github.io/education/',      color:'#FF8B00', color2:'#FFD000',  icon:'fa-graduation-cap', title:'MuGöl Education',    sub:'Kapsamlı dijital eğitim portalı',         badge:'blue',  label:'Yeni'    },
+                        { href:'https://mugol-portal.github.io/hesapmakinesi/',  color:'#6554C0', color2:'#8b5cf6',  icon:'fa-calculator',     title:'MuGöl Hesap',        sub:'Hızlı ve pratik hesap makinesi',          badge:'green', label:'Güncel'  },
+                        { href:'https://mugol-portal.github.io/alisverislistesi/', color:'#00B8D9', color2:'#0052CC', icon:'fa-shopping-cart', title:'Alışveriş Listem',   sub:'Günlük ihtiyaçlarınızı yönetin',         badge:'blue',  label:'Yeni'    },
+                        { href:'https://mugol-portal.github.io/mugol.notdefteri/', color:'#FFAB00', color2:'#FF8B00', icon:'fa-sticky-note',  title:'Not Defterim',       sub:'Notlarınızı hızlıca yazın ve saklayın',  badge:'green', label:'Güncel'  },
+                        { href:'https://mugol-portal.github.io/Mugol.games/',    color:'#FF5630', color2:'#FF8B00',  icon:'fa-gamepad',        title:'MuGöl GAMES',        sub:'Eğlenceli oyunlar ve boş zaman',          badge:'red',   label:'Popüler' },
+                        { href:'https://mugol-portal.github.io/radyo-mugol/',    color:'#FF5630', color2:'#E31A1A',  icon:'fa-radio',          title:'MuGöl Radyo',        sub:'Canlı radyo dinle',                       badge:'red',   label:'Canlı'   },
+                        { href:'https://mugol-portal.github.io/mugol-tv/',       color:'#E31A1A', color2:'#7f1d1d',  icon:'fa-tv',             title:'MuGöl TV',           sub:'Canlı TV kanallarını izle',               badge:'red',   label:'Canlı'   },
+                        { href:'https://mugol-portal.github.io/mugol-qr-kodokuyucu/', color:'#4318ff', color2:'#6366f1', icon:'fa-qrcode',   title:'QR Kod Okuyucu',     sub:'QR kodlarını hızlıca oku',                badge:'blue',  label:'Yeni'    }
+                    ];
+
+                    // Günün indexine göre 3 farklı uygulama seç
+                    var dayIndex = new Date().getDate() % APPS.length;
+                    var shown = [
+                        APPS[dayIndex % APPS.length],
+                        APPS[(dayIndex + 4) % APPS.length],
+                        APPS[(dayIndex + 8) % APPS.length]
+                    ];
+
+                    var container = document.getElementById('mgOnerilenContainer');
+                    if (!container) return;
+
+                    container.innerHTML = shown.map(function(a) {
+                        return '<a href="' + a.href + '" class="mg-daily-card" target="_blank" style="--dc-color:' + a.color + '">' +
+                            '<div class="mg-dc-icon" style="background:linear-gradient(135deg,' + a.color + ',' + a.color2 + ')"><i class="fas ' + a.icon + '"></i></div>' +
+                            '<div class="mg-dc-body">' +
+                                '<div class="mg-dc-title">' + a.title + '</div>' +
+                                '<div class="mg-dc-sub">' + a.sub + '</div>' +
+                            '</div>' +
+                            '<span class="mg-dc-badge ' + a.badge + '">' + a.label + '</span>' +
+                        '</a>';
+                    }).join('');
+                })();
+                </script>
+
+                <!-- Saat Widget JS -->
+                <script>
+                (function() {
+                    var timeEl  = document.getElementById('mgHomeTime');
+                    var dateEl  = document.getElementById('mgHomeDate');
+                    var greetEl = document.getElementById('mgHomeGreet');
+                    if (!timeEl) return;
+
+                    var DAYS = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+                    var MONTHS = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran',
+                                  'Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+
+                    function pad(n) { return n < 10 ? '0' + n : n; }
+
+                    function update() {
+                        var now = new Date();
+                        var h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+                        timeEl.textContent = pad(h) + ':' + pad(m);
+
+                        var day = DAYS[now.getDay()];
+                        var date = now.getDate();
+                        var month = MONTHS[now.getMonth()];
+                        dateEl.textContent = day + ', ' + date + ' ' + month;
+
+                        var greet = h < 6  ? 'İyi Geceler' :
+                                    h < 12 ? 'Günaydın'    :
+                                    h < 18 ? 'İyi Günler'  : 'İyi Akşamlar';
+                        if (greetEl) greetEl.textContent = greet;
+                    }
+
+                    update();
+                    setInterval(update, 1000);
+                })();
+                </script>
+
+                <!-- ── KATEGORİLER BAŞLIĞI ── -->
+                <div class="mg-section-label" style="margin-top:8px;">
+                    <span class="mg-section-label-text">Kategoriler</span>
+                </div>
+
                 <div class="category-grid">
                     <div class="category-card" role="button" tabindex="0" data-target="page-gunluk" aria-label="Günlük Kategorisi - 7 Uygulama">
                         <div class="cat-icon-wrap" style="background: linear-gradient(135deg, #4318ff, #00d2ff);" aria-hidden="true">
@@ -1252,7 +567,7 @@
                         <i class="fas fa-chevron-right cat-arrow" aria-hidden="true"></i>
                     </div>
 
-                    <div class="category-card" role="button" tabindex="0" data-target="page-araclar" aria-label="Araçlar Kategorisi - 10 Uygulama">
+                    <div class="category-card" role="button" tabindex="0" data-target="page-araclar" aria-label="Araçlar Kategorisi - 9 Uygulama">
                         <div class="cat-icon-wrap" style="background: linear-gradient(135deg, #00B8D9, #0052CC);" aria-hidden="true">
                             <i class="fas fa-toolbox"></i>
                         </div>
@@ -1260,7 +575,7 @@
                             <h3>Araçlar</h3>
                             <p>İşinizi kolaylaştıran dijital araçlar</p>
                         </div>
-                        <span class="cat-count">10 Uygulama</span>
+                        <span class="cat-count">9 Uygulama</span>
                         <i class="fas fa-chevron-right cat-arrow" aria-hidden="true"></i>
                     </div>
 
@@ -1333,12 +648,13 @@
                         <span class="tumuu-label">Sismik Radar</span>
                     </a>
 
-                    <!-- ── AdMob Banner Reklam #1 (Tümü Grid) ── -->
+                    <!-- ── AdSense Banner Reklam #1 (Tümü Grid) ── -->
                     <div class="mg-admob-wrap" aria-label="Reklam">
+                        <span class="mg-admob-label">Reklam</span>
                         <ins class="adsbygoogle"
                              style="display:block;width:100%;min-height:50px;"
-                             data-ad-client="ca-app-pub-1880946354382681"
-                             data-ad-slot="5865212560"
+                             data-ad-client="ca-pub-1880946354382681"
+                             data-ad-slot="1435965312"
                              data-ad-format="banner"
                              data-full-width-responsive="true"></ins>
                         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
@@ -1477,19 +793,20 @@
                         <span class="tumuu-label">MuGöl Sayaç</span>
                     </a>
 
-                    <a href="https://mugol-portal.github.io/mugol.-dijital.pano/" class="tumuu-tile" style="animation-delay:0.938s;">
+                    <a href="https://mugol-portal.github.io/mugol.-dijital.pano/" class="tumuu-tile" style="animation-delay:0.975s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="../images/dijitalpano.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Pano&background=0052CC&color=fff&rounded=true&bold=true'">
+                            <img src="../images/dijitalpano.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Pano&background=4318ff&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl Dijital Pano</span>
                     </a>
 
-                    <!-- ── AdMob Banner Reklam #2 (Tümü Grid) ── -->
+                    <!-- ── AdSense Banner Reklam #2 (Tümü Grid) ── -->
                     <div class="mg-admob-wrap" aria-label="Reklam">
+                        <span class="mg-admob-label">Reklam</span>
                         <ins class="adsbygoogle"
                              style="display:block;width:100%;min-height:50px;"
-                             data-ad-client="ca-app-pub-1880946354382681"
-                             data-ad-slot="5865212560"
+                             data-ad-client="ca-pub-1880946354382681"
+                             data-ad-slot="1435965312"
                              data-ad-format="banner"
                              data-full-width-responsive="true"></ins>
                         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
@@ -1574,12 +891,13 @@
                         </div>
                     </a>
 
-                    <!-- ── AdMob Banner Reklam (Günlük Grid) ── -->
+                    <!-- ── AdSense Banner Reklam (Günlük Grid) ── -->
                     <div class="mg-admob-wrap" aria-label="Reklam">
+                        <span class="mg-admob-label">Reklam</span>
                         <ins class="adsbygoogle"
                              style="display:block;width:100%;min-height:50px;"
-                             data-ad-client="ca-app-pub-1880946354382681"
-                             data-ad-slot="5865212560"
+                             data-ad-client="ca-pub-1880946354382681"
+                             data-ad-slot="1435965312"
                              data-ad-format="banner"
                              data-full-width-responsive="true"></ins>
                         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
@@ -1678,12 +996,13 @@
                         </div>
                     </a>
 
-                    <!-- ── AdMob Banner Reklam (Eğitim Grid) ── -->
+                    <!-- ── AdSense Banner Reklam (Eğitim Grid) ── -->
                     <div class="mg-admob-wrap" aria-label="Reklam">
+                        <span class="mg-admob-label">Reklam</span>
                         <ins class="adsbygoogle"
                              style="display:block;width:100%;min-height:50px;"
-                             data-ad-client="ca-app-pub-1880946354382681"
-                             data-ad-slot="5865212560"
+                             data-ad-client="ca-pub-1880946354382681"
+                             data-ad-slot="1435965312"
                              data-ad-format="banner"
                              data-full-width-responsive="true"></ins>
                         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
@@ -1794,12 +1113,13 @@
                         </div>
                     </a>
 
-                    <!-- ── AdMob Banner Reklam (Araçlar Grid) ── -->
+                    <!-- ── AdSense Banner Reklam (Araçlar Grid) ── -->
                     <div class="mg-admob-wrap" aria-label="Reklam">
+                        <span class="mg-admob-label">Reklam</span>
                         <ins class="adsbygoogle"
                              style="display:block;width:100%;min-height:50px;"
-                             data-ad-client="ca-app-pub-1880946354382681"
-                             data-ad-slot="5865212560"
+                             data-ad-client="ca-pub-1880946354382681"
+                             data-ad-slot="1435965312"
                              data-ad-format="banner"
                              data-full-width-responsive="true"></ins>
                         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
@@ -1879,10 +1199,10 @@
 
                     <a href="https://mugol-portal.github.io/mugol.-dijital.pano/" class="app-card" style="animation-delay: 0.9s;">
                         <div class="app-card-header">
-                            <img src="../images/dijitalpano.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Pano&background=0052CC&color=fff&rounded=true&bold=true'">
+                            <img src="../images/dijitalpano.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Pano&background=4318ff&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl Dijital Pano</h3></div>
                         </div>
-                        <p class="app-desc">Kişisel dijital panonuzu oluşturun ve bilgilerinizi düzenli tutun.</p>
+                        <p class="app-desc">Kişisel dijital panonuzu oluşturun, widget'larla özelleştirin.</p>
                         <div class="app-card-footer">
                             <span class="app-tag" data-cat="Araç">Araç</span>
                             <div class="launch-btn" aria-hidden="true"><span class="btn-label">Aç</span><i class="fas fa-arrow-right"></i></div>
@@ -1970,6 +1290,20 @@
 
                     <div class="setting-item">
                         <div class="setting-info">
+                            <i class="fas fa-music" aria-hidden="true"></i>
+                            <div>
+                                <h4>Açılış Müziği</h4>
+                                <p>Uygulama açılırken çalan karşılama müziğini açar veya kapatır.</p>
+                            </div>
+                        </div>
+                        <label class="switch" aria-label="Açılış Müziğini Aç/Kapat">
+                            <input type="checkbox" id="musicSwitch" checked>
+                            <span class="slider" aria-hidden="true"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
                             <i class="fas fa-text-height" aria-hidden="true"></i>
                             <div>
                                 <h4>Yazı Boyutu</h4>
@@ -2040,12 +1374,12 @@
                                 background:linear-gradient(135deg,#4318ff,#6366f1);
                                 color:#fff; border:none; font-family:'Nunito',sans-serif;
                                 font-size:0.9rem; font-weight:800; cursor:pointer;
-                                box-shadow:0 4px 14px rgba(67,24,255,.3);
+                                box-shadow:0 4px 14px rgba(67, 24, 255, 0.3);
                                 transition:transform .2s,box-shadow .2s;
                                 white-space:nowrap;
                             "
-                            onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 22px rgba(67,24,255,.45)'"
-                            onmouseout="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(67,24,255,.3)'">
+                            onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 22px rgba(67, 24, 255, 0.29)'"
+                            onmouseout="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(67, 24, 255, 0.3)'">
                             <i class="fas fa-expand" id="mgFsIconSettings"></i>
                             <span id="mgFsLabelSettings">Tam Ekrana Geç</span>
                         </button>
@@ -2067,12 +1401,12 @@
                                 background:linear-gradient(135deg,#4318ff 0%,#2979ff 50%,#00d2ff 100%);
                                 color:#fff; border:none; font-family:'Nunito',sans-serif;
                                 font-size:0.9rem; font-weight:800; cursor:pointer;
-                                box-shadow:0 4px 14px rgba(67,24,255,.3);
+                                box-shadow:0 4px 14px rgba(67, 24, 255, 0.3);
                                 transition:transform .2s,box-shadow .2s;
                                 white-space:nowrap; position:relative; overflow:hidden;
                             "
-                            onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 22px rgba(67,24,255,.45)'"
-                            onmouseout="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(67,24,255,.3)'">
+                            onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 22px rgba(67, 24, 255, 0.29)'"
+                            onmouseout="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(67, 24, 255, 0.3)'">
                             <span style="position:absolute;inset:0;background:linear-gradient(105deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,0) 60%);pointer-events:none;"></span>
                             <i class="fas fa-sync-alt" id="mgUpdateIcon" aria-hidden="true"></i>
                             <span id="mgUpdateLabel">Güncelleme Yap</span>
@@ -2094,7 +1428,7 @@
                                 <p>Fikirleriniz, önerileriniz veya destek talepleriniz bizim için çok değerli. Formu doldurarak doğrudan ekibimize mesaj gönderebilirsiniz.</p>
                                 
                                 <div class="contact-pill-links">
-                                    <a href="https://mugol-portal.github.io/erisim" target="_blank" class="contact-pill" aria-label="Sosyal Medya Hesaplarımız" style="display:inline-flex; align-items:center; gap:8px; padding:12px 22px; border-radius:14px; background:linear-gradient(135deg,#4318ff,#00d2ff); color:#fff; font-weight:800; font-size:0.95rem; text-decoration:none; border:none; box-shadow:0 4px 16px rgba(67,24,255,0.3);">
+                                    <a href="https://mugol-portal.github.io/erisim" target="_blank" class="contact-pill" aria-label="Sosyal Medya Hesaplarımız" style="display:inline-flex; align-items:center; gap:8px; padding:12px 22px; border-radius:14px; background:linear-gradient(135deg,#4318ff,#00d2ff); color:#fff; font-weight:800; font-size:0.95rem; text-decoration:none; border:none; box-shadow:0 4px 16px rgba(67, 24, 255, 0.3);">
                                         <i class="fas fa-share-alt" aria-hidden="true"></i>
                                         Sosyal Medya Hesaplarımız
                                     </a>
@@ -2152,7 +1486,7 @@
             <!-- SAYFA: PROFİL -->
             <div id="page-profil" class="page-section" role="region" aria-label="Profilim">
 
-                <!-- Profil İçeriği -->
+                <!-- GİRİŞ YAPILMIŞ: Profil İçeriği -->
                 <div id="profil-icerik">
 
                 <!-- Profil Hero Kartı -->
@@ -2255,9 +1589,7 @@
                     </p>
                 </div>
 
-
                 </div><!-- /profil-icerik -->
-
 
             </div>
 
@@ -2331,6 +1663,12 @@
                                     </div>
                                     <span style="font-size:.88rem;font-weight:800;color:var(--text-main);">ChatGPT</span>
                                 </div>
+                                <div style="display:flex;align-items:center;gap:11px;padding:9px 13px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:13px;">
+                                    <div style="width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#e94cff,#7b2ff7);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                        <i class="fas fa-heart" style="color:#fff;font-size:.75rem;"></i>
+                                    </div>
+                                    <span style="font-size:.88rem;font-weight:800;color:var(--text-main);">Lovable</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2342,7 +1680,7 @@
 
                 <!-- Başlık Kartı -->
                 <div class="content-card premium-card" style="text-align: center; padding: 3rem 2rem 2rem;">
-                    <div style="width:72px;height:72px;background:linear-gradient(135deg,#4318ff,#00d2ff);border-radius:20px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:1.2rem;box-shadow:0 12px 28px rgba(67,24,255,0.25);">
+                    <div style="width:72px;height:72px;background:linear-gradient(135deg,#4318ff,#00d2ff);border-radius:20px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:1.2rem;box-shadow:0 12px 28px rgba(67, 24, 255, 0.25);">
                         <i class="fas fa-shield-alt" style="font-size:2rem;color:#fff;"></i>
                     </div>
                     <h2 style="font-size:2rem;font-weight:900;color:var(--text-main);margin:0 0 0.5rem;">Gizlilik Politikası</h2>
@@ -2350,7 +1688,7 @@
                 </div>
 
                 <!-- Ana ilke - vurgulu kutu -->
-                <div class="content-card" style="border-left:4px solid #4318ff;background:linear-gradient(135deg,rgba(67,24,255,0.05),rgba(0,210,255,0.05));">
+                <div class="content-card" style="border-left:4px solid #4318ff;background:linear-gradient(135deg,rgba(67, 24, 255, 0.05),rgba(0,210,255,0.05));">
                     <div style="display:flex;align-items:flex-start;gap:1rem;">
                         <div style="width:44px;height:44px;background:linear-gradient(135deg,#4318ff,#00d2ff);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                             <i class="fas fa-cloud" style="color:#fff;font-size:1.1rem;"></i>
@@ -2364,12 +1702,13 @@
                     </div>
                 </div>
 
-                <!-- Veri Kartı -->
+                <!-- Maddeler -->
                 <div class="content-card">
                     <h3 style="font-size:1.1rem;font-weight:900;color:var(--text-main);margin:0 0 1.2rem;display:flex;align-items:center;gap:0.6rem;">
                         <i class="fas fa-list-ul" style="color:#4318ff;"></i> Hangi Veriler, Nerede Saklanır?
                     </h3>
                     <div style="display:flex;flex-direction:column;gap:0.8rem;">
+
                         <div style="display:flex;align-items:flex-start;gap:0.9rem;padding:0.9rem;background:rgba(0,0,0,0.03);border-radius:14px;">
                             <i class="fas fa-palette" style="color:#4318ff;font-size:1.2rem;margin-top:2px;"></i>
                             <div>
@@ -2377,6 +1716,7 @@
                                 <span style="color:var(--text-muted);font-size:0.9rem;font-weight:600;">Seçtiğiniz koyu/açık tema, renk paleti ve dil ayarı tarayıcı localStorage'ında tutulur. Sayfayı kapatsanız da tercihleriniz korunur.</span>
                             </div>
                         </div>
+
                         <div style="display:flex;align-items:flex-start;gap:0.9rem;padding:0.9rem;background:rgba(0,0,0,0.03);border-radius:14px;">
                             <i class="fas fa-bell" style="color:#4318ff;font-size:1.2rem;margin-top:2px;"></i>
                             <div>
@@ -2384,6 +1724,7 @@
                                 <span style="color:var(--text-muted);font-size:0.9rem;font-weight:600;">Hangi bildirimleri okuduğunuza dair bilgi cihazınızdaki localStorage'a kaydedilir. İçerik dışarıya aktarılmaz.</span>
                             </div>
                         </div>
+
                     </div>
                 </div>
 
@@ -2435,7 +1776,7 @@
                 <div class="content-card premium-card" style="text-align:center; padding:2.4rem 1.8rem 2rem; margin-bottom:1.2rem;">
                     <div style="width:72px;height:72px;background:linear-gradient(135deg,#4318ff,#00d2ff);border-radius:20px;
                                 display:inline-flex;align-items:center;justify-content:center;margin-bottom:1.2rem;
-                                box-shadow:0 12px 28px rgba(67,24,255,0.28);">
+                                box-shadow:0 12px 28px rgba(67, 24, 255, 0.28);">
                         <i class="fas fa-download" style="font-size:2rem;color:#fff;"></i>
                     </div>
                     <h2 style="font-size:1.7rem;font-weight:900;color:var(--text-main);margin:0 0 0.5rem;">MuGöl PORTAL'ı İndir</h2>
@@ -2497,7 +1838,7 @@
                         <div style="width:48px;height:48px;border-radius:14px;
                                     background:linear-gradient(135deg,#4318ff,#00d2ff);
                                     display:flex;align-items:center;justify-content:center;flex-shrink:0;
-                                    box-shadow:0 4px 14px rgba(67,24,255,.3);">
+                                    box-shadow:0 4px 14px rgba(67, 24, 255, 0.3);">
                             <i class="fas fa-mobile-alt" style="color:#fff;font-size:1.3rem;"></i>
                         </div>
                         <div>
@@ -2531,11 +1872,11 @@
                                width:100%;padding:16px;border:none;border-radius:16px;
                                background:linear-gradient(135deg,#4318ff 0%,#2979ff 50%,#00d2ff 100%);
                                color:#fff;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:900;
-                               cursor:pointer;box-shadow:0 8px 26px rgba(67,24,255,.42),inset 0 1px 0 rgba(255,255,255,.2);
+                               cursor:pointer;box-shadow:0 8px 26px rgba(67, 24, 255, 0.27),inset 0 1px 0 rgba(255,255,255,.2);
                                transition:transform .22s cubic-bezier(.25,.8,.25,1),box-shadow .22s ease;
                                position:relative;overflow:hidden;"
-                        onmouseover="if(!this.disabled){this.style.transform='translateY(-2px)';this.style.boxShadow='0 14px 32px rgba(67,24,255,.55)'}"
-                        onmouseout="this.style.transform='';this.style.boxShadow='0 8px 26px rgba(67,24,255,.42)'">
+                        onmouseover="if(!this.disabled){this.style.transform='translateY(-2px)';this.style.boxShadow='0 14px 32px rgba(67, 24, 255, 0.36)'}"
+                        onmouseout="this.style.transform='';this.style.boxShadow='0 8px 26px rgba(67, 24, 255, 0.27)'">
                         <span style="position:absolute;inset:0;background:linear-gradient(105deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,0) 60%);pointer-events:none;"></span>
                         <i class="fas fa-download" id="mgPwaBtnIcon" style="font-size:1.05rem;flex-shrink:0;"></i>
                         <span id="mgPwaBtnText">Uygulamayı Yükle</span>
@@ -2588,7 +1929,7 @@
                                 ✅ Bildirim desteği<br>✅ Arka planda çalışır<br>✅ Otomatik güncelleme<br>📱 Yalnızca Android
                             </div>
                         </div>
-                        <div style="padding:14px;border-radius:14px;background:rgba(67,24,255,.04);border:1.5px solid rgba(67,24,255,.1);">
+                        <div style="padding:14px;border-radius:14px;background:rgba(67, 24, 255, 0.04);border:1.5px solid rgba(67, 24, 255, 0.1);">
                             <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
                                 <i class="fas fa-mobile-alt" style="color:#4318ff;font-size:1.2rem;"></i>
                                 <b style="font-size:.88rem;color:var(--text-main);">PWA</b>
@@ -2613,35 +1954,6 @@
     <!-- ════════════════════════════ -->
 
     <!-- NSosyal & Pinterest Pill Stilleri -->
-    <style>
-        .nsosyal-pill {
-            background: linear-gradient(135deg, #ff6b35, #f7c59f) !important;
-            color: #fff !important;
-            border-color: transparent !important;
-        }
-        .nsosyal-pill:hover { filter: brightness(1.1); }
-        .pinterest-pill {
-            background: linear-gradient(135deg, #e60023, #ad081b) !important;
-            color: #fff !important;
-            border-color: transparent !important;
-        }
-        .pinterest-pill:hover { filter: brightness(1.1); }
-        .contact-pill-icon-only {
-            width: 44px !important;
-            height: 44px !important;
-            min-width: 44px !important;
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            border-radius: 50% !important;
-            font-size: 1.2rem !important;
-        }
-        .contact-pill-icon-only svg {
-            width: 18px;
-            height: 18px;
-        }
-    </style>
     <!-- ═══ GOOGLE ADMOB BAŞLATMA ═══ -->
     <script>
     (function () {
@@ -2699,8 +2011,6 @@
     </script>
     <!-- ══════════════════════════════════ -->
 
-        <!-- 🔥 FİREBASE SDK (Bulut Veritabanı) -->
-
     <script src="script.js"></script>
     <!-- BİLDİRİM SİSTEMİ (ayrı dosya: notifications.js) -->
     <script src="notifications.js"></script>
@@ -2731,20 +2041,6 @@
         }
 
         /* ────────────────────────────────────
-           2. FAB — HIZLI ARAMA BUTONU
-        ──────────────────────────────────── */
-        var fab = document.getElementById('mgFab');
-        if (mc && fab) {
-            mc.addEventListener('scroll', function () {
-                fab.classList.toggle('mg-fab-on', mc.scrollTop > 220);
-            }, { passive: true });
-            fab.addEventListener('click', function () {
-                if (typeof openSearch === 'function') openSearch();
-                else { var b = document.getElementById('searchBtn'); if (b) b.click(); }
-            });
-        }
-
-        /* ────────────────────────────────────
            3. MİNİ TOAST
         ──────────────────────────────────── */
         var toastEl = document.getElementById('mgMiniToast');
@@ -2763,6 +2059,15 @@
         ──────────────────────────────────── */
         var avatarBtn = document.getElementById('mgAvatar');
         var drop      = document.getElementById('mgDrop');
+
+        function refreshAvatar() {
+            if (!avatarBtn) return;
+            /* Dropdown içi */
+            var dName = document.getElementById('mgDropName');
+            var dRole = document.getElementById('mgDropRole');
+            if (dName) dName.textContent = 'Kullanıcı';
+            if (dRole) dRole.textContent = 'MuGöl PORTAL';
+        }
 
         function closeDropdown() {
             if (drop) drop.classList.remove('mg-open');
@@ -2795,6 +2100,7 @@
                 if (mi) mi.click(); closeDropdown();
             });
         }
+        refreshAvatar();
 
         /* ────────────────────────────────────
            5. SİDEBAR ARAMA
@@ -2830,8 +2136,8 @@
         var vcEl = document.getElementById('mgStatVisit');
         if (vcEl) animCount(vcEl, vc);
 
-        /* Uygulama sayısı */
-        var appCnt = document.querySelectorAll('.app-card').length;
+        /* Uygulama sayısı — tumuu-grid'deki benzersiz kartları say */
+        var appCnt = document.querySelectorAll('#tumuuGrid .tumuu-tile').length;
         var apEl = document.getElementById('mgStatApps');
         if (apEl && appCnt > 0) animCount(apEl, appCnt);
 
@@ -2863,10 +2169,6 @@
         }
 
         /* ────────────────────────────────────
-           HESABI SİL (Firebase + localStorage)
-        ──────────────────────────────────── */
-
-                /* ────────────────────────────────────
            8. SON AÇILANLAR
         ──────────────────────────────────── */
         var RK = 'mg-recent-v2';
@@ -3166,33 +2468,108 @@
         window._mgAddRipple = addRipple;
 
         /* ─────────────────────────────────────────
-           1. HEADER TEMA TOGGLE
+           1. ÇOKLU TEMA SEÇİCİ
         ───────────────────────────────────────── */
         var headerThemeToggle = document.getElementById('headerThemeToggle');
         var headerThemeIcon   = document.getElementById('headerThemeIcon');
+        var mgThemePanel      = document.getElementById('mgThemePanel');
+        var mgThemeOptions    = document.getElementById('mgThemeOptions');
 
-        function syncThemeIcon() {
-            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            if (headerThemeIcon) headerThemeIcon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
-            if (headerThemeToggle) headerThemeToggle.setAttribute('title', isDark ? 'Açık Temaya Geç' : 'Koyu Temaya Geç');
+        var MG_THEMES = [
+            { id:'light',   label:'Açık',    icon:'fa-sun',       dot:'linear-gradient(135deg,#f3f5f9,#dbeafe)' },
+            { id:'dark',    label:'Koyu',    icon:'fa-moon',      dot:'linear-gradient(135deg,#0b0f19,#1e293b)' },
+            { id:'sunset',  label:'Gün Batımı', icon:'fa-fire',   dot:'linear-gradient(135deg,#ff6b35,#ff0080)' },
+            { id:'ocean',   label:'Okyanus', icon:'fa-water',     dot:'linear-gradient(135deg,#00b4d8,#0077b6)' },
+            { id:'forest',  label:'Orman',   icon:'fa-leaf',      dot:'linear-gradient(135deg,#4caf50,#00e676)' },
+            { id:'neon',    label:'Neon',    icon:'fa-bolt',      dot:'linear-gradient(135deg,#cc00ff,#00ffe7)' }
+        ];
+
+        function applyTheme(themeId) {
+            document.documentElement.setAttribute('data-theme', themeId);
+            localStorage.setItem('mugol-theme', themeId);
+            var ts = document.getElementById('themeSwitch');
+            if (ts) ts.checked = themeId === 'dark';
+            if (typeof _fbSetPref === 'function') _fbSetPref('theme', themeId);
+            /* Icon güncelle */
+            if (headerThemeIcon) {
+                var th = MG_THEMES.find(function(t){ return t.id === themeId; });
+                if (th) headerThemeIcon.className = 'fas ' + th.icon;
+            }
+            /* Aktif butonu işaretle */
+            document.querySelectorAll('.mg-theme-opt').forEach(function(btn) {
+                btn.classList.toggle('active', btn.dataset.themeId === themeId);
+            });
+            /* Toast */
+            var labels = {light:'☀️ Açık tema',dark:'🌙 Koyu tema',sunset:'🌅 Gün Batımı',ocean:'🌊 Okyanus',forest:'🌿 Orman',neon:'⚡ Neon'};
+            if (typeof showToast === 'function') showToast(labels[themeId] || 'Tema değiştirildi');
         }
-        syncThemeIcon();
 
-        if (headerThemeToggle) {
-            headerThemeToggle.addEventListener('click', function() {
-                var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-                var newTheme = isDark ? 'light' : 'dark';
-                document.documentElement.setAttribute('data-theme', newTheme);
-                localStorage.setItem('mugol-theme', newTheme);
-                syncThemeIcon();
-                var ts = document.getElementById('themeSwitch');
-                if (ts) ts.checked = newTheme === 'dark';
-                if (typeof _fbSetPref === 'function') _fbSetPref('theme', newTheme);
-                addRipple(headerThemeToggle);
-                if (typeof showToast === 'function') showToast(newTheme === 'dark' ? '🌙 Koyu tema' : '☀️ Açık tema');
+        /* Tema paneli oluştur */
+        if (mgThemeOptions) {
+            MG_THEMES.forEach(function(th) {
+                var btn = document.createElement('button');
+                btn.className = 'mg-theme-opt';
+                btn.dataset.themeId = th.id;
+                btn.setAttribute('aria-label', th.label + ' teması');
+                btn.innerHTML = '<div class="mg-theme-dot" style="background:' + th.dot + ';"></div>' + th.label;
+                btn.addEventListener('click', function() {
+                    applyTheme(th.id);
+                    closeMgThemePanel();
+                    addRipple(btn);
+                });
+                mgThemeOptions.appendChild(btn);
             });
         }
-        new MutationObserver(syncThemeIcon).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+        function openMgThemePanel() {
+            if (!mgThemePanel) return;
+            /* Aktif temayı işaretle */
+            var cur = document.documentElement.getAttribute('data-theme') || 'light';
+            document.querySelectorAll('.mg-theme-opt').forEach(function(btn) {
+                btn.classList.toggle('active', btn.dataset.themeId === cur);
+            });
+            mgThemePanel.style.display = 'block';
+            if (headerThemeToggle) headerThemeToggle.setAttribute('aria-expanded','true');
+            /* Dışarı tıklanınca kapat — bir tick sonra bind et */
+            setTimeout(function() {
+                document.addEventListener('click', outsidePanelClick, true);
+            }, 10);
+        }
+
+        function closeMgThemePanel() {
+            if (!mgThemePanel) return;
+            mgThemePanel.style.display = 'none';
+            if (headerThemeToggle) headerThemeToggle.setAttribute('aria-expanded','false');
+            document.removeEventListener('click', outsidePanelClick, true);
+        }
+
+        function outsidePanelClick(e) {
+            if (mgThemePanel && !mgThemePanel.contains(e.target) && e.target !== headerThemeToggle && !headerThemeToggle.contains(e.target)) {
+                closeMgThemePanel();
+            }
+        }
+
+        if (headerThemeToggle) {
+            headerThemeToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (mgThemePanel && mgThemePanel.style.display === 'block') {
+                    closeMgThemePanel();
+                } else {
+                    openMgThemePanel();
+                }
+                addRipple(headerThemeToggle);
+            });
+        }
+
+        /* Sayfa yüklendiğinde ikonunu güncelle */
+        (function(){
+            var cur = document.documentElement.getAttribute('data-theme') || 'light';
+            var th = MG_THEMES.find(function(t){ return t.id === cur; });
+            if (th && headerThemeIcon) headerThemeIcon.className = 'fas ' + th.icon;
+        })();
+
+        /* Eski Ctrl+D kısayolunu koru */
+        new MutationObserver(function(){}).observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
 
         /* ─────────────────────────────────────────
            2. GRID / LİSTE TOGGLE
@@ -3473,11 +2850,11 @@
         /* Hover efekti */
         btn.addEventListener('mouseenter', function() {
             btn.style.transform = 'translateY(-3px)';
-            btn.style.boxShadow = '0 12px 32px rgba(67,24,255,.38)';
+            btn.style.boxShadow = '0 12px 32px rgba(67, 24, 255, 0.25)';
         });
         btn.addEventListener('mouseleave', function() {
             btn.style.transform = '';
-            btn.style.boxShadow = '0 6px 20px rgba(67,24,255,.25)';
+            btn.style.boxShadow = '0 6px 20px rgba(67, 24, 255, 0.25)';
         });
 
         /* ── Onay Modal ── */
@@ -3527,7 +2904,7 @@
             'background:linear-gradient(135deg,#4318ff,#6366f1);',
             'color:#fff;font-size:.9rem;font-weight:700;cursor:pointer;',
             'font-family:inherit;transition:all .2s;',
-            'box-shadow:0 6px 20px rgba(67,24,255,.3);">',
+            'box-shadow:0 6px 20px rgba(67, 24, 255, 0.3);">',
             '✓ &nbsp;Onayla</button>',
             '</div>',
 
@@ -3759,7 +3136,7 @@
                                border-radius:10px;padding:7px 14px;font-size:.8rem;font-weight:800;
                                cursor:pointer;font-family:'Nunito',sans-serif;flex-shrink:0;
                                transition:transform .2s,box-shadow .2s;
-                               box-shadow:0 4px 12px rgba(67,24,255,.3);">
+                               box-shadow:0 4px 12px rgba(67, 24, 255, 0.3);">
                         <i class="fas fa-copy"></i> Kopyala
                     </button>
                 </div>
@@ -3803,7 +3180,7 @@
                     style="display:none;width:100%;margin-top:12px;padding:14px;border:none;border-radius:16px;
                            background:linear-gradient(135deg,#4318ff,#2979ff,#00d2ff);color:#fff;
                            font-family:'Nunito',sans-serif;font-size:1rem;font-weight:900;cursor:pointer;
-                           box-shadow:0 8px 24px rgba(67,24,255,.4);transition:transform .2s;
+                           box-shadow:0 8px 24px rgba(67, 24, 255, 0.26);transition:transform .2s;
                            align-items:center;justify-content:center;gap:10px;">
                     <i class="fas fa-share-alt"></i> Diğer Uygulamalarla Paylaş
                 </button>
@@ -4078,7 +3455,7 @@
         function setStatus(type, msg) {
             if (!pwaStatusEl || !pwaStatusText) return;
             var colors = {
-                info:    { bg: 'rgba(67,24,255,.06)',  border: 'rgba(67,24,255,.15)',  icon: 'var(--primary-color)' },
+                info:    { bg: 'rgba(67, 24, 255, 0.06)',  border: 'rgba(67, 24, 255, 0.15)',  icon: 'var(--primary-color)' },
                 success: { bg: 'rgba(16,185,129,.07)', border: 'rgba(16,185,129,.2)',  icon: '#10b981' },
                 warning: { bg: 'rgba(245,158,11,.07)', border: 'rgba(245,158,11,.2)',  icon: '#f59e0b' },
                 done:    { bg: 'rgba(16,185,129,.07)', border: 'rgba(16,185,129,.2)',  icon: '#10b981' }
@@ -4215,6 +3592,260 @@
         };
     })();
     </script>
+
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     MOBİL GELİŞTİRMELER v2.0 — Sıfırdan yazıldı, mevcut kod korundu
+     • Ripple efekti           • Sayfa geçiş animasyonu
+     • Haptic feedback         • İstatistik sayaç animasyonu
+     • Toast bildirim sistemi  • Kaydırma jestleri (swipe)
+     • Pull-to-refresh         • Gelişmiş bottom nav
+     • Hızlı erişim iyileştirmeleri
+     ═══════════════════════════════════════════════════════════════ -->
+
+<div id="mg-toast-container" aria-live="polite" aria-atomic="true"></div>
+<div id="mg-ptr" aria-hidden="true"><i class="fas fa-rotate-right"></i></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   MOBİL GELİŞTİRMELER v2.0 — JAVASCRIPT
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+    'use strict';
+
+    /* ────────────────────────────────────────
+       0. UYGULAMA SAYISI — DİNAMİK HESAPLA
+    ──────────────────────────────────────── */
+    function updateAppCount() {
+        var el = document.getElementById('mgStatApps');
+        if (!el) return;
+        /* tumuu-grid içindeki gerçek uygulama kartlarını say
+           (admob wrapper'larını hariç tut) */
+        var tiles = document.querySelectorAll('#tumuuGrid .tumuu-tile');
+        var count = tiles.length;
+        if (count > 0) {
+            el.textContent = count;
+        }
+    }
+
+    /* ────────────────────────────────────────
+       1. TOAST BİLDİRİM SİSTEMİ
+    ──────────────────────────────────────── */
+    window.mgToast = function(msg, type, duration) {
+        type     = type     || 'info';
+        duration = duration || 3000;
+        var icons = { success:'fa-check', info:'fa-circle-info', warn:'fa-triangle-exclamation', error:'fa-xmark' };
+        var container = document.getElementById('mg-toast-container');
+        if (!container) return;
+        var toast = document.createElement('div');
+        toast.className = 'mg-toast';
+        toast.setAttribute('role', 'alert');
+        toast.innerHTML =
+            '<div class="mg-toast-icon ' + type + '"><i class="fas ' + (icons[type]||icons.info) + '"></i></div>' +
+            '<span>' + msg + '</span>';
+        container.appendChild(toast);
+        var timer = setTimeout(function() {
+            toast.classList.add('mg-toast-out');
+            setTimeout(function() { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 280);
+        }, duration);
+        toast.addEventListener('click', function() {
+            clearTimeout(timer);
+            toast.classList.add('mg-toast-out');
+            setTimeout(function() { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 280);
+        });
+    };
+
+    /* ────────────────────────────────────────
+       2. HAPTİK GERİ BİLDİRİM
+    ──────────────────────────────────────── */
+    function haptic(pattern) {
+        try {
+            if (navigator.vibrate) navigator.vibrate(pattern || 8);
+        } catch(e) {}
+    }
+
+    /* ────────────────────────────────────────
+       3. RİPPLE EFEKTİ
+    ──────────────────────────────────────── */
+    function addRipple(el, e) {
+        var rect  = el.getBoundingClientRect();
+        var size  = Math.max(rect.width, rect.height) * 1.5;
+        var x     = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left - size / 2;
+        var y     = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top  - size / 2;
+        var wave  = document.createElement('span');
+        wave.className = 'mg-ripple-wave';
+        wave.style.cssText = 'width:' + size + 'px;height:' + size + 'px;left:' + x + 'px;top:' + y + 'px;';
+        el.appendChild(wave);
+        setTimeout(function() { if (wave.parentNode) wave.parentNode.removeChild(wave); }, 600);
+    }
+
+    function initRipples() {
+        var selectors = [
+            '.app-card', '.category-card', '.tumuu-tile', '.qa-chip', '.mg-chip', '.mg-sc',
+            '.mgd-btn', '#mgRateBtn', '.launch-btn'
+        ];
+        selectors.forEach(function(sel) {
+            document.querySelectorAll(sel).forEach(function(el) {
+                if (el._mgRipple) return;
+                el._mgRipple = true;
+                el.classList.add('mg-ripple-host');
+
+                var _tx = 0, _ty = 0, _te = null;
+
+                el.addEventListener('touchstart', function(e) {
+                    _tx = e.touches[0].clientX;
+                    _ty = e.touches[0].clientY;
+                    _te = e;
+                }, { passive: true });
+
+                el.addEventListener('touchend', function(e) {
+                    if (!_te) return;
+                    var dx = Math.abs(e.changedTouches[0].clientX - _tx);
+                    var dy = Math.abs(e.changedTouches[0].clientY - _ty);
+                    /* Sadece gerçek tap ise (8px'den az hareket) */
+                    if (dx < 8 && dy < 8) {
+                        addRipple(this, _te);
+                        haptic(6);
+                    }
+                    _te = null;
+                }, { passive: true });
+            });
+        });
+    }
+
+    /* ────────────────────────────────────────
+       4. SAYFA GEÇİŞ ANİMASYONU (OVERRIDE)
+    ──────────────────────────────────────── */
+    var _origActivateMenu = null;
+    function patchActivateMenu() {
+        if (typeof activateMenu !== 'function') return;
+        if (_origActivateMenu) return;
+        _origActivateMenu = activateMenu;
+        window.activateMenu = function(item) {
+            var targetId = item.getAttribute('data-target');
+            var nextPage = targetId ? document.getElementById(targetId) : null;
+            if (nextPage && !nextPage.classList.contains('active')) {
+                nextPage.classList.add('mg-page-enter');
+                setTimeout(function() { nextPage.classList.remove('mg-page-enter'); }, 320);
+            }
+            _origActivateMenu.call(this, item);
+            setTimeout(function() {
+                var mc = document.querySelector('.main-content');
+                if (mc) mc.scrollTo({ top:0, behavior:'smooth' });
+            }, 50);
+        };
+    }
+
+    /* ────────────────────────────────────────
+       5. İSTATİSTİK SAYAÇ ANİMASYONU
+    ──────────────────────────────────────── */
+    function animateCounter(el, target, duration) {
+        var start    = 0;
+        var startTs  = null;
+        var numTarget = parseInt(target) || 0;
+        if (numTarget === 0 || isNaN(numTarget)) return;
+        function step(ts) {
+            if (!startTs) startTs = ts;
+            var progress = Math.min((ts - startTs) / duration, 1);
+            var eased    = 1 - Math.pow(1 - progress, 3);
+            var current  = Math.floor(eased * numTarget);
+            el.textContent = current;
+            if (progress < 1) { requestAnimationFrame(step); }
+            else {
+                el.textContent = numTarget;
+                el.classList.add('mg-pop');
+                setTimeout(function() { el.classList.remove('mg-pop'); }, 400);
+            }
+        }
+        requestAnimationFrame(step);
+    }
+
+    function initStatCounters() {
+        var statsEl = document.getElementById('mgStats');
+        if (!statsEl || statsEl._mgCounted) return;
+        var obs = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting && !statsEl._mgCounted) {
+                    statsEl._mgCounted = true;
+                    statsEl.querySelectorAll('.mg-sv').forEach(function(sv) {
+                        var val = parseInt(sv.textContent);
+                        if (!isNaN(val) && val > 0) animateCounter(sv, val, 900);
+                    });
+                    obs.disconnect();
+                }
+            });
+        }, { threshold:0.3 });
+        obs.observe(statsEl);
+    }
+        initPullToRefresh();
+        initLaunchBtns();
+        initCategoryCards();
+        initScrollRestore();
+        showWelcomeHint();
+
+        /* activateMenu patch — biraz gecikmeyle (script.js yüklenmesini bekle) */
+        setTimeout(patchActivateMenu, 300);
+
+        /* Dinamik içerik sonrası ripple yenile (nav değişince) */
+        document.querySelectorAll('.nav-item[data-target]').forEach(function(item) {
+            item.addEventListener('click', function() {
+                setTimeout(initRipples, 200);
+            });
+        });
+            btn.addEventListener('touchend', function(e) {
+                if (!_te) return;
+                var dx = Math.abs(e.changedTouches[0].clientX - _tx);
+                var dy = Math.abs(e.changedTouches[0].clientY - _ty);
+                if (dx < 8 && dy < 8) addRipple(this, _te);
+                _te = null;
+            }, { passive: true });
+        });
+
+        console.log('[MuGöl] ✓ Mobil geliştirmeler v2.0 yüklendi');
+
+        /* ── NATIVE PULL-TO-REFRESH ENGELLE (scroll kırmadan) ──
+           Sadece main-content tamamen en üstteyken VE dokunulan alan
+           main-content içindeyken aşağı çekmeyi engeller.
+           Normal içerik scroll'una kesinlikle müdahale etmez.          */
+        (function() {
+            var mc       = document.querySelector('.main-content');
+            var startY   = 0;
+            var startScrollTop = 0;
+            var mayBlock = false;   /* Bu dokunuşta engelleme yapılabilir mi? */
+
+            document.addEventListener('touchstart', function(e) {
+                startY = e.touches[0].clientY;
+                mayBlock = false;
+                if (!mc) return;
+                startScrollTop = mc.scrollTop;
+                /* Sadece dokunulan nokta main-content içindeyse ilgilen */
+                if (mc.contains(e.target)) {
+                    /* Scroll en üstte mi? */
+                    mayBlock = (startScrollTop <= 0);
+                }
+            }, { passive: true });
+
+            document.addEventListener('touchmove', function(e) {
+                if (!mayBlock) return;          /* İçeride veya ortadaysa dokunma */
+                var currentY = e.touches[0].clientY;
+                var pullDown = currentY > startY; /* Parmak aşağı = yenile hareketi */
+                /* Tekrar kontrol: scroll gerçekten hâlâ 0'da mı? */
+                var stillAtTop = mc ? mc.scrollTop <= 0 : true;
+                if (pullDown && stillAtTop) {
+                    e.preventDefault();         /* Yalnızca bu durumda engelle */
+                }
+            }, { passive: false });
+        })();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+    } else {
+        boot();
+    }
+})();
+</script>
 
 </body>
 </html>

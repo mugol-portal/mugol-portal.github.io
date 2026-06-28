@@ -50,7 +50,7 @@ window.MG_NOTIFICATIONS = [
     {
         id: 'n1',
         icon: '🚀',
-        title: 'MuGöl PORTAL v2.0 Yayında!',
+        title: 'MuGöl PORTAL v3.0 Yayında!',
         body: 'Yeni tasarım, güncelleme animasyonu ve gelişmiş bildirim sistemi eklendi.',
         time: 'Az önce',
         type: 'success',
@@ -71,7 +71,7 @@ window.MG_NOTIFICATIONS = [
         id: 'n3',
         icon: '🔄',
         title: 'Güncelleme Butonu',
-        body: 'Ana Sayfa\'daki "Güncelleme Yap" butonu ile önbelleği temizleyip en son sürümü alabilirsiniz.',
+        body: 'Ayarlar'daki "Güncelleme Yap" butonu ile önbelleği temizleyip en son sürümü alabilirsiniz.',
         time: '3 gün önce',
         type: 'info',
         popup: false
