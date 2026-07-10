@@ -3064,26 +3064,47 @@ body {
 
                     function pad(n) { return n < 10 ? '0' + n : n; }
 
+                    var lastTimeStr = '';
+                    var lastDateStr = '';
+                    var lastGreet = '';
+
                     function update() {
                         var now = new Date();
-                        var h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
-                        timeEl.textContent = pad(h) + ':' + pad(m);
+                        var h = now.getHours(), m = now.getMinutes();
+                        var timeStr = pad(h) + ':' + pad(m);
+                        // Sadece değer gerçekten değiştiyse DOM'a yaz — anasayfada
+                        // sürekli reflow tetiklenip parmakla kaydırma başlangıcını
+                        // geciktirmesin diye (Tümü sekmesinde bu widget yok, o yüzden orası etkilenmiyordu).
+                        if (timeStr !== lastTimeStr) {
+                            timeEl.textContent = timeStr;
+                            lastTimeStr = timeStr;
+                        }
 
                         var day = DAYS[now.getDay()];
                         var date = now.getDate();
                         var month = MONTHS[now.getMonth()];
-                        dateEl.textContent = day + ', ' + date + ' ' + month;
+                        var dateStr = day + ', ' + date + ' ' + month;
+                        if (dateStr !== lastDateStr) {
+                            dateEl.textContent = dateStr;
+                            lastDateStr = dateStr;
+                        }
 
                         var greet = h < 6  ? 'İyi Geceler' :
                                     h < 12 ? 'Günaydın'    :
                                     h < 18 ? 'İyi Günler'  : 'İyi Akşamlar';
-                        if (greetEl) greetEl.textContent = greet;
+                        if (greetEl && greet !== lastGreet) {
+                            greetEl.textContent = greet;
+                            lastGreet = greet;
+                        }
                     }
 
                     update();
-                    setInterval(update, 1000);
+                    // Saniyede bir yerine dakikada bir kontrol yeterli (saat gösterimi
+                    // zaten saat:dakika, saniye göstermiyor) — ana thread'i daha az meşgul eder.
+                    setInterval(update, 15000);
                 })();
                 </script>
+
 
                 <!-- ── KATEGORİLER BAŞLIĞI ── -->
                 <div class="mg-section-label" style="margin-top:8px;">
@@ -3379,6 +3400,13 @@ body {
                             <img src="../images/tv.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=TV&background=E31A1A&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl TV</span>
+                    </a>
+
+                    <a href="https://mugol-portal.github.io/mugol-.iq/" class="tumuu-tile" style="animation-delay:1.025s;">
+                        <div class="tumuu-icon-wrap">
+                            <img src="../images/iq.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=IQ&background=FF5630&color=fff&rounded=true&bold=true'">
+                        </div>
+                        <span class="tumuu-label">MuGöl IQ</span>
                     </a>
 
                 </div>
