@@ -5128,9 +5128,11 @@ html[data-theme="dark"] .info-pill {
 }
 
 /* ───── SCROLL — momentum + skeleton smoothness ───── */
+/* NOT: scroll-behavior:smooth kaldırıldı — Android Chrome'da parmakla
+   kaydırmayı ilk başlatırken gecikme/direnç hissi yaratıyordu.
+   "Yukarı çık" butonu zaten script.js içinde kendi smooth scroll'unu kullanıyor. */
 .main-content {
     -webkit-overflow-scrolling: touch !important;
-    scroll-behavior: smooth !important;
     overscroll-behavior: contain !important;
 }
 
@@ -8555,10 +8557,10 @@ body {
                 }
                 .mg-qa-scroll::-webkit-scrollbar { display: none; }
 
-                /* Üst kapsayıcıların overflow-x:hidden kısıtını kaldır — bu scroll'u kesiyor */
-                #page-anasayfa.active {
-                    overflow: visible !important;
-                }
+                /* NOT: #page-anasayfa.active üzerindeki overflow:visible kaldırıldı —
+                   Android Chrome'da dikey kaydırmayı (touch scroll) kesiyordu.
+                   .mg-qa-section zaten kendi overflow:hidden'ı ile yatay şeridi clip ediyor,
+                   üst seviyede visible yapmaya gerek yok. */
                 .mg-qa-section {
                     /* Ana içerik padding'ini aşarak tam genişlik scroll alanı kazan */
                     margin-left: -2px !important;
@@ -9759,4 +9761,25 @@ body {
     border-color: rgba(204,0,255,0.6) !important;
     box-shadow: 0 0 20px rgba(204,0,255,0.25), 0 8px 32px rgba(0,0,0,0.4) !important;
 }
+
+/* =========================================================
+   🛠 SCROLL FIX FINAL — Android Chrome dokunmatik başlatma sertliği
+   Kaynak: .main-content dosyada 13+ kez tanımlanmış, çakışan
+   -webkit-overflow-scrolling / overscroll-behavior / scroll-behavior
+   bayrakları Chrome'un touch-start anında ekstra karar almasına
+   yol açıyordu. Çalışan referans (index-51.html) düz overflow-y:auto
+   kullanıyor, hiçbir ekstra bayrak yok. Aynı sade yaklaşımı burada
+   son kural olarak zorluyoruz ki öncekiler ne olursa olsun ezilsin.
+   ========================================================= */
+.layout { overflow: hidden !important; min-height: 0 !important; }
+.main-content {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    height: 100% !important;
+    -webkit-overflow-scrolling: auto !important;
+    overscroll-behavior: auto !important;
+    scroll-behavior: auto !important;
+    touch-action: auto !important;
+}
+
 
