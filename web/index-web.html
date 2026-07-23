@@ -151,14 +151,17 @@
 
     <div id="splash-screen" role="presentation">
         <div class="splash-particles" id="splashParticles"></div>
-        <div class="splash-logo-wrap">
-            <div class="splash-icon-ring">
-                <img src="logo.png" alt="MuGöl" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                <span class="splash-icon-fallback" style="display:none;" aria-hidden="true">MG</span>
-            </div>
-            <div class="splash-title">
-                <h1>MuGöl<span>PORTAL</span></h1>
-                <p>Tüm uygulamalarınız bir arada</p>
+        <div class="splash-video-wrap">
+            <video id="splashVideo" class="splash-video" src="mugol_acilis.mp4" autoplay muted playsinline webkit-playsinline preload="auto" aria-label="MuGöl Portal açılış animasyonu"></video>
+            <div class="splash-logo-wrap" id="splashLogoFallback" style="display:none;">
+                <div class="splash-icon-ring">
+                    <img src="logo.png" alt="MuGöl" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <span class="splash-icon-fallback" style="display:none;" aria-hidden="true">MG</span>
+                </div>
+                <div class="splash-title">
+                    <h1>MuGöl<span>PORTAL</span></h1>
+                    <p>Tüm uygulamalarınız bir arada</p>
+                </div>
             </div>
         </div>
         <div class="splash-progress-wrap">
@@ -198,16 +201,10 @@
                 <i class="fas fa-rotate-right" aria-hidden="true" style="transition:transform 0.4s;"></i>
             </button>
 
-            <!-- TEMA SEÇİCİ BUTONU -->
-            <button class="hamburger-btn mg-theme-toggle" id="headerThemeToggle" aria-label="Tema Seç" title="Tema Seç" aria-haspopup="dialog" aria-expanded="false">
-                <i class="fas fa-palette" id="headerThemeIcon"></i>
+            <!-- TEMA TOGGLE BUTONU -->
+            <button class="hamburger-btn mg-theme-toggle" id="headerThemeToggle" aria-label="Tema Değiştir" title="Temayı Değiştir">
+                <i class="fas fa-moon" id="headerThemeIcon"></i>
             </button>
-
-            <!-- TEMA PANELİ -->
-            <div id="mgThemePanel" role="dialog" aria-label="Tema Seçici" aria-modal="true" style="display:none;position:absolute;top:calc(100% + 10px);right:0;z-index:9999;background:var(--bg-card);border:1px solid var(--border-color);border-radius:18px;padding:14px;box-shadow:0 20px 60px rgba(0,0,0,0.18),0 4px 16px rgba(0,0,0,0.08);min-width:200px;backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);">
-                <div style="font-size:.7rem;font-weight:900;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px;padding:0 2px;"><i class="fas fa-palette" style="margin-right:5px;"></i>Tema Seç</div>
-                <div id="mgThemeOptions" style="display:grid;grid-template-columns:1fr 1fr;gap:7px;"></div>
-            </div>
 
             <!-- KULLANICI AVATAR BUTONU -->
             <button id="mgAvatar" aria-label="Profil menüsü" aria-haspopup="menu" aria-expanded="false">
@@ -340,28 +337,53 @@
             <!-- SAYFA: ANA SAYFA -->
             <div id="page-anasayfa" class="page-section active" role="region" aria-labelledby="sectionTitle">
 
-                <!-- ── HERO BANNER (resim tasarımı) ── -->
-                <div class="mg-hero-banner" aria-label="MuGöl Portal Hoş Geldiniz">
-                    <div class="mg-hero-badge">
-                        <i class="fas fa-bolt" aria-hidden="true"></i> V3.0 YAYINDA
+                <!-- Saat & Tarih Widget -->
+                <div class="mg-clock-widget" id="mgClockWidget">
+                    <div class="mg-cw-left">
+                        <div class="mg-cw-time" id="mgHomeTime">--:--</div>
+                        <div class="mg-cw-date" id="mgHomeDate">Yükleniyor...</div>
                     </div>
-                    <h1 class="mg-hero-title">
-                        Tüm uygulamalarınız <span class="mg-hero-accent">tek bir portalda.</span>
-                    </h1>
-                    <p class="mg-hero-desc">
-                        Takvim, hava durumu, ekonomi, deprem takibi, namaz vakitleri ve daha fazlası —
-                        hepsi MuGöl PORTAL'da bir tık uzaklıkta.
-                    </p>
-                    <div class="mg-hero-actions">
-                        <button class="mg-hero-btn-primary" onclick="(function(){var mi=document.querySelector('[data-target=&quot;page-tumuu&quot;]');if(mi)mi.click();})();" aria-label="Tüm uygulamaları keşfet">
-                            Keşfetmeye Başla <i class="fas fa-arrow-right" aria-hidden="true"></i>
-                        </button>
-                        <button class="mg-hero-btn-secondary" onclick="(function(){var mi=document.querySelector('[data-target=&quot;page-ayarlar&quot;]');if(mi)mi.click();})();" aria-label="Tercihler sayfasına git">
-                            <i class="fas fa-sliders-h" aria-hidden="true"></i> Tercihler
-                        </button>
-                        <button class="mg-hero-btn-secondary" onclick="(function(){var mi=document.querySelector('[data-target=&quot;page-indir&quot;]');if(mi)mi.click();})();" aria-label="İndir sayfasına git" style="color:#16a34a; border-color:rgba(22,163,74,0.3); background:rgba(22,163,74,0.07);">
-                            <i class="fas fa-download" aria-hidden="true"></i> İndir
-                        </button>
+                    <div class="mg-cw-right">
+                        <div class="mg-cw-icon"><i class="fas fa-clock"></i></div>
+                        <span class="mg-cw-pill" id="mgHomeGreet">Merhaba</span>
+                    </div>
+                </div>
+
+                <!-- ── ÖZEL REKLAM KARTI: MuGöl IQ / AI / OS (hero kartı yerine, aynı boyutta) ── -->
+                <div class="mg-ad-carousel" id="mgAdCarousel" aria-label="Öne çıkan uygulamalar reklamı">
+                    <div class="mg-ad-track" id="mgAdTrack" role="list">
+                        <a href="https://mugol-portal.github.io/mugol-.iq/" class="mg-ad-card mg-ad-iq" role="listitem" aria-label="MuGöl IQ reklamı">
+                            <span class="mg-ad-label">REKLAM</span>
+                            <div class="mg-ad-icon"><img src="../images/iq.png" alt="" class="mg-ad-icon-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><i class="fas fa-brain mg-ad-icon-fallback" aria-hidden="true" style="display:none;"></i></div>
+                            <div class="mg-ad-body">
+                                <span class="mg-ad-title">MuGöl IQ</span>
+                                <span class="mg-ad-desc">Ücretsiz zeka testleriyle IQ seviyeni ölç, detaylı analiz raporunu gör</span>
+                            </div>
+                            <span class="mg-ad-cta">Dene <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+                        </a>
+                        <a href="https://mugol-portal.github.io/mugol.-ai/" class="mg-ad-card mg-ad-ai" role="listitem" aria-label="MuGöl AI reklamı">
+                            <span class="mg-ad-label">REKLAM</span>
+                            <div class="mg-ad-icon"><img src="../images/ai.png" alt="" class="mg-ad-icon-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><i class="fas fa-robot mg-ad-icon-fallback" aria-hidden="true" style="display:none;"></i></div>
+                            <div class="mg-ad-body">
+                                <span class="mg-ad-title">MuGöl AI</span>
+                                <span class="mg-ad-desc">Yapay zeka destekli akıllı asistanınla anında sohbet et, sorularına yanıt al</span>
+                            </div>
+                            <span class="mg-ad-cta">Dene <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+                        </a>
+                        <a href="https://mugol-portal.github.io/mugol.-os/" class="mg-ad-card mg-ad-os" role="listitem" aria-label="MuGöl OS reklamı">
+                            <span class="mg-ad-label">REKLAM</span>
+                            <div class="mg-ad-icon"><img src="../images/os.png" alt="" class="mg-ad-icon-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><i class="fas fa-desktop mg-ad-icon-fallback" aria-hidden="true" style="display:none;"></i></div>
+                            <div class="mg-ad-body">
+                                <span class="mg-ad-title">MuGöl OS</span>
+                                <span class="mg-ad-desc">Tarayıcıdan çalışan işletim sistemi</span>
+                            </div>
+                            <span class="mg-ad-cta">Dene <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+                        </a>
+                    </div>
+                    <div class="mg-ad-dots" id="mgAdDots" aria-hidden="true">
+                        <span class="mg-ad-dot active" data-idx="0"></span>
+                        <span class="mg-ad-dot" data-idx="1"></span>
+                        <span class="mg-ad-dot" data-idx="2"></span>
                     </div>
                 </div>
 
@@ -384,123 +406,6 @@
                 <div style="display:none;">
                     <span id="mgStatVisit">1</span>
                 </div>
-                <!-- ── HIZLI ERİŞİM ŞERİDİ v4 — Düzeltilmiş Kaydırma ── -->
-
-                <!-- Saat & Tarih Widget -->
-                <div class="mg-clock-widget" id="mgClockWidget">
-                    <div class="mg-cw-left">
-                        <div class="mg-cw-time" id="mgHomeTime">--:--</div>
-                        <div class="mg-cw-date" id="mgHomeDate">Yükleniyor...</div>
-                    </div>
-                    <div class="mg-cw-right">
-                        <div class="mg-cw-icon"><i class="fas fa-clock"></i></div>
-                        <span class="mg-cw-pill" id="mgHomeGreet">Merhaba</span>
-                    </div>
-                </div>
-
-                <!-- Hızlı Erişim Şeridi v4 -->
-                <div class="mg-qa-section">
-                    <div class="mg-qa-header">
-                        <span class="mg-qa-title">Hızlı Erişim</span>
-                        <button class="mg-qa-see-all"
-                            onclick="(function(){var mi=document.querySelector('[data-target=&quot;page-tumuu&quot;]');if(mi)mi.click();})();"
-                            aria-label="Tüm uygulamaları gör">
-                            Tümünü Gör →
-                        </button>
-                    </div>
-                    <div class="mg-qa-scroll" role="list" aria-label="Hızlı erişim uygulamaları">
-                        <a href="https://mugol-portal.github.io/MuGol.bugun/" class="mg-qa-card" target="_blank" role="listitem">
-                            <span class="mg-qa-icon" style="background:linear-gradient(135deg,#4318ff,#6366f1)"><i class="fas fa-calendar-day"></i></span>
-                            <span class="mg-qa-label">Takvim</span>
-                        </a>
-                        <a href="https://mugol-portal.github.io/mugol.havadurumu/" class="mg-qa-card" target="_blank" role="listitem">
-                            <span class="mg-qa-icon" style="background:linear-gradient(135deg,#FFAB00,#FF8B00)"><i class="fas fa-cloud-sun"></i></span>
-                            <span class="mg-qa-label">Hava</span>
-                        </a>
-                        <a href="https://mugol-portal.github.io/mugol.haber/" class="mg-qa-card" target="_blank" role="listitem">
-                            <span class="mg-qa-icon" style="background:linear-gradient(135deg,#FF5630,#E31A1A)"><i class="fas fa-newspaper"></i></span>
-                            <span class="mg-qa-label">Haber</span>
-                        </a>
-                        <a href="https://mugol-portal.github.io/mugol.ekonomi/" class="mg-qa-card" target="_blank" role="listitem">
-                            <span class="mg-qa-icon" style="background:linear-gradient(135deg,#00B8D9,#0052CC)"><i class="fas fa-chart-line"></i></span>
-                            <span class="mg-qa-label">Ekonomi</span>
-                        </a>
-                        <a href="https://mugol-portal.github.io/deprem/" class="mg-qa-card" target="_blank" role="listitem">
-                            <span class="mg-qa-icon" style="background:linear-gradient(135deg,#E31A1A,#7f1d1d)"><i class="fas fa-wave-square"></i></span>
-                            <span class="mg-qa-label">Deprem</span>
-                        </a>
-                        <a href="https://mugol-portal.github.io/mugol.imsak-vakti/" class="mg-qa-card" target="_blank" role="listitem">
-                            <span class="mg-qa-icon" style="background:linear-gradient(135deg,#36B37E,#064e3b)"><i class="fas fa-mosque"></i></span>
-                            <span class="mg-qa-label">Namaz</span>
-                        </a>
-                        <a href="https://mugol-portal.github.io/mugol.saglik/" class="mg-qa-card" target="_blank" role="listitem">
-                            <span class="mg-qa-icon" style="background:linear-gradient(135deg,#36B37E,#10b981)"><i class="fas fa-heartbeat"></i></span>
-                            <span class="mg-qa-label">Sağlık</span>
-                        </a>
-                        <a href="https://mugol-portal.github.io/education/" class="mg-qa-card" target="_blank" role="listitem">
-                            <span class="mg-qa-new" aria-label="Yeni"></span>
-                            <span class="mg-qa-icon" style="background:linear-gradient(135deg,#FF8B00,#FFD000)"><i class="fas fa-graduation-cap"></i></span>
-                            <span class="mg-qa-label">Eğitim</span>
-                        </a>
-                        <a href="https://mugol-portal.github.io/hesapmakinesi/" class="mg-qa-card" target="_blank" role="listitem">
-                            <span class="mg-qa-icon" style="background:linear-gradient(135deg,#6554C0,#8b5cf6)"><i class="fas fa-calculator"></i></span>
-                            <span class="mg-qa-label">Hesap</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- ── YENİ ÖZELLİKLER BLOĞU ── -->
-
-
-                <!-- Önerilen Uygulamalar — Günlük Değişir -->
-                <div class="mg-section-label" style="margin-top:6px;">
-                    <span class="mg-section-label-text">Önerilen</span>
-                </div>
-
-                <div id="mgOnerilenContainer"></div>
-
-                <script>
-                (function() {
-                    var APPS = [
-                        { href:'https://mugol-portal.github.io/deprem/',         color:'#E31A1A', color2:'#7f1d1d',  icon:'fa-wave-square',    title:'Sismik Radar',       sub:'Son depremleri anlık takip et',           badge:'red',   label:'Canlı'   },
-                        { href:'https://mugol-portal.github.io/mugol.ekonomi/',  color:'#00B8D9', color2:'#0052CC',  icon:'fa-chart-line',     title:'MuGöl Ekonomi',      sub:'Döviz, altın ve piyasa verileri',         badge:'blue',  label:'Yeni'    },
-                        { href:'https://mugol-portal.github.io/mugol.imsak-vakti/', color:'#36B37E', color2:'#064e3b', icon:'fa-mosque',       title:'Namaz Vakitleri',    sub:'Günlük imsak ve namaz takibi',            badge:'green', label:'Güncel'  },
-                        { href:'https://mugol-portal.github.io/mugol.havadurumu/', color:'#FFAB00', color2:'#FF8B00',  icon:'fa-cloud-sun',    title:'MuGöl Hava Durumu',  sub:'Anlık hava durumu ve tahminler',          badge:'blue',  label:'Canlı'   },
-                        { href:'https://mugol-portal.github.io/mugol.haber/',    color:'#FF5630', color2:'#E31A1A',  icon:'fa-newspaper',      title:'MuGöl Haber',        sub:'Güncel haberler ve son dakika',           badge:'red',   label:'Canlı'   },
-                        { href:'https://mugol-portal.github.io/mugol.saglik/',   color:'#36B37E', color2:'#10b981',  icon:'fa-heartbeat',      title:'MuGöl Sağlık',       sub:'Sağlık verileri ve takip araçları',       badge:'green', label:'Güncel'  },
-                        { href:'https://mugol-portal.github.io/education/',      color:'#FF8B00', color2:'#FFD000',  icon:'fa-graduation-cap', title:'MuGöl Education',    sub:'Kapsamlı dijital eğitim portalı',         badge:'blue',  label:'Yeni'    },
-                        { href:'https://mugol-portal.github.io/hesapmakinesi/',  color:'#6554C0', color2:'#8b5cf6',  icon:'fa-calculator',     title:'MuGöl Hesap',        sub:'Hızlı ve pratik hesap makinesi',          badge:'green', label:'Güncel'  },
-                        { href:'https://mugol-portal.github.io/alisverislistesi/', color:'#00B8D9', color2:'#0052CC', icon:'fa-shopping-cart', title:'Alışveriş Listem',   sub:'Günlük ihtiyaçlarınızı yönetin',         badge:'blue',  label:'Yeni'    },
-                        { href:'https://mugol-portal.github.io/mugol.notdefteri/', color:'#FFAB00', color2:'#FF8B00', icon:'fa-sticky-note',  title:'Not Defterim',       sub:'Notlarınızı hızlıca yazın ve saklayın',  badge:'green', label:'Güncel'  },
-                        { href:'https://mugol-portal.github.io/Mugol.games/',    color:'#FF5630', color2:'#FF8B00',  icon:'fa-gamepad',        title:'MuGöl GAMES',        sub:'Eğlenceli oyunlar ve boş zaman',          badge:'red',   label:'Popüler' },
-                        { href:'https://mugol-portal.github.io/radyo-mugol/',    color:'#FF5630', color2:'#E31A1A',  icon:'fa-radio',          title:'MuGöl Radyo',        sub:'Canlı radyo dinle',                       badge:'red',   label:'Canlı'   },
-                        { href:'https://mugol-portal.github.io/mugol-tv/',       color:'#E31A1A', color2:'#7f1d1d',  icon:'fa-tv',             title:'MuGöl TV',           sub:'Canlı TV kanallarını izle',               badge:'red',   label:'Canlı'   },
-                        { href:'https://mugol-portal.github.io/mugol-qr-kodokuyucu/', color:'#4318ff', color2:'#6366f1', icon:'fa-qrcode',   title:'QR Kod Okuyucu',     sub:'QR kodlarını hızlıca oku',                badge:'blue',  label:'Yeni'    }
-                    ];
-
-                    // Günün indexine göre 3 farklı uygulama seç
-                    var dayIndex = new Date().getDate() % APPS.length;
-                    var shown = [
-                        APPS[dayIndex % APPS.length],
-                        APPS[(dayIndex + 4) % APPS.length],
-                        APPS[(dayIndex + 8) % APPS.length]
-                    ];
-
-                    var container = document.getElementById('mgOnerilenContainer');
-                    if (!container) return;
-
-                    container.innerHTML = shown.map(function(a) {
-                        return '<a href="' + a.href + '" class="mg-daily-card" target="_blank" style="--dc-color:' + a.color + '">' +
-                            '<div class="mg-dc-icon" style="background:linear-gradient(135deg,' + a.color + ',' + a.color2 + ')"><i class="fas ' + a.icon + '"></i></div>' +
-                            '<div class="mg-dc-body">' +
-                                '<div class="mg-dc-title">' + a.title + '</div>' +
-                                '<div class="mg-dc-sub">' + a.sub + '</div>' +
-                            '</div>' +
-                            '<span class="mg-dc-badge ' + a.badge + '">' + a.label + '</span>' +
-                        '</a>';
-                    }).join('');
-                })();
-                </script>
 
                 <!-- Saat Widget JS -->
                 <script>
@@ -588,7 +493,7 @@
                         <i class="fas fa-chevron-right cat-arrow" aria-hidden="true"></i>
                     </div>
 
-                    <div class="category-card" role="button" tabindex="0" data-target="page-araclar" aria-label="Araçlar Kategorisi - 9 Uygulama">
+                    <div class="category-card" role="button" tabindex="0" data-target="page-araclar" aria-label="Araçlar Kategorisi - 12 Uygulama">
                         <div class="cat-icon-wrap" style="background: linear-gradient(135deg, #00B8D9, #0052CC);" aria-hidden="true">
                             <i class="fas fa-toolbox"></i>
                         </div>
@@ -596,7 +501,7 @@
                             <h3>Araçlar</h3>
                             <p>İşinizi kolaylaştıran dijital araçlar</p>
                         </div>
-                        <span class="cat-count">9 Uygulama</span>
+                        <span class="cat-count">12 Uygulama</span>
                         <i class="fas fa-chevron-right cat-arrow" aria-hidden="true"></i>
                     </div>
 
@@ -626,6 +531,20 @@
                     </button>
                 </div>
                 <div class="tumuu-grid" id="tumuuGrid">
+
+                    <a href="https://mugol-portal.github.io/mugol.-os/" class="tumuu-tile" style="animation-delay:0s;">
+                        <div class="tumuu-icon-wrap">
+                            <img src="../images/os.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=OS&background=6554C0&color=fff&rounded=true&bold=true'">
+                        </div>
+                        <span class="tumuu-label">MuGöl OS</span>
+                    </a>
+
+                    <a href="https://mugol-portal.github.io/mugol.-ai/" class="tumuu-tile" style="animation-delay:0.05s;">
+                        <div class="tumuu-icon-wrap">
+                            <img src="../images/ai.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=AI&background=4318ff&color=fff&rounded=true&bold=true'">
+                        </div>
+                        <span class="tumuu-label">MuGöl AI</span>
+                    </a>
 
                     <a href="https://mugol-portal.github.io/MuGol.bugun/" class="tumuu-tile" style="animation-delay:0s;">
                         <div class="tumuu-icon-wrap">
@@ -1105,6 +1024,30 @@
                     <button class="mg-vt-btn" id="araclarListBtn" onclick="setViewMode('araclar','list')" aria-label="Liste görünümü"><i class="fas fa-list"></i><span>Liste</span></button>
                 </div>
                 <div class="app-grid" id="araclarGrid">
+                    <a href="https://mugol-portal.github.io/mugol.-os/" class="app-card" style="animation-delay: 0s;">
+                        <div class="app-card-header">
+                            <img src="../images/os.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=OS&background=6554C0&color=fff&rounded=true&bold=true'">
+                            <div class="app-info"><h3>MuGöl OS</h3></div>
+                        </div>
+                        <p class="app-desc">Tarayıcınızda çalışan masaüstü deneyimi, MuGöl'ün kendi işletim sistemi arayüzü.</p>
+                        <div class="app-card-footer">
+                            <span class="app-tag" data-cat="Araç">Araç</span>
+                            <div class="launch-btn" aria-hidden="true"><span class="btn-label">Aç</span><i class="fas fa-arrow-right"></i></div>
+                        </div>
+                    </a>
+
+                    <a href="https://mugol-portal.github.io/mugol.-ai/" class="app-card" style="animation-delay: 0.1s;">
+                        <div class="app-card-header">
+                            <img src="../images/ai.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=AI&background=4318ff&color=fff&rounded=true&bold=true'">
+                            <div class="app-info"><h3>MuGöl AI</h3></div>
+                        </div>
+                        <p class="app-desc">Yapay zeka destekli akıllı asistanınız, sorularınıza anında yanıt versin.</p>
+                        <div class="app-card-footer">
+                            <span class="app-tag" data-cat="Araç">Araç</span>
+                            <div class="launch-btn" aria-hidden="true"><span class="btn-label">Aç</span><i class="fas fa-arrow-right"></i></div>
+                        </div>
+                    </a>
+
                     <a href="https://mugol-portal.github.io/mugol.ekonomi/" class="app-card" style="animation-delay: 0s;">
                         <div class="app-card-header">
                             <img src="../images/ekonomi.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Eko&background=00B8D9&color=fff&rounded=true&bold=true'">
@@ -1654,7 +1597,7 @@
                         <div class="about-stats about-stats--row" aria-label="Platform İstatistikleri">
                             <div class="stat-item">
                                 <i class="fas fa-rocket" aria-hidden="true"></i>
-                                <div><strong aria-label="28">28</strong><span>Uygulama</span></div>
+                                <div><strong id="mgStatAppsAbout" aria-label="32">32</strong><span>Uygulama</span></div>
                             </div>
                             <div class="stat-item">
                                 <i class="fas fa-layer-group" aria-hidden="true"></i>
@@ -2508,105 +2451,33 @@
         window._mgAddRipple = addRipple;
 
         /* ─────────────────────────────────────────
-           1. ÇOKLU TEMA SEÇİCİ
+           1. HEADER TEMA TOGGLE
         ───────────────────────────────────────── */
         var headerThemeToggle = document.getElementById('headerThemeToggle');
         var headerThemeIcon   = document.getElementById('headerThemeIcon');
-        var mgThemePanel      = document.getElementById('mgThemePanel');
-        var mgThemeOptions    = document.getElementById('mgThemeOptions');
 
-        var MG_THEMES = [
-            { id:'light',   label:'Açık',    icon:'fa-sun',       dot:'linear-gradient(135deg,#f3f5f9,#dbeafe)' },
-            { id:'dark',    label:'Koyu',    icon:'fa-moon',      dot:'linear-gradient(135deg,#0b0f19,#1e293b)' },
-            { id:'sunset',  label:'Gün Batımı', icon:'fa-fire',   dot:'linear-gradient(135deg,#ff6b35,#ff0080)' },
-            { id:'ocean',   label:'Okyanus', icon:'fa-water',     dot:'linear-gradient(135deg,#00b4d8,#0077b6)' },
-            { id:'forest',  label:'Orman',   icon:'fa-leaf',      dot:'linear-gradient(135deg,#4caf50,#00e676)' },
-            { id:'neon',    label:'Neon',    icon:'fa-bolt',      dot:'linear-gradient(135deg,#cc00ff,#00ffe7)' }
-        ];
-
-        function applyTheme(themeId) {
-            document.documentElement.setAttribute('data-theme', themeId);
-            localStorage.setItem('mugol-theme', themeId);
-            var ts = document.getElementById('themeSwitch');
-            if (ts) ts.checked = themeId === 'dark';
-            if (typeof _fbSetPref === 'function') _fbSetPref('theme', themeId);
-            /* Icon güncelle */
-            if (headerThemeIcon) {
-                var th = MG_THEMES.find(function(t){ return t.id === themeId; });
-                if (th) headerThemeIcon.className = 'fas ' + th.icon;
-            }
-            /* Aktif butonu işaretle */
-            document.querySelectorAll('.mg-theme-opt').forEach(function(btn) {
-                btn.classList.toggle('active', btn.dataset.themeId === themeId);
-            });
-            /* Toast */
-            var labels = {light:'☀️ Açık tema',dark:'🌙 Koyu tema',sunset:'🌅 Gün Batımı',ocean:'🌊 Okyanus',forest:'🌿 Orman',neon:'⚡ Neon'};
-            if (typeof showToast === 'function') showToast(labels[themeId] || 'Tema değiştirildi');
+        function syncThemeIcon() {
+            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (headerThemeIcon) headerThemeIcon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+            if (headerThemeToggle) headerThemeToggle.setAttribute('title', isDark ? 'Açık Temaya Geç' : 'Koyu Temaya Geç');
         }
-
-        /* Tema paneli oluştur */
-        if (mgThemeOptions) {
-            MG_THEMES.forEach(function(th) {
-                var btn = document.createElement('button');
-                btn.className = 'mg-theme-opt';
-                btn.dataset.themeId = th.id;
-                btn.setAttribute('aria-label', th.label + ' teması');
-                btn.innerHTML = '<div class="mg-theme-dot" style="background:' + th.dot + ';"></div>' + th.label;
-                btn.addEventListener('click', function() {
-                    applyTheme(th.id);
-                    closeMgThemePanel();
-                    addRipple(btn);
-                });
-                mgThemeOptions.appendChild(btn);
-            });
-        }
-
-        function openMgThemePanel() {
-            if (!mgThemePanel) return;
-            /* Aktif temayı işaretle */
-            var cur = document.documentElement.getAttribute('data-theme') || 'light';
-            document.querySelectorAll('.mg-theme-opt').forEach(function(btn) {
-                btn.classList.toggle('active', btn.dataset.themeId === cur);
-            });
-            mgThemePanel.style.display = 'block';
-            if (headerThemeToggle) headerThemeToggle.setAttribute('aria-expanded','true');
-            /* Dışarı tıklanınca kapat — bir tick sonra bind et */
-            setTimeout(function() {
-                document.addEventListener('click', outsidePanelClick, true);
-            }, 10);
-        }
-
-        function closeMgThemePanel() {
-            if (!mgThemePanel) return;
-            mgThemePanel.style.display = 'none';
-            if (headerThemeToggle) headerThemeToggle.setAttribute('aria-expanded','false');
-            document.removeEventListener('click', outsidePanelClick, true);
-        }
-
-        function outsidePanelClick(e) {
-            if (mgThemePanel && !mgThemePanel.contains(e.target) && e.target !== headerThemeToggle && !headerThemeToggle.contains(e.target)) {
-                closeMgThemePanel();
-            }
-        }
+        syncThemeIcon();
 
         if (headerThemeToggle) {
-            headerThemeToggle.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (mgThemePanel && mgThemePanel.style.display === 'block') {
-                    closeMgThemePanel();
-                } else {
-                    openMgThemePanel();
-                }
+            headerThemeToggle.addEventListener('click', function() {
+                var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                var newTheme = isDark ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('mugol-theme', newTheme);
+                syncThemeIcon();
+                var ts = document.getElementById('themeSwitch');
+                if (ts) ts.checked = newTheme === 'dark';
+                if (typeof _fbSetPref === 'function') _fbSetPref('theme', newTheme);
                 addRipple(headerThemeToggle);
+                if (typeof showToast === 'function') showToast(newTheme === 'dark' ? '🌙 Koyu tema' : '☀️ Açık tema');
             });
         }
-
-        /* Sayfa yüklendiğinde ikonunu güncelle */
-        (function(){
-            var cur = document.documentElement.getAttribute('data-theme') || 'light';
-            var th = MG_THEMES.find(function(t){ return t.id === cur; });
-            if (th && headerThemeIcon) headerThemeIcon.className = 'fas ' + th.icon;
-        })();
+        new MutationObserver(syncThemeIcon).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
         /* Eski Ctrl+D kısayolunu koru */
         new MutationObserver(function(){}).observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
@@ -3659,13 +3530,15 @@
     ──────────────────────────────────────── */
     function updateAppCount() {
         var el = document.getElementById('mgStatApps');
-        if (!el) return;
+        var elAbout = document.getElementById('mgStatAppsAbout');
+        if (!el && !elAbout) return;
         /* tumuu-grid içindeki gerçek uygulama kartlarını say
            (admob wrapper'larını hariç tut) */
         var tiles = document.querySelectorAll('#tumuuGrid .tumuu-tile');
         var count = tiles.length;
         if (count > 0) {
-            el.textContent = count;
+            if (el) el.textContent = count;
+            if (elAbout) elAbout.textContent = count;
         }
     }
 

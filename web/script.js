@@ -310,6 +310,32 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     const bar = document.getElementById('splashProgressBar');
     const label = document.getElementById('splashProgressLabel');
     const splash = document.getElementById('splash-screen');
+    const splashVideo = document.getElementById('splashVideo');
+    const splashLogoFallback = document.getElementById('splashLogoFallback');
+
+    // ── Video oynatılamazsa (dosya bulunamadı, tarayıcı desteklemiyor vb.) logo/başlığa geri dön
+    if (splashVideo) {
+        splashVideo.playbackRate = 0.6;
+        splashVideo.addEventListener('loadedmetadata', function () {
+            splashVideo.playbackRate = 0.6;
+        });
+        splashVideo.addEventListener('error', function () {
+            splashVideo.style.display = 'none';
+            if (splashLogoFallback) splashLogoFallback.style.display = 'flex';
+        });
+        // Video oynatılamıyorsa (autoplay engeli vb.) da fallback göster
+        var videoPlayPromise = splashVideo.play();
+        if (videoPlayPromise !== undefined) {
+            videoPlayPromise.catch(function () {
+                splashVideo.style.display = 'none';
+                if (splashLogoFallback) splashLogoFallback.style.display = 'flex';
+            });
+        }
+        // Video bir kez oynayıp bittiğinde son karede dursun (loop yok), akış müzik/süre ile devam eder
+        splashVideo.addEventListener('ended', function () {
+            splashVideo.style.opacity = '0.85';
+        });
+    }
 
     // ── Güncelleme URL'si varsa (mgUpdateBtn sonrası) ziyaret bayrağı zaten sessionStorage.clear ile silindi
     // _v parametresi varsa bu güncelleme reload'u → splash göster, bayrağı sıfırla
@@ -1372,4 +1398,106 @@ window.closeAdblockWarning = function() {
         _boot();
     }
 
+})();
+
+// =========================================================
+// REKLAM KARTI CAROUSEL — MuGöl IQ / AI / OS (kaydırmalı + otomatik)
+// (mobil ana sayfa ile aynı davranış için eklendi)
+// =========================================================
+(function () {
+    const track = document.getElementById('mgAdTrack');
+    const dotsWrap = document.getElementById('mgAdDots');
+    if (!track || !dotsWrap) return;
+
+    const cards = Array.from(track.children);
+    const dots = Array.from(dotsWrap.children);
+    let activeIdx = 0;
+    let autoTimer = null;
+    let isUserInteracting = false;
+
+    function setActive(idx) {
+        activeIdx = idx;
+        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    }
+
+    function goTo(idx, smooth) {
+        if (!cards[idx]) return;
+        track.scrollTo({ left: cards[idx].offsetLeft - track.offsetLeft, behavior: smooth === false ? 'auto' : 'smooth' });
+        setActive(idx);
+    }
+
+    function nextSlide() {
+        const next = (activeIdx + 1) % cards.length;
+        goTo(next);
+    }
+
+    function startAuto() {
+        stopAuto();
+        autoTimer = setInterval(() => {
+            if (!isUserInteracting) nextSlide();
+        }, 3500);
+    }
+    function stopAuto() {
+        if (autoTimer) clearInterval(autoTimer);
+        autoTimer = null;
+    }
+
+    // Kullanıcı elle kaydırınca aktif noktayı güncelle
+    let scrollDebounce = null;
+    track.addEventListener('scroll', function () {
+        isUserInteracting = true;
+        if (scrollDebounce) clearTimeout(scrollDebounce);
+        scrollDebounce = setTimeout(function () {
+            const trackLeft = track.scrollLeft;
+            let closest = 0, closestDist = Infinity;
+            cards.forEach((c, i) => {
+                const dist = Math.abs(c.offsetLeft - track.offsetLeft - trackLeft);
+                if (dist < closestDist) { closestDist = dist; closest = i; }
+            });
+            setActive(closest);
+            isUserInteracting = false;
+        }, 150);
+    }, { passive: true });
+
+    // Noktalara tıklayınca ilgili karta git
+    dots.forEach((dot, i) => {
+        dot.addEventListener('click', function () { goTo(i); });
+    });
+
+    // Sekme arka plana alındığında otomatik döngüyü durdur (performans)
+    document.addEventListener('visibilitychange', function () {
+        if (document.hidden) stopAuto(); else startAuto();
+    });
+
+    // ── Dikey kaydırma önceliği: parmak dikey hareket ediyorsa yatay
+    //    carousel'in dokunuşu yutmasını engelle, sayfa scroll'una bırak.
+    (function () {
+        let startX = 0, startY = 0, decided = false;
+
+        track.style.touchAction = 'pan-y';
+
+        track.addEventListener('touchstart', function (e) {
+            if (!e.touches || !e.touches[0]) return;
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            decided = false;
+            track.style.touchAction = 'pan-y';
+        }, { passive: true });
+
+        track.addEventListener('touchmove', function (e) {
+            if (!e.touches || !e.touches[0]) return;
+            const dx = e.touches[0].clientX - startX;
+            const dy = e.touches[0].clientY - startY;
+            if (!decided) {
+                if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+                    decided = true;
+                    if (Math.abs(dx) > Math.abs(dy) * 1.2) {
+                        track.style.touchAction = 'pan-x';
+                    }
+                }
+            }
+        }, { passive: true });
+    })();
+
+    startAuto();
 })();
