@@ -7044,6 +7044,111 @@ body {
 
 /* Pull-to-refresh → JS ile yönetiliyor */
 
+/* ═══════════════════════════════════════════════════════════════
+   26. GENEL TAŞMA / SIKIŞIKLIK DÜZELTMELERİ (MOBİL)
+   Mevcut tasarımı bozmadan sadece dar ekranlarda içeriğin
+   sığmasını ve nefes alan bir boşluk düzenini garanti eder.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Hiçbir eleman viewport'tan yatay taşamasın */
+html, body { max-width: 100%; overflow-x: hidden !important; }
+* { min-width: 0; }
+img, svg, video, canvas { max-width: 100%; height: auto; }
+
+/* Header: sağdaki ikon grubu artık taşmak yerine küçülür / gerekirse kaydırılır */
+.header-right {
+    flex-wrap: nowrap !important;
+    max-width: 60% !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+}
+.header-right::-webkit-scrollbar { display: none !important; }
+.header-left {
+    min-width: 0 !important;
+    flex-shrink: 1 !important;
+}
+.logo-area span {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+@media (max-width: 992px) {
+    .header { padding-left: 0.85rem !important; padding-right: 0.85rem !important; }
+    .header-left { gap: 10px !important; }
+    .header-right { gap: 4px !important; }
+    .hamburger-btn { width: 38px !important; height: 38px !important; font-size: 1.05rem !important; }
+}
+
+@media (max-width: 420px) {
+    .header-right { max-width: 56% !important; }
+    .logo-area span { font-size: 1.05rem !important; }
+    #mgAvatar { width: 34px !important; height: 34px !important; font-size: 0.75rem !important; }
+}
+
+/* Bildirim paneli ve arama modalı dar ekranda ekran dışına taşmasın */
+#notifPanel {
+    max-width: calc(100vw - 24px) !important;
+    right: -8px !important;
+}
+@media (max-width: 400px) {
+    #notifPanel { width: calc(100vw - 24px) !important; }
+}
+
+/* Genel kart / grid / metin taşma güvenliği */
+.content-card, .app-card, .category-card, .welcome-banner, .welcome-banner--compact,
+.profil-hero-card, .stat-item, .setting-item {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+.app-grid, .category-grid { max-width: 100%; }
+h1, h2, h3, p, span, a { overflow-wrap: break-word; word-break: break-word; }
+
+/* main-content her zaman kendi genişliğine sıkı sıkıya bağlı kalsın */
+.main-content { max-width: 100vw; box-sizing: border-box; }
+
+/* ═══════════════════════════════════════════════════════════════
+   27. AÇILIŞ (SPLASH) VİDEO ÇERÇEVESİ — GELİŞTİRİLMİŞ TASARIM
+   Video artık camsı, ışıltılı ve daha "premium" bir çerçeve içinde.
+   ═══════════════════════════════════════════════════════════════ */
+.splash-video-wrap {
+    padding: 10px;
+    border-radius: 32px;
+    background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.02));
+    box-shadow:
+        0 0 0 1px rgba(255,255,255,0.12),
+        0 0 60px rgba(67,24,255,0.35),
+        0 25px 60px rgba(0,0,0,0.5);
+    position: relative;
+    isolation: isolate;
+}
+.splash-video-wrap::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 34px;
+    padding: 2px;
+    background: linear-gradient(135deg, #4318ff, #00d2ff, #7c3aed, #4318ff);
+    background-size: 300% 300%;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: splashFrameGlow 4s linear infinite;
+    z-index: -1;
+    opacity: 0.9;
+}
+@keyframes splashFrameGlow {
+    0%   { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+}
+.splash-video {
+    border-radius: 24px !important;
+    box-shadow:
+        0 0 0 1px rgba(255,255,255,0.1) inset,
+        0 20px 50px rgba(0,0,0,0.45) !important;
+}
+
 </style>
 
 <div id="mg-toast-container" aria-live="polite" aria-atomic="true"></div>
