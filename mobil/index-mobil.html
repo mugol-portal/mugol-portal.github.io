@@ -2309,7 +2309,7 @@ body {
                 </div>
             </div>
         </div>
-        <div class="splash-progress-wrap">
+        <div class="splash-progress-wrap" data-pct="0">
             <div class="splash-progress-track">
                 <div class="splash-progress-bar" id="splashProgressBar" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
@@ -7140,6 +7140,227 @@ h1, h2, h3, p, span, a { overflow-wrap: break-word; word-break: break-word; }
         0 20px 50px rgba(0,0,0,0.45) !important;
 }
 
+
+/* ═══════════════════════════════════════════════════════════════
+   28. AÇILIŞ (SPLASH) v3 — DÖNEN IŞIK ÇERÇEVESİ, AURA, PARLAMA,
+   GELİŞMİŞ YÜKLEME ÇUBUĞU, % GÖSTERGESİ
+   (Sadece ekleme: mevcut kurallar korunur, burada üzerine yazılır)
+   ═══════════════════════════════════════════════════════════════ */
+@property --mg-sp-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+
+#splash-screen {
+    background:
+        radial-gradient(circle at 50% 36%, rgba(67,24,255,0.30), transparent 58%),
+        radial-gradient(circle at 85% 92%, rgba(0,210,255,0.13), transparent 50%),
+        radial-gradient(circle at 10% 8%, rgba(124,58,237,0.18), transparent 45%),
+        linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+}
+
+/* Çerçeve: dönen konik ışık + nefes alan aura */
+.splash-video-wrap {
+    padding: 12px;
+    border-radius: 36px;
+    background: linear-gradient(145deg, rgba(255,255,255,0.16), rgba(255,255,255,0.03));
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    animation:
+        splashPopIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s both,
+        mgSplashAura 3.2s ease-in-out 1s infinite;
+}
+.splash-video-wrap::before {
+    inset: -3px;
+    border-radius: 39px;
+    padding: 3px;
+    background: conic-gradient(from var(--mg-sp-angle),
+        #4318ff, #00d2ff, rgba(255,255,255,0.9) 18%, #7c3aed, #4318ff 60%, #00d2ff 80%, #4318ff);
+    background-size: auto;
+    animation: mgSplashSpin 5s linear infinite;
+    opacity: 1;
+}
+/* Video üzerinde yavaşça gezen cam parlaması */
+.splash-video-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border-radius: 26px;
+    background: linear-gradient(115deg, transparent 38%, rgba(255,255,255,0.13) 50%, transparent 62%);
+    background-size: 260% 100%;
+    background-position: 130% 0;
+    animation: mgSplashShine 3.6s ease-in-out 1.2s infinite;
+    pointer-events: none;
+    z-index: 3;
+}
+.splash-video {
+    border-radius: 26px !important;
+    background: radial-gradient(circle at 50% 35%, rgba(0,210,255,0.10), transparent 60%), #16294f;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.10) inset, 0 20px 50px rgba(0,0,0,0.45) !important;
+}
+
+@keyframes mgSplashSpin  { to { --mg-sp-angle: 360deg; } }
+@keyframes mgSplashShine { 0% { background-position: 130% 0; } 55%, 100% { background-position: -30% 0; } }
+@keyframes mgSplashAura {
+    0%, 100% { box-shadow: 0 0 0 1px rgba(255,255,255,0.12), 0 0 50px rgba(67,24,255,0.30), 0 25px 60px rgba(0,0,0,0.5); }
+    50%      { box-shadow: 0 0 0 1px rgba(255,255,255,0.18), 0 0 90px rgba(0,210,255,0.38), 0 25px 60px rgba(0,0,0,0.5); }
+}
+
+/* Yükleme çubuğu */
+.splash-progress-wrap { width: min(70vw, 300px); margin-top: 34px; }
+.splash-progress-wrap::after {
+    content: attr(data-pct) '%';
+    position: absolute;
+    top: -24px; right: 2px;
+    font-size: 0.78rem; font-weight: 800; letter-spacing: 1px;
+    color: rgba(255,255,255,0.75);
+    font-variant-numeric: tabular-nums;
+}
+.splash-progress-track {
+    height: 10px !important;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.08) !important;
+}
+#splash-screen #splashProgressBar {
+    position: relative;
+    background:
+        linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.35) 50%, rgba(255,255,255,0) 100%) 0 0 / 60px 100% no-repeat,
+        linear-gradient(90deg, #4318ff, #00d2ff) !important;
+    animation: mgSplashBarShine 1.6s linear infinite !important;
+    box-shadow: 0 0 14px rgba(0,210,255,0.55) !important;
+}
+#splash-screen #splashProgressBar::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 50%;
+    width: 12px; height: 12px;
+    transform: translate(40%, -50%);
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 10px 3px rgba(0,210,255,0.9);
+}
+@keyframes mgSplashBarShine { 0% { background-position: -60px 0, 0 0; } 100% { background-position: 320px 0, 0 0; } }
+
+.splash-progress-label {
+    letter-spacing: 3px !important;
+    color: rgba(255,255,255,0.78) !important;
+    text-shadow: 0 0 14px rgba(0,210,255,0.45);
+}
+
+/* Parçacıklar: biraz daha renkli */
+.splash-particle { will-change: transform; }
+
+@media (prefers-reduced-motion: reduce) {
+    .splash-video-wrap, .splash-video-wrap::before, .splash-video-wrap::after,
+    #splash-screen #splashProgressBar { animation: none !important; }
+
+/* ═══════════════════════════════════════════════════════════════
+   29. UYGULAMA TASARIM GELİŞTİRMESİ v3 (yalnızca ekleme)
+   Başlık, kartlar, ikonlar, alt menü, kaydırma çubuğu, odak halkası
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+    --mg-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --mg-glow: rgba(67,24,255,0.22);
+}
+html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+::selection { background: rgba(0,210,255,0.28); color: inherit; }
+
+/* Başlık: altta ince gradyan ışık çizgisi, kaydırınca derinleşen gölge */
+.header::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
+    background: linear-gradient(90deg, transparent, #4318ff 20%, #00d2ff 50%, #7c3aed 80%, transparent);
+    opacity: 0.55; pointer-events: none;
+    background-size: 200% 100%; animation: mgHdrFlow 8s linear infinite;
+}
+.header.mg-scrolled { box-shadow: 0 8px 28px -8px rgba(15,23,42,0.28) !important; }
+@keyframes mgHdrFlow { to { background-position: 200% 0; } }
+
+/* Logo yazısı */
+.logo-area > span { letter-spacing: -0.4px; }
+
+/* Bölüm başlığı */
+.section-title { letter-spacing: -0.4px; }
+
+/* Kategori kartları: daha derin, dokunuşa duyarlı */
+.category-card {
+    position: relative; overflow: hidden;
+    transition: transform 0.35s var(--mg-ease), box-shadow 0.35s var(--mg-ease), border-color 0.3s ease !important;
+}
+.category-card::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0) 55%);
+    opacity: 0; transition: opacity 0.3s ease;
+}
+.category-card:hover::before, .category-card:active::before { opacity: 1; }
+.category-card:hover { transform: translateY(-3px); box-shadow: 0 18px 36px -12px var(--mg-glow) !important; }
+.category-card:active { transform: scale(0.975); }
+.cat-icon-wrap { box-shadow: 0 8px 18px -6px rgba(67,24,255,0.45); }
+.cat-arrow { transition: transform 0.3s var(--mg-ease); }
+.category-card:hover .cat-arrow { transform: translateX(4px); }
+
+/* Uygulama ikonları (tile): yumuşak gölge + bastırma efekti */
+.tumuu-tile { transition: transform 0.3s var(--mg-ease), box-shadow 0.3s var(--mg-ease) !important; }
+.tumuu-tile:hover { transform: translateY(-3px); box-shadow: 0 14px 28px -10px var(--mg-glow) !important; }
+.tumuu-tile:active { transform: scale(0.94) !important; }
+.tumuu-icon-wrap { box-shadow: 0 6px 14px -4px rgba(0,0,0,0.25); }
+.tumuu-icon { transition: transform 0.35s var(--mg-ease); }
+.tumuu-tile:hover .tumuu-icon { transform: scale(1.08) rotate(-2deg); }
+.tumuu-label { letter-spacing: 0.1px; }
+
+/* Genel kartlar */
+.app-card, .content-card { transition: transform 0.3s var(--mg-ease), box-shadow 0.3s var(--mg-ease); }
+.app-card:active { transform: scale(0.98); }
+
+/* Butonlar dokunma geri bildirimi */
+button, .hamburger-btn { transition: transform 0.18s var(--mg-ease), background-color 0.2s ease, box-shadow 0.2s ease; }
+.hamburger-btn:active { transform: scale(0.88); }
+
+/* Alt menü: üstte ince gradyan ışık */
+#mgBottomNav::before {
+    content: ''; position: absolute; left: 12%; right: 12%; top: -1px; height: 2px;
+    background: linear-gradient(90deg, transparent, #4318ff, #00d2ff, transparent);
+    opacity: 0.6; pointer-events: none; border-radius: 2px;
+}
+#mgBottomNav .mg-bn-item { transition: transform 0.25s var(--mg-ease), color 0.2s ease; }
+#mgBottomNav .mg-bn-item:active { transform: scale(0.9); }
+
+/* Erişilebilir odak halkası */
+:focus-visible { outline: 2px solid #00d2ff; outline-offset: 2px; border-radius: 10px; }
+
+/* İnce, şık kaydırma çubuğu */
+* { scrollbar-width: thin; scrollbar-color: rgba(67,24,255,0.35) transparent; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb { background: rgba(67,24,255,0.30); border-radius: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* Sayfa içeriği yumuşak girsin */
+.main-content { animation: mgPageIn 0.5s var(--mg-ease) both; }
+@keyframes mgPageIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+[data-theme="dark"] { --mg-glow: rgba(0,210,255,0.16); }
+[data-theme="dark"] .tumuu-icon-wrap { box-shadow: 0 6px 16px -4px rgba(0,0,0,0.6); }
+[data-theme="dark"] ::-webkit-scrollbar-thumb { background: rgba(0,210,255,0.28); }
+[data-theme="dark"] * { scrollbar-color: rgba(0,210,255,0.3) transparent; }
+
+/* Bildirim paneli & profil menüsü: .header-right overflow'u yüzünden kesiliyordu.
+   JS ile <body>'ye taşınır, burada ekrana sabitlenir. */
+#notifPanel, #mgDrop {
+    position: fixed !important;
+    top: calc(var(--header-height, 70px) + 10px) !important;
+    right: 10px !important;
+    left: auto !important;
+    max-width: calc(100vw - 20px) !important;
+    max-height: calc(100vh - var(--header-height, 70px) - 90px);
+    overflow-y: auto;
+    z-index: 100000 !important;
+}
+#notifPanel { width: min(340px, calc(100vw - 20px)) !important; }
+#mgDrop { width: min(272px, calc(100vw - 20px)) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .header::after, .main-content { animation: none !important; }
+    .category-card, .tumuu-tile { transition: none !important; }
+}
+}
+
 </style>
 
 <div id="mg-toast-container" aria-live="polite" aria-atomic="true"></div>
@@ -7548,5 +7769,74 @@ h1, h2, h3, p, span, a { overflow-wrap: break-word; word-break: break-word; }
 })();
 </script>
 
+
+<script>
+/* ═══ SPLASH v3 — parçacıklar + yüzde göstergesi (ek, mevcut mantığa dokunmaz) ═══ */
+(function () {
+    'use strict';
+    var splash = document.getElementById('splash-screen');
+    if (!splash) return;
+    var box = document.getElementById('splashParticles');
+    var bar = document.getElementById('splashProgressBar');
+    var wrap = bar && bar.closest('.splash-progress-wrap');
+
+    /* Yüzde */
+    function syncPct() {
+        if (!bar || !wrap) return;
+        var p = Math.max(0, Math.min(100, Math.round(parseFloat(bar.style.width) || 0)));
+        wrap.setAttribute('data-pct', p);
+        bar.setAttribute('aria-valuenow', p);
+    }
+    if (bar) {
+        syncPct();
+        new MutationObserver(syncPct).observe(bar, { attributes: true, attributeFilter: ['style'] });
+    }
+
+    /* Parçacıklar */
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (box && !reduce) {
+        var colors = ['rgba(255,255,255,0.18)', 'rgba(0,210,255,0.35)', 'rgba(124,58,237,0.40)'];
+        for (var i = 0; i < 22; i++) {
+            var s = document.createElement('span');
+            var size = 3 + Math.random() * 6;
+            s.className = 'splash-particle';
+            s.style.cssText =
+                'width:' + size + 'px;height:' + size + 'px;' +
+                'left:' + (Math.random() * 100) + '%;' +
+                'background:' + colors[i % colors.length] + ';' +
+                'animation-duration:' + (7 + Math.random() * 8) + 's;' +
+                'animation-delay:-' + (Math.random() * 10) + 's;';
+            box.appendChild(s);
+        }
+        /* Splash kapanınca animasyonları durdur (pil tasarrufu) */
+        var mo = new MutationObserver(function () {
+            if (splash.classList.contains('hidden') || splash.style.display === 'none') {
+                box.innerHTML = '';
+                mo.disconnect();
+            }
+        });
+        mo.observe(splash, { attributes: true, attributeFilter: ['class', 'style'] });
+    }
+})();
+</script>
+
+<script>
+/* Panelleri .header-right dışına taşı (kesilmesin) */
+(function () {
+    ['notifPanel', 'mgDrop'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el && el.parentNode !== document.body) document.body.appendChild(el);
+    });
+})();
+/* UI v3: başlık gölgesi (kaydırınca) */
+(function () {
+    var h = document.querySelector('.header');
+    if (!h) return;
+    var t = false;
+    function upd() { t = false; h.classList.toggle('mg-scrolled', (window.scrollY || document.documentElement.scrollTop) > 6); }
+    window.addEventListener('scroll', function () { if (!t) { t = true; requestAnimationFrame(upd); } }, { passive: true });
+    upd();
+})();
+</script>
 </body>
 </html>
