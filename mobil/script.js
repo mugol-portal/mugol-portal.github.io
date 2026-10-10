@@ -416,28 +416,89 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     const splashVideo = document.getElementById('splashVideo');
     const splashLogoFallback = document.getElementById('splashLogoFallback');
 
-    // ── Video oynatılamazsa (dosya bulunamadı, tarayıcı desteklemiyor vb.) logo/başlığa geri dön
-    if (splashVideo) {
-        splashVideo.playbackRate = 0.6;
-        splashVideo.addEventListener('loadedmetadata', function () {
-            splashVideo.playbackRate = 0.6;
-        });
-        splashVideo.addEventListener('error', function () {
-            splashVideo.style.display = 'none';
-            if (splashLogoFallback) splashLogoFallback.style.display = 'flex';
-        });
-        // Video oynatılamıyorsa (autoplay engeli vb.) da fallback göster
-        var videoPlayPromise = splashVideo.play();
-        if (videoPlayPromise !== undefined) {
-            videoPlayPromise.catch(function () {
-                splashVideo.style.display = 'none';
-                if (splashLogoFallback) splashLogoFallback.style.display = 'flex';
-            });
+    // ── AYARLAR ──────────────────────────────────────────────
+    // Açılış süresini artık VİDEO belirler (mugol_acilis.mp4 şu an 15 sn).
+    // Videoyu tekrar uzatıp kısaltırsan kodda hiçbir şey değiştirmen gerekmez.
+    const SPLASH_VIDEO_RATE   = 1;     // 1 = normal hız (eskiden 0.6 idi; video uzatıldığı için kaldırıldı)
+    const SPLASH_END_HOLD_MS  = 300;   // video bitince son karede bekleme
+    const SPLASH_SAFETY_PAD_MS = 4000; // 'ended' hiç gelmezse güvenlik süresi
+    const FALLBACK_MS         = 6500;  // video hiç oynamazsa kullanılacak süre (müzik süresi)
+
+    const labels = ['Sistem Başlatılıyor...', 'Uygulamalar Hazırlanıyor...', 'Son Ayarlar...', 'Hoş Geldiniz!'];
+
+    let closed = false;
+    let videoFailed = false;
+    let progressTimer = null;
+    let safetyTimer = null;
+
+    // ── Progress bar + etiket ──
+    let labelIdx = -1;
+    function setProgress(pct) {
+        pct = Math.max(0, Math.min(pct, 100));
+        if (bar) bar.style.width = pct + '%';
+        const idx = Math.min(Math.floor(pct / 33), labels.length - 1);
+        if (idx !== labelIdx) {
+            labelIdx = idx;
+            if (label) label.textContent = labels[idx];
         }
-        // Video bir kez oynayıp bittiğinde son karede dursun (loop yok), akış müzik/süre ile devam eder
-        splashVideo.addEventListener('ended', function () {
-            splashVideo.style.opacity = '0.85';
-        });
+    }
+
+    // ── Splash'i kapat (tek sefer) ──
+    function closeSplash() {
+        if (closed) return;
+        closed = true;
+        if (progressTimer) clearInterval(progressTimer);
+        if (safetyTimer) clearTimeout(safetyTimer);
+        if (bar) bar.style.width = '100%';
+        if (label) label.textContent = 'Hoş Geldiniz!';
+        setTimeout(() => {
+            if (splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.classList.add('hidden');
+                }, 400);
+            }
+        }, 200);
+    }
+
+    // ── Video ana saat: ilerleme = currentTime / duration ──
+    function startVideoProgress() {
+        if (progressTimer) clearInterval(progressTimer);
+        progressTimer = setInterval(() => {
+            const d = splashVideo.duration;
+            if (d && isFinite(d)) {
+                setProgress(Math.min((splashVideo.currentTime / d) * 100, 99));
+            }
+        }, 80);
+
+        // Güvenlik: video takılırsa/ended gelmezse splash sonsuza kadar kalmasın
+        if (safetyTimer) clearTimeout(safetyTimer);
+        const d = splashVideo.duration;
+        if (d && isFinite(d)) {
+            const totalMs = (d / SPLASH_VIDEO_RATE) * 1000;
+            safetyTimer = setTimeout(closeSplash, totalMs + SPLASH_SAFETY_PAD_MS);
+        }
+    }
+
+    // ── Video oynatılamazsa: süreye dayalı ilerleme ile devam et ──
+    function startFallbackProgress(totalMs) {
+        if (closed) return;
+        if (progressTimer) clearInterval(progressTimer);
+        if (safetyTimer) clearTimeout(safetyTimer);
+        const startTime = Date.now();
+        progressTimer = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            setProgress(Math.min((elapsed / totalMs) * 100, 99));
+            if (elapsed >= totalMs) closeSplash();
+        }, 80);
+    }
+
+    function onVideoFailed() {
+        if (videoFailed) return;
+        videoFailed = true;
+        if (splashVideo) splashVideo.style.display = 'none';
+        if (splashLogoFallback) splashLogoFallback.style.display = 'flex';
+        startFallbackProgress(FALLBACK_MS);
     }
 
     // ── Güncelleme URL'si varsa (mgUpdateBtn sonrası) ziyaret bayrağı zaten sessionStorage.clear ile silindi
@@ -457,6 +518,7 @@ document.querySelectorAll('.category-card').forEach(catCard => {
 
     // ── Geri tuşuyla gelindiyse splash'i atla
     if (isBackNav && !isUpdateReload) {
+        if (splashVideo) { try { splashVideo.pause(); } catch (e) {} }
         if (splash) splash.classList.add('hidden');
         sessionStorage.setItem('mugol-portal-visited', '1');
         return;
@@ -465,106 +527,53 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     // İlk ziyareti kaydet — sonraki geri tuşlarında splash gösterilmez
     sessionStorage.setItem('mugol-portal-visited', '1');
 
-    const labels = ['Sistem Başlatılıyor...', 'Uygulamalar Hazırlanıyor...', 'Son Ayarlar...', 'Hoş Geldiniz!'];
+    // ── VİDEO KURULUMU ──
+    if (splashVideo) {
+        splashVideo.playbackRate = SPLASH_VIDEO_RATE;
+        splashVideo.addEventListener('loadedmetadata', function () {
+            splashVideo.playbackRate = SPLASH_VIDEO_RATE;
+            if (!videoFailed) startVideoProgress();
+        });
+        // Metadata script çalışmadan önce yüklendiyse olay kaçmış olabilir
+        if (splashVideo.readyState >= 1 && !videoFailed) {
+            splashVideo.playbackRate = SPLASH_VIDEO_RATE;
+            startVideoProgress();
+        }
+        splashVideo.addEventListener('error', onVideoFailed);
+        // Video bitince son karede kısa bekle, sonra splash'i kapat
+        splashVideo.addEventListener('ended', function () {
+            splashVideo.style.opacity = '0.85';
+            setProgress(100);
+            setTimeout(closeSplash, SPLASH_END_HOLD_MS);
+        });
+        // Autoplay engeli vb. → fallback
+        var videoPlayPromise = splashVideo.play();
+        if (videoPlayPromise !== undefined) {
+            videoPlayPromise.catch(onVideoFailed);
+        }
+    } else {
+        // Video elementi hiç yoksa
+        onVideoFailed();
+    }
 
-    // ── Açılış müziğini çal (ayardan kapalıysa çalma)
+    // ── Açılış müziği (ayardan kapalıysa sessiz) ──
+    // Müzik yalnızca eşlik eder; splash'in süresini artık video belirler.
     const musicEnabled = localStorage.getItem('mugol-acilis-muzik') !== 'kapali';
     const splashAudio = new Audio('mugol_acilis.mp3');
     splashAudio.preload = 'auto';
     if (!musicEnabled) { splashAudio.volume = 0; }
 
-    // Splash'i kapatma fonksiyonu
-    function closeSplash() {
-        if (bar) bar.style.width = '100%';
-        if (label) label.textContent = 'Hoş Geldiniz!';
-        setTimeout(() => {
-            if (splash) {
-                splash.style.opacity = '0';
-                setTimeout(() => {
-                    splash.classList.add('hidden');
-                }, 400);
-            }
-        }, 200);
-    }
-
-    // Müzik süresiyle senkronize progress bar
-    function startProgressWithAudio(duration) {
-        let progress = 0;
-        let labelIdx = 0;
-        const totalMs = duration * 1000;
-        const startTime = Date.now();
-
-        const interval = setInterval(() => {
-            const elapsed = Date.now() - startTime;
-            progress = Math.min((elapsed / totalMs) * 100, 99);
-
-            if (bar) bar.style.width = progress + '%';
-
-            const newLabelIdx = Math.min(Math.floor(progress / 33), labels.length - 1);
-            if (newLabelIdx !== labelIdx) {
-                labelIdx = newLabelIdx;
-                if (label) label.textContent = labels[labelIdx];
-            }
-
-            if (elapsed >= totalMs) {
-                clearInterval(interval);
-            }
-        }, 80);
-    }
-
-    // Müzik yüklenince süresini al ve başlat
+    // Video çalışmıyorsa (fallback) süreyi müzik uzunluğundan al
     splashAudio.addEventListener('loadedmetadata', function () {
-        startProgressWithAudio(splashAudio.duration);
+        if (videoFailed && !closed && isFinite(splashAudio.duration)) {
+            startFallbackProgress(splashAudio.duration * 1000);
+        }
     });
 
-    // Müzik bitince splash kapat
-    splashAudio.addEventListener('ended', function () {
-        closeSplash();
-    });
-
-    // Müzik yüklenemezse veya hata olursa eski davranışla devam et
-    splashAudio.addEventListener('error', function () {
-        let progress = 0;
-        let labelIdx = 0;
-        const interval = setInterval(() => {
-            progress += Math.random() * 4 + 2;
-            if (progress > 100) progress = 100;
-            if (bar) bar.style.width = progress + '%';
-            const newLabelIdx = Math.min(Math.floor(progress / 33), labels.length - 1);
-            if (newLabelIdx !== labelIdx) {
-                labelIdx = newLabelIdx;
-                if (label) label.textContent = labels[labelIdx];
-            }
-            if (progress >= 100) {
-                clearInterval(interval);
-                closeSplash();
-            }
-        }, 120);
-    });
-
-    // Müziği oynat
     const playPromise = splashAudio.play();
     if (playPromise !== undefined) {
-        playPromise.catch(function () {
-            // Tarayıcı autoplay'e izin vermezse: kullanıcı etkileşimi beklenmeden
-            // eski ilerleme animasyonu ile devam et
-            let progress = 0;
-            let labelIdx = 0;
-            const interval = setInterval(() => {
-                progress += Math.random() * 4 + 2;
-                if (progress > 100) progress = 100;
-                if (bar) bar.style.width = progress + '%';
-                const newLabelIdx = Math.min(Math.floor(progress / 33), labels.length - 1);
-                if (newLabelIdx !== labelIdx) {
-                    labelIdx = newLabelIdx;
-                    if (label) label.textContent = labels[labelIdx];
-                }
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    closeSplash();
-                }
-            }, 120);
-        });
+        // Tarayıcı müziği engellerse sessiz devam et — video yine akışı yönetir
+        playPromise.catch(function () {});
     }
 })();
 
