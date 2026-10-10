@@ -4708,6 +4708,25 @@ body {
     </script>
     <!-- ══════════════════════════════════ -->
 
+    <!-- ═══ ÇEVRİMDIŞI GİRİŞ — Service Worker kaydı (sw.js) ═══ -->
+    <script>
+    (function () {
+        if (!('serviceWorker' in navigator)) return;
+        if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') return;
+        window.addEventListener('load', function () {
+            navigator.serviceWorker.register('sw.js').then(function () {
+                return navigator.serviceWorker.ready;
+            }).then(function (reg) {
+                /* Açık olan sayfa da çevrimdışı için önbelleğe alınsın */
+                if (reg && reg.active) {
+                    reg.active.postMessage({ type: 'CACHE_URL', url: location.href.split('#')[0].split('?')[0] });
+                }
+            }).catch(function (err) {
+                console.warn('[MuGöl] Service Worker kaydedilemedi:', err);
+            });
+        });
+    })();
+    </script>
     <script src="script.js"></script>
     <!-- BİLDİRİM SİSTEMİ (ayrı dosya: notifications.js) -->
     <script src="notifications.js"></script>
