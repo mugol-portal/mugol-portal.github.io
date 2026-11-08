@@ -4,18 +4,22 @@
 <script>
 (function(){
   "use strict";
-  function isTWA(){
-    if(document.referrer && document.referrer.indexOf("android-app://")===0) return true;
+  var APP_PACKAGE = "com.mugol.portal2";
+
+  function isApp(){
+    // Kendi Android uygulamandan (TWA) açıldıysa => mobil
+    if(document.referrer && document.referrer.indexOf("android-app://" + APP_PACKAGE) === 0) return true;
+    // Ana ekrana eklenip uygulama gibi açıldıysa (PWA) => mobil
     try{
       if(window.matchMedia("(display-mode: standalone)").matches) return true;
       if(window.matchMedia("(display-mode: fullscreen)").matches) return true;
     }catch(e){}
-    if(window.navigator.standalone===true) return true;
-    var ua=navigator.userAgent||"";
-    if(/Android/.test(ua)&&/wv/.test(ua)) return true;
+    if(window.navigator.standalone === true) return true;
+    // Chrome / diğer tarayıcı sekmesi => web
     return false;
   }
-  var target = isTWA()
+
+  var target = isApp()
     ? "mobil/index-mobil.html"
     : "web/index-web.html";
   window.location.replace(target+(window.location.search||"")+(window.location.hash||""));
@@ -35,5 +39,6 @@ html,body{margin:0;padding:0;background:#0f172a;min-height:100vh;display:flex;al
 </head>
 <body>
 <div class="r"><div class="ring"></div><div class="txt">Yükleniyor...</div></div>
+<noscript><meta http-equiv="refresh" content="0;url=web/index-web.html"></noscript>
 </body>
 </html>
