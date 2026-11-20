@@ -1,0 +1,66 @@
+/* ═══════════════════════════════════════════════
+   MuGöl — Görünüm Modları (Mobil / Tablet / Masaüstü)
+   <html class="mg-mode-mobile|tablet|desktop">
+   ═══════════════════════════════════════════════ */
+
+/* ── 1. "Daha Fazla" (MG) düğmesi: çubuğun içinde dikey ortala ── */
+html body #mgBottomNav { align-items: center !important; }
+html body #mgBottomNav .mg-bn-item.mg-bn-more {
+    margin: 0 !important; padding: 0 !important;
+    height: 100% !important; width: 64px !important; min-width: 64px !important; flex: 0 0 64px !important;
+    align-self: center !important; display: flex !important; align-items: center !important; justify-content: center !important;
+    background: transparent !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important;
+}
+html body #mgBottomNav .mg-bn-item.mg-bn-more .mg-bn-pi-icon.mg-bn-more-circle {
+    position: static !important; inset: auto !important; margin: 0 !important; transform: none !important;
+    display: flex !important; align-items: center !important; justify-content: center !important;
+}
+
+/* ── 2. Ayarlar: görünüm modu seçici ── */
+.mg-mode-btn {
+    -webkit-appearance: none; appearance: none; cursor: pointer; border: 0; background: transparent;
+    display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 76px;
+    padding: 9px 10px; border-radius: 11px; font: inherit; font-size: .78rem; font-weight: 700; color: var(--text-muted);
+    transition: background .2s, color .2s, box-shadow .2s;
+}
+.mg-mode-btn i { font-size: 1.15rem; }
+.mg-mode-btn.active { background: var(--bg-card); color: var(--primary-color); box-shadow: 0 3px 10px -2px rgba(12,15,46,.18); }
+
+/* ── 3. MOBİL MOD: alt menü, yan menü yok ── */
+html.mg-mode-mobile body #mgBottomNav { display: flex !important; }
+html.mg-mode-mobile body .sidebar,
+html.mg-mode-mobile body .sidebar-overlay { display: none !important; }
+html.mg-mode-mobile body #hamburgerBtn { display: none !important; }
+html.mg-mode-mobile body .main-content { padding-bottom: calc(var(--mg-nav-h) + 52px) !important; max-width: 640px; margin-left: auto; margin-right: auto; }
+
+/* ── 4. TABLET & MASAÜSTÜ: alt menü kalkar ── */
+html.mg-mode-tablet body #mgBottomNav, html.mg-mode-tablet body #mgBnPanel, html.mg-mode-tablet body #mgBnOverlay,
+html.mg-mode-desktop body #mgBottomNav, html.mg-mode-desktop body #mgBnPanel, html.mg-mode-desktop body #mgBnOverlay { display: none !important; }
+html.mg-mode-tablet body .main-content, html.mg-mode-desktop body .main-content { padding-bottom: 2.5rem !important; }
+html.mg-mode-tablet body #admob-banner-container, html.mg-mode-desktop body #admob-banner-container { bottom: 0 !important; }
+html.mg-mode-tablet body #scrollTopBtn, html.mg-mode-desktop body #scrollTopBtn,
+html.mg-mode-tablet body #redirect-toast, html.mg-mode-desktop body #redirect-toast { bottom: 20px !important; }
+
+/* ── 5. TABLET MOD: solda dar ikon şeridi ── */
+html.mg-mode-tablet body #hamburgerBtn { display: none !important; }
+html.mg-mode-tablet body .sidebar-overlay { display: none !important; }
+html.mg-mode-tablet body .sidebar {
+    position: relative !important; left: 0 !important; top: auto !important; height: auto !important;
+    width: 88px !important; padding: 1.2rem .6rem !important; box-shadow: none !important;
+    border-right: 1px solid var(--border-color) !important;
+}
+html.mg-mode-tablet body .sidebar .menu-title,
+html.mg-mode-tablet body .sidebar .nav-text,
+html.mg-mode-tablet body .sidebar .mg-ss-wrap,
+html.mg-mode-tablet body .sidebar .sidebar-profile { display: none !important; }
+html.mg-mode-tablet body .sidebar .nav-item { justify-content: center !important; padding: 14px 0 !important; }
+html.mg-mode-tablet body .sidebar .nav-item i { margin: 0 !important; font-size: 1.3rem !important; }
+html.mg-mode-tablet body .category-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 14px !important; }
+html.mg-mode-tablet body .app-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important; }
+
+/* ── 6. MASAÜSTÜ MOD: üst solda menü (☰) + sol menü ── */
+html.mg-mode-desktop body #hamburgerBtn { display: flex !important; }
+html.mg-mode-desktop body .main-content { padding-left: 2rem; padding-right: 2rem; }
+@media (min-width: 993px) {
+    html.mg-mode-desktop body .category-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+}

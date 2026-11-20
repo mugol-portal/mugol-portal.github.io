@@ -34,13 +34,6 @@
       "purpose": "maskable"
     }
   ],
-  "screenshots": [
-    {
-      "src": "./screenshot.png",
-      "sizes": "540x720",
-      "type": "image/png"
-    }
-  ],
   "shortcuts": [
     {
       "name": "Namaz Vakitleri",
@@ -95,7 +88,11 @@
       ]
     }
   ],
-  "categories": ["education", "productivity", "utilities"],
+  "categories": [
+    "education",
+    "productivity",
+    "utilities"
+  ],
   "lang": "tr",
   "dir": "ltr"
 }
