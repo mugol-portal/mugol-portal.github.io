@@ -327,6 +327,120 @@ document.querySelectorAll('.category-card').forEach(catCard => {
 });
 
 // =========================================================
+// 8. GÜNLÜK REKLAM SEÇKİSİ
+//    Ana sayfadaki reklam şeridi her gün farklı uygulamaları gösterir.
+//    Havuz: portaldaki tüm uygulama kartları (.app-card). Yeni uygulama eklediğinde
+//    kendiliğinden havuza girer. Seçim tarihe bağlıdır: aynı gün herkes aynı 3 uygulamayı görür,
+//    ertesi gün başkaları gelir; art arda iki gün aynı uygulama çıkmaz.
+// =========================================================
+(function () {
+    'use strict';
+    var track = document.getElementById('mgAdTrack');
+    var dotsWrap = document.getElementById('mgAdDots');
+    if (!track || !dotsWrap) return;
+
+    var PER_DAY = 3;   // şeritte aynı anda kaç reklam
+    /* Özel tasarımlı üç uygulama: kendi rengi ve kısa reklam metni korunur */
+    var SPECIAL = {
+        'https://mugol-portal.github.io/mugol-.iq/': { cls: 'mg-ad-iq', fa: 'fa-brain',   desc: 'Ücretsiz zeka testleriyle IQ seviyeni ölç, detaylı analiz raporunu gör' },
+        'https://mugol-portal.github.io/mugol.-ai/': { cls: 'mg-ad-ai', fa: 'fa-robot',   desc: 'Yapay zeka destekli akıllı asistanınla anında sohbet et, sorularına yanıt al' },
+        'https://mugol-portal.github.io/mugol.-os/': { cls: 'mg-ad-os', fa: 'fa-desktop', desc: 'Tarayıcıdan çalışan işletim sistemi' }
+    };
+    var PALETTE = 8;   // style.css içindeki .mg-ad-p0 … .mg-ad-p7
+
+    /* ── havuz ── */
+    var pool = [], seen = {};
+    document.querySelectorAll('.app-card').forEach(function (a) {
+        var href = a.getAttribute('href');
+        if (!href || seen[href]) return;
+        seen[href] = 1;
+        var t = a.querySelector('.app-info h3'), img = a.querySelector('.app-icon-img'), d = a.querySelector('.app-desc');
+        pool.push({
+            href: href,
+            title: t ? t.textContent.trim() : 'Uygulama',
+            img: img ? img.getAttribute('src') : '',
+            desc: d ? d.textContent.trim() : ''
+        });
+    });
+    if (pool.length < PER_DAY) return;          // havuz yetersizse mevcut kartlar olduğu gibi kalır
+    pool.sort(function (a, b) { return a.href < b.href ? -1 : a.href > b.href ? 1 : 0; });   // sıra DOM'dan bağımsız olsun
+
+    /* ── tarihe bağlı, tekrarsız seçim ── */
+    function rng(seed) {                         // mulberry32
+        return function () {
+            seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+            var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+            t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+            return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        };
+    }
+    var now = new Date();
+    var day = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 86400000);   // yerel takvim günü
+    var rand = rng(pool.length * 7919);
+    var order = pool.slice();
+    for (var i = order.length - 1; i > 0; i--) {                                                   // sabit karışık sıra (Fisher–Yates)
+        var j = Math.floor(rand() * (i + 1)), tmp = order[i]; order[i] = order[j]; order[j] = tmp;
+    }
+    /* Her gün sıradan 3 ardışık uygulama alınır, ertesi gün sonraki 3'ü → art arda iki gün asla aynı uygulama çıkmaz,
+       havuzdaki herkes eşit sıklıkta (≈ her 10 günde bir) görünür. */
+    var picks = [];
+    for (var k = 0; k < PER_DAY; k++) picks.push(order[(day * PER_DAY + k) % order.length]);
+
+    function hash(str) { var h = 0; for (var n = 0; n < str.length; n++) h = (h * 31 + str.charCodeAt(n)) | 0; return Math.abs(h); }
+    function shorten(t, max) {
+        if (t.length <= max) return t;
+        var cut = t.slice(0, max); cut = cut.slice(0, cut.lastIndexOf(' ') > 40 ? cut.lastIndexOf(' ') : max);
+        return cut.replace(/[\s,.;:!-]+$/, '') + '…';
+    }
+
+    /* ── kartları oluştur ── */
+    function card(app) {
+        var sp = SPECIAL[app.href];
+        var a = document.createElement('a');
+        a.href = app.href;
+        a.className = 'mg-ad-card ' + (sp ? sp.cls : 'mg-ad-p' + (hash(app.href) % PALETTE)) + (app.title.length > 20 ? ' mg-ad-long' : '');
+        a.setAttribute('role', 'listitem');
+        a.setAttribute('aria-label', app.title + ' reklamı');
+
+        var label = document.createElement('span'); label.className = 'mg-ad-label'; label.textContent = 'REKLAM';
+
+        var icon = document.createElement('div'); icon.className = 'mg-ad-icon';
+        /* Yedek simge yalnızca görsel yüklenemezse (ya da hiç yoksa) eklenir */
+        function addFallback() {
+            if (icon.querySelector('.mg-ad-icon-fallback')) return;
+            var fb = document.createElement('i');
+            fb.className = 'fas ' + (sp ? sp.fa : 'fa-star') + ' mg-ad-icon-fallback';
+            fb.setAttribute('aria-hidden', 'true'); fb.style.display = 'flex';
+            icon.appendChild(fb);
+        }
+        if (app.img) {
+            var im = document.createElement('img'); im.alt = ''; im.className = 'mg-ad-icon-img'; im.src = app.img;
+            im.onerror = function () { im.style.display = 'none'; addFallback(); };
+            icon.appendChild(im);
+        } else { addFallback(); }
+
+        var body = document.createElement('div'); body.className = 'mg-ad-body';
+        var ti = document.createElement('span'); ti.className = 'mg-ad-title'; ti.textContent = app.title;
+        var de = document.createElement('span'); de.className = 'mg-ad-desc'; de.textContent = shorten(sp ? sp.desc : app.desc, 92);
+        body.appendChild(ti); body.appendChild(de);
+
+        var cta = document.createElement('span'); cta.className = 'mg-ad-cta'; cta.innerHTML = 'Dene <i class="fas fa-arrow-right" aria-hidden="true"></i>';
+
+        a.appendChild(label); a.appendChild(icon); a.appendChild(body); a.appendChild(cta);
+        return a;
+    }
+
+    track.innerHTML = '';
+    picks.forEach(function (p) { track.appendChild(card(p)); });
+    dotsWrap.innerHTML = '';
+    picks.forEach(function (_, idx) {
+        var d = document.createElement('span'); d.className = 'mg-ad-dot' + (idx === 0 ? ' active' : ''); d.setAttribute('data-idx', idx);
+        dotsWrap.appendChild(d);
+    });
+    window.mgAdPicksToday = picks.map(function (p) { return p.title; });   // kontrol için (konsolda görülebilir)
+})();
+
+// =========================================================
 // 8a. REKLAM KARTI CAROUSEL — MuGöl IQ / AI / OS (kaydırmalı + otomatik)
 // =========================================================
 (function () {
@@ -440,12 +554,13 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     const splashLogoFallback = document.getElementById('splashLogoFallback');
 
     // ── AYARLAR ──────────────────────────────────────────────
-    // Açılış süresini artık VİDEO belirler (mugol_acilis.mp4 şu an 15 sn).
+    // Açılış süresini VİDEO belirler (mugol_acilis.mp4 = 15 sn). Müzik (mugol_acilis.mp3) da 15 sn'dir
+    // ve video başlayınca birlikte başlar → ikisi aynı anda biter. Birini değiştirirsen ikisini AYNI uzunlukta hazırla.
     // Videoyu tekrar uzatıp kısaltırsan kodda hiçbir şey değiştirmen gerekmez.
     const SPLASH_VIDEO_RATE   = 1;     // 1 = normal hız (eskiden 0.6 idi; video uzatıldığı için kaldırıldı)
     const SPLASH_END_HOLD_MS  = 300;   // video bitince son karede bekleme
     const SPLASH_SAFETY_PAD_MS = 4000; // 'ended' hiç gelmezse güvenlik süresi
-    const FALLBACK_MS         = 6500;  // video hiç oynamazsa kullanılacak süre (müzik süresi)
+    const FALLBACK_MS         = 15000; // video hiç oynamazsa kullanılacak süre (video/müzik süresi, 15 sn)
 
     const labels = ['Sistem Başlatılıyor...', 'Uygulamalar Hazırlanıyor...', 'Son Ayarlar...', 'Hoş Geldiniz!'];
 
@@ -453,6 +568,19 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     let videoFailed = false;
     let progressTimer = null;
     let safetyTimer = null;
+    let splashAudioRef = null;   // müzik (aşağıda oluşturulur) — kapanırken yumuşakça kısılır
+
+    // Splash kapanırken müziği ani kesmek yerine kısarak durdur
+    function fadeOutAudio() {
+        const a = splashAudioRef;
+        if (!a || a.paused) return;
+        const v0 = a.volume; let n = 0;
+        const t = setInterval(function () {
+            n++;
+            try { a.volume = Math.max(0, v0 * (1 - n / 8)); } catch (e) {}
+            if (n >= 8) { clearInterval(t); try { a.pause(); } catch (e) {} }
+        }, 40);
+    }
 
     // ── Progress bar + etiket ──
     let labelIdx = -1;
@@ -474,6 +602,7 @@ document.querySelectorAll('.category-card').forEach(catCard => {
         if (safetyTimer) clearTimeout(safetyTimer);
         if (bar) bar.style.width = '100%';
         if (label) label.textContent = 'Hoş Geldiniz!';
+        fadeOutAudio();
         setTimeout(() => {
             if (splash) {
                 splash.style.opacity = '0';
@@ -580,11 +709,12 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     }
 
     // ── Açılış müziği (ayardan kapalıysa sessiz) ──
-    // Müzik yalnızca eşlik eder; splash'in süresini artık video belirler.
+    // Müzik video ile AYNI uzunlukta (15 sn) ve video ile birlikte başlar.
     const musicEnabled = localStorage.getItem('mugol-acilis-muzik') !== 'kapali';
     const splashAudio = new Audio('media/mugol_acilis.mp3');
     splashAudio.preload = 'auto';
     if (!musicEnabled) { splashAudio.volume = 0; }
+    splashAudioRef = splashAudio;
 
     // Video çalışmıyorsa (fallback) süreyi müzik uzunluğundan al
     splashAudio.addEventListener('loadedmetadata', function () {
@@ -593,10 +723,29 @@ document.querySelectorAll('.category-card').forEach(catCard => {
         }
     });
 
-    const playPromise = splashAudio.play();
-    if (playPromise !== undefined) {
+    let audioStarted = false;
+    function startAudio() {
+        if (audioStarted || closed) return;
+        audioStarted = true;
+        // Video zaten ilerlediyse müziği aynı noktaya getir (ikisi senkron kalsın)
+        try {
+            if (splashVideo && !videoFailed && isFinite(splashVideo.currentTime) && splashVideo.currentTime > 0.05) {
+                splashAudio.currentTime = Math.min(splashVideo.currentTime, 14.9);
+            }
+        } catch (e) {}
+        const playPromise = splashAudio.play();
         // Tarayıcı müziği engellerse sessiz devam et — video yine akışı yönetir
-        playPromise.catch(function () {});
+        if (playPromise !== undefined) playPromise.catch(function () {});
+    }
+
+    if (splashVideo) {
+        // Video gerçekten oynamaya başlayınca müziği başlat
+        splashVideo.addEventListener('playing', startAudio, { once: true });
+        if (!splashVideo.paused && splashVideo.readyState >= 3) startAudio();
+        // 'playing' hiç gelmezse (video yüklenemedi vb.) müzik yine de başlasın
+        setTimeout(startAudio, 1500);
+    } else {
+        startAudio();
     }
 })();
 
