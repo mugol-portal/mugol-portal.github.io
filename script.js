@@ -259,7 +259,65 @@ window.resetContactForm = function() {
             charCountEl.style.color = 'var(--text-muted)';
         }
     }
-}
+};
+
+// ── Hazır metinler (geri bildirim / iletişim formu) ──
+(function () {
+    var box = document.getElementById('contactTemplates');
+    var ta  = document.getElementById('contact-message');
+    var sel = document.getElementById('contact-category');
+    if (!box || !ta) return;
+
+    var TPL = {
+        oneri:    { cat: '💡 Öneri',          text: 'Merhaba, MuGöl PORTAL için bir önerim var: ' },
+        ozellik:  { cat: '💡 Öneri',          text: 'Merhaba, portalda şu özelliğin olmasını çok isterim: ' },
+        hata:     { cat: '🐛 Hata Bildirimi', text: 'Merhaba, bir hata ile karşılaştım.\nNerede: \nNe oldu: \nCihaz / tarayıcı: ' },
+        destek:   { cat: '🆘 Destek Talebi',  text: 'Merhaba, yardıma ihtiyacım var. Sorunum şu: ' },
+        is:       { cat: '🤝 İş Birliği',     text: 'Merhaba, sizinle iş birliği yapmak istiyorum. Teklifim: ' },
+        tesekkur: { cat: '💬 Diğer',          text: 'Merhaba, MuGöl PORTAL için teşekkür etmek istedim. ' }
+    };
+    var lastTpl = '';   // mesaja en son eklenen şablon metni
+
+    function setActive(key) {
+        box.querySelectorAll('.ct-chip').forEach(function (b) {
+            b.classList.toggle('on', b.getAttribute('data-tpl') === key);
+        });
+    }
+
+    box.addEventListener('click', function (e) {
+        var b = e.target.closest ? e.target.closest('.ct-chip') : null;
+        if (!b) return;
+        var key = b.getAttribute('data-tpl');
+        var t = TPL[key];
+        if (!t) return;
+
+        var cur = ta.value;
+        var max = parseInt(ta.getAttribute('maxlength'), 10) || 500;
+        // Boşsa ya da yalnızca önceki hazır metin varsa değiştir; kullanıcı yazdıysa altına ekle
+        var replace = (!cur.trim() || cur === lastTpl);
+        var next = replace ? t.text : cur.replace(/\s+$/, '') + '\n\n' + t.text;
+        ta.value = next.slice(0, max);
+        lastTpl = replace ? ta.value : '';
+
+        if (sel) sel.value = t.cat;
+        setActive(key);
+        ta.dispatchEvent(new Event('input', { bubbles: true }));   // karakter sayacı güncellensin
+        ta.focus();
+        try { ta.setSelectionRange(ta.value.length, ta.value.length); } catch (err) {}
+    });
+
+    // Kullanıcı metni değiştirince "seçili" vurgusu kalksın
+    ta.addEventListener('input', function () {
+        if (this.value !== lastTpl) { setActive(''); }
+    });
+
+    // Form sıfırlanınca da temizle
+    var origReset = window.resetContactForm;
+    window.resetContactForm = function () {
+        if (typeof origReset === 'function') origReset();
+        lastTpl = ''; setActive('');
+    };
+})();
 
 // =========================================================
 // 6. YÖNLENDİRME TOAST (POP-UP ENGELLEYİCİ ÇÖZÜMLÜ)
@@ -1026,7 +1084,7 @@ function refreshProfilUI() {
     if (sidebarPlan) {
         sidebarPlan.innerHTML = noads
             ? '<i class="fas fa-star" style="color:#f59e0b;font-size:0.65rem;"></i> Reklamsız Plan'
-            : 'Sürüm 2.0.0';
+            : 'Sürüm 9.0.0';
         sidebarPlan.style.color = noads ? '#f59e0b' : '';
     }
 
@@ -1740,7 +1798,7 @@ window.MG_NOTIFICATIONS = [
     {
         id: 'n1',
         icon: '🚀',
-        title: 'MuGöl PORTAL v3.0 Yayında!',
+        title: 'MuGöl PORTAL v9.0.0 Yayında!',
         body: 'Yeni tasarım, güncelleme animasyonu ve gelişmiş bildirim sistemi eklendi.',
         time: 'Az önce',
         type: 'success',
@@ -2168,190 +2226,4 @@ window.MG_NOTIFICATIONS = [
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
     askView();   /* açılış ekranının da üstünde, hemen göster */
-})();
-
-
-// ════════════════════════════════════════════════════════════
-// SORU SOR — "Muhammet'e sor" penceresi (e-posta ile mesaj)
-// ════════════════════════════════════════════════════════════
-(function () {
-    'use strict';
-    var TO = 'muhammete.soru.sor@gmail.com';
-    var MAX = 1000;
-    var NAME_KEY = 'mugol-user-name';
-    var CHIPS = [
-        { k: 'soru',       e: '❓', t: 'Soru',        s: 'Merhaba Muhammet, MuGöl PORTAL ile ilgili bir sorum var: ' },
-        { k: 'öneri',      e: '💡', t: 'Öneri',       s: 'Merhaba Muhammet, MuGöl PORTAL için bir önerim var: ' },
-        { k: 'hata bildirimi', e: '🐛', t: 'Hata bildir', s: 'Merhaba Muhammet, MuGöl PORTAL\'da bir hata buldum: ' },
-        { k: 'iş birliği', e: '🤝', t: 'İş birliği',  s: 'Merhaba Muhammet, seninle iş birliği yapmak isterim: ' },
-        { k: 'tanışma',    e: '👋', t: 'Tanışalım',   s: 'Merhaba Muhammet, tanışmak istedim! ' }
-    ];
-    var box = null, lastFocus = null, kind = 'mesaj', starter = '', rec = null;
-
-    var SVG_CHAT = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-3.6-.8L3 21l1.9-5.2A8.4 8.4 0 1 1 21 11.5z"/><circle cx="8.5" cy="11.5" r=".6" fill="#fff"/><circle cx="12" cy="11.5" r=".6" fill="#fff"/><circle cx="15.5" cy="11.5" r=".6" fill="#fff"/></svg>';
-    var SVG_X = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>';
-    var SVG_SEND = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>';
-
-    function getName() { try { return (localStorage.getItem(NAME_KEY) || ''); } catch (e) { return ''; } }
-    function saveName(n) {
-        try { if (n) localStorage.setItem(NAME_KEY, n); else localStorage.removeItem(NAME_KEY); } catch (e) {}
-        try { window.dispatchEvent(new Event('mg-name')); } catch (e) {}
-    }
-    function $(sel) { return box.querySelector(sel); }
-
-    function subjectText() {
-        var n = $('#mgAskName').value.trim();
-        return 'MuGöl PORTAL\'dan ' + kind + (n ? ' - ' + n : '');
-    }
-    function refreshSubject() { $('#mgAskSubj').textContent = 'Konu: ' + subjectText(); }
-    function refreshSend() { $('#mgAskSend').disabled = $('#mgAskMsg').value.trim().length < 3; }
-
-    function build() {
-        var chips = CHIPS.map(function (c, i) {
-            return '<button type="button" class="mg-ask-chip" data-i="' + i + '"><span aria-hidden="true">' + c.e + '</span> ' + c.t + '</button>';
-        }).join('');
-        box = document.createElement('div');
-        box.id = 'mgAskBox';
-        box.setAttribute('role', 'dialog');
-        box.setAttribute('aria-modal', 'true');
-        box.setAttribute('aria-labelledby', 'mgAskTitle');
-        box.innerHTML =
-            '<div class="mg-ask-card">' +
-              '<i class="mg-ask-strip"></i>' +
-              '<button type="button" class="mg-ask-x" aria-label="Kapat">' + SVG_X + '</button>' +
-              '<div class="mg-ask-form">' +
-                '<div class="mg-ask-head"><div class="mg-ask-ico">' + SVG_CHAT + '</div>' +
-                  '<div><div class="mg-ask-title" id="mgAskTitle">Muhammet\'e sor</div>' +
-                  '<div class="mg-ask-sub">Merak ettiğini yaz; mesajın e-posta olarak Muhammet\'e ulaşsın.</div></div></div>' +
-                '<div class="mg-ask-lab caps">Hızlı başlangıç</div>' +
-                '<div class="mg-ask-chips">' + chips + '</div>' +
-                '<label class="mg-ask-lab" for="mgAskName">Adın</label>' +
-                '<input type="text" class="mg-ask-name" id="mgAskName" maxlength="60" placeholder="Adın (isteğe bağlı)" autocomplete="given-name">' +
-                '<label class="mg-ask-lab" for="mgAskMsg">Sorun veya mesajın</label>' +
-                '<textarea id="mgAskMsg" class="mg-ask-msg" maxlength="' + MAX + '" rows="4" placeholder="Merhaba Muhammet, ..."></textarea>' +
-                '<button type="button" class="mg-ask-voice" id="mgAskVoice" hidden><span aria-hidden="true">🎤</span> <span class="mg-ask-voice-t">Sesle yaz</span></button>' +
-                '<div class="mg-ask-count" id="mgAskCount">0/' + MAX + '</div>' +
-                '<div class="mg-ask-subj" id="mgAskSubj"></div>' +
-                '<div class="mg-ask-actions">' +
-                  '<button type="button" class="mg-ask-copy" id="mgAskCopy">Kopyala</button>' +
-                  '<button type="button" class="mg-ask-send" id="mgAskSend" disabled>Mesajı gönder ' + SVG_SEND + '</button>' +
-                '</div>' +
-              '</div>' +
-              '<div class="mg-ask-done" id="mgAskDone" hidden>' +
-                '<div class="mg-ask-ico">' + SVG_CHAT + '</div>' +
-                '<div class="mg-ask-title">E-posta uygulaman açıldı</div>' +
-                '<div class="mg-ask-sub">Mesajın hazır. Orada <b>Gönder</b>\'e basarak Muhammet\'e ulaştırabilirsin.<br>Açılmadıysa şu adrese yazabilirsin:<br><a href="mailto:' + TO + '">' + TO + '</a></div>' +
-                '<button type="button" class="mg-ask-send mg-ask-close">Tamam</button>' +
-              '</div>' +
-            '</div>';
-        document.body.appendChild(box);
-
-        var msg = $('#mgAskMsg'), name = $('#mgAskName');
-        msg.addEventListener('input', function () { $('#mgAskCount').textContent = msg.value.length + '/' + MAX; refreshSend(); });
-        name.addEventListener('input', refreshSubject);
-        $('#mgAskSend').addEventListener('click', submit);
-        $('#mgAskCopy').addEventListener('click', copy);
-        box.addEventListener('click', function (e) {
-            if (e.target === box || e.target.closest('.mg-ask-x') || e.target.closest('.mg-ask-close')) { close(); return; }
-            var chip = e.target.closest('.mg-ask-chip');
-            if (chip) pickChip(+chip.getAttribute('data-i'));
-        });
-        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && box && box.classList.contains('open')) close(); });
-        initVoice();
-    }
-
-    function pickChip(i) {
-        var c = CHIPS[i], msg = $('#mgAskMsg');
-        box.querySelectorAll('.mg-ask-chip').forEach(function (b) { b.classList.toggle('on', +b.getAttribute('data-i') === i); });
-        kind = c.k;
-        if (!msg.value.trim() || msg.value === starter) { msg.value = c.s; }
-        starter = c.s;
-        $('#mgAskCount').textContent = msg.value.length + '/' + MAX;
-        refreshSubject(); refreshSend();
-        msg.focus();
-        try { msg.setSelectionRange(msg.value.length, msg.value.length); } catch (e) {}
-    }
-
-    /* ── Sesle yaz (tarayıcı destekliyorsa) ── */
-    function initVoice() {
-        var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-        var btn = $('#mgAskVoice');
-        if (!SR) return;
-        btn.hidden = false;
-        btn.addEventListener('click', function () {
-            if (rec) { try { rec.stop(); } catch (e) {} return; }
-            var msg = $('#mgAskMsg'), base = msg.value;
-            rec = new SR();
-            rec.lang = 'tr-TR'; rec.interimResults = true; rec.continuous = false;
-            rec.onresult = function (ev) {
-                var t = '';
-                for (var i = 0; i < ev.results.length; i++) t += ev.results[i][0].transcript;
-                msg.value = (base + (base && !/\s$/.test(base) ? ' ' : '') + t).slice(0, MAX);
-                $('#mgAskCount').textContent = msg.value.length + '/' + MAX; refreshSend();
-            };
-            var end = function () { rec = null; btn.classList.remove('live'); btn.querySelector('.mg-ask-voice-t').textContent = 'Sesle yaz'; };
-            rec.onend = end; rec.onerror = end;
-            btn.classList.add('live'); btn.querySelector('.mg-ask-voice-t').textContent = 'Dinliyorum...';
-            try { rec.start(); } catch (e) { end(); }
-        });
-    }
-
-    function composeBody(msg, name) {
-        return msg + '\n\n──────────────────' + (name ? '\nGönderen: ' + name : '')
-             + '\nGönderildiği yer: MuGöl PORTAL\nTarih: ' + new Date().toLocaleString('tr-TR');
-    }
-    function mailtoUrl(name, msg, k) {
-        var subject = 'MuGöl PORTAL\'dan ' + (k || 'mesaj') + (name ? ' - ' + name : '');
-        return 'mailto:' + TO + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(composeBody(msg, name));
-    }
-    window.mgAskMailto = mailtoUrl;
-
-    function copy() {
-        var name = $('#mgAskName').value.trim(), msg = $('#mgAskMsg').value.trim();
-        if (!msg) return;
-        var text = msg + (name ? '\n\n— ' + name : '');
-        var done = function () {
-            var b = $('#mgAskCopy'); b.textContent = 'Kopyalandı ✓';
-            setTimeout(function () { b.textContent = 'Kopyala'; }, 1600);
-        };
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text); done(); });
-        } else { fallbackCopy(text); done(); }
-    }
-    function fallbackCopy(text) {
-        var t = document.createElement('textarea'); t.value = text; t.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0;';
-        document.body.appendChild(t); t.select(); try { document.execCommand('copy'); } catch (e) {} document.body.removeChild(t);
-    }
-
-    function open() {
-        if (!box) build();
-        lastFocus = document.activeElement;
-        box.querySelector('.mg-ask-form').hidden = false;
-        $('#mgAskDone').hidden = true;
-        var nm = $('#mgAskName'); if (!nm.value) nm.value = getName();
-        refreshSubject(); refreshSend();
-        box.classList.add('open');
-        setTimeout(function () { var m = $('#mgAskMsg'); if (m) m.focus(); }, 80);
-    }
-    function close() {
-        if (!box) return;
-        if (rec) { try { rec.stop(); } catch (e) {} }
-        box.classList.remove('open');
-        if (lastFocus && lastFocus.focus) { try { lastFocus.focus(); } catch (e) {} }
-    }
-    function submit() {
-        var name = $('#mgAskName').value.trim(), msg = $('#mgAskMsg').value.trim();
-        if (msg.length < 3) return;
-        saveName(name);
-        window.location.href = mailtoUrl(name, msg, kind);
-        box.querySelector('.mg-ask-form').hidden = true;
-        $('#mgAskDone').hidden = false;
-        $('#mgAskMsg').value = ''; starter = ''; kind = 'mesaj';
-        box.querySelectorAll('.mg-ask-chip').forEach(function (b) { b.classList.remove('on'); });
-        $('#mgAskCount').textContent = '0/' + MAX; refreshSend();
-    }
-
-    document.addEventListener('click', function (e) {
-        if (e.target.closest && e.target.closest('#mgAskBtn')) { e.preventDefault(); open(); }
-    });
 })();

@@ -326,7 +326,7 @@
             <div class="sidebar-profile" aria-hidden="true">
                 <div class="sidebar-profile-avatar">MG</div>
                 <div class="sidebar-profile-info">
-                    <span id="sidebarProfilePlan">Sürüm 2.0.0</span>
+                    <span id="sidebarProfilePlan">Sürüm 9.0.0</span>
                 </div>
             </div>
         </aside>
@@ -354,7 +354,6 @@
                     <div class="mg-cw-sky" aria-hidden="true"><i class="mg-cw-orb"></i><i class="mg-cw-stars"></i></div>
                     <div class="mg-cw-top">
                         <span class="mg-cw-pill" id="mgHomeGreet">Merhaba 👋</span>
-                        <button type="button" class="mg-cw-ask" id="mgAskBtn" aria-haspopup="dialog"><span aria-hidden="true">💬</span> Soru Sor</button>
                     </div>
                     <div class="mg-cw-left">
                         <div class="mg-cw-time" id="mgHomeTime">--:--</div>
@@ -466,16 +465,12 @@
                             lastDateStr = dateStr;
                         }
 
-                        /* Kullanıcının adı (Soru Sor formundan) — yalnızca bu cihazda saklanır */
-                        var uname = '';
-                        try { uname = (localStorage.getItem('mugol-user-name') || '').trim().split(/\s+/)[0].slice(0, 12); } catch (e) {}
-
                         /* Günün dilimi → kartın gökyüzü teması */
                         var tod = (h >= 5 && h < 12) ? 'morning' : (h >= 12 && h < 18) ? 'day' : (h >= 18 && h < 22) ? 'evening' : 'night';
                         if (wEl && wEl.getAttribute('data-tod') !== tod) wEl.setAttribute('data-tod', tod);
 
                         var G = { morning: ['Günaydın', '🌞'], day: ['İyi günler', '😊'], evening: ['İyi akşamlar', '🌆'], night: ['İyi geceler', '🌙'] }[tod];
-                        var greet = G[0] + (uname ? ', ' + uname : '') + ' ' + G[1];
+                        var greet = G[0] + ' ' + G[1];
                         if (greetEl && greet !== lastGreet) {
                             greetEl.textContent = greet;
                             lastGreet = greet;
@@ -495,7 +490,6 @@
                     }
 
                     update();
-                    window.addEventListener('mg-name', function () { lastGreet = ''; update(); });
                     // Saniyede bir yerine dakikada bir kontrol yeterli (saat gösterimi
                     // zaten saat:dakika, saniye göstermiyor) — ana thread'i daha az meşgul eder.
                     setInterval(update, 15000);
@@ -1346,7 +1340,7 @@
                                 <p>MuGöl PORTAL'ın mevcut lisanslı ve güncel sürüm bilgisi.</p>
                             </div>
                         </div>
-                        <span class="version-badge" aria-label="Uygulama Sürümü 2.0.0">Sürüm 2.0.0</span>
+                        <span class="version-badge" aria-label="Uygulama Sürümü 9.0.0">Sürüm 9.0.0</span>
                     </div>
 
                     <div class="setting-item" style="flex-direction:column; align-items:flex-start; gap:14px;">
@@ -1485,6 +1479,17 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
+                                        <label id="contactTplLabel">Hazır Metinler <span class="ct-hint">· dokun, mesaja eklensin</span></label>
+                                        <div class="ct-chips" id="contactTemplates" role="group" aria-labelledby="contactTplLabel">
+                                            <button type="button" class="ct-chip" data-tpl="oneri"><span aria-hidden="true">💡</span> Öneri</button>
+                                            <button type="button" class="ct-chip" data-tpl="ozellik"><span aria-hidden="true">✨</span> Özellik isteği</button>
+                                            <button type="button" class="ct-chip" data-tpl="hata"><span aria-hidden="true">🐛</span> Hata bildirimi</button>
+                                            <button type="button" class="ct-chip" data-tpl="destek"><span aria-hidden="true">🆘</span> Destek talebi</button>
+                                            <button type="button" class="ct-chip" data-tpl="is"><span aria-hidden="true">🤝</span> İş birliği</button>
+                                            <button type="button" class="ct-chip" data-tpl="tesekkur"><span aria-hidden="true">💜</span> Teşekkür</button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
                                         <label for="contact-message" style="display:flex; justify-content:space-between;">
                                             <span>Mesajınız</span>
                                             <span id="charCount" aria-live="polite" style="font-weight:700; color:var(--text-muted); font-size:0.85rem;">0 / 500</span>
@@ -1565,7 +1570,7 @@
                             </div>
                             <div class="profil-info-detail">
                                 <span class="profil-info-label">Platform Sürümü</span>
-                                <span class="profil-info-value">MuGöl PORTAL v2.0.0</span>
+                                <span class="profil-info-value">MuGöl PORTAL v9.0.0</span>
                             </div>
                         </div>
                         <div class="profil-info-row">
@@ -1703,7 +1708,7 @@
                         <i class="fas fa-shield-alt" style="font-size:2rem;color:#fff;"></i>
                     </div>
                     <h2 style="font-size:2rem;font-weight:900;color:var(--text-main);margin:0 0 0.5rem;">Gizlilik Politikası</h2>
-                    <p style="color:var(--text-muted);font-size:1rem;font-weight:600;max-width:480px;margin:0 auto;">Son güncelleme: Nisan 2026 &nbsp;·&nbsp; MuGöl PORTAL v3.0</p>
+                    <p style="color:var(--text-muted);font-size:1rem;font-weight:600;max-width:480px;margin:0 auto;">Son güncelleme: Nisan 2026 &nbsp;·&nbsp; MuGöl PORTAL v9.0.0</p>
                 </div>
 
                 <!-- Ana ilke - vurgulu kutu -->

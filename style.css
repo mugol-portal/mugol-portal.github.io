@@ -11127,100 +11127,8 @@ html body #mgClockWidget .mg-cw-pill {
     font-size: .82rem !important; font-weight: 800 !important; letter-spacing: .01em !important; text-transform: none !important;
     -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
 }
-html body #mgClockWidget .mg-cw-ask {
-    -webkit-appearance: none; appearance: none; cursor: pointer; font: inherit; flex: 0 0 auto;
-    display: inline-flex; align-items: center; gap: 7px;
-    padding: 9px 15px; border-radius: 99px; border: 0;
-    background: #fff; color: #1e1b4b; font-size: .84rem; font-weight: 800;
-    box-shadow: 0 8px 20px -6px rgba(0, 0, 0, .35);
-    transition: transform .15s ease, box-shadow .15s ease;
-}
-html body #mgClockWidget .mg-cw-ask:hover { box-shadow: 0 10px 24px -6px rgba(0, 0, 0, .45); }
-html body #mgClockWidget .mg-cw-ask:active { transform: scale(.95); }
 @media (min-width: 993px) { html body #mgClockWidget { min-height: 196px; } html body #mgClockWidget .mg-cw-hello { max-width: 28rem; } }
 @media (prefers-reduced-motion: reduce) { #mgClockWidget .mg-cw-stars { animation: none; } }
-
-
-/* ════════════════════════════════════════════════════════════
-   SORU SOR PENCERESİ — "Muhammet'e sor"
-   ════════════════════════════════════════════════════════════ */
-#mgAskBox {
-    --ak-teal: #12808a; --ak-teal-dark: #0e5f68; --ak-tint: rgba(18, 128, 138, .12);
-    --ak-field: #eef1f9; --ak-line: #dfe5f3; --ak-chip: #f6f8fd;
-    position: fixed; inset: 0; z-index: 100001;
-    display: none; align-items: center; justify-content: center; padding: 16px;
-    background: rgba(8, 12, 32, .55);
-    -webkit-backdrop-filter: blur(7px); backdrop-filter: blur(7px);
-}
-html[data-theme="dark"] #mgAskBox { --ak-teal: #3cc3cf; --ak-teal-dark: #7adbe4; --ak-tint: rgba(60, 195, 207, .14); --ak-field: rgba(255, 255, 255, .07); --ak-line: rgba(255, 255, 255, .12); --ak-chip: rgba(255, 255, 255, .05); }
-#mgAskBox.open { display: flex; animation: mgAskFade .2s ease; }
-@keyframes mgAskFade { from { opacity: 0; } to { opacity: 1; } }
-@keyframes mgAskUp { from { transform: translateY(22px) scale(.98); opacity: 0; } to { transform: none; opacity: 1; } }
-#mgAskBox .mg-ask-card {
-    position: relative; width: 100%; max-width: 430px; max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px); overflow-y: auto;
-    padding: 24px 19px 19px; border-radius: 30px;
-    background: var(--bg-card, #fff); color: var(--text-main, #0f172a);
-    box-shadow: 0 34px 80px -12px rgba(0, 0, 0, .55);
-    animation: mgAskUp .28s ease;
-}
-#mgAskBox .mg-ask-strip { position: absolute; top: 0; left: 0; right: 0; height: 5px; background: linear-gradient(90deg, #12808a 0%, #6366f1 62%, #d946ef 100%); }
-#mgAskBox .mg-ask-x {
-    position: absolute; top: 18px; right: 16px; width: 36px; height: 36px; border: 0; border-radius: 50%; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; background: var(--ak-tint); color: var(--text-main, #0f172a);
-}
-#mgAskBox .mg-ask-head { display: flex; gap: 14px; align-items: flex-start; padding-right: 44px; margin-bottom: 18px; }
-#mgAskBox .mg-ask-ico {
-    flex: 0 0 auto; width: 52px; height: 52px; border-radius: 17px; display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(135deg, #12808a, #6366f1); box-shadow: 0 10px 22px -8px rgba(99, 102, 241, .6);
-}
-#mgAskBox .mg-ask-title { font-size: 1.4rem; font-weight: 800; line-height: 1.2; margin-bottom: 4px; }
-#mgAskBox .mg-ask-sub { font-size: .95rem; line-height: 1.5; color: var(--text-muted, #64748b); }
-#mgAskBox .mg-ask-sub a { color: var(--ak-teal); font-weight: 800; word-break: break-all; }
-#mgAskBox .mg-ask-lab { display: block; font-size: .92rem; font-weight: 800; margin: 14px 2px 7px; }
-#mgAskBox .mg-ask-lab.caps { font-size: .76rem; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted, #64748b); margin-top: 0; }
-#mgAskBox .mg-ask-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-#mgAskBox .mg-ask-chip {
-    -webkit-appearance: none; appearance: none; cursor: pointer; font: inherit; font-size: .9rem; font-weight: 800;
-    display: inline-flex; align-items: center; gap: 6px; padding: 8px 13px; border-radius: 99px;
-    border: 1.5px solid var(--ak-line); background: var(--ak-chip); color: var(--ak-teal-dark);
-    transition: background .15s ease, border-color .15s ease, transform .1s ease;
-}
-#mgAskBox .mg-ask-chip:active { transform: scale(.96); }
-#mgAskBox .mg-ask-chip.on { background: var(--ak-tint); border-color: var(--ak-teal); }
-#mgAskBox .mg-ask-name, #mgAskBox .mg-ask-msg {
-    width: 100%; box-sizing: border-box; font: inherit; font-size: 1rem; color: inherit; outline: none;
-    padding: 13px 15px; border-radius: 16px; border: 2px solid var(--ak-line); background: var(--ak-field);
-    transition: border-color .15s ease, box-shadow .15s ease;
-}
-#mgAskBox .mg-ask-msg { resize: none; min-height: 112px; line-height: 1.45; }
-#mgAskBox .mg-ask-name:focus, #mgAskBox .mg-ask-msg:focus { border-color: var(--ak-teal); box-shadow: 0 0 0 5px var(--ak-tint); }
-#mgAskBox .mg-ask-name::placeholder, #mgAskBox .mg-ask-msg::placeholder { color: var(--text-muted, #94a3b8); opacity: .8; }
-#mgAskBox .mg-ask-voice {
-    -webkit-appearance: none; appearance: none; cursor: pointer; font: inherit; font-size: .95rem; font-weight: 800;
-    display: inline-flex; align-items: center; gap: 8px; margin-top: 12px; padding: 10px 18px; border-radius: 99px;
-    border: 2px solid var(--ak-teal); background: transparent; color: var(--ak-teal-dark);
-}
-#mgAskBox .mg-ask-voice.live { background: var(--ak-teal); color: #fff; animation: mgAskPulse 1.2s ease-in-out infinite; }
-@keyframes mgAskPulse { 50% { box-shadow: 0 0 0 7px var(--ak-tint); } }
-#mgAskBox .mg-ask-count { text-align: right; font-size: .85rem; font-weight: 800; color: var(--text-muted, #64748b); margin: 2px 4px 10px; }
-#mgAskBox .mg-ask-subj { padding: 12px 15px; border-radius: 14px; background: var(--ak-tint); color: var(--ak-teal-dark); font-size: .92rem; font-weight: 700; word-break: break-word; }
-#mgAskBox .mg-ask-actions { display: flex; gap: 12px; margin-top: 16px; }
-#mgAskBox .mg-ask-copy, #mgAskBox .mg-ask-send {
-    -webkit-appearance: none; appearance: none; cursor: pointer; font: inherit; font-size: 1.05rem; font-weight: 800;
-    height: 54px; border-radius: 18px; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-    transition: transform .12s ease, opacity .15s ease;
-}
-#mgAskBox .mg-ask-copy { flex: 0 0 auto; padding: 0 22px; border: 2px solid var(--ak-line); background: transparent; color: var(--text-main, #0f172a); }
-#mgAskBox .mg-ask-send { flex: 1 1 auto; border: 0; color: #fff; background: linear-gradient(100deg, #12808a 0%, #5b63ee 100%); box-shadow: 0 14px 26px -10px rgba(91, 99, 238, .75); }
-#mgAskBox .mg-ask-copy:active, #mgAskBox .mg-ask-send:active { transform: scale(.97); }
-#mgAskBox .mg-ask-send:disabled { opacity: .5; cursor: not-allowed; box-shadow: none; }
-#mgAskBox .mg-ask-done { text-align: center; padding: 10px 4px 2px; }
-#mgAskBox .mg-ask-done .mg-ask-ico { margin: 0 auto 14px; }
-#mgAskBox .mg-ask-done .mg-ask-title { margin-bottom: 8px; }
-#mgAskBox .mg-ask-done .mg-ask-sub { margin-bottom: 18px; }
-#mgAskBox .mg-ask-done .mg-ask-send { width: 100%; }
-#mgAskBox [hidden] { display: none !important; }
-
 
 /* ════════════════════════════════════════════════════════════
    GÜNLÜK REKLAM SEÇKİSİ — IQ/AI/OS dışındaki uygulamaların renkleri
@@ -11236,3 +11144,19 @@ html body .mg-ad-p7 { background: radial-gradient(90% 100% at 100% 0%, rgba(103,
 html body .mg-ad-card.mg-ad-long .mg-ad-title { font-size: 1.05rem !important; line-height: 1.2 !important; }
 html body .mg-ad-card .mg-ad-desc { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
+/* ════════════════════════════════════════════════════════════
+   GERİ BİLDİRİM — HAZIR METİNLER
+   ════════════════════════════════════════════════════════════ */
+.contact-form .ct-hint { font-weight: 600; font-size: .8rem; color: var(--text-muted); }
+.ct-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.ct-chip {
+    -webkit-appearance: none; appearance: none; cursor: pointer; font: inherit;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 14px; border-radius: 99px;
+    border: 1.5px solid var(--border-color); background: var(--bg-body); color: var(--text-main);
+    font-size: .85rem; font-weight: 700; line-height: 1;
+    transition: transform .15s ease, border-color .15s ease, background .15s ease;
+}
+.ct-chip:hover { border-color: var(--primary-color); }
+.ct-chip:active { transform: scale(.96); }
+.ct-chip.on { border-color: var(--primary-color); background: var(--primary-glow); color: var(--primary-color); }
