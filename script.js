@@ -397,10 +397,10 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     // Açılış süresini VİDEO belirler (mugol_acilis.mp4 = 15 sn). Müzik (mugol_acilis.mp3) da 15 sn'dir
     // ve video başlayınca birlikte başlar → ikisi aynı anda biter. Birini değiştirirsen ikisini AYNI uzunlukta hazırla.
     // Videoyu tekrar uzatıp kısaltırsan kodda hiçbir şey değiştirmen gerekmez.
-    const SPLASH_VIDEO_RATE   = 1;     // 1 = normal hız (eskiden 0.6 idi; video uzatıldığı için kaldırıldı)
-    const SPLASH_END_HOLD_MS  = 300;   // video bitince son karede bekleme
-    const SPLASH_SAFETY_PAD_MS = 4000; // 'ended' hiç gelmezse güvenlik süresi
-    const FALLBACK_MS         = 15000; // video hiç oynamazsa kullanılacak süre (video/müzik süresi, 15 sn)
+    const SPLASH_VIDEO_RATE   = 2;     // oynatma hızı: 1 = 15 sn, 2 = ~7.5 sn, 3 = ~5 sn (video + müzik birlikte hızlanır)
+    const SPLASH_END_HOLD_MS  = 150;   // video bitince son karede bekleme
+    const SPLASH_SAFETY_PAD_MS = 2000; // 'ended' hiç gelmezse güvenlik süresi
+    const FALLBACK_MS         = 7500;  // video hiç oynamazsa kullanılacak süre
 
     const labels = ['Sistem Başlatılıyor...', 'Uygulamalar Hazırlanıyor...', 'Son Ayarlar...', 'Hoş Geldiniz!'];
 
@@ -555,11 +555,12 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     splashAudio.preload = 'auto';
     if (!musicEnabled) { splashAudio.volume = 0; }
     splashAudioRef = splashAudio;
+    splashAudio.playbackRate = SPLASH_VIDEO_RATE; // müzik de videoyla aynı hızda
 
     // Video çalışmıyorsa (fallback) süreyi müzik uzunluğundan al
     splashAudio.addEventListener('loadedmetadata', function () {
         if (videoFailed && !closed && isFinite(splashAudio.duration)) {
-            startFallbackProgress(splashAudio.duration * 1000);
+            startFallbackProgress((splashAudio.duration / SPLASH_VIDEO_RATE) * 1000);
         }
     });
 
@@ -2092,6 +2093,81 @@ window.MG_NOTIFICATIONS = [
 })();
 
 
+/* ═════════════ GÜNÜN SORUSU (MuGöl Bilgi · mugol-bilgin/sorular) ═════════════ */
+(function () {
+    var textEl = document.getElementById('mgSoruText');
+    if (!textEl) return;
+    var catEl = document.getElementById('mgSoruCat');
+    var REPO = 'mugol-portal/mugol-bilgin';
+    var API = 'https://api.github.com/repos/' + REPO + '/contents/sorular';
+    var BASE = 'https://mugol-portal.github.io/mugol-bilgin/';
+    var CACHE = 'mg-soru-cache-v1';
+    var fallback = [
+        { text: 'Dünyanın en büyük okyanusu hangisidir?', cat: 'Genel Kültür' },
+        { text: 'Türkiye Cumhuriyeti hangi yıl ilan edilmiştir?', cat: 'Tarih' },
+        { text: 'Işığın boşluktaki hızı yaklaşık kaç km/sn\'dir?', cat: 'Fizik' }
+    ];
+    var QKEYS = ['soru', 'question', 'soruMetni', 'soru_metni', 'q', 'sorusu', 'text', 'metin', 'baslik', 'title'];
+    var CKEYS = ['kategori', 'category', 'konu', 'ders', 'topic'];
+
+    function dayNum() { var d = new Date(); return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000); }
+    function today() { var d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+    function pick(o, keys) {
+        for (var i = 0; i < keys.length; i++) { var v = o[keys[i]]; if (typeof v === 'string' && v.trim()) return v.trim(); }
+        return '';
+    }
+    function collect(node, out, depth, fileCat) {
+        if (!node || depth > 5) return;
+        if (Array.isArray(node)) { node.forEach(function (n) { collect(n, out, depth + 1, fileCat); }); return; }
+        if (typeof node !== 'object') return;
+        var q = pick(node, QKEYS);
+        if (q.length > 8) { out.push({ text: q, cat: pick(node, CKEYS) || fileCat || '' }); return; }
+        Object.keys(node).forEach(function (k) { collect(node[k], out, depth + 1, fileCat); });
+    }
+    function show(q) {
+        if (!q || !q.text) return false;
+        textEl.textContent = q.text;
+        if (catEl) catEl.textContent = q.cat ? q.cat + ' · Cevaplamak için dokun' : 'Cevaplamak için dokun';
+        return true;
+    }
+    function fetchJson(url) {
+        return fetch(url, { cache: 'no-cache' }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
+    }
+    function loadAll() {
+        return fetchJson(API).then(function (files) {
+            var urls = [];
+            if (Array.isArray(files)) {
+                files.filter(function (f) { return f.type === 'file' && /\.json$/i.test(f.name); })
+                     .sort(function (a, b) { return a.name < b.name ? -1 : 1; })
+                     .slice(0, 15)
+                     .forEach(function (f) { urls.push({ url: f.download_url, cat: f.name.replace(/\.json$/i, '').replace(/[-_]+/g, ' ') }); });
+            }
+            if (!urls.length) {
+                ['sorular/sorular.json', 'sorular/index.json', 'sorular/data.json', 'sorular.json'].forEach(function (p) { urls.push({ url: BASE + p, cat: '' }); });
+            }
+            return Promise.all(urls.map(function (u) {
+                return fetchJson(u.url).then(function (d) { var o = []; collect(d, o, 0, u.cat); return o; });
+            }));
+        }).then(function (parts) {
+            var all = [].concat.apply([], parts || []);
+            return all.length ? all : null;
+        });
+    }
+
+    var cached = null;
+    try { cached = JSON.parse(localStorage.getItem(CACHE) || 'null'); } catch (e) {}
+    if (cached && cached.day === today() && show(cached.q)) return;
+    show(fallback[dayNum() % fallback.length]);
+    try {
+        loadAll().then(function (list) {
+            if (!list) return;
+            var q = list[(dayNum() + 13) % list.length];
+            if (show(q)) { try { localStorage.setItem(CACHE, JSON.stringify({ day: today(), q: q })); } catch (e) {} }
+        }).catch(function () {});
+    } catch (e) {}
+})();
+
+
 /* ═════════════ GÜNÜN SÖZÜ / HADİSİ KAYDIRICI (kaydırmalı + otomatik) ═════════════ */
 (function () {
     var track = document.getElementById('mgQuoteTrack');
@@ -2141,4 +2217,199 @@ window.MG_NOTIFICATIONS = [
         }
     }, { passive: true });
     startAuto();
+})();
+
+
+/* =========================================================
+   ÖNEMLİ GÜNLERDE AÇILIŞ KUTLAMA / TEBRİK EKRANI
+   - Splash bittikten sonra, o güne ait tebrik tam ekran açılır (günde bir kez, her gün için ayrı).
+   - Önizleme: adresin sonuna ?kutlama=ogretmenler gibi bir kimlik ekleyin (kimlikler OCC listesinde).
+   - Dini günler (Diyanet) her yıl aşağıdaki DINI listesine eklenir. Listede olmayan yıllarda
+     bayramlar Hicri takvimden tahmini hesaplanır (Diyanet ile ±1 gün fark olabilir).
+   ========================================================= */
+(function () {
+    'use strict';
+
+    // mode: 'party' = konfeti + renkli, 'solemn' = sade, anma günü (konfeti yok)
+    var OCC = {
+        yilbasi:    { e: '🎆', t: 'Mutlu Yıllar!', m: 'Yeni yılın sağlık, huzur ve başarı getirmesini dileriz.', g: ['#0ea5e9', '#6366f1'] },
+        kadinlar:   { e: '💜', t: '8 Mart Dünya Kadınlar Günü Kutlu Olsun', m: 'Hayatı güzelleştiren tüm kadınların emeğine ve gücüne saygıyla.', g: ['#db2777', '#9333ea'] },
+        canakkale:  { e: '🕊️', t: '18 Mart Çanakkale Zaferi ve Şehitleri Anma Günü', m: 'Vatan için canlarını feda eden aziz şehitlerimizi rahmet ve minnetle anıyoruz.', g: ['#1f2937', '#7f1d1d'], mode: 'solemn' },
+        '23nisan':  { e: '🎈', t: '23 Nisan Ulusal Egemenlik ve Çocuk Bayramı Kutlu Olsun', m: 'Geleceğimizin teminatı çocuklarımızın bayramı kutlu olsun!', g: ['#e11d48', '#f97316'] },
+        '1mayis':   { e: '🤝', t: '1 Mayıs Emek ve Dayanışma Günü Kutlu Olsun', m: 'Alın teriyle üretenlerin emeğine saygıyla.', g: ['#dc2626', '#b91c1c'] },
+        '19mayis':  { e: '🇹🇷', t: '19 Mayıs Atatürk\'ü Anma, Gençlik ve Spor Bayramı Kutlu Olsun', m: 'Bu ülkenin geleceği olan tüm gençlerin bayramı kutlu olsun!', g: ['#dc2626', '#9f1239'] },
+        anneler:    { e: '🌷', t: 'Anneler Günü Kutlu Olsun', m: 'Karşılıksız sevginin en güzel hâli olan tüm annelerin günü kutlu olsun.', g: ['#ec4899', '#f472b6'] },
+        babalar:    { e: '👔', t: 'Babalar Günü Kutlu Olsun', m: 'Emeğiyle yolumuzu aydınlatan tüm babaların günü kutlu olsun.', g: ['#2563eb', '#0ea5e9'] },
+        '15temmuz': { e: '🇹🇷', t: '15 Temmuz Demokrasi ve Milli Birlik Günü', m: 'Demokrasimize sahip çıkan şehitlerimizi ve gazilerimizi rahmet ve minnetle anıyoruz.', g: ['#7f1d1d', '#111827'], mode: 'solemn' },
+        '30agustos':{ e: '🇹🇷', t: '30 Ağustos Zafer Bayramı Kutlu Olsun', m: 'Zaferin bin bir emekle kazanıldığını unutmadan, bayramımız kutlu olsun!', g: ['#dc2626', '#7f1d1d'] },
+        '29ekim':   { e: '🇹🇷', t: '29 Ekim Cumhuriyet Bayramı Kutlu Olsun', m: 'Cumhuriyetimizin kuruluşunun yıl dönümü kutlu olsun!', g: ['#e30a17', '#9f0712'] },
+        '10kasim':  { e: '🖤', t: 'Saygı ve Özlemle', m: 'Cumhuriyetimizin kurucusu Gazi Mustafa Kemal Atatürk\'ü ölümünün yıl dönümünde saygı, minnet ve özlemle anıyoruz.', g: ['#0f172a', '#334155'], mode: 'solemn' },
+        ogretmenler:{ e: '📚', t: 'Öğretmenler Günü Kutlu Olsun', m: 'Geleceği emekle şekillendiren tüm öğretmenlerimizin günü kutlu olsun.', g: ['#2563eb', '#7c3aed'] },
+        ramazan:    { e: '🌙', t: 'Hayırlı Ramazanlar', m: 'Rahmet, bereket ve mağfiret ayı Ramazan-ı şerif hepimize hayırlı olsun.', g: ['#4338ca', '#0e7490'] },
+        'arefe-r':  { e: '🌙', t: 'Arefe Gününüz Hayırlı Olsun', m: 'Yarın bayram! Sevdiklerinizle huzurlu bir bayram geçirmenizi dileriz.', g: ['#0f766e', '#065f46'] },
+        'bayram-r': { e: '🌙', t: 'Ramazan Bayramınız Mübarek Olsun', m: 'Sevdiklerinizle sağlık, huzur ve bereket dolu bir bayram geçirmenizi dileriz.', g: ['#4318ff', '#7c3aed'] },
+        'arefe-k':  { e: '🕌', t: 'Arefe Gününüz Hayırlı Olsun', m: 'Yarın bayram! Huzur ve bereket dolu bir bayram dileriz.', g: ['#059669', '#0e7490'] },
+        'bayram-k': { e: '🕌', t: 'Kurban Bayramınız Mübarek Olsun', m: 'Paylaşmanın ve dayanışmanın en güzel hâlini yaşayacağınız, huzur dolu bir bayram dileriz.', g: ['#059669', '#0e7490'] },
+        mirac:      { e: '✨', t: 'Miraç Kandiliniz Mübarek Olsun', m: 'Bu mübarek gecenin rahmet ve bereketi üzerinize olsun.', g: ['#1e1b4b', '#4c1d95'] },
+        berat:      { e: '✨', t: 'Berat Kandiliniz Mübarek Olsun', m: 'Dualarınızın kabul olduğu, gönüllerin aydınlandığı bir gece geçirmenizi dileriz.', g: ['#1e1b4b', '#4c1d95'] }
+    };
+
+    var FIXED = { '1-1': 'yilbasi', '3-8': 'kadinlar', '3-18': 'canakkale', '4-23': '23nisan', '5-1': '1mayis', '5-19': '19mayis',
+                  '7-15': '15temmuz', '8-30': '30agustos', '10-29': '29ekim', '11-10': '10kasim', '11-24': 'ogretmenler' };
+
+    // [yıl, ay, gün, kimlik] — Diyanet dini günler takvimi (2027 doğrulandı). Her yıl yenisini ekleyin.
+    var DINI = [
+        [2027, 1, 4, 'mirac'], [2027, 1, 22, 'berat'], [2027, 2, 8, 'ramazan'],
+        [2027, 3, 8, 'arefe-r'], [2027, 3, 9, 'bayram-r'], [2027, 3, 10, 'bayram-r'], [2027, 3, 11, 'bayram-r'],
+        [2027, 5, 15, 'arefe-k'], [2027, 5, 16, 'bayram-k'], [2027, 5, 17, 'bayram-k'], [2027, 5, 18, 'bayram-k'], [2027, 5, 19, 'bayram-k']
+    ];
+
+    function nthSunday(y, m, n) { var off = (7 - new Date(y, m - 1, 1).getDay()) % 7; return 1 + off + (n - 1) * 7; }
+
+    function hijri(d) {
+        try {
+            var o = {};
+            new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { day: 'numeric', month: 'numeric' })
+                .formatToParts(d).forEach(function (p) { o[p.type] = +p.value; });
+            return [o.month, o.day];
+        } catch (e) { return null; }
+    }
+
+    // Verilen gün için kutlanacak kimlikler (öncelik sırasıyla)
+    function daysOf(d) {
+        var y = d.getFullYear(), m = d.getMonth() + 1, g = d.getDate(), out = [];
+        var known = false;
+        DINI.forEach(function (r) {
+            if (r[0] === y) known = true;
+            if (r[0] === y && r[1] === m && r[2] === g) out.push(r[3]);
+        });
+        if (!known) {
+            var h = hijri(d);
+            if (h) {
+                if (h[0] === 9 && h[1] === 1) out.push('ramazan');
+                else if (h[0] === 10 && h[1] <= 3) out.push('bayram-r');
+                else if (h[0] === 12 && h[1] >= 10 && h[1] <= 13) out.push('bayram-k');
+            }
+        }
+        var f = FIXED[m + '-' + g];
+        if (f) out.push(f);
+        if (m === 5 && g === nthSunday(y, 5, 2)) out.push('anneler');
+        if (m === 6 && g === nthSunday(y, 6, 3)) out.push('babalar');
+        return out;
+    }
+    window.mgKutlamaGun = daysOf; // test / hata ayıklama için
+
+    function ymd(d) { return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+    function seen(key) { try { return localStorage.getItem(key) === '1'; } catch (e) { return false; } }
+    function mark(key) { try { localStorage.setItem(key, '1'); } catch (e) {} }
+
+    // ── Konfeti ──
+    function confetti(cv) {
+        if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) { cv.remove(); return; }
+        var ctx = cv.getContext('2d'), W = cv.width = innerWidth, H = cv.height = innerHeight;
+        var cols = ['#fde047', '#fff', '#f472b6', '#38bdf8', '#a3e635', '#fb923c'], P = [], t0 = Date.now();
+        for (var i = 0; i < 90; i++) P.push({ x: Math.random() * W, y: -Math.random() * H * .6, s: 5 + Math.random() * 7, v: 1.6 + Math.random() * 2.6,
+            w: Math.random() * 2 - 1, r: Math.random() * 6, rv: (Math.random() - .5) * .3, c: cols[i % cols.length] });
+        (function frame() {
+            var age = Date.now() - t0;
+            if (age > 6500 || !cv.isConnected) { cv.remove(); return; }
+            ctx.clearRect(0, 0, W, H);
+            P.forEach(function (p) {
+                p.y += p.v; p.x += p.w + Math.sin(p.y / 30) * .6; p.r += p.rv;
+                if (p.y > H + 20 && age < 4500) { p.y = -20; p.x = Math.random() * W; }
+                ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillStyle = p.c;
+                ctx.globalAlpha = age > 5200 ? Math.max(0, 1 - (age - 5200) / 1300) : 1;
+                ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); ctx.restore();
+            });
+            requestAnimationFrame(frame);
+        })();
+    }
+
+    function show(id, key, done) {
+        var o = OCC[id]; if (!o) { done(); return; }
+        mark(key);
+        var solemn = o.mode === 'solemn';
+        var el = document.createElement('div');
+        el.className = 'mg-kut'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
+        el.setAttribute('aria-label', o.t);
+        el.style.setProperty('--k1', o.g[0]); el.style.setProperty('--k2', o.g[1]);
+        if (solemn) el.setAttribute('data-mode', 'solemn');
+        el.innerHTML =
+            (solemn ? '' : '<canvas class="mg-kut-fx" aria-hidden="true"></canvas>') +
+            '<div class="mg-kut-card">' +
+                '<div class="mg-kut-emoji" aria-hidden="true">' + o.e + '</div>' +
+                '<h2 class="mg-kut-title"></h2><p class="mg-kut-msg"></p>' +
+                '<div class="mg-kut-sign">MuGöl PORTAL ailesi</div>' +
+                '<div class="mg-kut-actions">' +
+                    '<button type="button" class="mg-kut-btn mg-kut-share"><i class="fas fa-share-nodes" aria-hidden="true"></i> Paylaş</button>' +
+                    '<button type="button" class="mg-kut-btn mg-kut-ok">' + (solemn ? 'Kapat' : 'Teşekkürler') + '</button>' +
+                '</div>' +
+            '</div>';
+        el.querySelector('.mg-kut-title').textContent = o.t;
+        el.querySelector('.mg-kut-msg').textContent = o.m;
+        document.body.appendChild(el);
+        requestAnimationFrame(function () { el.classList.add('mg-kut-in'); });
+        try { if (!solemn && navigator.vibrate) navigator.vibrate(25); } catch (e) {}
+        var cv = el.querySelector('.mg-kut-fx'); if (cv) confetti(cv);
+
+        function close() {
+            document.removeEventListener('keydown', onKey);
+            el.classList.remove('mg-kut-in');
+            setTimeout(function () { el.remove(); done(); }, 320);
+        }
+        function onKey(e) { if (e.key === 'Escape') close(); }
+        document.addEventListener('keydown', onKey);
+        el.querySelector('.mg-kut-ok').addEventListener('click', close);
+        el.querySelector('.mg-kut-share').addEventListener('click', function () {
+            var text = o.t + '\n' + o.m + '\n— MuGöl PORTAL';
+            if (navigator.share) { navigator.share({ title: o.t, text: text, url: location.origin + location.pathname }).catch(function () {}); }
+            else if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(function () { if (window.mgToast) window.mgToast('Tebrik metni kopyalandı', 'success'); }).catch(function () {});
+            }
+        });
+        var ok = el.querySelector('.mg-kut-ok'); if (ok.focus) ok.focus({ preventScroll: true });
+    }
+
+    function run() {
+        var p = new URLSearchParams(location.search).get('kutlama');
+        var queue;
+        if (p && OCC[p]) queue = [[p, null]];          // önizleme: her seferinde göster
+        else {
+            var now = new Date(), day = ymd(now);
+            queue = daysOf(now).map(function (id) { return [id, 'mg-kutlama:' + day + ':' + id]; })
+                               .filter(function (q) { return !seen(q[1]); });
+        }
+        (function next() { var q = queue.shift(); if (q) show(q[0], q[1] || 'mg-kutlama:preview', next); })();
+    }
+
+    // ── Ayarlar > "Kutlama Ekranını Test Et" ──
+    var NAMES = {
+        yilbasi: 'Yılbaşı', kadinlar: '8 Mart Kadınlar Günü', canakkale: '18 Mart Çanakkale (anma)', '23nisan': '23 Nisan',
+        '1mayis': '1 Mayıs', '19mayis': '19 Mayıs', anneler: 'Anneler Günü', babalar: 'Babalar Günü', '15temmuz': '15 Temmuz (anma)',
+        '30agustos': '30 Ağustos Zafer Bayramı', '29ekim': '29 Ekim Cumhuriyet Bayramı', '10kasim': '10 Kasım (anma)', ogretmenler: 'Öğretmenler Günü',
+        ramazan: 'Ramazan Başlangıcı', 'arefe-r': 'Ramazan Bayramı Arefesi', 'bayram-r': 'Ramazan Bayramı', 'arefe-k': 'Kurban Bayramı Arefesi',
+        'bayram-k': 'Kurban Bayramı', mirac: 'Miraç Kandili', berat: 'Berat Kandili'
+    };
+    window.mgKutlamaTest = function (id) { if (OCC[id]) show(id, 'mg-kutlama:preview', function () {}); };
+    function setupTest() {
+        var sel = document.getElementById('mgKutSelect'), btn = document.getElementById('mgKutTestBtn');
+        if (!sel || !btn) return;
+        Object.keys(OCC).forEach(function (id) {
+            var op = document.createElement('option'); op.value = id; op.textContent = NAMES[id] || id; sel.appendChild(op);
+        });
+        btn.addEventListener('click', function () { window.mgKutlamaTest(sel.value); });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setupTest); else setupTest();
+
+    function start() {
+        var splash = document.getElementById('splash-screen');
+        function go() { setTimeout(run, 500); }
+        if (!splash || splash.classList.contains('hidden')) { go(); return; }
+        var mo = new MutationObserver(function () {
+            if (splash.classList.contains('hidden')) { mo.disconnect(); go(); }
+        });
+        mo.observe(splash, { attributes: true, attributeFilter: ['class'] });
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();

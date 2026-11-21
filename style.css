@@ -11146,3 +11146,436 @@ html[data-theme="dark"] body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile
 html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-label {
     display: block !important; -webkit-line-clamp: unset !important; line-clamp: unset !important; overflow: visible !important; text-overflow: clip !important; max-height: none !important; min-height: 0 !important;
 }
+
+
+/* ═════════ GÜNÜN SÖZÜ / HADİSİ KARTI · LOGO ═════════ */
+html body .mg-quote-card .mg-quote-row {
+    position: relative; display: flex; align-items: center; justify-content: space-between; gap: 14px;
+}
+html body .mg-quote-card .mg-quote-row .mg-quote-meta { flex: 1 1 auto; min-width: 0; }
+html body .mg-quote-card .mg-quote-logo {
+    display: block !important; flex: 0 0 60px !important;
+    width: 60px !important; height: 60px !important; min-width: 60px; min-height: 60px; max-width: 60px; max-height: 60px;
+    aspect-ratio: 1 / 1; border-radius: 50% !important; object-fit: cover;
+    border: 2px solid rgba(255,255,255,.6); background: rgba(255,255,255,.15);
+    box-shadow: 0 6px 16px rgba(0,0,0,.22); pointer-events: none;
+}
+
+
+/* ═════════ ANA SAYFA · YENİ TASARIM (renkli kategori kartları, tutarlı köşeler, başlık vurgusu) ═════════ */
+html body #page-anasayfa { display: flex; flex-direction: column; gap: 4px; }
+html body #page-anasayfa .mg-clock-widget,
+html body #page-anasayfa .mg-quote-card { border-radius: 30px !important; }
+html body #page-anasayfa .mg-clock-widget { box-shadow: 0 22px 40px -22px rgba(15,23,42,.55) !important; }
+
+/* Bölüm başlığı: renkli çubuk + yumuşak çizgi */
+html body #page-anasayfa .mg-section-label { margin: 1.1rem 2px .9rem !important; justify-content: flex-start; gap: 10px; }
+html body #page-anasayfa .mg-section-label-text { display: inline-flex; align-items: center; gap: 10px; font-size: 1.25rem; font-weight: 900; letter-spacing: -.02em; }
+html body #page-anasayfa .mg-section-label-text::before {
+    display: block !important; content: ""; width: 5px; height: 22px; border-radius: 99px;
+    background: linear-gradient(180deg, #4318ff, #00d2ff);
+}
+
+/* Kategori kartları: dolgun gradyan, cam ikon, dekoratif daireler */
+html body .category-grid { gap: 14px !important; }
+html body .category-card {
+    --cc1: #4318ff; --cc2: #00b4ff;
+    background: linear-gradient(145deg, var(--cc1), var(--cc2)) !important;
+    border: 1px solid rgba(255,255,255,.22) !important; min-height: 188px; border-radius: 28px !important;
+    box-shadow: 0 18px 30px -16px var(--cc1), inset 0 1px 0 rgba(255,255,255,.3) !important; color: #fff !important;
+}
+html body .category-card:nth-child(1) { --cc1: #4318ff; --cc2: #00b4ff; }
+html body .category-card:nth-child(2) { --cc1: #f97316; --cc2: #f5a300; }
+html body .category-card:nth-child(3) { --cc1: #0e9aa7; --cc2: #2563eb; }
+html body .category-card:nth-child(4) { --cc1: #e11d74; --cc2: #f97316; }
+html body .category-card::before {
+    right: -46px; top: -46px; width: 150px; height: 150px; background: rgba(255,255,255,.16) !important; opacity: 1 !important;
+}
+html body .category-card::after {
+    content: ""; position: absolute; left: -34px; bottom: -50px; width: 120px; height: 120px; border-radius: 50%;
+    background: rgba(255,255,255,.1); pointer-events: none;
+}
+html body .category-card .cat-icon-wrap {
+    background: rgba(255,255,255,.22) !important; border: 1px solid rgba(255,255,255,.35); color: #fff !important;
+    width: 54px !important; height: 54px !important; border-radius: 18px !important; font-size: 1.3rem !important;
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); box-shadow: 0 8px 18px -8px rgba(0,0,0,.35) !important;
+}
+html body .category-card .cat-info { position: relative; z-index: 1; }
+html body .category-card .cat-info h3 { color: #fff !important; font-size: 1.2rem !important; text-shadow: 0 2px 8px rgba(0,0,0,.18); }
+html body .category-card .cat-info p { color: rgba(255,255,255,.86) !important; }
+html body .category-card .cat-count {
+    position: relative; z-index: 1; background: rgba(255,255,255,.22) !important; color: #fff !important;
+    border: 1px solid rgba(255,255,255,.3) !important;
+}
+html body .category-card .cat-arrow { z-index: 1; background: #fff !important; color: var(--cc1) !important; box-shadow: 0 6px 14px -6px rgba(0,0,0,.35); }
+html body .category-card:hover .cat-count { background: rgba(255,255,255,.3) !important; color: #fff !important; }
+
+
+/* ═════════ TÜMÜ SAYFASI · YENİ TASARIM ═════════ */
+/* Kart/Liste anahtarı + arama çubuğu */
+html body #page-tumuu .mg-view-toggle { border-radius: 99px !important; padding: 4px !important; box-shadow: 0 8px 20px -12px rgba(15,23,42,.35) !important; }
+html body #page-tumuu .mg-vt-btn.mg-vt-active { background: linear-gradient(135deg, #4318ff, #00b4ff) !important; color: #fff !important; box-shadow: 0 8px 16px -8px rgba(67,24,255,.7) !important; }
+html body .mg-filter-bar { border-radius: 99px !important; box-shadow: 0 12px 26px -16px rgba(15,23,42,.45) !important; border: 1px solid rgba(67,24,255,.12) !important; }
+html body .mg-filter-bar:focus-within { border-color: var(--primary-color) !important; box-shadow: 0 0 0 4px var(--primary-glow), 0 12px 26px -16px rgba(67,24,255,.5) !important; }
+
+/* Normal kutular: hafif renk geçişi, yuvarlak ikon halkası */
+html body #page-tumuu .tumuu-grid:not(.list-view) { gap: 12px !important; }
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile {
+    background: linear-gradient(160deg, var(--bg-card) 40%, color-mix(in srgb, var(--primary-color) 9%, var(--bg-card))) !important;
+    border: 1px solid color-mix(in srgb, var(--primary-color) 10%, var(--border-color)) !important;
+    box-shadow: 0 14px 26px -18px rgba(15,23,42,.5) !important; border-radius: 26px !important;
+}
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile::after {
+    content: ""; position: absolute; right: -22px; bottom: -22px; width: 70px; height: 70px; border-radius: 50%;
+    background: var(--primary-glow); pointer-events: none;
+}
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-icon-wrap {
+    border-radius: 50% !important; background: #fff !important; padding: 3px; overflow: hidden;
+    box-shadow: 0 10px 20px -10px rgba(15,23,42,.55), 0 0 0 2px rgba(67,24,255,.08) !important;
+}
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-icon { width: 100% !important; height: 100% !important; border-radius: 50% !important; object-fit: cover; }
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile:hover { transform: translateY(-3px); box-shadow: 0 20px 32px -16px rgba(67,24,255,.45) !important; }
+
+/* Geniş kutular: ikon ve yazı dikeyde ortalı, yazı sola */
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile:nth-of-type(8n+4),
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile:nth-of-type(8n+6) { align-items: center !important; }
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile:nth-of-type(8n+4) .tumuu-icon-wrap,
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile:nth-of-type(8n+6) .tumuu-icon-wrap { width: 62px !important; height: 62px !important; }
+
+/* Mavi (öne çıkan) kutular: her biri farklı renk, parlama ve büyük ikon */
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile:nth-of-type(8n+1) {
+    --f1: #4318ff; --f2: #00b4ff;
+    background: linear-gradient(150deg, var(--f1), var(--f2)) !important; border: 1px solid rgba(255,255,255,.28) !important;
+    box-shadow: 0 24px 36px -20px var(--f1), inset 0 1px 0 rgba(255,255,255,.35) !important;
+}
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile:nth-of-type(9)  { --f1: #7c3aed; --f2: #ec4899; }
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile:nth-of-type(17) { --f1: #0e9aa7; --f2: #22c55e; }
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile:nth-of-type(25) { --f1: #f97316; --f2: #f5c400; }
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile:nth-of-type(8n+1)::before {
+    content: ""; position: absolute; inset: auto; right: -50px; top: -50px; width: 170px; height: 170px; border-radius: 50%;
+    background: rgba(255,255,255,.18); opacity: 1; pointer-events: none;
+}
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile:nth-of-type(8n+1)::after {
+    left: -40px; right: auto; bottom: -56px; width: 140px; height: 140px; background: rgba(255,255,255,.12);
+}
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile:nth-of-type(8n+1) .tumuu-icon-wrap {
+    width: 104px !important; height: 104px !important; border: 3px solid rgba(255,255,255,.7); position: relative; z-index: 1;
+    box-shadow: 0 16px 30px -12px rgba(0,0,0,.5) !important;
+}
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile:nth-of-type(8n+1) .tumuu-label { position: relative; z-index: 1; }
+
+
+/* ═════════ ANA SAYFA · KATEGORİLER TEK SATIRDA (4 buton) ═════════ */
+html body .category-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 8px !important; }
+html body .category-card {
+    min-height: 0 !important; align-items: center !important; justify-content: center; text-align: center;
+    padding: .85rem .25rem .8rem !important; border-radius: 22px !important;
+}
+html body .category-card::before { right: -26px; top: -26px; width: 80px; height: 80px; }
+html body .category-card::after  { left: -22px; bottom: -30px; width: 70px; height: 70px; }
+html body .category-card .cat-icon-wrap { width: 44px !important; height: 44px !important; border-radius: 15px !important; font-size: 1.05rem !important; margin-bottom: .55rem !important; }
+html body .category-card .cat-info { flex: 0 0 auto; width: 100%; }
+html body .category-card .cat-info h3 { font-size: .8rem !important; margin: 0 !important; letter-spacing: -.02em !important; }
+html body .category-card .cat-info p,
+html body .category-card .cat-arrow { display: none !important; }
+html body .category-card .cat-count {
+    margin-top: .5rem !important; align-self: center !important; padding: 3px 7px !important;
+    font-size: .58rem !important; white-space: nowrap; letter-spacing: 0;
+}
+
+
+/* ═════════ GÜNLÜK · EĞİTİM · ARAÇLAR · EĞLENCE SEKMELERİ · YENİ TASARIM ═════════ */
+html body #page-gunluk  { --pg1: #4318ff; --pg2: #00b4ff; }
+html body #page-egitim  { --pg1: #f97316; --pg2: #f5a300; }
+html body #page-araclar { --pg1: #0e9aa7; --pg2: #2563eb; }
+html body #page-eglence { --pg1: #e11d74; --pg2: #f97316; }
+
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-grid { gap: 12px !important; }
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card {
+    position: relative; overflow: hidden; padding: 15px 15px 15px 20px !important; border-radius: 26px !important;
+    background: linear-gradient(160deg, var(--bg-card) 45%, color-mix(in srgb, var(--pg1) 9%, var(--bg-card))) !important;
+    border: 1px solid color-mix(in srgb, var(--pg1) 16%, var(--border-color)) !important;
+    box-shadow: 0 14px 26px -18px color-mix(in srgb, var(--pg1) 70%, #0f172a) !important;
+}
+/* Sol renkli şerit */
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card::before {
+    display: block !important; content: ""; position: absolute; left: 0; top: 16px; bottom: 16px; width: 5px;
+    border-radius: 0 99px 99px 0; background: linear-gradient(180deg, var(--pg1), var(--pg2)); opacity: 1 !important;
+}
+/* Sağ üst dekoratif daire */
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card::after {
+    display: block !important; content: ""; position: absolute; right: -34px; top: -34px; width: 96px; height: 96px; border-radius: 50%;
+    background: color-mix(in srgb, var(--pg1) 10%, transparent); pointer-events: none;
+}
+/* Yuvarlak ikon + renkli halka */
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card .app-icon-img {
+    width: 62px !important; height: 62px !important; border-radius: 50% !important; object-fit: cover; background: #fff !important; padding: 2px;
+    border: 2px solid color-mix(in srgb, var(--pg1) 35%, #fff) !important;
+    box-shadow: 0 12px 22px -10px color-mix(in srgb, var(--pg1) 80%, #000) !important; position: relative; z-index: 1;
+}
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card .app-info h3 { font-size: 1.05rem !important; }
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card .app-tag {
+    background: color-mix(in srgb, var(--pg1) 14%, transparent) !important; color: var(--pg1) !important; border: 0 !important;
+}
+/* Aç düğmesi: dolgun gradyan */
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card .launch-btn {
+    width: 42px !important; height: 42px !important; border-radius: 15px !important; z-index: 1;
+    background: linear-gradient(135deg, var(--pg1), var(--pg2)) !important; color: #fff !important;
+    box-shadow: 0 10px 18px -8px var(--pg1) !important;
+}
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card:active .launch-btn { transform: scale(.92); }
+@media (min-width: 700px) {
+    html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+/* Kart/Liste anahtarı: sekme rengiyle */
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .mg-vt-btn.mg-vt-active {
+    background: linear-gradient(135deg, var(--pg1), var(--pg2)) !important; color: #fff !important; box-shadow: 0 8px 16px -8px var(--pg1) !important;
+}
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .mg-view-toggle { border-radius: 99px !important; padding: 4px !important; }
+
+
+/* ═════════ SEKME KARTLARI · DÜZELTME (şerit/daire kaldırıldı, rozetler gizli) ═════════ */
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card::before,
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card::after { display: none !important; content: none !important; }
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card { padding: 14px !important; }
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card .app-icon-img { width: 58px !important; height: 58px !important; }
+/* "ÖNE ÇIKAN", "POPÜLER" vb. rozetler görünmesin */
+html body .app-card .mg-badge, html body .tumuu-tile .mg-badge { display: none !important; }
+html body .app-card:has(.mg-badge) .app-info h3 { padding-right: 0 !important; }
+
+
+/* ═════════ ÖNEMLİ GÜN KUTLAMA / TEBRİK EKRANI ═════════ */
+.mg-kut {
+    position: fixed; inset: 0; z-index: 100000; display: flex; align-items: center; justify-content: center;
+    padding: max(20px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom));
+    background: linear-gradient(160deg, var(--k1, #4318ff), var(--k2, #7c3aed)); opacity: 0; transition: opacity .32s ease;
+}
+.mg-kut.mg-kut-in { opacity: 1; }
+.mg-kut::before, .mg-kut::after { content: ""; position: absolute; border-radius: 50%; background: rgba(255,255,255,.12); pointer-events: none; }
+.mg-kut::before { width: 320px; height: 320px; right: -110px; top: -110px; }
+.mg-kut::after  { width: 260px; height: 260px; left: -90px; bottom: -90px; background: rgba(255,255,255,.09); }
+.mg-kut-fx { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+.mg-kut-card {
+    position: relative; z-index: 1; width: min(380px, 100%); text-align: center; color: #fff;
+    padding: 34px 24px 24px; border-radius: 32px; background: rgba(255,255,255,.14);
+    border: 1px solid rgba(255,255,255,.3); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    box-shadow: 0 30px 60px -24px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.35);
+    transform: translateY(24px) scale(.94); transition: transform .45s cubic-bezier(.34,1.4,.64,1);
+}
+.mg-kut-in .mg-kut-card { transform: none; }
+.mg-kut-emoji { font-size: 84px; line-height: 1; margin-bottom: 14px; filter: drop-shadow(0 12px 18px rgba(0,0,0,.3)); animation: mgKutFloat 3.2s ease-in-out infinite; }
+@keyframes mgKutFloat { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-8px) rotate(3deg); } }
+.mg-kut-title { margin: 0 0 10px; font-size: 1.5rem; line-height: 1.25; font-weight: 900; letter-spacing: -.02em; text-shadow: 0 2px 10px rgba(0,0,0,.25); }
+.mg-kut-msg { margin: 0; font-size: 1rem; line-height: 1.55; opacity: .94; }
+.mg-kut-sign { margin-top: 16px; font-size: .78rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; opacity: .8; }
+.mg-kut-actions { display: flex; gap: 10px; margin-top: 22px; }
+.mg-kut-btn {
+    flex: 1; border: 0; cursor: pointer; padding: 13px 14px; border-radius: 99px; font: inherit; font-weight: 800; font-size: .95rem;
+    background: rgba(255,255,255,.2); color: #fff; border: 1px solid rgba(255,255,255,.35); transition: transform .15s;
+}
+.mg-kut-btn:active { transform: scale(.95); }
+.mg-kut-ok { background: #fff; color: var(--k1, #4318ff); border-color: #fff; box-shadow: 0 12px 22px -10px rgba(0,0,0,.45); }
+.mg-kut[data-mode="solemn"] .mg-kut-emoji { animation: none; }
+.mg-kut[data-mode="solemn"] .mg-kut-card { background: rgba(255,255,255,.08); }
+@media (prefers-reduced-motion: reduce) { .mg-kut-emoji { animation: none; } .mg-kut, .mg-kut-card { transition: none; } }
+
+
+/* ═════════ AYARLAR · KUTLAMA TESTİ ═════════ */
+.mg-kut-test { display: flex; gap: 10px; width: 100%; max-width: 420px; }
+.mg-kut-select {
+    flex: 1 1 auto; min-width: 0; padding: 11px 14px; border-radius: 14px; font: inherit; font-weight: 700; font-size: .9rem;
+    color: var(--text-main); background: var(--bg-body); border: 1px solid var(--border-color); outline: none;
+}
+.mg-kut-select:focus { border-color: var(--primary-color); box-shadow: 0 0 0 4px var(--primary-glow); }
+.mg-kut-test-btn {
+    flex: 0 0 auto; display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border: 0; border-radius: 14px; cursor: pointer;
+    font: inherit; font-weight: 800; font-size: .9rem; color: #fff; white-space: nowrap;
+    background: linear-gradient(135deg, #4318ff, #00b4ff); box-shadow: 0 8px 16px -8px rgba(67,24,255,.7); transition: transform .15s;
+}
+.mg-kut-test-btn:active { transform: scale(.95); }
+
+
+/* ═════════ GÜNÜN SORUSU KARTI (MuGöl Bilgi) ═════════ */
+html body .mg-quote-card.mg-quote-soru {
+    background: linear-gradient(135deg, #f59e0b 0%, #f97316 55%, #ef4444 100%) !important;
+    box-shadow: 0 16px 32px -16px rgba(249,115,22,.6), inset 0 1px 0 rgba(255,255,255,.25) !important;
+}
+html body .mg-quote-card.mg-quote-soru .mg-quote-label,
+html body .mg-quote-card.mg-quote-soru .mg-quote-cta,
+html body .mg-quote-card.mg-quote-soru .mg-quote-mark { color: #fff !important; }
+
+
+/* ═════════ KOYU MOD · RENKLİ BUTONLAR ═════════ */
+/* Kategori butonları: koyu modda da dolgun renkli gradyan */
+html[data-theme="dark"] body .category-card {
+    background: linear-gradient(145deg, var(--cc1), var(--cc2)) !important;
+    border: 1px solid rgba(255,255,255,.22) !important;
+    box-shadow: 0 14px 26px -14px var(--cc1), inset 0 1px 0 rgba(255,255,255,.3) !important;
+    color: #fff !important;
+}
+html[data-theme="dark"] body .category-card::before { background: rgba(255,255,255,.16) !important; opacity: 1 !important; }
+html[data-theme="dark"] body .category-card::after  { background: rgba(255,255,255,.1) !important; }
+html[data-theme="dark"] body .category-card .cat-icon-wrap {
+    background: rgba(255,255,255,.22) !important; border: 1px solid rgba(255,255,255,.35) !important; color: #fff !important;
+}
+html[data-theme="dark"] body .category-card .cat-info h3 { color: #fff !important; }
+html[data-theme="dark"] body .category-card .cat-count {
+    background: rgba(255,255,255,.22) !important; color: #fff !important; border: 1px solid rgba(255,255,255,.3) !important;
+}
+
+/* Üst çubuk butonları: koyu modda renkli */
+html[data-theme="dark"] body .header #searchBtn {
+    background: linear-gradient(135deg, #4318ff, #2979ff) !important; border-color: rgba(255,255,255,.25) !important; color: #fff !important;
+    box-shadow: 0 8px 18px -8px rgba(67,24,255,.7) !important;
+}
+html[data-theme="dark"] body .header #notifBtn {
+    background: linear-gradient(135deg, #f97316, #f5a300) !important; border-color: rgba(255,255,255,.25) !important; color: #fff !important;
+    box-shadow: 0 8px 18px -8px rgba(249,115,22,.7) !important;
+}
+html[data-theme="dark"] body .header #mgShareBtn {
+    background: linear-gradient(135deg, #059669, #14b8a6) !important; border-color: rgba(255,255,255,.25) !important; color: #fff !important;
+    box-shadow: 0 8px 18px -8px rgba(5,150,105,.7) !important;
+}
+html[data-theme="dark"] body .header #mgRefreshBtn {
+    background: linear-gradient(135deg, #0e9aa7, #2563eb) !important; border-color: rgba(255,255,255,.25) !important; color: #fff !important;
+}
+html[data-theme="dark"] body .header #headerThemeToggle {
+    background: linear-gradient(135deg, #f59e0b, #fbbf24) !important; border-color: rgba(255,255,255,.3) !important; color: #fff !important;
+    box-shadow: 0 8px 18px -8px rgba(245,158,11,.7) !important;
+}
+html[data-theme="dark"] body .header #headerThemeToggle i { color: #fff !important; }
+
+
+/* ═════════ TÜMÜ · KATEGORİYE GÖRE RENKLİ KUTULAR ═════════ */
+html body #page-tumuu .tumuu-tile[data-cat="gunluk"]  { --tc1: #4318ff; --tc2: #00b4ff; }
+html body #page-tumuu .tumuu-tile[data-cat="egitim"]  { --tc1: #f97316; --tc2: #f5a300; }
+html body #page-tumuu .tumuu-tile[data-cat="araclar"] { --tc1: #0e9aa7; --tc2: #2563eb; }
+html body #page-tumuu .tumuu-tile[data-cat="eglence"] { --tc1: #e11d74; --tc2: #f97316; }
+
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile[data-cat],
+html body #page-tumuu .tumuu-grid.list-view .tumuu-tile[data-cat] {
+    background: linear-gradient(150deg, var(--tc1), var(--tc2)) !important;
+    border: 1px solid rgba(255,255,255,.25) !important;
+    box-shadow: 0 14px 24px -14px var(--tc1), inset 0 1px 0 rgba(255,255,255,.3) !important;
+}
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile[data-cat]::after { background: rgba(255,255,255,.14) !important; }
+html body #page-tumuu .tumuu-grid .tumuu-tile[data-cat] .tumuu-label {
+    color: #fff !important; text-shadow: 0 2px 8px rgba(0,0,0,.2);
+}
+html body #page-tumuu .tumuu-grid.list-view .tumuu-tile[data-cat]::after { color: rgba(255,255,255,.85) !important; }
+
+
+/* ═════════ ÜST ÇUBUK BUTONLARI · AÇIK MODDA DA RENKLİ ═════════ */
+html body .header #searchBtn {
+    background: linear-gradient(135deg, #4318ff, #2979ff) !important; border-color: rgba(255,255,255,.35) !important; color: #fff !important;
+    box-shadow: 0 8px 18px -8px rgba(67,24,255,.6) !important;
+}
+html body .header #notifBtn {
+    background: linear-gradient(135deg, #f97316, #f5a300) !important; border-color: rgba(255,255,255,.35) !important; color: #fff !important;
+    box-shadow: 0 8px 18px -8px rgba(249,115,22,.6) !important;
+}
+html body .header #mgShareBtn {
+    background: linear-gradient(135deg, #059669, #14b8a6) !important; border-color: rgba(255,255,255,.35) !important; color: #fff !important;
+    box-shadow: 0 8px 18px -8px rgba(5,150,105,.6) !important;
+}
+html body .header #mgRefreshBtn {
+    background: linear-gradient(135deg, #0e9aa7, #2563eb) !important; border-color: rgba(255,255,255,.35) !important; color: #fff !important;
+    box-shadow: 0 8px 18px -8px rgba(37,99,235,.6) !important;
+}
+html body .header #headerThemeToggle {
+    background: linear-gradient(135deg, #f59e0b, #fbbf24) !important; border-color: rgba(255,255,255,.4) !important; color: #fff !important;
+    box-shadow: 0 8px 18px -8px rgba(245,158,11,.6) !important;
+}
+html body .header #headerThemeToggle i,
+html body .header #searchBtn i, html body .header #notifBtn i,
+html body .header #mgShareBtn i, html body .header #mgRefreshBtn i { color: #fff !important; }
+
+
+/* ═════════ 4 SEKME (Günlük · Eğitim · Araçlar · Eğlence) · BELİRGİN AMA YUMUŞAK RENK ═════════ */
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--pg1) 24%, var(--bg-card)) 0%, color-mix(in srgb, var(--pg2) 8%, var(--bg-card)) 70%, var(--bg-card) 100%) !important;
+    border: 1px solid color-mix(in srgb, var(--pg1) 45%, var(--border-color)) !important;
+    box-shadow: 0 14px 26px -16px color-mix(in srgb, var(--pg1) 80%, #0f172a) !important;
+}
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card .app-icon-img {
+    border: 2px solid color-mix(in srgb, var(--pg1) 70%, #fff) !important;
+}
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card .app-tag {
+    background: color-mix(in srgb, var(--pg1) 26%, transparent) !important;
+    color: color-mix(in srgb, var(--pg1) 55%, var(--text-main)) !important;
+    border: 1px solid color-mix(in srgb, var(--pg1) 45%, transparent) !important;
+}
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card .launch-btn {
+    border: 1px solid rgba(255,255,255,.3) !important;
+}
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .mg-filter-bar {
+    border-color: color-mix(in srgb, var(--pg1) 40%, var(--border-color)) !important;
+}
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .mg-fb-icon { color: var(--pg1) !important; }
+
+
+/* ═════════ 4 SEKME · TÜMÜ SEKMESİYLE AYNI DOLGUN GRADYAN KARTLAR ═════════ */
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card {
+    background: linear-gradient(150deg, var(--pg1), var(--pg2)) !important;
+    border: 1px solid rgba(255,255,255,.25) !important;
+    box-shadow: 0 14px 24px -14px var(--pg1), inset 0 1px 0 rgba(255,255,255,.3) !important;
+    color: #fff !important;
+}
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card::after {
+    display: block !important; content: "" !important; background: rgba(255,255,255,.14) !important;
+    right: -34px; top: -34px; width: 110px; height: 110px;
+}
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card .app-info h3 {
+    color: #fff !important; text-shadow: 0 2px 8px rgba(0,0,0,.2);
+}
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card .app-desc {
+    color: rgba(255,255,255,.88) !important;
+}
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card .app-icon-img {
+    border: 3px solid rgba(255,255,255,.7) !important; background: #fff !important;
+    box-shadow: 0 12px 22px -10px rgba(0,0,0,.45) !important;
+}
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card .app-tag {
+    background: rgba(255,255,255,.22) !important; color: #fff !important; border: 1px solid rgba(255,255,255,.35) !important;
+}
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card .launch-btn {
+    background: #fff !important; color: var(--pg1) !important; border: 0 !important;
+    box-shadow: 0 8px 16px -8px rgba(0,0,0,.4) !important;
+}
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card .launch-btn i,
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-card .launch-btn .btn-label { color: var(--pg1) !important; }
+
+
+/* ═════════ 4 SEKME · TON TON FARKLI RENKLER (her kart kendi renk ailesinde farklı ton) ═════════ */
+html body #page-gunluk .app-grid > a.app-card:nth-of-type(8n+1) { --pg1: #4318ff; --pg2: #00b4ff; }
+html body #page-gunluk .app-grid > a.app-card:nth-of-type(8n+2) { --pg1: #2563eb; --pg2: #22d3ee; }
+html body #page-gunluk .app-grid > a.app-card:nth-of-type(8n+3) { --pg1: #6d28d9; --pg2: #3b82f6; }
+html body #page-gunluk .app-grid > a.app-card:nth-of-type(8n+4) { --pg1: #0ea5e9; --pg2: #2563eb; }
+html body #page-gunluk .app-grid > a.app-card:nth-of-type(8n+5) { --pg1: #4f46e5; --pg2: #06b6d4; }
+html body #page-gunluk .app-grid > a.app-card:nth-of-type(8n+6) { --pg1: #1d4ed8; --pg2: #60a5fa; }
+html body #page-gunluk .app-grid > a.app-card:nth-of-type(8n+7) { --pg1: #7c3aed; --pg2: #38bdf8; }
+html body #page-gunluk .app-grid > a.app-card:nth-of-type(8n+8) { --pg1: #0284c7; --pg2: #4318ff; }
+html body #page-egitim .app-grid > a.app-card:nth-of-type(8n+1) { --pg1: #f97316; --pg2: #f5a300; }
+html body #page-egitim .app-grid > a.app-card:nth-of-type(8n+2) { --pg1: #ea580c; --pg2: #fbbf24; }
+html body #page-egitim .app-grid > a.app-card:nth-of-type(8n+3) { --pg1: #f59e0b; --pg2: #ef4444; }
+html body #page-egitim .app-grid > a.app-card:nth-of-type(8n+4) { --pg1: #d97706; --pg2: #fb923c; }
+html body #page-egitim .app-grid > a.app-card:nth-of-type(8n+5) { --pg1: #f43f5e; --pg2: #f59e0b; }
+html body #page-egitim .app-grid > a.app-card:nth-of-type(8n+6) { --pg1: #c2410c; --pg2: #f59e0b; }
+html body #page-egitim .app-grid > a.app-card:nth-of-type(8n+7) { --pg1: #fb923c; --pg2: #facc15; }
+html body #page-egitim .app-grid > a.app-card:nth-of-type(8n+8) { --pg1: #e65100; --pg2: #ffb300; }
+html body #page-araclar .app-grid > a.app-card:nth-of-type(8n+1) { --pg1: #0e9aa7; --pg2: #2563eb; }
+html body #page-araclar .app-grid > a.app-card:nth-of-type(8n+2) { --pg1: #0891b2; --pg2: #6366f1; }
+html body #page-araclar .app-grid > a.app-card:nth-of-type(8n+3) { --pg1: #0d9488; --pg2: #0ea5e9; }
+html body #page-araclar .app-grid > a.app-card:nth-of-type(8n+4) { --pg1: #2563eb; --pg2: #06b6d4; }
+html body #page-araclar .app-grid > a.app-card:nth-of-type(8n+5) { --pg1: #14b8a6; --pg2: #3b82f6; }
+html body #page-araclar .app-grid > a.app-card:nth-of-type(8n+6) { --pg1: #0369a1; --pg2: #22d3ee; }
+html body #page-araclar .app-grid > a.app-card:nth-of-type(8n+7) { --pg1: #0f766e; --pg2: #38bdf8; }
+html body #page-araclar .app-grid > a.app-card:nth-of-type(8n+8) { --pg1: #1d4ed8; --pg2: #14b8a6; }
+html body #page-eglence .app-grid > a.app-card:nth-of-type(8n+1) { --pg1: #e11d74; --pg2: #f97316; }
+html body #page-eglence .app-grid > a.app-card:nth-of-type(8n+2) { --pg1: #db2777; --pg2: #fb7185; }
+html body #page-eglence .app-grid > a.app-card:nth-of-type(8n+3) { --pg1: #be185d; --pg2: #f472b6; }
+html body #page-eglence .app-grid > a.app-card:nth-of-type(8n+4) { --pg1: #f43f5e; --pg2: #fb923c; }
+html body #page-eglence .app-grid > a.app-card:nth-of-type(8n+5) { --pg1: #c026d3; --pg2: #f43f5e; }
+html body #page-eglence .app-grid > a.app-card:nth-of-type(8n+6) { --pg1: #e11d74; --pg2: #a855f7; }
+html body #page-eglence .app-grid > a.app-card:nth-of-type(8n+7) { --pg1: #f97316; --pg2: #ec4899; }
+html body #page-eglence .app-grid > a.app-card:nth-of-type(8n+8) { --pg1: #9d174d; --pg2: #f97316; }
