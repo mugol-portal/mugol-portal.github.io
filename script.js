@@ -21,7 +21,30 @@ const mainContent = document.querySelector('.main-content');
 // =========================================================
 // 1. MENÜ GEÇİŞ SİSTEMİ (Tıklama ve Klavye Desteği)
 // =========================================================
+/* Harici bağlantılı menü öğesi (data-href): sayfa değiştirmez, adresi yeni sekmede açar */
+function mgOpenHref(el) {
+    var url = el.getAttribute('data-href');
+    if (!url) return;
+    var a = document.createElement('a');
+    a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+    a.style.cssText = 'position:fixed;width:0;height:0;opacity:0;pointer-events:none;left:-9999px;';
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { if (a.parentNode) a.parentNode.removeChild(a); }, 500);
+    /* açık menüleri kapat */
+    var sb = document.getElementById('sidebar'), ov = document.getElementById('sidebarOverlay');
+    if (sb) sb.classList.remove('mobile-open');
+    if (ov) ov.classList.remove('active');
+    var bnOv = document.getElementById('mgBnOverlay');
+    if (bnOv && bnOv.classList.contains('bn-visible')) bnOv.click();
+}
+/* Alt menüdeki "Daha Fazla" panelinde data-href'li düğmeler */
+document.addEventListener('click', function (e) {
+    var el = e.target.closest ? e.target.closest('.mg-bn-panel-item[data-href]') : null;
+    if (el) { e.preventDefault(); mgOpenHref(el); }
+});
+
 function activateMenu(item) {
+    if (item.hasAttribute('data-href')) { mgOpenHref(item); return; }
     if (item.id === 'installAppBtn') return;
 
     navItems.forEach(nav => {
@@ -1510,4 +1533,676 @@ window.closeAdblockWarning = function() {
         _boot();
     }
 
+})();
+
+
+// ════════════════════════════════════════════════════════════
+// BİLDİRİMLER (eski notifications.js) — bildirim eklemek için aşağıdaki liste
+// ════════════════════════════════════════════════════════════
+// ╔══════════════════════════════════════════════════════════════╗
+// ║          MuGöl PORTAL — BİLDİRİM SİSTEMİ                    ║
+// ║  Bu dosyayı düzenleyerek bildirimleri yönetebilirsiniz.      ║
+// ╚══════════════════════════════════════════════════════════════╝
+//
+// ── BİLDİRİM EKLEME REHBERİ ──────────────────────────────────
+//
+//  Her bildirim şu alanlardan oluşur:
+//
+//  id       : Benzersiz kimlik (string). Okunan bildirimi takip eder.
+//             Her yeni bildirim için farklı bir id verin (n3, n4, ...).
+//
+//  icon     : Emoji veya Font Awesome class (örn: "🔔" veya "fa-bell").
+//             Emoji önerilir — daha geniş destek.
+//
+//  title    : Bildirim başlığı (kısa ve net olsun).
+//
+//  body     : Bildirim açıklama metni.
+//
+//  time     : Zaman etiketi (örn: "Az önce", "1 saat önce", "3 Mayıs").
+//
+//  type     : Bildirim tipi — kartın sol kenarlık rengini belirler.
+//             Seçenekler: "info" | "success" | "warning" | "error"
+//             Belirtilmezse varsayılan "info" kullanılır.
+//
+//  link     : (İsteğe bağlı) Tıklandığında açılacak URL.
+//             Belirtilmezse sadece okundu işaretlenir.
+//
+//  popup    : true → Splash sonrası mesaj kutusunda gösterilir.
+//             false veya belirtilmezse → Sadece bildirim panelinde görünür.
+//
+// ── ÖRNEK ────────────────────────────────────────────────────
+//
+//  {
+//    id: 'n5',
+//    icon: '⚡',
+//    title: 'Yeni Özellik: Karanlık Mod',
+//    body: 'Ayarlar > Karanlık Mod ile göz yorgunluğunu azaltın.',
+//    time: '10 Mayıs',
+//    type: 'success',
+//    popup: true
+//  },
+//
+// ─────────────────────────────────────────────────────────────
+
+window.MG_NOTIFICATIONS = [
+
+    // ── Mevcut Bildirimler ────────────────────────────────────
+
+    {
+        id: 'n1',
+        icon: '🚀',
+        title: 'MuGöl PORTAL v3.0 Yayında!',
+        body: 'Yeni tasarım, güncelleme animasyonu ve gelişmiş bildirim sistemi eklendi.',
+        time: 'Az önce',
+        type: 'success',
+        popup: true
+    },
+
+    {
+        id: 'n2',
+        icon: '🔍',
+        title: 'Hızlı Arama',
+        body: 'Ctrl+K kısayoluyla tüm uygulamaları anında arayabilirsiniz.',
+        time: '2 gün önce',
+        type: 'info',
+        popup: false
+    },
+
+    {
+        id: 'n3',
+        icon: '🔄',
+        title: 'Güncelleme Butonu',
+        body: 'Ayarlar\'daki "Güncelleme Yap" butonu ile önbelleği temizleyip en son sürümü alabilirsiniz.',
+        time: '3 gün önce',
+        type: 'info',
+        popup: false
+    },
+
+    // ── Yeni bildirim eklemek için buraya kopyalayın ──────────
+    //
+    // {
+    //     id: 'n4',
+    //     icon: '🎉',
+    //     title: 'Bildirim Başlığı',
+    //     body: 'Bildirim açıklama metni buraya gelir.',
+    //     time: 'Az önce',
+    //     type: 'info',   // info | success | warning | error
+    //     popup: true     // true = splash sonrası mesaj kutusunda çıksın
+    // },
+
+];
+
+// ─────────────────────────────────────────────────────────────
+// AŞAĞIYI DEĞİŞTİRMEYİN — Sistem Kodu
+// ─────────────────────────────────────────────────────────────
+
+(function () {
+    'use strict';
+
+    /* Tip → renk eşleşmesi */
+    var TYPE_COLORS = {
+        info:    { border: '#4318ff', bg: 'rgba(67,24,255,0.06)',  icon: '#4318ff' },
+        success: { border: '#10b981', bg: 'rgba(16,185,129,0.06)', icon: '#10b981' },
+        warning: { border: '#f59e0b', bg: 'rgba(245,158,11,0.06)', icon: '#f59e0b' },
+        error:   { border: '#ef4444', bg: 'rgba(239,68,68,0.06)',  icon: '#ef4444' }
+    };
+
+    function typeColor(type) {
+        return TYPE_COLORS[type] || TYPE_COLORS.info;
+    }
+
+    /* localStorage yardımcıları */
+    var READ_KEY = 'mugol-read-notifs';
+    function getRead()     { try { return JSON.parse(localStorage.getItem(READ_KEY) || '[]'); } catch(e) { return []; } }
+    function saveRead(arr) { try { localStorage.setItem(READ_KEY, JSON.stringify(arr)); } catch(e) {} }
+
+    /* ── Bildirim panelini render et (mevcut script.js ile entegre) ── */
+    function renderNotifications() {
+        var list = document.getElementById('notifList');
+        var dot  = document.getElementById('notifDot');
+        if (!list) return;
+
+        var notifs = window.MG_NOTIFICATIONS || [];
+        var readArr = getRead();
+        var unread  = notifs.filter(function(n) { return !readArr.includes(n.id); });
+
+        if (dot) dot.style.display = unread.length > 0 ? 'block' : 'none';
+
+        if (!notifs.length) {
+            list.innerHTML = '<div style="padding:24px;text-align:center;color:var(--text-muted);font-weight:700;font-size:.9rem;">Henüz bildirim yok.</div>';
+            return;
+        }
+
+        list.innerHTML = notifs.map(function(n) {
+            var isRead = readArr.includes(n.id);
+            var c = typeColor(n.type);
+            return (
+                '<div onclick="window.MG_markRead(\'' + n.id + '\')" ' +
+                'style="padding:14px 16px;border-bottom:1px solid var(--border-color);cursor:pointer;' +
+                'background:' + (isRead ? 'transparent' : c.bg) + ';' +
+                'display:flex;gap:13px;align-items:flex-start;' +
+                'border-left:3px solid ' + (isRead ? 'transparent' : c.border) + ';' +
+                'transition:background .15s;">' +
+                    '<div style="font-size:1.4rem;line-height:1.2;flex-shrink:0;">' + n.icon + '</div>' +
+                    '<div style="flex:1;min-width:0;">' +
+                        '<div style="font-weight:900;color:var(--text-main);font-size:.9rem;margin-bottom:3px;">' + n.title + '</div>' +
+                        '<div style="font-size:.83rem;color:var(--text-muted);line-height:1.5;font-weight:600;">' + n.body + '</div>' +
+                        '<div style="font-size:.75rem;color:var(--text-muted);margin-top:5px;opacity:.7;font-weight:700;">' + n.time + '</div>' +
+                    '</div>' +
+                    (!isRead ? '<div style="width:8px;height:8px;border-radius:50%;background:' + c.icon + ';flex-shrink:0;margin-top:5px;"></div>' : '') +
+                '</div>'
+            );
+        }).join('');
+    }
+    window.MG_renderNotifications = renderNotifications;
+
+    /* ── Bildirim okundu işaretle ── */
+    window.MG_markRead = function(id) {
+        var readArr = getRead();
+        if (!readArr.includes(id)) {
+            readArr.push(id);
+            saveRead(readArr);
+            if (typeof _fbSetPref === 'function') _fbSetPref('readNotifs', readArr);
+        }
+        renderNotifications();
+    };
+
+    /* ── Tümünü okundu işaretle ── */
+    window.MG_markAllRead = function() {
+        var all = (window.MG_NOTIFICATIONS || []).map(function(n) { return n.id; });
+        saveRead(all);
+        if (typeof _fbSetPref === 'function') _fbSetPref('readNotifs', all);
+        renderNotifications();
+    };
+
+    /* ─────────────────────────────────────────────────────────
+       SPLASH SONRASI POPUP MESAJ KUTUSU
+    ───────────────────────────────────────────────────────── */
+    var POPUP_KEY = 'mugol-seen-popups';
+
+    function getSeenPopups()       { try { return JSON.parse(localStorage.getItem(POPUP_KEY) || '[]'); } catch(e) { return []; } }
+    function saveSeenPopup(id)     { var arr = getSeenPopups(); if (!arr.includes(id)) { arr.push(id); try { localStorage.setItem(POPUP_KEY, JSON.stringify(arr)); } catch(e) {} } }
+
+    function buildPopup(notif) {
+        var c = typeColor(notif.type);
+        var overlay = document.createElement('div');
+        overlay.id = 'mg-notif-popup-overlay';
+        overlay.setAttribute('role', 'dialog');
+        overlay.setAttribute('aria-modal', 'true');
+        overlay.setAttribute('aria-label', 'Bildirim');
+        overlay.style.cssText = [
+            'position:fixed;inset:0;z-index:999990;',
+            'display:flex;align-items:center;justify-content:center;padding:20px;',
+            'background:rgba(0,0,0,.55);backdrop-filter:blur(8px);',
+            '-webkit-backdrop-filter:blur(8px);',
+            'animation:mgPopupBgIn .3s ease both;'
+        ].join('');
+
+        var card = document.createElement('div');
+        card.style.cssText = [
+            'background:var(--bg-card,#fff);border-radius:24px;',
+            'width:min(92vw,420px);overflow:hidden;',
+            'box-shadow:0 28px 64px rgba(0,0,0,.22),0 8px 20px rgba(0,0,0,.1);',
+            'border:1px solid var(--border-color,rgba(0,0,0,.08));',
+            'animation:mgPopupCardIn .35s cubic-bezier(.34,1.56,.64,1) both;',
+            'animation-delay:.05s;'
+        ].join('');
+
+        /* Üst renkli bant */
+        var band = document.createElement('div');
+        band.style.cssText = [
+            'height:5px;',
+            'background:linear-gradient(90deg,' + c.border + ',',
+            (notif.type === 'success' ? '#00d2ff' : notif.type === 'warning' ? '#ef4444' : notif.type === 'error' ? '#f59e0b' : '#00d2ff') + ');'
+        ].join('');
+
+        /* İçerik */
+        var body = document.createElement('div');
+        body.style.cssText = 'padding:24px 24px 20px;';
+        body.innerHTML = [
+            /* İkon + kapat */
+            '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;">',
+                '<div style="display:flex;align-items:center;gap:12px;">',
+                    '<div style="width:48px;height:48px;border-radius:15px;',
+                    'background:' + c.bg + ';border:1.5px solid ' + c.border + '33;',
+                    'display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;">',
+                    notif.icon,
+                    '</div>',
+                    '<div>',
+                        '<div style="font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.6px;',
+                        'color:' + c.icon + ';margin-bottom:3px;">',
+                        (notif.type === 'success' ? '✓ Başarı' : notif.type === 'warning' ? '⚠ Uyarı' : notif.type === 'error' ? '✕ Hata' : 'ℹ Bildirim'),
+                        '</div>',
+                        '<div style="font-size:.75rem;color:var(--text-muted,#94a3b8);font-weight:700;">' + notif.time + '</div>',
+                    '</div>',
+                '</div>',
+                '<button id="mg-popup-close" aria-label="Kapat" style="',
+                'width:32px;height:32px;border-radius:10px;border:1px solid var(--border-color,rgba(0,0,0,.1));',
+                'background:var(--bg-body,#f3f5f9);color:var(--text-muted,#94a3b8);',
+                'cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;',
+                'transition:background .15s,transform .15s;flex-shrink:0;',
+                'font-family:inherit;">✕</button>',
+            '</div>',
+            /* Başlık + metin */
+            '<h2 style="font-size:1.1rem;font-weight:900;color:var(--text-main,#0f172a);margin:0 0 8px;line-height:1.35;">',
+            notif.title,
+            '</h2>',
+            '<p style="font-size:.9rem;color:var(--text-muted,#64748b);font-weight:600;line-height:1.6;margin:0 0 20px;">',
+            notif.body,
+            '</p>',
+            /* Butonlar */
+            '<div style="display:flex;gap:10px;">',
+                (notif.link
+                    ? '<a href="' + notif.link + '" target="_blank" rel="noopener" id="mg-popup-cta" style="' +
+                      'flex:1;padding:12px 0;border-radius:14px;border:none;text-align:center;' +
+                      'background:linear-gradient(135deg,' + c.border + ',#00d2ff);' +
+                      'color:#fff;font-size:.9rem;font-weight:800;cursor:pointer;text-decoration:none;' +
+                      'font-family:\'Nunito\',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;' +
+                      'box-shadow:0 4px 14px ' + c.border + '44;">↗ İncele</a>'
+                    : ''),
+                '<button id="mg-popup-ok" style="' +
+                'flex:1;padding:12px 0;border-radius:14px;' +
+                'border:1.5px solid var(--border-color,rgba(0,0,0,.1));' +
+                'background:transparent;color:var(--text-main,#0f172a);' +
+                'font-size:.9rem;font-weight:800;cursor:pointer;font-family:\'Nunito\',sans-serif;' +
+                'transition:background .15s;">Tamam, Anladım</button>',
+            '</div>'
+        ].join('');
+
+        card.appendChild(band);
+        card.appendChild(body);
+        overlay.appendChild(card);
+
+        /* Stil enjekte */
+        if (!document.getElementById('mg-popup-keyframes')) {
+            var s = document.createElement('style');
+            s.id = 'mg-popup-keyframes';
+            s.textContent = [
+                '@keyframes mgPopupBgIn{from{opacity:0}to{opacity:1}}',
+                '@keyframes mgPopupBgOut{from{opacity:1}to{opacity:0}}',
+                '@keyframes mgPopupCardIn{from{opacity:0;transform:translateY(24px) scale(.93)}to{opacity:1;transform:translateY(0) scale(1)}}',
+                '@keyframes mgPopupCardOut{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(.93)}}',
+            ].join('');
+            document.head.appendChild(s);
+        }
+
+        function closePopup() {
+            overlay.style.animation = 'mgPopupBgOut .2s ease forwards';
+            card.style.animation    = 'mgPopupCardOut .2s ease forwards';
+            setTimeout(function() {
+                if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+                /* Sonraki okunmamış popup var mı kontrol et */
+                setTimeout(showNextPopup, 300);
+            }, 220);
+        }
+
+        document.body.appendChild(overlay);
+
+        /* Kapat butonu */
+        var closeBtn = document.getElementById('mg-popup-close');
+        var okBtn    = document.getElementById('mg-popup-ok');
+        if (closeBtn) closeBtn.addEventListener('click', function() { saveSeenPopup(notif.id); window.MG_markRead(notif.id); closePopup(); });
+        if (okBtn)    okBtn.addEventListener('click',    function() { saveSeenPopup(notif.id); window.MG_markRead(notif.id); closePopup(); });
+
+        /* Overlay dışı tıkla */
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) { saveSeenPopup(notif.id); window.MG_markRead(notif.id); closePopup(); }
+        });
+
+        /* ESC ile kapat */
+        function onKey(e) {
+            if (e.key === 'Escape') { saveSeenPopup(notif.id); window.MG_markRead(notif.id); closePopup(); document.removeEventListener('keydown', onKey); }
+        }
+        document.addEventListener('keydown', onKey);
+    }
+
+    /* Sıradaki gösterilmemiş popup'ı bul ve göster */
+    function showNextPopup() {
+        var notifs  = window.MG_NOTIFICATIONS || [];
+        var seen    = getSeenPopups();
+        var next    = null;
+        for (var i = 0; i < notifs.length; i++) {
+            var n = notifs[i];
+            if (n.popup && !seen.includes(n.id)) { next = n; break; }
+        }
+        if (next) buildPopup(next);
+    }
+
+    /* ── Splash bitince popup'ı başlat ── */
+    function waitForSplash() {
+        var splash = document.getElementById('splash-screen');
+        if (!splash) { setTimeout(showNextPopup, 800); return; }
+
+        /* MutationObserver: splash 'hidden' class alınca tetikle */
+        var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(m) {
+                if (m.type === 'attributes' && m.attributeName === 'class') {
+                    if (splash.classList.contains('hidden')) {
+                        observer.disconnect();
+                        /* Kısa bekleme — sayfa tam görünür olsun */
+                        setTimeout(showNextPopup, 650);
+                    }
+                }
+            });
+        });
+
+        /* Splash zaten hidden ise hemen göster */
+        if (splash.classList.contains('hidden')) {
+            setTimeout(showNextPopup, 650);
+        } else {
+            observer.observe(splash, { attributes: true });
+        }
+    }
+
+    /* ── script.js'teki mevcut bildirim sistemine entegre ── */
+    /* script.js NOTIFICATIONS ve renderNotifications'ı override et */
+    function patchScriptJS() {
+        /* Mevcut NOTIFICATIONS varsa yok say — MG_NOTIFICATIONS kullan */
+        if (typeof window.NOTIFICATIONS !== 'undefined') {
+            try { window.NOTIFICATIONS = window.MG_NOTIFICATIONS; } catch(e) {}
+        }
+        /* Mevcut renderNotifications varsa override et */
+        if (typeof window.renderNotifications === 'function') {
+            window.renderNotifications = renderNotifications;
+        }
+        /* markNotifRead'i güncelle */
+        if (typeof window.markNotifRead === 'function') {
+            window.markNotifRead = window.MG_markRead;
+        }
+        /* Tümünü okundu butonu */
+        var markAllBtn = document.getElementById('notifMarkAll');
+        if (markAllBtn) {
+            markAllBtn.onclick = function() { window.MG_markAllRead(); };
+        }
+        /* Bildirim butonunu render et */
+        renderNotifications();
+    }
+
+    /* DOM hazır olunca başlat */
+    function init() {
+        patchScriptJS();
+        waitForSplash();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        /* script.js tam yüklenmemiş olabilir, kısa gecikme */
+        setTimeout(init, 50);
+    }
+
+})();
+
+
+// ════════════════════════════════════════════════════════════
+// GÖRÜNÜM MODLARI — Mobil / Tablet / Masaüstü (eski mg-modes.js)
+// ════════════════════════════════════════════════════════════
+/* MuGöl — Görünüm modu (mobil / tablet / masaüstü)
+   Tarayıcıdan ilk girişte "Mobil mi, Tarayıcı mı?" diye sorar (seçim hatırlanır). */
+(function () {
+    'use strict';
+    var KEY = 'mugol-layout-mode', MODES = ['mobile', 'tablet', 'desktop'];
+    var root = document.documentElement;
+
+    function stored() { try { var m = localStorage.getItem(KEY); return MODES.indexOf(m) > -1 ? m : null; } catch (e) { return null; } }
+
+    /* Android uygulaması (TWA) ya da ana ekrana eklenmiş PWA mı? */
+    function isApp() {
+        try {
+            if ((document.referrer || '').indexOf('android-app://') === 0) return true;
+            if (window.navigator.standalone === true) return true;
+            var q = ['standalone', 'fullscreen', 'minimal-ui'];
+            for (var i = 0; i < q.length; i++) if (window.matchMedia('(display-mode: ' + q[i] + ')').matches) return true;
+        } catch (e) {}
+        return false;
+    }
+    function auto() {
+        if (isApp()) return 'mobile';
+        var w = window.innerWidth; return w <= 700 ? 'mobile' : (w <= 1024 ? 'tablet' : 'desktop');
+    }
+
+    function apply(mode, save) {
+        MODES.forEach(function (m) { root.classList.remove('mg-mode-' + m); });
+        root.classList.add('mg-mode-' + mode);
+        if (save) { try { localStorage.setItem(KEY, mode); } catch (e) {} }
+
+        var sb = document.getElementById('sidebar');
+        var ov = document.getElementById('sidebarOverlay');
+        if (sb) {
+            sb.classList.remove('mobile-open');
+            if (mode === 'tablet') sb.classList.add('collapsed'); else sb.classList.remove('collapsed');
+        }
+        if (ov) ov.classList.remove('active');
+
+        document.querySelectorAll('.mg-mode-btn').forEach(function (b) {
+            var on = b.getAttribute('data-mode') === mode;
+            b.classList.toggle('active', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+    }
+
+    /* ── Giriş sorusu: yalnızca tarayıcıda, seçim yapılmamışsa ── */
+    function askView() {
+        if (isApp() || stored() || document.getElementById('mgViewAsk')) return;
+        if (/bot|crawl|spider|lighthouse|slurp|facebookexternalhit/i.test(navigator.userAgent || '')) return;
+        var small = window.innerWidth <= 700;
+        var box = document.createElement('div');
+        box.id = 'mgViewAsk';
+        box.setAttribute('role', 'dialog');
+        box.setAttribute('aria-modal', 'true');
+        box.setAttribute('aria-labelledby', 'mgViewAskTitle');
+        box.innerHTML =
+            '<div class="mg-va-card">' +
+              '<div class="mg-va-title" id="mgViewAskTitle">MuGöl PORTAL\'a hoş geldiniz</div>' +
+              '<div class="mg-va-sub">Hangi görünümle devam etmek istersiniz?</div>' +
+              '<button type="button" class="mg-va-btn' + (small ? ' rec' : '') + '" data-mode="mobile">' +
+                '<span class="mg-va-ico">&#128241;</span><span><b>Mobil</b><small>Alt menülü, uygulama gibi görünüm</small></span></button>' +
+              '<button type="button" class="mg-va-btn' + (small ? '' : ' rec') + '" data-mode="desktop">' +
+                '<span class="mg-va-ico">&#128421;&#65039;</span><span><b>Tarayıcı</b><small>Sol menülü, geniş ekran görünümü</small></span></button>' +
+              '<div class="mg-va-note">Seçiminizi daha sonra Ayarlar &rsaquo; Görünüm Modu bölümünden değiştirebilirsiniz.</div>' +
+            '</div>';
+        box.addEventListener('click', function (e) {
+            var b = e.target.closest ? e.target.closest('.mg-va-btn') : null;
+            if (!b) return;
+            apply(b.getAttribute('data-mode'), true);
+            box.classList.add('closing');
+            setTimeout(function () { if (box.parentNode) box.parentNode.removeChild(box); }, 250);
+        });
+        (document.body || document.documentElement).appendChild(box);
+    }
+
+    function init() {
+        apply(stored() || auto(), false);
+        document.querySelectorAll('.mg-mode-btn').forEach(function (b) {
+            b.addEventListener('click', function () { apply(b.getAttribute('data-mode'), true); });
+        });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+    askView();   /* açılış ekranının da üstünde, hemen göster */
+})();
+
+
+// ════════════════════════════════════════════════════════════
+// SORU SOR — "Muhammet'e sor" penceresi (e-posta ile mesaj)
+// ════════════════════════════════════════════════════════════
+(function () {
+    'use strict';
+    var TO = 'muhammete.soru.sor@gmail.com';
+    var MAX = 1000;
+    var NAME_KEY = 'mugol-user-name';
+    var CHIPS = [
+        { k: 'soru',       e: '❓', t: 'Soru',        s: 'Merhaba Muhammet, MuGöl PORTAL ile ilgili bir sorum var: ' },
+        { k: 'öneri',      e: '💡', t: 'Öneri',       s: 'Merhaba Muhammet, MuGöl PORTAL için bir önerim var: ' },
+        { k: 'hata bildirimi', e: '🐛', t: 'Hata bildir', s: 'Merhaba Muhammet, MuGöl PORTAL\'da bir hata buldum: ' },
+        { k: 'iş birliği', e: '🤝', t: 'İş birliği',  s: 'Merhaba Muhammet, seninle iş birliği yapmak isterim: ' },
+        { k: 'tanışma',    e: '👋', t: 'Tanışalım',   s: 'Merhaba Muhammet, tanışmak istedim! ' }
+    ];
+    var box = null, lastFocus = null, kind = 'mesaj', starter = '', rec = null;
+
+    var SVG_CHAT = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-3.6-.8L3 21l1.9-5.2A8.4 8.4 0 1 1 21 11.5z"/><circle cx="8.5" cy="11.5" r=".6" fill="#fff"/><circle cx="12" cy="11.5" r=".6" fill="#fff"/><circle cx="15.5" cy="11.5" r=".6" fill="#fff"/></svg>';
+    var SVG_X = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>';
+    var SVG_SEND = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>';
+
+    function getName() { try { return (localStorage.getItem(NAME_KEY) || ''); } catch (e) { return ''; } }
+    function saveName(n) {
+        try { if (n) localStorage.setItem(NAME_KEY, n); else localStorage.removeItem(NAME_KEY); } catch (e) {}
+        try { window.dispatchEvent(new Event('mg-name')); } catch (e) {}
+    }
+    function $(sel) { return box.querySelector(sel); }
+
+    function subjectText() {
+        var n = $('#mgAskName').value.trim();
+        return 'MuGöl PORTAL\'dan ' + kind + (n ? ' - ' + n : '');
+    }
+    function refreshSubject() { $('#mgAskSubj').textContent = 'Konu: ' + subjectText(); }
+    function refreshSend() { $('#mgAskSend').disabled = $('#mgAskMsg').value.trim().length < 3; }
+
+    function build() {
+        var chips = CHIPS.map(function (c, i) {
+            return '<button type="button" class="mg-ask-chip" data-i="' + i + '"><span aria-hidden="true">' + c.e + '</span> ' + c.t + '</button>';
+        }).join('');
+        box = document.createElement('div');
+        box.id = 'mgAskBox';
+        box.setAttribute('role', 'dialog');
+        box.setAttribute('aria-modal', 'true');
+        box.setAttribute('aria-labelledby', 'mgAskTitle');
+        box.innerHTML =
+            '<div class="mg-ask-card">' +
+              '<i class="mg-ask-strip"></i>' +
+              '<button type="button" class="mg-ask-x" aria-label="Kapat">' + SVG_X + '</button>' +
+              '<div class="mg-ask-form">' +
+                '<div class="mg-ask-head"><div class="mg-ask-ico">' + SVG_CHAT + '</div>' +
+                  '<div><div class="mg-ask-title" id="mgAskTitle">Muhammet\'e sor</div>' +
+                  '<div class="mg-ask-sub">Merak ettiğini yaz; mesajın e-posta olarak Muhammet\'e ulaşsın.</div></div></div>' +
+                '<div class="mg-ask-lab caps">Hızlı başlangıç</div>' +
+                '<div class="mg-ask-chips">' + chips + '</div>' +
+                '<label class="mg-ask-lab" for="mgAskName">Adın</label>' +
+                '<input type="text" class="mg-ask-name" id="mgAskName" maxlength="60" placeholder="Adın (isteğe bağlı)" autocomplete="given-name">' +
+                '<label class="mg-ask-lab" for="mgAskMsg">Sorun veya mesajın</label>' +
+                '<textarea id="mgAskMsg" class="mg-ask-msg" maxlength="' + MAX + '" rows="4" placeholder="Merhaba Muhammet, ..."></textarea>' +
+                '<button type="button" class="mg-ask-voice" id="mgAskVoice" hidden><span aria-hidden="true">🎤</span> <span class="mg-ask-voice-t">Sesle yaz</span></button>' +
+                '<div class="mg-ask-count" id="mgAskCount">0/' + MAX + '</div>' +
+                '<div class="mg-ask-subj" id="mgAskSubj"></div>' +
+                '<div class="mg-ask-actions">' +
+                  '<button type="button" class="mg-ask-copy" id="mgAskCopy">Kopyala</button>' +
+                  '<button type="button" class="mg-ask-send" id="mgAskSend" disabled>Mesajı gönder ' + SVG_SEND + '</button>' +
+                '</div>' +
+              '</div>' +
+              '<div class="mg-ask-done" id="mgAskDone" hidden>' +
+                '<div class="mg-ask-ico">' + SVG_CHAT + '</div>' +
+                '<div class="mg-ask-title">E-posta uygulaman açıldı</div>' +
+                '<div class="mg-ask-sub">Mesajın hazır. Orada <b>Gönder</b>\'e basarak Muhammet\'e ulaştırabilirsin.<br>Açılmadıysa şu adrese yazabilirsin:<br><a href="mailto:' + TO + '">' + TO + '</a></div>' +
+                '<button type="button" class="mg-ask-send mg-ask-close">Tamam</button>' +
+              '</div>' +
+            '</div>';
+        document.body.appendChild(box);
+
+        var msg = $('#mgAskMsg'), name = $('#mgAskName');
+        msg.addEventListener('input', function () { $('#mgAskCount').textContent = msg.value.length + '/' + MAX; refreshSend(); });
+        name.addEventListener('input', refreshSubject);
+        $('#mgAskSend').addEventListener('click', submit);
+        $('#mgAskCopy').addEventListener('click', copy);
+        box.addEventListener('click', function (e) {
+            if (e.target === box || e.target.closest('.mg-ask-x') || e.target.closest('.mg-ask-close')) { close(); return; }
+            var chip = e.target.closest('.mg-ask-chip');
+            if (chip) pickChip(+chip.getAttribute('data-i'));
+        });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && box && box.classList.contains('open')) close(); });
+        initVoice();
+    }
+
+    function pickChip(i) {
+        var c = CHIPS[i], msg = $('#mgAskMsg');
+        box.querySelectorAll('.mg-ask-chip').forEach(function (b) { b.classList.toggle('on', +b.getAttribute('data-i') === i); });
+        kind = c.k;
+        if (!msg.value.trim() || msg.value === starter) { msg.value = c.s; }
+        starter = c.s;
+        $('#mgAskCount').textContent = msg.value.length + '/' + MAX;
+        refreshSubject(); refreshSend();
+        msg.focus();
+        try { msg.setSelectionRange(msg.value.length, msg.value.length); } catch (e) {}
+    }
+
+    /* ── Sesle yaz (tarayıcı destekliyorsa) ── */
+    function initVoice() {
+        var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        var btn = $('#mgAskVoice');
+        if (!SR) return;
+        btn.hidden = false;
+        btn.addEventListener('click', function () {
+            if (rec) { try { rec.stop(); } catch (e) {} return; }
+            var msg = $('#mgAskMsg'), base = msg.value;
+            rec = new SR();
+            rec.lang = 'tr-TR'; rec.interimResults = true; rec.continuous = false;
+            rec.onresult = function (ev) {
+                var t = '';
+                for (var i = 0; i < ev.results.length; i++) t += ev.results[i][0].transcript;
+                msg.value = (base + (base && !/\s$/.test(base) ? ' ' : '') + t).slice(0, MAX);
+                $('#mgAskCount').textContent = msg.value.length + '/' + MAX; refreshSend();
+            };
+            var end = function () { rec = null; btn.classList.remove('live'); btn.querySelector('.mg-ask-voice-t').textContent = 'Sesle yaz'; };
+            rec.onend = end; rec.onerror = end;
+            btn.classList.add('live'); btn.querySelector('.mg-ask-voice-t').textContent = 'Dinliyorum...';
+            try { rec.start(); } catch (e) { end(); }
+        });
+    }
+
+    function composeBody(msg, name) {
+        return msg + '\n\n──────────────────' + (name ? '\nGönderen: ' + name : '')
+             + '\nGönderildiği yer: MuGöl PORTAL\nTarih: ' + new Date().toLocaleString('tr-TR');
+    }
+    function mailtoUrl(name, msg, k) {
+        var subject = 'MuGöl PORTAL\'dan ' + (k || 'mesaj') + (name ? ' - ' + name : '');
+        return 'mailto:' + TO + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(composeBody(msg, name));
+    }
+    window.mgAskMailto = mailtoUrl;
+
+    function copy() {
+        var name = $('#mgAskName').value.trim(), msg = $('#mgAskMsg').value.trim();
+        if (!msg) return;
+        var text = msg + (name ? '\n\n— ' + name : '');
+        var done = function () {
+            var b = $('#mgAskCopy'); b.textContent = 'Kopyalandı ✓';
+            setTimeout(function () { b.textContent = 'Kopyala'; }, 1600);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text); done(); });
+        } else { fallbackCopy(text); done(); }
+    }
+    function fallbackCopy(text) {
+        var t = document.createElement('textarea'); t.value = text; t.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0;';
+        document.body.appendChild(t); t.select(); try { document.execCommand('copy'); } catch (e) {} document.body.removeChild(t);
+    }
+
+    function open() {
+        if (!box) build();
+        lastFocus = document.activeElement;
+        box.querySelector('.mg-ask-form').hidden = false;
+        $('#mgAskDone').hidden = true;
+        var nm = $('#mgAskName'); if (!nm.value) nm.value = getName();
+        refreshSubject(); refreshSend();
+        box.classList.add('open');
+        setTimeout(function () { var m = $('#mgAskMsg'); if (m) m.focus(); }, 80);
+    }
+    function close() {
+        if (!box) return;
+        if (rec) { try { rec.stop(); } catch (e) {} }
+        box.classList.remove('open');
+        if (lastFocus && lastFocus.focus) { try { lastFocus.focus(); } catch (e) {} }
+    }
+    function submit() {
+        var name = $('#mgAskName').value.trim(), msg = $('#mgAskMsg').value.trim();
+        if (msg.length < 3) return;
+        saveName(name);
+        window.location.href = mailtoUrl(name, msg, kind);
+        box.querySelector('.mg-ask-form').hidden = true;
+        $('#mgAskDone').hidden = false;
+        $('#mgAskMsg').value = ''; starter = ''; kind = 'mesaj';
+        box.querySelectorAll('.mg-ask-chip').forEach(function (b) { b.classList.remove('on'); });
+        $('#mgAskCount').textContent = '0/' + MAX; refreshSend();
+    }
+
+    document.addEventListener('click', function (e) {
+        if (e.target.closest && e.target.closest('#mgAskBtn')) { e.preventDefault(); open(); }
+    });
 })();

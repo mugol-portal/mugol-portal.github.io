@@ -8,7 +8,7 @@
 'use strict';
 
 var CACHE_PREFIX = 'mugol-mobil-';
-var CACHE_NAME   = CACHE_PREFIX + 'v7';   /* Değişiklik yayınlarken sürümü artır: v2, v3 … */
+var CACHE_NAME   = CACHE_PREFIX + 'v9';   /* Değişiklik yayınlarken sürümü artır: v2, v3 … */
 var NAV_TIMEOUT  = 4000;                  /* Ağ bu sürede yanıt vermezse önbellekten aç */
 
 /* Konumlar sw.js'e göre çözülür */
@@ -18,11 +18,7 @@ var SHELL = [
     'manifest.json',
     'favicon.ico',
     'style.css',
-    'mg-redesign.css',
-    'mg-modes.css',
     'script.js',
-    'notifications.js',
-    'mg-modes.js',
     'logo.png',
     'icon-192.png',
     'icon-512.png'
