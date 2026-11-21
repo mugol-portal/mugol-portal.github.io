@@ -384,224 +384,6 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     });
 });
 
-// =========================================================
-// 8. GÜNLÜK REKLAM SEÇKİSİ
-//    Ana sayfadaki reklam şeridi her gün farklı uygulamaları gösterir.
-//    Havuz: portaldaki tüm uygulama kartları (.app-card). Yeni uygulama eklediğinde
-//    kendiliğinden havuza girer. Seçim tarihe bağlıdır: aynı gün herkes aynı 3 uygulamayı görür,
-//    ertesi gün başkaları gelir; art arda iki gün aynı uygulama çıkmaz.
-// =========================================================
-(function () {
-    'use strict';
-    var track = document.getElementById('mgAdTrack');
-    var dotsWrap = document.getElementById('mgAdDots');
-    if (!track || !dotsWrap) return;
-
-    var PER_DAY = 3;   // şeritte aynı anda kaç reklam
-    /* Özel tasarımlı üç uygulama: kendi rengi ve kısa reklam metni korunur */
-    var SPECIAL = {
-        'https://mugol-portal.github.io/mugol-.iq/': { cls: 'mg-ad-iq', fa: 'fa-brain',   desc: 'Ücretsiz zeka testleriyle IQ seviyeni ölç, detaylı analiz raporunu gör' },
-        'https://mugol-portal.github.io/mugol.-ai/': { cls: 'mg-ad-ai', fa: 'fa-robot',   desc: 'Yapay zeka destekli akıllı asistanınla anında sohbet et, sorularına yanıt al' },
-        'https://mugol-portal.github.io/mugol.-os/': { cls: 'mg-ad-os', fa: 'fa-desktop', desc: 'Tarayıcıdan çalışan işletim sistemi' }
-    };
-    var PALETTE = 8;   // style.css içindeki .mg-ad-p0 … .mg-ad-p7
-
-    /* ── havuz ── */
-    var pool = [], seen = {};
-    document.querySelectorAll('.app-card').forEach(function (a) {
-        var href = a.getAttribute('href');
-        if (!href || seen[href]) return;
-        seen[href] = 1;
-        var t = a.querySelector('.app-info h3'), img = a.querySelector('.app-icon-img'), d = a.querySelector('.app-desc');
-        pool.push({
-            href: href,
-            title: t ? t.textContent.trim() : 'Uygulama',
-            img: img ? img.getAttribute('src') : '',
-            desc: d ? d.textContent.trim() : ''
-        });
-    });
-    if (pool.length < PER_DAY) return;          // havuz yetersizse mevcut kartlar olduğu gibi kalır
-    pool.sort(function (a, b) { return a.href < b.href ? -1 : a.href > b.href ? 1 : 0; });   // sıra DOM'dan bağımsız olsun
-
-    /* ── tarihe bağlı, tekrarsız seçim ── */
-    function rng(seed) {                         // mulberry32
-        return function () {
-            seed |= 0; seed = seed + 0x6D2B79F5 | 0;
-            var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
-            t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-            return ((t ^ t >>> 14) >>> 0) / 4294967296;
-        };
-    }
-    var now = new Date();
-    var day = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 86400000);   // yerel takvim günü
-    var rand = rng(pool.length * 7919);
-    var order = pool.slice();
-    for (var i = order.length - 1; i > 0; i--) {                                                   // sabit karışık sıra (Fisher–Yates)
-        var j = Math.floor(rand() * (i + 1)), tmp = order[i]; order[i] = order[j]; order[j] = tmp;
-    }
-    /* Her gün sıradan 3 ardışık uygulama alınır, ertesi gün sonraki 3'ü → art arda iki gün asla aynı uygulama çıkmaz,
-       havuzdaki herkes eşit sıklıkta (≈ her 10 günde bir) görünür. */
-    var picks = [];
-    for (var k = 0; k < PER_DAY; k++) picks.push(order[(day * PER_DAY + k) % order.length]);
-
-    function hash(str) { var h = 0; for (var n = 0; n < str.length; n++) h = (h * 31 + str.charCodeAt(n)) | 0; return Math.abs(h); }
-    function shorten(t, max) {
-        if (t.length <= max) return t;
-        var cut = t.slice(0, max); cut = cut.slice(0, cut.lastIndexOf(' ') > 40 ? cut.lastIndexOf(' ') : max);
-        return cut.replace(/[\s,.;:!-]+$/, '') + '…';
-    }
-
-    /* ── kartları oluştur ── */
-    function card(app) {
-        var sp = SPECIAL[app.href];
-        var a = document.createElement('a');
-        a.href = app.href;
-        a.className = 'mg-ad-card ' + (sp ? sp.cls : 'mg-ad-p' + (hash(app.href) % PALETTE)) + (app.title.length > 20 ? ' mg-ad-long' : '');
-        a.setAttribute('role', 'listitem');
-        a.setAttribute('aria-label', app.title + ' reklamı');
-
-        var label = document.createElement('span'); label.className = 'mg-ad-label'; label.textContent = 'REKLAM';
-
-        var icon = document.createElement('div'); icon.className = 'mg-ad-icon';
-        /* Yedek simge yalnızca görsel yüklenemezse (ya da hiç yoksa) eklenir */
-        function addFallback() {
-            if (icon.querySelector('.mg-ad-icon-fallback')) return;
-            var fb = document.createElement('i');
-            fb.className = 'fas ' + (sp ? sp.fa : 'fa-star') + ' mg-ad-icon-fallback';
-            fb.setAttribute('aria-hidden', 'true'); fb.style.display = 'flex';
-            icon.appendChild(fb);
-        }
-        if (app.img) {
-            var im = document.createElement('img'); im.alt = ''; im.className = 'mg-ad-icon-img'; im.src = app.img;
-            im.onerror = function () { im.style.display = 'none'; addFallback(); };
-            icon.appendChild(im);
-        } else { addFallback(); }
-
-        var body = document.createElement('div'); body.className = 'mg-ad-body';
-        var ti = document.createElement('span'); ti.className = 'mg-ad-title'; ti.textContent = app.title;
-        var de = document.createElement('span'); de.className = 'mg-ad-desc'; de.textContent = shorten(sp ? sp.desc : app.desc, 92);
-        body.appendChild(ti); body.appendChild(de);
-
-        var cta = document.createElement('span'); cta.className = 'mg-ad-cta'; cta.innerHTML = 'Dene <i class="fas fa-arrow-right" aria-hidden="true"></i>';
-
-        a.appendChild(label); a.appendChild(icon); a.appendChild(body); a.appendChild(cta);
-        return a;
-    }
-
-    track.innerHTML = '';
-    picks.forEach(function (p) { track.appendChild(card(p)); });
-    dotsWrap.innerHTML = '';
-    picks.forEach(function (_, idx) {
-        var d = document.createElement('span'); d.className = 'mg-ad-dot' + (idx === 0 ? ' active' : ''); d.setAttribute('data-idx', idx);
-        dotsWrap.appendChild(d);
-    });
-    window.mgAdPicksToday = picks.map(function (p) { return p.title; });   // kontrol için (konsolda görülebilir)
-})();
-
-// =========================================================
-// 8a. REKLAM KARTI CAROUSEL — MuGöl IQ / AI / OS (kaydırmalı + otomatik)
-// =========================================================
-(function () {
-    const track = document.getElementById('mgAdTrack');
-    const dotsWrap = document.getElementById('mgAdDots');
-    if (!track || !dotsWrap) return;
-
-    const cards = Array.from(track.children);
-    const dots = Array.from(dotsWrap.children);
-    let activeIdx = 0;
-    let autoTimer = null;
-    let isUserInteracting = false;
-
-    function setActive(idx) {
-        activeIdx = idx;
-        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
-    }
-
-    function goTo(idx, smooth) {
-        if (!cards[idx]) return;
-        track.scrollTo({ left: cards[idx].offsetLeft - track.offsetLeft, behavior: smooth === false ? 'auto' : 'smooth' });
-        setActive(idx);
-    }
-
-    function nextSlide() {
-        const next = (activeIdx + 1) % cards.length;
-        goTo(next);
-    }
-
-    function startAuto() {
-        stopAuto();
-        autoTimer = setInterval(() => {
-            if (!isUserInteracting) nextSlide();
-        }, 3500);
-    }
-    function stopAuto() {
-        if (autoTimer) clearInterval(autoTimer);
-        autoTimer = null;
-    }
-
-    // Kullanıcı elle kaydırınca aktif noktayı güncelle
-    let scrollDebounce = null;
-    track.addEventListener('scroll', function () {
-        isUserInteracting = true;
-        if (scrollDebounce) clearTimeout(scrollDebounce);
-        scrollDebounce = setTimeout(function () {
-            const trackLeft = track.scrollLeft;
-            let closest = 0, closestDist = Infinity;
-            cards.forEach((c, i) => {
-                const dist = Math.abs(c.offsetLeft - track.offsetLeft - trackLeft);
-                if (dist < closestDist) { closestDist = dist; closest = i; }
-            });
-            setActive(closest);
-            isUserInteracting = false;
-        }, 150);
-    }, { passive: true });
-
-    // Noktalara tıklayınca ilgili karta git
-    dots.forEach((dot, i) => {
-        dot.addEventListener('click', function () { goTo(i); });
-    });
-
-    // Sekme arka plana alındığında otomatik döngüyü durdur (performans)
-    document.addEventListener('visibilitychange', function () {
-        if (document.hidden) stopAuto(); else startAuto();
-    });
-
-    // ── Dikey kaydırma önceliği: parmak dikey hareket ediyorsa yatay
-    //    carousel'in dokunuşu yutmasını engelle, sayfa scroll'una bırak.
-    (function () {
-        let startX = 0, startY = 0, decided = false;
-
-        // Varsayılan: dikey kaydırmaya öncelik ver (hafif/parmak ucu dokunuşlar dahil).
-        // Net bir yatay hareket algılanana kadar tarayıcı sayfayı kaydırabilir.
-        track.style.touchAction = 'pan-y';
-
-        track.addEventListener('touchstart', function (e) {
-            if (!e.touches || !e.touches[0]) return;
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-            decided = false;
-            track.style.touchAction = 'pan-y';
-        }, { passive: true });
-
-        track.addEventListener('touchmove', function (e) {
-            if (!e.touches || !e.touches[0]) return;
-            const dx = e.touches[0].clientX - startX;
-            const dy = e.touches[0].clientY - startY;
-            if (!decided) {
-                // Düşük eşik (3px): hafif/parmak ucu dokunuşlarda da erken karar verir.
-                if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
-                    decided = true;
-                    // Yatay hareket dikeyden belirgin şekilde fazlaysa (1.2x pay) yatay kabul et.
-                    if (Math.abs(dx) > Math.abs(dy) * 1.2) {
-                        track.style.touchAction = 'pan-x';
-                    }
-                }
-            }
-        }, { passive: true });
-    })();
-
-    startAuto();
-})();
 
 
 (function () {
@@ -2226,4 +2008,137 @@ window.MG_NOTIFICATIONS = [
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
     askView();   /* açılış ekranının da üstünde, hemen göster */
+})();
+
+
+/* ═════════════ GÜNÜN SÖZÜ (MuGöl Edebiyat · data_quotes.js) ═════════════ */
+(function () {
+    var textEl = document.getElementById('mgQuoteText');
+    if (!textEl) return;
+    var authorEl = document.getElementById('mgQuoteAuthor');
+    var bookEl = document.getElementById('mgQuoteBook');
+    var SRC = 'https://mugol-portal.github.io/mugol.-edebiyat/data_quotes.js';
+    var CACHE = 'mg-quotes-cache-v1';
+    var fallback = [
+        { authorName: 'Sabahattin Ali', text: 'Dünyada hayatın bir tek manası varsa o da sevmektir.', book: 'Kürk Mantolu Madonna' },
+        { authorName: 'Fyodor Dostoyevski', text: 'Her insan, herkesin önünde, her şeyden sorumludur.', book: 'Karamazov Kardeşler' },
+        { authorName: 'Oğuz Atay', text: 'Kelimeler albayım, bazı anlamlara gelmiyor.', book: 'Tehlikeli Oyunlar' },
+        { authorName: 'Nazım Hikmet Ran', text: 'Yaşamak şakaya gelmez, büyük bir ciddiyetle yaşayacaksın.', book: 'Yaşamaya Dair' },
+        { authorName: 'Cemal Süreya', text: 'Hayat kısa, kuşlar uçuyor.', book: 'Sevda Sözleri' },
+        { authorName: 'Oscar Wilde', text: 'Sanat, hayatı taklit etmez; hayat sanatı taklit eder.', book: 'Sanat Üzerine Denemeler' }
+    ];
+    function dayNum() { var d = new Date(); return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000); }
+    function render(list) {
+        if (!list || !list.length) return;
+        var q = list[dayNum() % list.length];
+        if (!q || !q.text) return;
+        textEl.textContent = q.text;
+        if (authorEl) authorEl.textContent = q.authorName || q.author || '';
+        if (bookEl) { bookEl.textContent = q.book || ''; bookEl.style.display = q.book ? '' : 'none'; }
+    }
+    var cached = null;
+    try { cached = JSON.parse(localStorage.getItem(CACHE) || 'null'); } catch (e) {}
+    render(cached && cached.length ? cached : fallback);
+    /* Edebiyat verisini arka planda çek (CORS gerekmez); başarısız olursa mevcut söz kalır */
+    try {
+        var s = document.createElement('script');
+        s.src = SRC; s.async = true;
+        s.onload = function () {
+            try {
+                if (typeof localQuotesData !== 'undefined' && localQuotesData.length) {
+                    render(localQuotesData);
+                    try { localStorage.setItem(CACHE, JSON.stringify(localQuotesData)); } catch (e) {}
+                }
+            } catch (e) {}
+        };
+        s.onerror = function () {};
+        document.head.appendChild(s);
+    } catch (e) {}
+})();
+
+
+/* ═════════════ GÜNÜN HADİSİ (MuGöl İmsak Vakti · sozler.json) ═════════════ */
+(function () {
+    var textEl = document.getElementById('mgHadithText');
+    if (!textEl) return;
+    var srcEl = document.getElementById('mgHadithSource');
+    var SRC = 'https://mugol-portal.github.io/mugol.imsak-vakti/sozler.json';
+    var CACHE = 'mg-hadith-cache-v1';
+    var fallback = [
+        { text: 'Sizin en hayırlınız, Kur\'an\'ı öğrenen ve öğretendir.', source: 'Hadis-i Şerif (Buhari)' },
+        { text: 'Allah sizin ne dış görünüşünüze ne de mallarınıza bakar. O sadece sizin kalplerinize ve işlerinize bakar.', source: 'Hadis-i Şerif (Müslim)' },
+        { text: 'Namaz dinin direğidir, kim onu terk ederse dinini yıkmış olur.', source: 'Hadis-i Şerif (Tirmizi)' }
+    ];
+    function dayNum() { var d = new Date(); return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000); }
+    function onlyHadith(arr) {
+        return (arr || []).filter(function (x) { return x && x.text && /hadis/i.test(x.source || ''); });
+    }
+    function render(list) {
+        list = onlyHadith(list);
+        if (!list.length) return false;
+        var q = list[(dayNum() + 7) % list.length];
+        textEl.textContent = q.text;
+        if (srcEl) srcEl.textContent = (q.source || 'Hadis-i Şerif').replace(/^Hadis-i Şerif\s*/i, '').replace(/[()]/g, '') || 'Hadis-i Şerif';
+        return true;
+    }
+    var cached = null;
+    try { cached = JSON.parse(localStorage.getItem(CACHE) || 'null'); } catch (e) {}
+    if (!render(cached)) render(fallback);
+    try {
+        fetch(SRC, { cache: 'no-cache' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (data) {
+            if (data && render(data)) { try { localStorage.setItem(CACHE, JSON.stringify(onlyHadith(data))); } catch (e) {} }
+        }).catch(function () {});
+    } catch (e) {}
+})();
+
+
+/* ═════════════ GÜNÜN SÖZÜ / HADİSİ KAYDIRICI (kaydırmalı + otomatik) ═════════════ */
+(function () {
+    var track = document.getElementById('mgQuoteTrack');
+    var dotsWrap = document.getElementById('mgQuoteDots');
+    if (!track || !dotsWrap) return;
+    var cards = Array.prototype.slice.call(track.children);
+    var dots = Array.prototype.slice.call(dotsWrap.children);
+    var activeIdx = 0, autoTimer = null, interacting = false, deb = null;
+    function setActive(i) { activeIdx = i; dots.forEach(function (d, k) { d.classList.toggle('active', k === i); }); }
+    function goTo(i) {
+        if (!cards[i]) return;
+        track.scrollTo({ left: cards[i].offsetLeft - track.offsetLeft, behavior: 'smooth' });
+        setActive(i);
+    }
+    function startAuto() {
+        stopAuto();
+        autoTimer = setInterval(function () { if (!interacting) goTo((activeIdx + 1) % cards.length); }, 6000);
+    }
+    function stopAuto() { if (autoTimer) clearInterval(autoTimer); autoTimer = null; }
+    track.addEventListener('scroll', function () {
+        interacting = true;
+        clearTimeout(deb);
+        deb = setTimeout(function () {
+            var best = 0, bd = Infinity;
+            cards.forEach(function (c, i) {
+                var d = Math.abs(c.offsetLeft - track.offsetLeft - track.scrollLeft);
+                if (d < bd) { bd = d; best = i; }
+            });
+            setActive(best);
+            interacting = false;
+        }, 150);
+    }, { passive: true });
+    dots.forEach(function (d, i) { d.addEventListener('click', function () { goTo(i); }); });
+    document.addEventListener('visibilitychange', function () { if (document.hidden) stopAuto(); else startAuto(); });
+    /* dikey kaydırma önceliği */
+    var sx = 0, sy = 0, decided = false;
+    track.addEventListener('touchstart', function (e) {
+        if (!e.touches || !e.touches[0]) return;
+        sx = e.touches[0].clientX; sy = e.touches[0].clientY; decided = false; track.style.touchAction = 'pan-y';
+    }, { passive: true });
+    track.addEventListener('touchmove', function (e) {
+        if (!e.touches || !e.touches[0] || decided) return;
+        var dx = e.touches[0].clientX - sx, dy = e.touches[0].clientY - sy;
+        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+            decided = true;
+            if (Math.abs(dx) > Math.abs(dy) * 1.2) track.style.touchAction = 'pan-x';
+        }
+    }, { passive: true });
+    startAuto();
 })();
