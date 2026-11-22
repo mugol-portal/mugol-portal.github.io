@@ -1,11 +1,3 @@
-// =========================================================
-// FIREBASE YARDIMCILARI — Kullanıcı sistemi kaldırıldı, stub
-// =========================================================
-function _fbGetUser()          { return null; }
-function _fbSafePath(u)        { return ''; }
-function _fbSetPref()          {}
-function _fbLoadPrefs(cb)      { if (cb) cb(null); }
-function _fbApplyPrefs()       {}
 
 // =========================================================
 // DEĞİŞKENLER VE DOM ELEMENTLERİ
@@ -143,7 +135,6 @@ if (themeSwitch) {
         const theme = e.target.checked ? 'dark' : 'light';
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('mugol-theme', theme);
-        _fbSetPref('theme', theme);
     });
 }
 
@@ -185,27 +176,6 @@ fontBtns.forEach(btn => {
         }
     });
 });
-
-// =========================================================
-// 4. TARİH VE SAAT FONKSİYONU
-// =========================================================
-function updateDateTime() {
-    const now = new Date();
-    const h = String(now.getHours()).padStart(2, '0');
-    const m = String(now.getMinutes()).padStart(2, '0');
-    const s = String(now.getSeconds()).padStart(2, '0');
-    const timeEl = document.getElementById('timeDisplay');
-    const secEl  = document.getElementById('secondDisplay');
-    if (timeEl) timeEl.textContent = h + ':' + m;
-    if (secEl)  secEl.textContent  = ':' + s;
-
-    const options = { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' };
-    const dateString = now.toLocaleDateString('tr-TR', options);
-    const dateEl = document.getElementById('dateDisplay');
-    if (dateEl && dateEl.textContent !== dateString) dateEl.textContent = dateString;
-}
-setInterval(updateDateTime, 1000);
-updateDateTime();
 
 // =========================================================
 // 5. GELİŞMİŞ İLETİŞİM FORMU
@@ -322,25 +292,6 @@ window.resetContactForm = function() {
 // =========================================================
 // 6. YÖNLENDİRME TOAST (POP-UP ENGELLEYİCİ ÇÖZÜMLÜ)
 // =========================================================
-let toastTimer = null;
-let toastCountdown = null;
-let pendingUrl = null;
-
-const toast = document.getElementById('redirect-toast');
-const toastAppName = document.getElementById('toast-app-name');
-const toastCountEl = document.getElementById('toast-countdown');
-const toastRing = document.getElementById('toast-ring');
-const toastCancelBtn = document.getElementById('toast-cancel-btn');
-const CIRCUMFERENCE = 2 * Math.PI * 14;
-
-function cancelToast() {
-    if (toastTimer) clearTimeout(toastTimer);
-    if (toastCountdown) clearInterval(toastCountdown);
-    if (toast) toast.classList.remove('show');
-    pendingUrl = null;
-}
-
-if (toastCancelBtn) toastCancelBtn.addEventListener('click', cancelToast);
 
 function showRedirectToast(appName, url, logoSrc) {
     if (url) _mgOpenUrl(url, appName, logoSrc);
@@ -438,6 +389,12 @@ document.querySelectorAll('.category-card').forEach(catCard => {
         }
     }
 
+    // Video kapandıktan sonra bellekte/decoder'da kalmasın (düşük donanımlı telefonlarda kasma yapıyordu)
+    function releaseSplashVideo() {
+        if (!splashVideo) return;
+        try { splashVideo.pause(); splashVideo.removeAttribute('src'); splashVideo.load(); } catch (e) {}
+    }
+
     // ── Splash'i kapat (tek sefer) ──
     function closeSplash() {
         if (closed) return;
@@ -452,6 +409,7 @@ document.querySelectorAll('.category-card').forEach(catCard => {
                 splash.style.opacity = '0';
                 setTimeout(() => {
                     splash.classList.add('hidden');
+                    releaseSplashVideo();
                 }, 400);
             }
         }, 200);
@@ -514,7 +472,7 @@ document.querySelectorAll('.category-card').forEach(catCard => {
 
     // ── Geri tuşuyla gelindiyse splash'i atla
     if (isBackNav && !isUpdateReload) {
-        if (splashVideo) { try { splashVideo.pause(); } catch (e) {} }
+        releaseSplashVideo();
         if (splash) splash.classList.add('hidden');
         sessionStorage.setItem('mugol-portal-visited', '1');
         return;
@@ -607,11 +565,6 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     }
 })();
 
-// DİĞER TÜM SCRIPT.JS FONKSİYONLARIN (Menü, Toast, PWA vb.) BURADA DEVAM ETMELİ...
-
-// =========================================================
-// 9. AŞAĞI ÇEKME YENİLE — DEVRE DIŞI
-
 // =========================================================
 // 10. BİLDİRİM SİSTEMİ
 // =========================================================
@@ -644,7 +597,6 @@ window.markNotifRead = function(id) {
     if (!readNotifs.includes(id)) {
         readNotifs.push(id);
         localStorage.setItem('mugol-read-notifs', JSON.stringify(readNotifs));
-        _fbSetPref('readNotifs', readNotifs);
         renderNotifications();
     }
 };
@@ -666,7 +618,6 @@ if (notifMarkAll) {
     notifMarkAll.addEventListener('click', () => {
         readNotifs = NOTIFICATIONS.map(n => n.id);
         localStorage.setItem('mugol-read-notifs', JSON.stringify(readNotifs));
-        _fbSetPref('readNotifs', readNotifs);
         renderNotifications();
     });
 }
@@ -704,9 +655,6 @@ function openSearch() {
 window.closeSearch = () => { if(searchModal) searchModal.style.display = 'none'; };
 if(document.getElementById('searchBtn')) document.getElementById('searchBtn').addEventListener('click', openSearch);
 
-// FAB arama butonu da aynı modalı açsın
-var mgFab = document.getElementById('mgFab');
-if (mgFab) mgFab.addEventListener('click', openSearch);
 
 function renderSearchResults(q) {
     var resultsEl = document.getElementById('searchResults');
@@ -767,7 +715,6 @@ document.querySelectorAll('.color-swatch').forEach(swatch => {
         const color = swatch.getAttribute('data-color');
         document.documentElement.style.setProperty('--primary-color', color);
         localStorage.setItem('mugol-primary-color', color);
-        _fbSetPref('color', color);
         // Aktif swatch'ı güncelle
         document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.remove('active'));
         swatch.classList.add('active');
@@ -777,11 +724,6 @@ document.querySelectorAll('.color-swatch').forEach(swatch => {
 // =========================================================
 // 13. YUKARI KAYDIR VE DİL SİSTEMİ
 // =========================================================
-const scrollTopBtn = document.getElementById('scrollTopBtn');
-if (mainContent && scrollTopBtn) {
-    mainContent.addEventListener('scroll', () => { scrollTopBtn.classList.toggle('visible', mainContent.scrollTop > 300); });
-    scrollTopBtn.addEventListener('click', () => { mainContent.scrollTo({ top: 0, behavior: 'smooth' }); });
-}
 
 const translations = {
     tr: { welcomeTitle: "Hoş Geldiniz! 👋", pullToRefresh: "Yenilemek için çekin" },
@@ -790,13 +732,11 @@ const translations = {
 
 function applyLanguage(lang) {
     const t = translations[lang];
-    if (document.getElementById('welcomeTitle')) document.getElementById('welcomeTitle').textContent = t.welcomeTitle;
     // Dil butonlarını güncelle
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
     });
     localStorage.setItem('mugol-lang', lang);
-    _fbSetPref('lang', lang);
 }
 
 // Dil butonları click
@@ -908,10 +848,8 @@ function refreshProfilUI() {
         }
     }
 
-    // Profil içeriğini her zaman göster (giriş daveti gizle)
-    var girisPanel  = document.getElementById('profil-giris-daveti');
+    // Profil içeriğini her zaman göster
     var icerikPanel = document.getElementById('profil-icerik');
-    if (girisPanel)  girisPanel.style.display = 'none';
     if (icerikPanel) icerikPanel.style.display = '';
 
     // Üyelik kodu input + iptal butonu
@@ -1709,7 +1647,6 @@ window.MG_NOTIFICATIONS = [
         if (!readArr.includes(id)) {
             readArr.push(id);
             saveRead(readArr);
-            if (typeof _fbSetPref === 'function') _fbSetPref('readNotifs', readArr);
         }
         renderNotifications();
     };
@@ -1718,7 +1655,6 @@ window.MG_NOTIFICATIONS = [
     window.MG_markAllRead = function() {
         var all = (window.MG_NOTIFICATIONS || []).map(function(n) { return n.id; });
         saveRead(all);
-        if (typeof _fbSetPref === 'function') _fbSetPref('readNotifs', all);
         renderNotifications();
     };
 
@@ -2658,4 +2594,53 @@ window.MG_NOTIFICATIONS = [
         });
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+
+// =========================================================
+// İLK GİRİŞTE "DESTEK OL" ÖNERİSİ (tek seferlik)
+// =========================================================
+(function () {
+    var KEY = 'mg-destek-prompt-v1';
+    try { if (localStorage.getItem(KEY)) return; } catch (e) { return; }
+
+    function close(el) {
+        el.classList.remove('mg-dp-in');
+        setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 250);
+    }
+    function show() {
+        if (document.getElementById('mgDestekPrompt')) return;
+        try { localStorage.setItem(KEY, '1'); } catch (e) {}
+        var el = document.createElement('div');
+        el.id = 'mgDestekPrompt';
+        el.setAttribute('role', 'dialog');
+        el.setAttribute('aria-modal', 'true');
+        el.setAttribute('aria-label', 'Destek Ol');
+        el.innerHTML =
+            '<div class="mg-dp-card">' +
+            '<div class="mg-dp-ico"><i class="fas fa-heart" aria-hidden="true"></i></div>' +
+            '<h3>MuGöl PORTAL’a hoş geldin! 💙</h3>' +
+            '<p>Portal ücretsiz ve herkese açık. Beğendiysen <b>Destek Ol</b> sekmesine göz atarak bize katkıda bulunabilirsin.</p>' +
+            '<button type="button" class="mg-dp-go">Destek Ol sekmesine git</button>' +
+            '<button type="button" class="mg-dp-later">Şimdi değil</button>' +
+            '</div>';
+        document.body.appendChild(el);
+        requestAnimationFrame(function () { el.classList.add('mg-dp-in'); });
+        el.querySelector('.mg-dp-go').addEventListener('click', function () {
+            var mi = document.querySelector('.nav-item[data-target="page-destek"]');
+            if (mi) mi.click();
+            close(el);
+        });
+        el.querySelector('.mg-dp-later').addEventListener('click', function () { close(el); });
+        el.addEventListener('click', function (e) { if (e.target === el) close(el); });
+    }
+    function start() {
+        var splash = document.getElementById('splash-screen');
+        function go() { setTimeout(show, 1500); }
+        if (!splash || splash.classList.contains('hidden')) { go(); return; }
+        var mo = new MutationObserver(function () {
+            if (splash.classList.contains('hidden')) { mo.disconnect(); go(); }
+        });
+        mo.observe(splash, { attributes: true, attributeFilter: ['class'] });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();

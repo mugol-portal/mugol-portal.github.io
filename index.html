@@ -112,40 +112,7 @@
     </script>
     
 
-    <!-- İKON FALLBACK — FA yüklenemezse emoji/unicode ikonlar göster -->
-    
     <link rel="stylesheet" href="style.css">
-    
-    <!-- ALT MENÜ — style.css override: aktif ikonu yukarı itme -->
-    
-    <!-- v3.0 — GÜNCELLENMİŞ TASARIM STİLLERİ -->
-    
-    <!-- ═══════════════════════════════════════════
-         PORTAL İYİLEŞTİRMELERİ v2.0 — CSS
-         Orijinal stil.css dokunulmaz, sadece genişler
-    ═══════════════════════════════════════════════ -->
-    
-    <!-- ═══════════════════════════════════════════
-         MOBİL DÜZELTMELER — v1.0
-         Taşma, donma, hamburger gizleme
-         ═══════════════════════════════════════════ -->
-    
-    <!-- ═══════════════════════════════════════════
-         MENÜ YENİ TASARIM — v4.0
-         ═══════════════════════════════════════════ -->
-    
-    <!-- ═══════════════════════════════════════════
-         ARAYÜZ GELİŞTİRMELERİ v3.0
-    ═══════════════════════════════════════════ -->
-    
-    <!-- HIZLI ERİŞİM SCROLL + İKON DÜZELTMESİ v4.1 -->
-    
-<!-- ═══════════════════════════════════════════════════
-     MuGöl PORTAL — GÜVENLİ TASARIM POLİSHİ v4.1
-     Sadece renk, gölge, border-radius geliştirmeleri.
-     Font, layout, z-index, display değiştirilmez.
-════════════════════════════════════════════════════ -->
-
 </head>
 <body>
 
@@ -420,10 +387,6 @@
                 </div>
                 </div>
 
-                <!-- ── UYGULAMALAR GRID BAŞLIĞI (gizlendi) ── -->
-
-                <!-- ── PORTAL GRID (kaldırıldı) ── -->
-
                 <!-- ── SON AÇILANLAR (gizli tutuluyor ama JS uyumluluğu için bırakıldı) ── -->
                 <div class="mg-recent" id="mgRecent" style="display:none;">
                     <div class="mg-rh">
@@ -439,10 +402,6 @@
                 <div style="display:none;">
                     <span id="mgStatVisit">1</span>
                 </div>
-                <!-- ── HIZLI ERİŞİM ŞERİDİ v4 — Düzeltilmiş Kaydırma ── -->
-                
-                <!-- ── YENİ ÖZELLİKLER BLOĞU ── -->
-                
 
                 <!-- Saat Widget JS -->
                 <script>
@@ -660,7 +619,6 @@
                              data-ad-slot="1435965312"
                              data-ad-format="banner"
                              data-full-width-responsive="true"></ins>
-                        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                     </div>
 
                     <a href="https://mugol-portal.github.io/mugol.-edebiyat" class="tumuu-tile" data-cat="egitim" style="animation-delay:0.3s;">
@@ -812,7 +770,6 @@
                              data-ad-slot="1435965312"
                              data-ad-format="banner"
                              data-full-width-responsive="true"></ins>
-                        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                     </div>
 
                     <a href="https://mugol-portal.github.io/Mugol.games/" class="tumuu-tile" data-cat="eglence" style="animation-delay:0.9s;">
@@ -903,7 +860,6 @@
                              data-ad-slot="1435965312"
                              data-ad-format="banner"
                              data-full-width-responsive="true"></ins>
-                        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                     </div>
 
                     <a href="https://mugol-portal.github.io/mugol.saglik/" class="app-card" style="animation-delay: 0.4s;">
@@ -1008,7 +964,6 @@
                              data-ad-slot="1435965312"
                              data-ad-format="banner"
                              data-full-width-responsive="true"></ins>
-                        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                     </div>
 
                     <a href="https://mugol-portal.github.io/mugol.-edebiyat" class="app-card" style="animation-delay: 0.4s;">
@@ -1149,7 +1104,6 @@
                              data-ad-slot="1435965312"
                              data-ad-format="banner"
                              data-full-width-responsive="true"></ins>
-                        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                     </div>
 
                     <a href="https://mugol-portal.github.io/ozgecmis/" class="app-card" style="animation-delay: 0.3s;">
@@ -2059,7 +2013,6 @@
     </div>
     <!-- ════════════════════════════ -->
 
-    <!-- NSosyal & Pinterest Pill Stilleri -->
         <!-- ═══ GOOGLE ADMOB BAŞLATMA ═══ -->
     <script>
     (function () {
@@ -2137,7 +2090,34 @@
     })();
     </script>
     <script src="script.js"></script>
-    <!-- ═══ SON KULLANILANLAR + ÇEVRİMDIŞI DURUM ═══ -->
+
+    <script>
+    /* Banner reklamlar: gizli sayfalarda (genişlik 0) yüklenmesin; ilgili sayfa açılıp
+       reklam görünür olunca tek tek yüklensin. Başlangıçta 4-5 reklam isteği ve iframe'i
+       düşük donanımlı telefonları donduruyordu. */
+    (function () {
+        var wraps = document.querySelectorAll('.mg-admob-wrap');
+        if (!wraps.length) return;
+        function load(wrap) {
+            if (wrap._mgAd) return; wrap._mgAd = true;
+            var tpl = wrap._mgTpl;
+            if (!tpl) return;
+            wrap.insertAdjacentHTML('beforeend', tpl);
+            try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
+        }
+        wraps.forEach(function (w) {
+            var ins = w.querySelector('ins.adsbygoogle');
+            if (!ins) return;
+            w._mgTpl = ins.outerHTML;   /* push({}) sıradaki ins'i doldurur → her seferinde tek ins olsun */
+            ins.parentNode.removeChild(ins);
+        });
+        if (!('IntersectionObserver' in window)) { wraps.forEach(load); return; }
+        var io = new IntersectionObserver(function (es) {
+            es.forEach(function (e) { if (e.isIntersecting) { io.unobserve(e.target); load(e.target); } });
+        }, { rootMargin: '150px' });
+        wraps.forEach(function (w) { io.observe(w); });
+    })();
+    </script>
 
     <!-- ═══ ROZETLER + 20 GÜN TEŞEKKÜR BELGESİ (PNG) ═══ -->
     <script>
@@ -2592,9 +2572,15 @@
         ──────────────────────────────────── */
         var pgBar = document.getElementById('mgScrollProgress');
         if (mc && pgBar) {
+            var _pgTick = false;
             mc.addEventListener('scroll', function () {
-                var sh = mc.scrollHeight - mc.clientHeight;
-                pgBar.style.width = (sh > 0 ? (mc.scrollTop / sh) * 100 : 0) + '%';
+                if (_pgTick) return;
+                _pgTick = true;
+                requestAnimationFrame(function () {
+                    _pgTick = false;
+                    var sh = mc.scrollHeight - mc.clientHeight;
+                    pgBar.style.width = (sh > 0 ? (mc.scrollTop / sh) * 100 : 0) + '%';
+                });
             }, { passive: true });
         }
 
@@ -2694,25 +2680,6 @@
         var vcEl = document.getElementById('mgStatVisit');
         if (vcEl) animCount(vcEl, vc);
 
-        /* Uygulama sayısı — tumuu-grid'deki benzersiz kartları say */
-        var appCnt = document.querySelectorAll('#tumuuGrid .tumuu-tile').length;
-        var apEl = document.getElementById('mgStatApps');
-        if (apEl && appCnt > 0) animCount(apEl, appCnt);
-
-        /* Canlı kullanıcı */
-        var liveEl = document.getElementById('mgStatLive');
-        function updateLive() {
-            /* Gerçekçi dalgalanma: baz 8-24 arası, 
-               saate göre değişen bir seed + küçük random */
-            var h  = new Date().getHours();
-            /* Gün içi trafik eğrisi: sabah düşük, öğlen-akşam yüksek */
-            var peak = [4,3,3,3,4,5,7,10,13,16,18,19,18,17,16,17,18,20,19,16,14,11,8,6][h];
-            var jitter = Math.floor(Math.random() * 5) - 2;  /* ±2 */
-            var v = Math.max(1, peak + jitter);
-            if (liveEl) liveEl.textContent = v;
-        }
-        updateLive();
-        setInterval(updateLive, 30000); /* Her 30 sn güncelle */
 
         function animCount(el, target) {
             if (isNaN(target) || target === 0) return;
@@ -2825,23 +2792,6 @@
             card.appendChild(b);
         });
 
-        /* ────────────────────────────────────
-           10. AYARLAR — GENİŞLETİLMİŞ RENK SEÇİCİ
-        ──────────────────────────────────── */
-        function initColorCard() {
-            /* Genişletilmiş renk paleti devre dışı bırakıldı */
-            return;
-        }
-
-        /* Ayarlar sayfasına tıklayınca kartı oluştur */
-        document.querySelectorAll('.nav-item[data-target="page-ayarlar"]').forEach(function (item) {
-            item.addEventListener('click', function () { setTimeout(initColorCard, 80); });
-        });
-        /* Sayfa zaten açıksa */
-        if (document.getElementById('page-ayarlar') &&
-            document.getElementById('page-ayarlar').classList.contains('active')) {
-            setTimeout(initColorCard, 100);
-        }
 
         /* ────────────────────────────────────
            11. CTRL+K KISAYOLU (script.js'dekiyle çakışmaz)
@@ -3327,10 +3277,6 @@
 
 
 
-
-    <script>
-    /* Geçiş reklamı kaldırıldı — linkler doğrudan yeni sekmede açılır */
-    </script>
 
     <script>
     /* ── SİTEYİ GÜNCELLE — Önbellek + SW Temizle + Hard Reload ── */
@@ -4422,48 +4368,6 @@
     }
 
     /* ────────────────────────────────────────
-       5. İSTATİSTİK SAYAÇ ANİMASYONU
-    ──────────────────────────────────────── */
-    function animateCounter(el, target, duration) {
-        var start    = 0;
-        var startTs  = null;
-        var numTarget = parseInt(target) || 0;
-        if (numTarget === 0 || isNaN(numTarget)) return;
-        function step(ts) {
-            if (!startTs) startTs = ts;
-            var progress = Math.min((ts - startTs) / duration, 1);
-            var eased    = 1 - Math.pow(1 - progress, 3);
-            var current  = Math.floor(eased * numTarget);
-            el.textContent = current;
-            if (progress < 1) { requestAnimationFrame(step); }
-            else {
-                el.textContent = numTarget;
-                el.classList.add('mg-pop');
-                setTimeout(function() { el.classList.remove('mg-pop'); }, 400);
-            }
-        }
-        requestAnimationFrame(step);
-    }
-
-    function initStatCounters() {
-        var statsEl = document.getElementById('mgStats');
-        if (!statsEl || statsEl._mgCounted) return;
-        var obs = new IntersectionObserver(function(entries) {
-            entries.forEach(function(entry) {
-                if (entry.isIntersecting && !statsEl._mgCounted) {
-                    statsEl._mgCounted = true;
-                    statsEl.querySelectorAll('.mg-sv').forEach(function(sv) {
-                        var val = parseInt(sv.textContent);
-                        if (!isNaN(val) && val > 0) animateCounter(sv, val, 900);
-                    });
-                    obs.disconnect();
-                }
-            });
-        }, { threshold:0.3 });
-        obs.observe(statsEl);
-    }
-
-    /* ────────────────────────────────────────
        6. SWIPE İLE PANEL KAPATMA
     ──────────────────────────────────────── */
     function initSwipePanel() {
@@ -4490,11 +4394,6 @@
             }
         }, { passive:true });
     }
-
-    /* ────────────────────────────────────────
-       7. PULL TO REFRESH — DEVRE DIŞI
-    ──────────────────────────────────────── */
-    function initPullToRefresh() { /* devre dışı bırakıldı */ }
 
     /* ────────────────────────────────────────
        8. BOTTOM NAV İÇİN HAP TİC
@@ -4548,7 +4447,8 @@
                 badge.remove();
             }
         });
-        obs.observe(document.body, { attributes:true, subtree:true, attributeFilter:['class'] });
+        var _p = document.getElementById('mgBnPanel');
+        if (_p) obs.observe(_p, { attributes:true, subtree:true, attributeFilter:['class'] });
     }
 
     /* ────────────────────────────────────────
@@ -4609,9 +4509,7 @@
     function boot() {
         initRipples();
         updateAppCount();   /* ← uygulama sayısını DOM'dan oku, sonra animasyon */
-        initStatCounters();
         initSwipePanel();
-        initPullToRefresh();
         initNavHaptic();
         initLaunchBtns();
         initMoreBtnBadge();
@@ -4648,39 +4546,6 @@
 
         console.log('[MuGöl] ✓ Mobil geliştirmeler v2.0 yüklendi');
 
-        /* ── NATIVE PULL-TO-REFRESH ENGELLE (scroll kırmadan) ──
-           Sadece main-content tamamen en üstteyken VE dokunulan alan
-           main-content içindeyken aşağı çekmeyi engeller.
-           Normal içerik scroll'una kesinlikle müdahale etmez.          */
-        (function() {
-            var mc       = document.querySelector('.main-content');
-            var startY   = 0;
-            var startScrollTop = 0;
-            var mayBlock = false;   /* Bu dokunuşta engelleme yapılabilir mi? */
-
-            document.addEventListener('touchstart', function(e) {
-                startY = e.touches[0].clientY;
-                mayBlock = false;
-                if (!mc) return;
-                startScrollTop = mc.scrollTop;
-                /* Sadece dokunulan nokta main-content içindeyse ilgilen */
-                if (mc.contains(e.target)) {
-                    /* Scroll en üstte mi? */
-                    mayBlock = (startScrollTop <= 0);
-                }
-            }, { passive: true });
-
-            document.addEventListener('touchmove', function(e) {
-                if (!mayBlock) return;          /* İçeride veya ortadaysa dokunma */
-                var currentY = e.touches[0].clientY;
-                var pullDown = currentY > startY; /* Parmak aşağı = yenile hareketi */
-                /* Tekrar kontrol: scroll gerçekten hâlâ 0'da mı? */
-                var stillAtTop = mc ? mc.scrollTop <= 0 : true;
-                if (pullDown && stillAtTop) {
-                    e.preventDefault();         /* Yalnızca bu durumda engelle */
-                }
-            }, { passive: false });
-        })();
     }
 
     if (document.readyState === 'loading') {
