@@ -397,7 +397,7 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     // Açılış süresini VİDEO belirler (mugol_acilis.mp4 = 15 sn). Müzik (mugol_acilis.mp3) da 15 sn'dir
     // ve video başlayınca birlikte başlar → ikisi aynı anda biter. Birini değiştirirsen ikisini AYNI uzunlukta hazırla.
     // Videoyu tekrar uzatıp kısaltırsan kodda hiçbir şey değiştirmen gerekmez.
-    const SPLASH_VIDEO_RATE   = 2;     // oynatma hızı: 1 = 15 sn, 2 = ~7.5 sn, 3 = ~5 sn (video + müzik birlikte hızlanır)
+    const SPLASH_VIDEO_RATE   = 2;     // oynatma hızı: 1 = 15 sn, 2 = ~7.5 sn, 3 = ~5 sn (yalnızca VİDEO hızlanır; müzik normal hızda çalar ve splash kapanırken kısılarak durur)
     const SPLASH_END_HOLD_MS  = 150;   // video bitince son karede bekleme
     const SPLASH_SAFETY_PAD_MS = 2000; // 'ended' hiç gelmezse güvenlik süresi
     const FALLBACK_MS         = 7500;  // video hiç oynamazsa kullanılacak süre
@@ -555,7 +555,7 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     splashAudio.preload = 'auto';
     if (!musicEnabled) { splashAudio.volume = 0; }
     splashAudioRef = splashAudio;
-    splashAudio.playbackRate = SPLASH_VIDEO_RATE; // müzik de videoyla aynı hızda
+    splashAudio.playbackRate = 1; // müzik normal hızda çalar (yalnızca video hızlanır)
 
     // Video çalışmıyorsa (fallback) süreyi müzik uzunluğundan al
     splashAudio.addEventListener('loadedmetadata', function () {
@@ -568,12 +568,8 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     function startAudio() {
         if (audioStarted || closed) return;
         audioStarted = true;
-        // Video zaten ilerlediyse müziği aynı noktaya getir (ikisi senkron kalsın)
-        try {
-            if (splashVideo && !videoFailed && isFinite(splashVideo.currentTime) && splashVideo.currentTime > 0.05) {
-                splashAudio.currentTime = Math.min(splashVideo.currentTime, 14.9);
-            }
-        } catch (e) {}
+        // Müzik hep baştan, normal hızda başlar (video hızlı oynadığı için senkron aranmaz)
+        try { splashAudio.currentTime = 0; } catch (e) {}
         const playPromise = splashAudio.play();
         // Tarayıcı müziği engellerse sessiz devam et — video yine akışı yönetir
         if (playPromise !== undefined) playPromise.catch(function () {});
