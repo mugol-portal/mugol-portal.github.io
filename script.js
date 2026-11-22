@@ -138,15 +138,6 @@ if (themeSwitch) {
     });
 }
 
-// ── Açılış Müziği Toggle ──
-const musicSwitch = document.getElementById('musicSwitch');
-if (musicSwitch) {
-    musicSwitch.checked = localStorage.getItem('mugol-acilis-muzik') !== 'kapali';
-    musicSwitch.addEventListener('change', (e) => {
-        localStorage.setItem('mugol-acilis-muzik', e.target.checked ? 'acik' : 'kapali');
-    });
-}
-
 const fontBtns = document.querySelectorAll('.font-btn');
 
 // Kaydedilmiş yazı boyutunu uygula
@@ -345,14 +336,12 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     const splashLogoFallback = document.getElementById('splashLogoFallback');
 
     // ── AYARLAR ──────────────────────────────────────────────
-    // Açılış süresini VİDEO belirler (mugol_acilis.mp4 = 15 sn). Müzik (mugol_acilis.mp3) da 15 sn'dir
-    // ve video başlayınca birlikte başlar → ikisi aynı anda biter. Birini değiştirirsen ikisini AYNI uzunlukta hazırla.
+    // Açılış süresini VİDEO belirler (mugol_acilis.mp4 = 15 sn).
     // Videoyu tekrar uzatıp kısaltırsan kodda hiçbir şey değiştirmen gerekmez.
     // VİDEO ve MÜZİK birlikte SPLASH_TARGET_SEC saniyede biter. Hız, dosya süresinden otomatik hesaplanır
     // (15 sn → 1.5x). Müzik tonu bozulmadan (preservesPitch) hızlandırılır.
     const SPLASH_TARGET_SEC   = 10;
     let   SPLASH_VIDEO_RATE   = 15 / SPLASH_TARGET_SEC;   // metadata gelince gerçek süreye göre yeniden hesaplanır
-    let   SPLASH_AUDIO_RATE   = 15 / SPLASH_TARGET_SEC;
     const SPLASH_END_HOLD_MS  = 150;   // video bitince son karede bekleme
     const SPLASH_SAFETY_PAD_MS = 2000; // 'ended' hiç gelmezse güvenlik süresi
     const FALLBACK_MS         = 7500;  // video hiç oynamazsa kullanılacak süre
@@ -363,19 +352,6 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     let videoFailed = false;
     let progressTimer = null;
     let safetyTimer = null;
-    let splashAudioRef = null;   // müzik (aşağıda oluşturulur) — kapanırken yumuşakça kısılır
-
-    // Splash kapanırken müziği ani kesmek yerine kısarak durdur
-    function fadeOutAudio() {
-        const a = splashAudioRef;
-        if (!a || a.paused) return;
-        const v0 = a.volume; let n = 0;
-        const t = setInterval(function () {
-            n++;
-            try { a.volume = Math.max(0, v0 * (1 - n / 8)); } catch (e) {}
-            if (n >= 8) { clearInterval(t); try { a.pause(); } catch (e) {} }
-        }, 40);
-    }
 
     // ── Progress bar + etiket ──
     let labelIdx = -1;
@@ -403,7 +379,6 @@ document.querySelectorAll('.category-card').forEach(catCard => {
         if (safetyTimer) clearTimeout(safetyTimer);
         if (bar) bar.style.width = '100%';
         if (label) label.textContent = 'Hoş Geldiniz!';
-        fadeOutAudio();
         setTimeout(() => {
             if (splash) {
                 splash.style.opacity = '0';
@@ -510,58 +485,6 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     } else {
         // Video elementi hiç yoksa
         onVideoFailed();
-    }
-
-    // ── Açılış müziği (ayardan kapalıysa sessiz) ──
-    // Müzik video ile AYNI uzunlukta (15 sn) ve video ile birlikte başlar.
-    const musicEnabled = localStorage.getItem('mugol-acilis-muzik') !== 'kapali';
-    const splashAudio = new Audio('media/mugol_acilis.mp3');
-    splashAudio.preload = 'auto';
-    if (!musicEnabled) { splashAudio.volume = 0; }
-    splashAudioRef = splashAudio;
-    splashAudio.preservesPitch = true; splashAudio.webkitPreservesPitch = true; splashAudio.mozPreservesPitch = true;
-    splashAudio.defaultPlaybackRate = SPLASH_AUDIO_RATE;
-    splashAudio.playbackRate = SPLASH_AUDIO_RATE; // müzik de videoyla aynı sürede (10 sn) biter
-
-    // Müzik bitince açılış da biter
-    splashAudio.addEventListener('ended', function () {
-        if (closed) return;
-        setProgress(100);
-        closeSplash();
-    });
-
-    // Video çalışmıyorsa (fallback) süreyi müzik uzunluğundan al
-    splashAudio.addEventListener('loadedmetadata', function () {
-        if (isFinite(splashAudio.duration) && splashAudio.duration > 0) {
-            SPLASH_AUDIO_RATE = splashAudio.duration / SPLASH_TARGET_SEC;
-            splashAudio.defaultPlaybackRate = SPLASH_AUDIO_RATE;
-            splashAudio.playbackRate = SPLASH_AUDIO_RATE;
-        }
-        if (videoFailed && !closed && isFinite(splashAudio.duration)) {
-            startFallbackProgress(SPLASH_TARGET_SEC * 1000);
-        }
-    });
-
-    let audioStarted = false;
-    function startAudio() {
-        if (audioStarted || closed) return;
-        audioStarted = true;
-        // Müzik baştan başlar; video ile aynı hızda (10 sn'de biter)
-        try { splashAudio.currentTime = 0; } catch (e) {}
-        splashAudio.playbackRate = SPLASH_AUDIO_RATE;
-        const playPromise = splashAudio.play();
-        // Tarayıcı müziği engellerse sessiz devam et — video yine akışı yönetir
-        if (playPromise !== undefined) playPromise.catch(function () {});
-    }
-
-    if (splashVideo) {
-        // Video gerçekten oynamaya başlayınca müziği başlat
-        splashVideo.addEventListener('playing', startAudio, { once: true });
-        if (!splashVideo.paused && splashVideo.readyState >= 3) startAudio();
-        // 'playing' hiç gelmezse (video yüklenemedi vb.) müzik yine de başlasın
-        setTimeout(startAudio, 1500);
-    } else {
-        startAudio();
     }
 })();
 
@@ -2651,4 +2574,277 @@ window.MG_NOTIFICATIONS = [
         new MutationObserver(later).observe(mc, { subtree: true, attributes: true, attributeFilter: ['class'] });
     }
     later();
+})();
+
+
+// =========================================================
+// FAVORİLER + UYGULAMA DETAY SAYFASI
+// ★ ile favori, karta uzun basınca (veya sağ tık) detay sayfası
+// =========================================================
+(function () {
+    'use strict';
+
+    var FKEY = 'mg-favs-v1', HKEY = 'mg-fav-hint-v1';
+    var SEL = '.app-card[href], .tumuu-tile[href]';
+    var CATS = { gunluk: 'Günlük', egitim: 'Eğitim', araclar: 'Araçlar', eglence: 'Eğlence' };
+    var holdUntil = 0, openedAt = 0, sheetOpen = false, curUrl = '';
+
+    function load() { try { return JSON.parse(localStorage.getItem(FKEY)) || []; } catch (e) { return []; } }
+    function save(a) { try { localStorage.setItem(FKEY, JSON.stringify(a)); } catch (e) {} }
+    function toast(m, ms) { if (typeof window._mgToast === 'function') window._mgToast(m, ms || 2200); }
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+    function absUrl(u) { try { return new URL(u, location.href).href; } catch (e) { return u; } }
+    function fallbackImg(name) { return 'https://ui-avatars.com/api/?name=' + encodeURIComponent((name || 'M').replace(/^MuGöl\s*/i, '') || 'M') + '&background=4318ff&color=fff&rounded=true&bold=true'; }
+
+    /* ── Uygulama bilgi indeksi (açıklama / kategori tüm kartlardan toplanır) ── */
+    function buildIndex() {
+        var map = {};
+        document.querySelectorAll(SEL).forEach(function (el) {
+            var u = el.getAttribute('href');
+            var o = map[u] || (map[u] = {});
+            var d = el.querySelector('.app-desc'), tag = el.querySelector('.app-tag'), dc = el.getAttribute('data-cat');
+            if (d && d.textContent.trim() && !o.desc) o.desc = d.textContent.trim();
+            if (tag && tag.textContent.trim() && !o.cat) o.cat = tag.textContent.trim();
+            if (dc && CATS[dc] && !o.cat) o.cat = CATS[dc];
+        });
+        return map;
+    }
+
+    function cardInfo(el) {
+        var u = el.getAttribute('href');
+        var n = el.querySelector('.app-info h3, .tumuu-label');
+        var im = el.querySelector('.app-icon-img, .tumuu-icon');
+        var x = buildIndex()[u] || {};
+        return { url: u, name: n ? n.textContent.trim() : '', img: im ? im.getAttribute('src') || im.src : '', desc: x.desc || '', cat: x.cat || '' };
+    }
+    function favInfo(url) {
+        var f = load().filter(function (a) { return a.url === url; })[0];
+        if (!f) return null;
+        var x = buildIndex()[url] || {};
+        return { url: f.url, name: f.name, img: f.img, desc: x.desc || '', cat: x.cat || '' };
+    }
+    function nodeInfo(node) {
+        var fi = node.closest('.mg-fav-item');
+        if (fi) return favInfo(fi.getAttribute('data-url'));
+        var c = node.closest(SEL);
+        return c ? cardInfo(c) : null;
+    }
+
+    function isFav(url) { return load().some(function (a) { return a.url === url; }); }
+    function toggleFav(info) {
+        if (!info || !info.url) return;
+        var list = load();
+        if (isFav(info.url)) {
+            list = list.filter(function (a) { return a.url !== info.url; });
+            save(list); toast('Favorilerden çıkarıldı');
+        } else {
+            list.unshift({ url: info.url, name: info.name, img: info.img });
+            save(list); toast('⭐ Favorilere eklendi');
+        }
+        refresh();
+    }
+
+    /* ── Kartlara ★ düğmesi ── */
+    function decorate() {
+        document.querySelectorAll(SEL).forEach(function (el) {
+            if (el.querySelector(':scope > .mg-fav-btn')) return;
+            var b = document.createElement('span');
+            b.className = 'mg-fav-btn';
+            b.setAttribute('role', 'button');
+            b.setAttribute('tabindex', '0');
+            b.setAttribute('aria-label', 'Favorilere ekle');
+            b.innerHTML = '<i class="far fa-star" aria-hidden="true"></i>';
+            el.appendChild(b);
+        });
+    }
+    function refreshStars() {
+        document.querySelectorAll(SEL).forEach(function (el) {
+            var b = el.querySelector(':scope > .mg-fav-btn'); if (!b) return;
+            var on = isFav(el.getAttribute('href'));
+            b.classList.toggle('on', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+            b.setAttribute('aria-label', on ? 'Favorilerden çıkar' : 'Favorilere ekle');
+            var i = b.querySelector('i'); if (i) i.className = (on ? 'fas' : 'far') + ' fa-star';
+        });
+    }
+
+    /* ── Ana Sayfa "Favorilerim" şeridi ── */
+    function ensureStrip() {
+        var s = document.getElementById('mgFavs');
+        if (s) return s;
+        s = document.createElement('section');
+        s.id = 'mgFavs'; s.className = 'mg-favs'; s.hidden = true;
+        s.setAttribute('aria-label', 'Favorilerim');
+        s.innerHTML = '<div class="mg-section-label"><span class="mg-section-label-text">Favorilerim</span><span class="mg-favs-count"></span></div><div class="mg-favs-row" role="list"></div>';
+        var rec = document.querySelector('section#mgRecent');
+        var page = document.getElementById('page-anasayfa');
+        if (rec && rec.parentNode) rec.parentNode.insertBefore(s, rec);
+        else if (page) page.appendChild(s);
+        return s;
+    }
+    function renderStrip() {
+        var s = ensureStrip(), list = load();
+        s.hidden = list.length === 0;
+        var cnt = s.querySelector('.mg-favs-count'); if (cnt) cnt.textContent = list.length ? list.length + ' uygulama' : '';
+        var row = s.querySelector('.mg-favs-row'); if (!row) return;
+        row.innerHTML = list.map(function (a) {
+            var fb = fallbackImg(a.name);
+            return '<button type="button" class="mg-fav-item" role="listitem" data-url="' + esc(a.url) + '" aria-label="' + esc(a.name) + ' uygulamasını aç">' +
+                '<span class="mg-fav-ico"><img src="' + esc(a.img || fb) + '" alt="" loading="lazy" onerror="this.onerror=null;this.src=\'' + fb + '\'"></span>' +
+                '<span class="mg-fav-name">' + esc((a.name || '').replace(/^MuGöl\s*/i, '')) + '</span></button>';
+        }).join('');
+    }
+
+    /* ── Uygulamayı aç (mevcut akış: reklam / son kullanılanlar / çevrimdışı kontrolü) ── */
+    function openApp(url, name, img) {
+        holdUntil = 0;
+        var cards = document.querySelectorAll(SEL), card = null;
+        for (var i = 0; i < cards.length; i++) { if (cards[i].getAttribute('href') === url) { card = cards[i]; break; } }
+        if (card) { card.click(); return; }
+        if (typeof window._mgOpenUrl === 'function') window._mgOpenUrl(url, name, img);
+        else window.open(url, '_blank', 'noopener,noreferrer');
+    }
+
+    /* ── Detay sayfası (alt sheet) ── */
+    function ensureSheet() {
+        var ov = document.getElementById('mgDsOv');
+        if (ov) return ov;
+        ov = document.createElement('div'); ov.id = 'mgDsOv'; ov.className = 'mg-ds-ov'; ov.hidden = true;
+        var sh = document.createElement('div'); sh.id = 'mgDs'; sh.className = 'mg-ds'; sh.hidden = true;
+        sh.setAttribute('role', 'dialog'); sh.setAttribute('aria-modal', 'true'); sh.setAttribute('aria-labelledby', 'mgDsName');
+        sh.innerHTML =
+            '<div class="mg-ds-grab" aria-hidden="true"></div>' +
+            '<button type="button" class="mg-ds-x" aria-label="Kapat"><i class="fas fa-xmark"></i></button>' +
+            '<div class="mg-ds-head"><span class="mg-ds-ico"><img id="mgDsImg" alt=""></span>' +
+            '<div class="mg-ds-titles"><h3 id="mgDsName"></h3><span class="mg-ds-cat" id="mgDsCat"></span></div></div>' +
+            '<p class="mg-ds-desc" id="mgDsDesc"></p>' +
+            '<div class="mg-ds-actions">' +
+            '<button type="button" class="mg-ds-btn mg-ds-open"><i class="fas fa-arrow-up-right-from-square"></i><span>Aç</span></button>' +
+            '<button type="button" class="mg-ds-btn mg-ds-fav"><i class="far fa-star"></i><span>Favori</span></button></div>' +
+            '<div class="mg-ds-links">' +
+            '<button type="button" class="mg-ds-link mg-ds-share"><i class="fas fa-share-nodes"></i> Paylaş</button>' +
+            '<button type="button" class="mg-ds-link mg-ds-copy"><i class="fas fa-link"></i> Bağlantıyı kopyala</button></div>';
+        document.body.appendChild(ov); document.body.appendChild(sh);
+
+        ov.addEventListener('click', function () { if (Date.now() - openedAt > 450) closeSheet(); });
+        sh.querySelector('.mg-ds-x').addEventListener('click', closeSheet);
+        sh.querySelector('.mg-ds-open').addEventListener('click', function () {
+            var n = document.getElementById('mgDsName').textContent, im = document.getElementById('mgDsImg').getAttribute('src'), u = curUrl;
+            closeSheet(); setTimeout(function () { openApp(u, n, im); }, 120);
+        });
+        sh.querySelector('.mg-ds-fav').addEventListener('click', function () {
+            toggleFav({ url: curUrl, name: document.getElementById('mgDsName').textContent, img: document.getElementById('mgDsImg').getAttribute('src') });
+        });
+        sh.querySelector('.mg-ds-share').addEventListener('click', function () {
+            var n = document.getElementById('mgDsName').textContent, u = absUrl(curUrl);
+            if (navigator.share) { navigator.share({ title: n, text: n + ' · MuGöl PORTAL', url: u }).catch(function () {}); }
+            else copy(u);
+        });
+        sh.querySelector('.mg-ds-copy').addEventListener('click', function () { copy(absUrl(curUrl)); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && sheetOpen) closeSheet(); });
+        return ov;
+    }
+    function copy(text) {
+        function ok() { toast('🔗 Bağlantı kopyalandı'); }
+        function legacy() {
+            var t = document.createElement('textarea'); t.value = text; t.style.cssText = 'position:fixed;opacity:0;left:-9999px;';
+            document.body.appendChild(t); t.select(); try { document.execCommand('copy'); ok(); } catch (e) { toast('Kopyalanamadı'); }
+            document.body.removeChild(t);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(ok, legacy); else legacy();
+    }
+    function syncSheetFav() {
+        var b = document.querySelector('#mgDs .mg-ds-fav'); if (!b) return;
+        var on = isFav(curUrl);
+        b.classList.toggle('on', on);
+        b.querySelector('i').className = (on ? 'fas' : 'far') + ' fa-star';
+        b.querySelector('span').textContent = on ? 'Favoride' : 'Favori';
+    }
+    function openSheet(info) {
+        if (!info || sheetOpen) return;
+        var ov = ensureSheet(), sh = document.getElementById('mgDs');
+        curUrl = info.url;
+        var img = document.getElementById('mgDsImg');
+        img.onerror = function () { img.onerror = null; img.src = fallbackImg(info.name); };
+        img.src = info.img || fallbackImg(info.name);
+        document.getElementById('mgDsName').textContent = info.name;
+        var cat = document.getElementById('mgDsCat');
+        cat.textContent = info.cat || ''; cat.style.display = info.cat ? '' : 'none';
+        document.getElementById('mgDsDesc').textContent = info.desc || 'Bu uygulama için henüz açıklama eklenmemiş.';
+        syncSheetFav();
+        ov.hidden = false; sh.hidden = false; sheetOpen = true; openedAt = Date.now();
+        requestAnimationFrame(function () { requestAnimationFrame(function () { ov.classList.add('show'); sh.classList.add('show'); }); });
+    }
+    function closeSheet() {
+        var ov = document.getElementById('mgDsOv'), sh = document.getElementById('mgDs');
+        if (!ov || !sheetOpen) return;
+        sheetOpen = false; holdUntil = Date.now() + 400;
+        ov.classList.remove('show'); sh.classList.remove('show');
+        setTimeout(function () { if (!sheetOpen) { ov.hidden = true; sh.hidden = true; } }, 260);
+    }
+
+    function refresh() { refreshStars(); renderStrip(); syncSheetFav(); }
+
+    /* ── Olaylar ── */
+    /* window yakalama aşaması: mevcut tüm tıklama dinleyicilerinden önce çalışır */
+    window.addEventListener('click', function (e) {
+        var t = e.target; if (!t || !t.closest) return;
+        var star = t.closest('.mg-fav-btn');
+        if (star) {
+            e.preventDefault(); e.stopImmediatePropagation();
+            var c = star.closest(SEL); if (c) toggleFav(cardInfo(c));
+            return;
+        }
+        if (Date.now() < holdUntil && t.closest(SEL + ', .mg-fav-item')) { e.preventDefault(); e.stopImmediatePropagation(); return; }
+        var fi = t.closest('.mg-fav-item');
+        if (fi) { e.preventDefault(); e.stopImmediatePropagation(); var i = favInfo(fi.getAttribute('data-url')); if (i) openApp(i.url, i.name, i.img); }
+    }, true);
+
+    document.addEventListener('keydown', function (e) {
+        if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('mg-fav-btn')) {
+            e.preventDefault(); var c = e.target.closest(SEL); if (c) toggleFav(cardInfo(c));
+        }
+    });
+
+    var timer = null, sx = 0, sy = 0;
+    document.addEventListener('touchstart', function (e) {
+        var t = e.target; if (!t.closest || t.closest('.mg-fav-btn')) return;
+        var node = t.closest(SEL + ', .mg-fav-item'); if (!node) return;
+        var p = e.touches[0]; sx = p.clientX; sy = p.clientY;
+        clearTimeout(timer);
+        timer = setTimeout(function () {
+            var info = nodeInfo(node); if (!info) return;
+            holdUntil = Date.now() + 900;
+            if (navigator.vibrate) { try { navigator.vibrate(15); } catch (er) {} }
+            openSheet(info);
+        }, 480);
+    }, { passive: true });
+    document.addEventListener('touchmove', function (e) {
+        var p = e.touches[0];
+        if (Math.abs(p.clientX - sx) > 10 || Math.abs(p.clientY - sy) > 10) clearTimeout(timer);
+    }, { passive: true });
+    ['touchend', 'touchcancel'].forEach(function (ev) { document.addEventListener(ev, function () { clearTimeout(timer); }, { passive: true }); });
+
+    /* Uzun basış / sağ tık menüsü yerine detay sayfası */
+    document.addEventListener('contextmenu', function (e) {
+        var t = e.target; if (!t.closest) return;
+        var node = t.closest(SEL + ', .mg-fav-item'); if (!node) return;
+        e.preventDefault();
+        if (!sheetOpen) { var info = nodeInfo(node); if (info) { holdUntil = Date.now() + 900; openSheet(info); } }
+    });
+
+    /* ── Başlat ── */
+    function init() {
+        decorate(); ensureStrip(); refresh();
+        var hinted = false; try { hinted = !!localStorage.getItem(HKEY); } catch (e) {}
+        if (!hinted) {
+            setTimeout(function () {
+                toast('💡 ★ ile favori ekle · ayrıntı için karta uzun bas', 4200);
+                try { localStorage.setItem(HKEY, '1'); } catch (e) {}
+            }, 3500);
+        }
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+    window.addEventListener('load', function () { decorate(); refresh(); });
+    window.mgFavorites = { list: load, toggle: function (url) { var i = buildIndex()[url]; toggleFav({ url: url, name: '', img: '' }); } };
 })();

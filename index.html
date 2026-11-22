@@ -363,7 +363,6 @@
                     <div class="mg-cw-left">
                         <div class="mg-cw-time" id="mgHomeTime">--:--</div>
                         <div class="mg-cw-date" id="mgHomeDate">Yükleniyor...</div>
-                        <div class="mg-cw-hello" id="mgHomeHello">Hoş geldin! 👋</div>
                     </div>
                 </div>
 
@@ -437,7 +436,6 @@
                     var timeEl  = document.getElementById('mgHomeTime');
                     var dateEl  = document.getElementById('mgHomeDate');
                     var greetEl = document.getElementById('mgHomeGreet');
-                    var helloEl = document.getElementById('mgHomeHello');
                     var wEl     = document.getElementById('mgClockWidget');
                     if (!timeEl) return;
 
@@ -481,18 +479,6 @@
                         if (greetEl && greet !== lastGreet) {
                             greetEl.textContent = greet;
                             lastGreet = greet;
-                        }
-
-                        /* Samimi karşılama cümlesi — gün+saate göre seçilir, 15 sn'de bir değişmez */
-                        if (helloEl) {
-                            var HELLO = h < 5  ? ['Uyku tutmadı mı? Ben buradayım 🌙', 'Gece kuşu, hoş geldin 🦉'] :
-                                        h < 12 ? ['Güne güzel başla, bugün neye bakıyoruz? ☕', 'Hoş geldin! Bugün sana ne lazım?'] :
-                                        h < 14 ? ['Öğle arası, kısa bir mola mı? 🥪', 'Karnın doydu mu? Biraz gezinelim 😊'] :
-                                        h < 18 ? ['Keyifli bir gün geçiriyorsun umarım 😊', 'Hoş geldin, bugün ne yapıyoruz?'] :
-                                        h < 22 ? ['Akşam keyfi, hoş geldin 🌆', 'Günün nasıl geçti? Gel bakalım 🙂'] :
-                                                 ['Gün biterken biraz oyalanalım mı? 🌙', 'Rahat bir gece olsun, bir göz atalım 😴'];
-                            var hello = HELLO[(now.getDate() + h) % 2];
-                            if (hello !== helloEl.textContent) helloEl.textContent = hello;
                         }
                     }
 
@@ -1305,20 +1291,6 @@
                             <button type="button" class="mg-mode-btn" data-mode="tablet" aria-pressed="false"><i class="fas fa-tablet-screen-button" aria-hidden="true"></i><span>Tablet</span></button>
                             <button type="button" class="mg-mode-btn" data-mode="desktop" aria-pressed="false"><i class="fas fa-desktop" aria-hidden="true"></i><span>Masaüstü</span></button>
                         </div>
-                    </div>
-
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <i class="fas fa-music" aria-hidden="true"></i>
-                            <div>
-                                <h4>Açılış Müziği</h4>
-                                <p>Uygulama açılırken çalan karşılama müziğini açar veya kapatır.</p>
-                            </div>
-                        </div>
-                        <label class="switch" aria-label="Açılış Müziğini Aç/Kapat">
-                            <input type="checkbox" id="musicSwitch" checked>
-                            <span class="slider" aria-hidden="true"></span>
-                        </label>
                     </div>
 
                     <!-- ── KUTLAMA EKRANI TEST ── -->
