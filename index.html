@@ -172,9 +172,13 @@
                 </div>
                 <div class="splash-title">
                     <h1>MuGöl<span>PORTAL</span></h1>
-                    <p>Tüm uygulamalarınız bir arada</p>
+                    <p class="splash-tagline-fb">Dijital Dünyan <b>Tek Bir Portalda</b></p>
                 </div>
             </div>
+        </div>
+        <div class="splash-brand" aria-hidden="true">
+            <b>MuGöl</b><span>PORTAL</span>
+            <small class="splash-tagline"><i>Dijital Dünyan</i><em>Tek Bir Portalda</em></small>
         </div>
         <div class="splash-progress-wrap" data-pct="0">
             <div class="splash-progress-track">
@@ -235,6 +239,9 @@
                 <div class="mgd-body">
                     <button class="mgd-btn" id="mgDropProfil" role="menuitem">
                         <i class="fas fa-user" aria-hidden="true"></i> Profilim
+                    </button>
+                    <button class="mgd-btn" id="mgDropRozet" role="menuitem">
+                        <i class="fas fa-award" aria-hidden="true"></i> Rozetlerim <span class="mgd-new" id="mgDropRozetNew" hidden></span>
                     </button>
                     <button class="mgd-btn" id="mgDropAyarlar" role="menuitem">
                         <i class="fas fa-cog" aria-hidden="true"></i> Ayarlar
@@ -389,18 +396,19 @@
                         <img class="mg-quote-logo" src="images/imsak.png" alt="" aria-hidden="true" onerror="this.src='https://ui-avatars.com/api/?name=İmsak&background=36B37E&color=fff&rounded=true&bold=true'">
                     </span>
                 </a>
-                <a class="mg-quote-card mg-quote-soru" id="mgSoruCard" href="https://mugol-portal.github.io/mugol-bilgin/" aria-label="Günün sorusu — MuGöl Bilgin">
+                <div class="mg-quote-card mg-quote-soru" id="mgSoruCard" role="button" tabindex="0" aria-haspopup="dialog" aria-label="Günün sorusu — cevaplamak için aç">
                     <span class="mg-quote-label"><i class="fas fa-circle-question" aria-hidden="true"></i> GÜNÜN SORUSU</span>
+                    <span class="mg-soru-streak" id="mgSoruStreak" hidden></span>
                     <span class="mg-quote-mark" aria-hidden="true">?</span>
                     <blockquote class="mg-quote-text" id="mgSoruText">Günün sorusu yükleniyor…</blockquote>
                     <span class="mg-quote-row">
                         <span class="mg-quote-meta">
-                        <span class="mg-quote-author">MuGöl Bilgin</span>
-                        <span class="mg-quote-book" id="mgSoruCat">Cevaplamak için dokun</span>
-                    </span>
+                            <span class="mg-quote-author">MuGöl Bilgin</span>
+                            <span class="mg-quote-book" id="mgSoruCat">Cevaplamak için dokun</span>
+                        </span>
                         <img class="mg-quote-logo" src="https://mugol-portal.github.io/mugol-bilgin/logo.png" alt="" aria-hidden="true" onerror="this.src='https://ui-avatars.com/api/?name=Bilgi&background=F59E0B&color=fff&rounded=true&bold=true'">
                     </span>
-                </a>
+                </div>
                 </div>
                 <div class="mg-quote-dots" id="mgQuoteDots" aria-hidden="true">
                     <span class="mg-quote-dot active"></span>
@@ -505,6 +513,15 @@
                 })();
                 </script>
 
+
+                <!-- ── SON KULLANILANLAR ── -->
+                <section id="mgRecent" class="mg-recent" aria-label="Son kullanılanlar" hidden>
+                    <div class="mg-section-label" style="margin-top:8px;">
+                        <span class="mg-section-label-text">Son Kullanılanlar</span>
+                        <button type="button" id="mgRecentClear" class="mg-recent-clear" aria-label="Son kullanılanları temizle">Temizle</button>
+                    </div>
+                    <div class="mg-recent-row" id="mgRecentRow" role="list"></div>
+                </section>
 
                 <!-- ── KATEGORİLER BAŞLIĞI ── -->
                 <div class="mg-section-label" style="margin-top:8px;">
@@ -2079,6 +2096,441 @@
     })();
     </script>
     <script src="script.js"></script>
+    <!-- ═══ SON KULLANILANLAR + ÇEVRİMDIŞI DURUM ═══ -->
+
+    <!-- ═══ ROZETLER + 20 GÜN TEŞEKKÜR BELGESİ (PNG) ═══ -->
+    <script>
+    (function () {
+        'use strict';
+        var KEY = 'mg-badges-v1', GOAL = 20;
+        var BADGES = [
+            { id: 'ilk',   n: 'İlk Adım',        i: 'fa-shoe-prints',   c: ['#22d3ee', '#3b82f6'], d: 'Portala ilk girişini yaptın.',            t: function (s) { return s.days.length >= 1; } },
+            { id: 'd3',    n: 'Alışıyoruz',      i: 'fa-seedling',      c: ['#34d399', '#059669'], d: '3 farklı günde portalı kullandın.',      t: function (s) { return s.days.length >= 3; } },
+            { id: 'd7',    n: 'Haftalık Dost',   i: 'fa-calendar-week', c: ['#818cf8', '#6366f1'], d: '7 farklı günde portalı kullandın.',      t: function (s) { return s.days.length >= 7; } },
+            { id: 'd14',   n: 'Sadık Kullanıcı', i: 'fa-heart',         c: ['#fb7185', '#e11d48'], d: '14 farklı günde portalı kullandın.',     t: function (s) { return s.days.length >= 14; } },
+            { id: 'd20',   n: 'Portal Dostu',    i: 'fa-crown',         c: ['#fbbf24', '#f59e0b'], d: '20 gün kullandın. Teşekkür belgen hazır!', t: function (s) { return s.days.length >= GOAL; } },
+            { id: 'kesif', n: 'Keşifçi',         i: 'fa-compass',       c: ['#38bdf8', '#0284c7'], d: '5 farklı uygulama açtın.',               t: function (s) { return s.apps.length >= 5; } },
+            { id: 'gezgin',n: 'Büyük Gezgin',    i: 'fa-map',           c: ['#a78bfa', '#7c3aed'], d: '15 farklı uygulama açtın.',              t: function (s) { return s.apps.length >= 15; } },
+            { id: 'bilgin',n: 'Bilgin',          i: 'fa-brain',         c: ['#f97316', '#ea580c'], d: 'Günün sorusunda 3 günlük seri yaptın.',  t: function () { return soruBest() >= 3; } },
+            { id: 'gece',  n: 'Gece Kuşu',       i: 'fa-moon',          c: ['#6366f1', '#312e81'], d: 'Gece 23:00\'ten sonra portala girdin.',  t: function (s) { return !!s.f.night; } },
+            { id: 'erken', n: 'Erken Kuş',       i: 'fa-sun',           c: ['#fde047', '#f59e0b'], d: 'Sabah 05:00–07:00 arasında girdin.',     t: function (s) { return !!s.f.early; } },
+            { id: 'tema',  n: 'Tema Ustası',     i: 'fa-palette',       c: ['#f472b6', '#db2777'], d: 'Karanlık modu denedin.',                 t: function (s) { return !!s.f.dark; } },
+            { id: 'cevrim',n: 'Hep Yanında',     i: 'fa-wifi',          c: ['#94a3b8', '#475569'], d: 'İnternetsizken de portalı açtın.',       t: function (s) { return !!s.f.offline; } },
+            { id: 'kur',   n: 'Cebimde',         i: 'fa-mobile-screen', c: ['#2dd4bf', '#0d9488'], d: 'Portalı ana ekrana ekledin.',            t: function (s) { return !!s.f.installed; } }
+        ];
+
+        /* ── Depolama ── */
+        function ymd(d) { d = d || new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+        function load() {
+            var s; try { s = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+            s = s && typeof s === 'object' ? s : {};
+            s.days = Array.isArray(s.days) ? s.days : [];
+            s.apps = Array.isArray(s.apps) ? s.apps : [];
+            s.f = s.f || {}; s.earned = s.earned || {}; s.name = s.name || '';
+            return s;
+        }
+        function save(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
+        function soruBest() {
+            try { var q = JSON.parse(localStorage.getItem('mg-soru-state-v1')) || {}; return Math.max(q.best || 0, q.count || 0); } catch (e) { return 0; }
+        }
+        function esc(x) { return String(x).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+        function toast(m, ms) { if (typeof window._mgToast === 'function') window._mgToast(m, ms || 3000); }
+
+        /* ── Kazanma kontrolü ── */
+        var queue = [];
+        function check() {
+            var s = load(), fresh = [];
+            BADGES.forEach(function (b) {
+                if (!s.earned[b.id] && b.t(s)) { s.earned[b.id] = { at: Date.now(), seen: false }; fresh.push(b); }
+            });
+            if (fresh.length) save(s);
+            fresh.forEach(function (b) { queue.push(b); });
+            if (fresh.length) flushQueue();
+            updateDropCount();
+            return s;
+        }
+        var flushing = false;
+        function flushQueue() {
+            if (flushing) return; flushing = true;
+            (function step() {
+                var sp = document.getElementById('splash-screen');
+                var splashOn = sp && !sp.classList.contains('hidden') && sp.style.display !== 'none' && getComputedStyle(sp).display !== 'none';
+                if (splashOn) { setTimeout(step, 700); return; }
+                var b = queue.shift();
+                if (!b) { flushing = false; return; }
+                toast('🏅 Yeni rozet: ' + b.n, 3200);
+                setTimeout(step, 3400);
+            })();
+        }
+        function updateDropCount() {
+            var s = load(), n = 0, k;
+            for (k in s.earned) if (s.earned[k] && !s.earned[k].seen) n++;
+            var el = document.getElementById('mgDropRozetNew');
+            if (el) { el.hidden = !n; el.textContent = n; }
+        }
+        function setFlag(k) { var s = load(); if (!s.f[k]) { s.f[k] = 1; save(s); check(); } }
+
+        /* ── İzleme ── */
+        (function track() {
+            var s = load(), t = ymd();
+            if (s.days.indexOf(t) === -1) { s.days.push(t); s.days = s.days.slice(-400); }
+            var hr = new Date().getHours();
+            if (hr >= 23 || hr < 4) s.f.night = 1;
+            if (hr >= 5 && hr < 7) s.f.early = 1;
+            if (!navigator.onLine) s.f.offline = 1;
+            try { if (matchMedia('(display-mode: standalone)').matches || navigator.standalone) s.f.installed = 1; } catch (e) {}
+            if (document.documentElement.getAttribute('data-theme') === 'dark') s.f.dark = 1;
+            save(s);
+
+            window.addEventListener('offline', function () { setFlag('offline'); });
+            window.addEventListener('appinstalled', function () { setFlag('installed'); });
+            new MutationObserver(function () {
+                if (document.documentElement.getAttribute('data-theme') === 'dark') setFlag('dark');
+            }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+            document.addEventListener('click', function (e) {
+                var el = e.target.closest && e.target.closest('.app-card[href], .tumuu-tile[href]');
+                if (!el) return;
+                var u = el.getAttribute('href'), st = load();
+                if (u && st.apps.indexOf(u) === -1) { st.apps.push(u); save(st); check(); }
+            }, true);
+            /* Günün sorusu cevaplanınca seri değişir */
+            window.addEventListener('storage', check);
+            setInterval(check, 20000);
+            check();
+        })();
+
+        /* ═════════ ARAYÜZ ═════════ */
+        var modal, unlocked = false;
+        function build() {
+            modal = document.createElement('div');
+            modal.id = 'mgBadgeModal'; modal.hidden = true;
+            modal.setAttribute('role', 'dialog'); modal.setAttribute('aria-modal', 'true'); modal.setAttribute('aria-label', 'Rozetlerim');
+            modal.innerHTML = '<div class="mgb-back" data-close="1"></div><div class="mgb-sheet"><div class="mgb-grab" aria-hidden="true"></div>' +
+                '<div class="mgb-head"><h2>Rozetlerim</h2><span class="mgb-count" id="mgbCount"></span><button type="button" class="mgb-x" data-close="1" aria-label="Kapat"><i class="fas fa-xmark"></i></button></div>' +
+                '<div class="mgb-body" id="mgbBody"></div></div>';
+            document.body.appendChild(modal);
+            modal.addEventListener('click', function (e) {
+                if (e.target.closest('[data-close]')) close();
+                var b = e.target.closest('#mgbCertBtn'); if (b) makeCert();
+                var d = e.target.closest('#mgbDl'); if (d) download();
+                var sh = e.target.closest('#mgbShare'); if (sh) share();
+                var lk = e.target.closest('.mgb-cert.locked .mgb-cert-top');
+                if (lk) { var pw = document.getElementById('mgbPwBox'); if (pw) { pw.hidden = !pw.hidden; if (!pw.hidden) { var i = document.getElementById('mgbPw'); if (i) setTimeout(function () { i.focus(); }, 50); } } }
+                if (e.target.closest('#mgbPwBtn')) tryPw();
+            });
+            modal.addEventListener('keydown', function (e) { if (e.key === 'Enter' && e.target.id === 'mgbPw') { e.preventDefault(); tryPw(); } });
+            modal.addEventListener('input', function (e) {
+                if (e.target.id === 'mgbName') {
+                    var s = load(); s.name = e.target.value.slice(0, 40); save(s);
+                    var btn = document.getElementById('mgbCertBtn'); if (btn) btn.disabled = s.name.trim().length < 2;
+                }
+            });
+            document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) close(); });
+        }
+        function open() {
+            if (!modal) build();
+            var s = check();
+            render(s);
+            modal.hidden = false;
+            document.documentElement.classList.add('mgb-lock');
+            requestAnimationFrame(function () { modal.classList.add('mgb-open'); });
+            /* görüldü say */
+            var k; for (k in s.earned) if (s.earned[k]) s.earned[k].seen = true;
+            save(s); setTimeout(updateDropCount, 600);
+        }
+        function close() {
+            modal.classList.remove('mgb-open');
+            document.documentElement.classList.remove('mgb-lock');
+            setTimeout(function () { modal.hidden = true; }, 250);
+        }
+        function render(s) {
+            var got = BADGES.filter(function (b) { return s.earned[b.id]; }).length;
+            document.getElementById('mgbCount').textContent = got + ' / ' + BADGES.length;
+            var days = Math.min(s.days.length, GOAL), pct = Math.round(days / GOAL * 100), real = s.days.length >= GOAL, ok = real || unlocked;
+            var cert = '<div class="mgb-cert' + (ok ? ' ok' : ' locked') + '">' +
+                '<div class="mgb-cert-top"><i class="fas fa-award"></i><div><b>Teşekkür Belgesi</b><span>' + (real ? '20 günü tamamladın, tebrikler!' : unlocked ? 'Önizleme modu açık' : GOAL + ' gün kullan, belgeni kazan') + '</span></div>' + (ok ? '' : '<i class="fas fa-key mgb-key" aria-hidden="true"></i>') + '</div>' +
+                '<div class="mgb-bar"><i style="width:' + pct + '%"></i></div>' +
+                '<div class="mgb-days">' + days + ' / ' + GOAL + ' gün</div>';
+            if (ok) {
+                cert += '<label class="mgb-lbl" for="mgbName">Belgede görünecek ad</label>' +
+                    '<input id="mgbName" class="mgb-input" type="text" maxlength="40" autocomplete="name" placeholder="Adın Soyadın" value="' + esc(s.name) + '">' +
+                    '<button type="button" id="mgbCertBtn" class="mgb-btn"' + (s.name.trim().length < 2 ? ' disabled' : '') + '><i class="fas fa-wand-magic-sparkles"></i> Belgemi oluştur</button>' +
+                    '<div id="mgbCertOut"></div>';
+            } else {
+                cert += '<p class="mgb-hint">Her farklı gün portalı açtığında sayaç bir artar. Peş peşe olması gerekmez.</p>' +
+                    '<div id="mgbPwBox" class="mgb-pw" hidden><label class="mgb-lbl" for="mgbPw">Şifre</label>' +
+                    '<div class="mgb-row"><input id="mgbPw" class="mgb-input" type="password" autocomplete="off" placeholder="Şifreyi yaz">' +
+                    '<button type="button" id="mgbPwBtn" class="mgb-btn mgb-btn-sm">Aç</button></div><div id="mgbPwErr" class="mgb-err"></div></div>';
+            }
+            cert += '</div>';
+            var grid = '<div class="mgb-grid">' + BADGES.map(function (b) {
+                var e = s.earned[b.id];
+                return '<div class="mgb-item' + (e ? ' on' : '') + '" title="' + esc(b.d) + '">' +
+                    '<span class="mgb-ico" style="--c1:' + b.c[0] + ';--c2:' + b.c[1] + '"><i class="fas ' + (e ? b.i : 'fa-lock') + '"></i></span>' +
+                    '<b>' + esc(b.n) + '</b><small>' + esc(b.d) + '</small></div>';
+            }).join('') + '</div>';
+            document.getElementById('mgbBody').innerHTML = cert + grid;
+        }
+
+        /* ═════════ BELGE (PNG) ═════════ */
+        var lastBlob = null;
+        function trDate(ts) { try { return new Date(ts).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }); } catch (e) { return ymd(new Date(ts)); } }
+        function hash6(str) { var h = 5381, i; for (i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) >>> 0; return ('000000' + h.toString(36).toUpperCase()).slice(-6); }
+        function loadLogo() {
+            return new Promise(function (res) {
+                var im = new Image(); im.onload = function () { res(im); }; im.onerror = function () { res(null); }; im.src = 'logo.png';
+            });
+        }
+        function sp(ctx, px) { if ('letterSpacing' in ctx) ctx.letterSpacing = px + 'px'; }
+
+        function draw(name, dateStr, no, logo) {
+            var W = 1600, H = 1131, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+            var x = cv.getContext('2d'), F = 'Nunito, Arial, sans-serif';
+            x.textAlign = 'center'; x.textBaseline = 'alphabetic';
+
+            /* zemin */
+            var bg = x.createLinearGradient(0, 0, W, H); bg.addColorStop(0, '#fffdf8'); bg.addColorStop(1, '#f5f3ff');
+            x.fillStyle = bg; x.fillRect(0, 0, W, H);
+            var g1 = x.createRadialGradient(0, 0, 0, 0, 0, 520); g1.addColorStop(0, 'rgba(34,211,238,.18)'); g1.addColorStop(1, 'rgba(34,211,238,0)');
+            x.fillStyle = g1; x.fillRect(0, 0, W, H);
+            var g2 = x.createRadialGradient(W, H, 0, W, H, 560); g2.addColorStop(0, 'rgba(236,72,153,.16)'); g2.addColorStop(1, 'rgba(236,72,153,0)');
+            x.fillStyle = g2; x.fillRect(0, 0, W, H);
+            /* filigran */
+            x.save(); x.globalAlpha = .045; x.fillStyle = '#4f46e5'; x.font = '800 620px ' + F; x.fillText('MG', W / 2, 770); x.restore();
+
+            /* çerçeve */
+            var fr = x.createLinearGradient(0, 0, W, H); fr.addColorStop(0, '#22d3ee'); fr.addColorStop(.5, '#6366f1'); fr.addColorStop(1, '#ec4899');
+            x.lineWidth = 16; x.strokeStyle = fr; rr(x, 40, 40, W - 80, H - 80, 36); x.stroke();
+            x.lineWidth = 3; x.strokeStyle = '#d4a94a'; rr(x, 72, 72, W - 144, H - 144, 22); x.stroke();
+            x.fillStyle = fr;
+            [[72, 72], [W - 72, 72], [72, H - 72], [W - 72, H - 72]].forEach(function (p) {
+                x.beginPath(); x.arc(p[0], p[1], 15, 0, Math.PI * 2); x.fill();
+                x.beginPath(); x.arc(p[0], p[1], 6, 0, Math.PI * 2); x.fillStyle = '#fff'; x.fill(); x.fillStyle = fr;
+            });
+
+            /* logo */
+            var ly = 190;
+            x.save(); x.beginPath(); x.arc(W / 2, ly, 70, 0, Math.PI * 2); x.closePath();
+            x.shadowColor = 'rgba(79,70,229,.35)'; x.shadowBlur = 24; x.shadowOffsetY = 8; x.fillStyle = '#fff'; x.fill(); x.restore();
+            if (logo) {
+                x.save(); x.beginPath(); x.arc(W / 2, ly, 62, 0, Math.PI * 2); x.clip();
+                var r = Math.min(124 / logo.width, 124 / logo.height), lw = logo.width * r, lh = logo.height * r;
+                x.drawImage(logo, W / 2 - lw / 2, ly - lh / 2, lw, lh); x.restore();
+            } else {
+                var lg = x.createLinearGradient(W / 2 - 60, ly - 60, W / 2 + 60, ly + 60); lg.addColorStop(0, '#22d3ee'); lg.addColorStop(1, '#4f46e5');
+                x.beginPath(); x.arc(W / 2, ly, 62, 0, Math.PI * 2); x.fillStyle = lg; x.fill();
+                x.fillStyle = '#fff'; x.font = '800 54px ' + F; x.fillText('MG', W / 2, ly + 19);
+            }
+
+            /* başlık */
+            x.font = '800 92px ' + F; sp(x, 6);
+            var tg = x.createLinearGradient(W / 2 - 480, 0, W / 2 + 480, 0); tg.addColorStop(0, '#4f46e5'); tg.addColorStop(.55, '#7c3aed'); tg.addColorStop(1, '#db2777');
+            x.fillStyle = tg; x.fillText('TEŞEKKÜR BELGESİ', W / 2, 382);
+            x.font = '700 26px ' + F; sp(x, 12); x.fillStyle = '#94a3b8'; x.fillText('MuGöl PORTAL', W / 2, 430);
+            sp(x, 0);
+
+            /* ayraç */
+            x.strokeStyle = '#d4a94a'; x.lineWidth = 2;
+            x.beginPath(); x.moveTo(W / 2 - 220, 462); x.lineTo(W / 2 - 24, 462); x.moveTo(W / 2 + 24, 462); x.lineTo(W / 2 + 220, 462); x.stroke();
+            x.fillStyle = '#d4a94a'; x.save(); x.translate(W / 2, 462); x.rotate(Math.PI / 4); x.fillRect(-7, -7, 14, 14); x.restore();
+
+            x.font = '600 30px ' + F; x.fillStyle = '#64748b'; x.fillText('Bu belge', W / 2, 520);
+
+            /* ad (sığana kadar küçül) */
+            var fs = 108; x.font = '800 ' + fs + 'px ' + F;
+            while (x.measureText(name).width > 1180 && fs > 44) { fs -= 4; x.font = '800 ' + fs + 'px ' + F; }
+            var nw = x.measureText(name).width;
+            x.fillStyle = '#1e1b4b'; x.fillText(name, W / 2, 640);
+            var ug = x.createLinearGradient(W / 2 - nw / 2, 0, W / 2 + nw / 2, 0); ug.addColorStop(0, '#22d3ee'); ug.addColorStop(.5, '#6366f1'); ug.addColorStop(1, '#ec4899');
+            x.strokeStyle = ug; x.lineWidth = 5; x.lineCap = 'round';
+            x.beginPath(); x.moveTo(W / 2 - Math.max(nw / 2, 260), 668); x.lineTo(W / 2 + Math.max(nw / 2, 260), 668); x.stroke();
+
+            /* metin */
+            x.fillStyle = '#334155'; x.font = '600 36px ' + F;
+            x.fillText('MuGöl PORTAL\u2019ı ' + GOAL + ' gün boyunca kullanarak gösterdiği ilgi ve destek için', W / 2, 734);
+            x.fillText('içtenlikle teşekkür eder, güzel dileklerimizi sunarız.', W / 2, 782);
+
+            /* tarih */
+            x.textAlign = 'center';
+            x.font = '700 34px ' + F; x.fillStyle = '#1e293b'; x.fillText(dateStr, 330, 935);
+            x.strokeStyle = '#94a3b8'; x.lineWidth = 2; x.beginPath(); x.moveTo(170, 955); x.lineTo(490, 955); x.stroke();
+            x.font = '600 22px ' + F; sp(x, 4); x.fillStyle = '#94a3b8'; x.fillText('TARİH', 330, 990); sp(x, 0);
+
+            /* imza */
+            x.font = '800 42px ' + F; x.fillStyle = '#4f46e5'; x.fillText('Muhammet GÖLPINAR', 1270, 935);
+            x.strokeStyle = '#94a3b8'; x.beginPath(); x.moveTo(1090, 955); x.lineTo(1450, 955); x.stroke();
+            x.font = '600 22px ' + F; sp(x, 4); x.fillStyle = '#94a3b8'; x.fillText('KURUCU & GELİŞTİRİCİ', 1270, 990); sp(x, 0);
+
+            /* mühür */
+            var cx = W / 2, cy = 905;
+            x.fillStyle = '#e11d48'; x.beginPath(); x.moveTo(cx - 50, cy + 40); x.lineTo(cx - 88, cy + 128); x.lineTo(cx - 54, cy + 112); x.lineTo(cx - 22, cy + 136); x.lineTo(cx - 8, cy + 60); x.closePath(); x.fill();
+            x.fillStyle = '#be123c'; x.beginPath(); x.moveTo(cx + 50, cy + 40); x.lineTo(cx + 88, cy + 128); x.lineTo(cx + 54, cy + 112); x.lineTo(cx + 22, cy + 136); x.lineTo(cx + 8, cy + 60); x.closePath(); x.fill();
+            var gold = x.createRadialGradient(cx - 30, cy - 30, 10, cx, cy, 110); gold.addColorStop(0, '#fde68a'); gold.addColorStop(.55, '#e0b04a'); gold.addColorStop(1, '#a67c1d');
+            x.save(); x.shadowColor = 'rgba(120,80,0,.4)'; x.shadowBlur = 20; x.shadowOffsetY = 8;
+            x.beginPath(); var i, n = 32;
+            for (i = 0; i < n * 2; i++) { var a = i * Math.PI / n, rad = i % 2 ? 92 : 108; x.lineTo(cx + Math.cos(a) * rad, cy + Math.sin(a) * rad); }
+            x.closePath(); x.fillStyle = gold; x.fill(); x.restore();
+            x.beginPath(); x.arc(cx, cy, 78, 0, Math.PI * 2); x.fillStyle = '#fff8e1'; x.fill();
+            x.lineWidth = 4; x.strokeStyle = '#c99a2e'; x.stroke();
+            x.beginPath(); x.arc(cx, cy, 66, 0, Math.PI * 2); x.lineWidth = 1.5; x.stroke();
+            x.fillStyle = '#a16207'; x.font = '800 74px ' + F; x.fillText(String(GOAL), cx, cy + 20);
+            x.font = '800 22px ' + F; sp(x, 6); x.fillText('GÜN', cx + 3, cy + 50); sp(x, 0);
+
+            return cv;
+        }
+        function rr(c, x, y, w, h, r) {
+            c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r);
+            c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath();
+        }
+
+        function tryPw() {
+            var inp = document.getElementById('mgbPw'), err = document.getElementById('mgbPwErr');
+            if (!inp) return;
+            if (inp.value.trim().toLowerCase() === 'furkan') {
+                unlocked = true;
+                render(load());
+                toast('🔓 Önizleme modu açıldı');
+                var b = document.getElementById('mgbCertBtn');
+                if (b && !b.disabled) makeCert();
+                else { var n = document.getElementById('mgbName'); if (n) setTimeout(function () { n.focus(); }, 80); }
+            } else {
+                if (err) err.textContent = 'Şifre yanlış.';
+                inp.value = ''; inp.focus();
+            }
+        }
+        function makeCert() {
+            var s = load(), name = (s.name || '').trim();
+            if (name.length < 2 || (s.days.length < GOAL && !unlocked)) return;
+            var out = document.getElementById('mgbCertOut'), btn = document.getElementById('mgbCertBtn');
+            btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Hazırlanıyor…';
+            var at = (s.earned.d20 && s.days.length >= GOAL) ? s.earned.d20.at : Date.now();
+            var fonts = (document.fonts && document.fonts.load) ? Promise.all([document.fonts.load('800 60px Nunito'), document.fonts.load('700 30px Nunito'), document.fonts.load('600 30px Nunito')]).catch(function () {}) : Promise.resolve();
+            Promise.all([fonts, loadLogo()]).then(function (r) {
+                var cv = draw(name, trDate(at), 'MG-' + hash6(name.toLowerCase() + ymd(new Date(at))), r[1]);
+                cv.toBlob(function (blob) {
+                    lastBlob = blob;
+                    var url = URL.createObjectURL(blob);
+                    out.innerHTML = '<img class="mgb-cert-img" alt="Teşekkür belgesi önizleme" src="' + url + '">' +
+                        '<div class="mgb-row"><button type="button" id="mgbDl" class="mgb-btn"><i class="fas fa-download"></i> PNG indir</button>' +
+                        (navigator.canShare && navigator.canShare({ files: [new File([blob], 'a.png', { type: 'image/png' })] }) ? '<button type="button" id="mgbShare" class="mgb-btn alt"><i class="fas fa-share-nodes"></i> Paylaş</button>' : '') + '</div>';
+                    btn.disabled = false; btn.innerHTML = '<i class="fas fa-rotate"></i> Yeniden oluştur';
+                }, 'image/png');
+            });
+        }
+        function fileName() { var s = load(); return 'MuGol-Portal-Tesekkur-Belgesi' + (s.name ? '-' + s.name.trim().replace(/[^\wÇçĞğİıÖöŞşÜü]+/g, '_') : '') + '.png'; }
+        function download() {
+            if (!lastBlob) return;
+            var a = document.createElement('a'); a.href = URL.createObjectURL(lastBlob); a.download = fileName();
+            document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+            toast('📥 Belge indiriliyor…');
+        }
+        function share() {
+            if (!lastBlob) return;
+            var f = new File([lastBlob], fileName(), { type: 'image/png' });
+            navigator.share({ files: [f], title: 'MuGöl PORTAL Teşekkür Belgesi' }).catch(function () {});
+        }
+
+        /* Menüden aç */
+        var btn = document.getElementById('mgDropRozet');
+        if (btn) btn.addEventListener('click', function () {
+            var d = document.getElementById('mgDrop'); if (d) d.classList.remove('mg-open');
+            open();
+        });
+        window.mgOpenBadges = open;
+        updateDropCount();
+    })();
+    </script>
+
+    <div id="mgOfflineBar" role="status" aria-live="polite" hidden></div>
+    <script>
+    (function () {
+        'use strict';
+        var KEY = 'mg-recent-apps', MAX = 8;
+        function load() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; } }
+        function save(a) { try { localStorage.setItem(KEY, JSON.stringify(a)); } catch (e) {} }
+        function toast(m) { if (typeof window._mgToast === 'function') window._mgToast(m, 2600); }
+        function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+        function record(name, url, img) {
+            if (!url || !name) return;
+            var list = load().filter(function (x) { return x.url !== url; });
+            list.unshift({ name: name, url: url, img: img || '' });
+            save(list.slice(0, MAX));
+            render();
+        }
+
+        function render() {
+            var box = document.getElementById('mgRecent'), row = document.getElementById('mgRecentRow');
+            if (!box || !row) return;
+            var list = load();
+            box.hidden = list.length === 0;
+            row.innerHTML = list.map(function (a, i) {
+                var fb = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(a.name.replace(/^MuGöl\s*/i, '') || 'M') + '&background=4318ff&color=fff&rounded=true&bold=true';
+                return '<button type="button" class="mg-recent-item" role="listitem" data-i="' + i + '" aria-label="' + esc(a.name) + ' uygulamasını aç">' +
+                    '<span class="mg-recent-ico"><img src="' + esc(a.img || fb) + '" alt="" loading="lazy" onerror="this.onerror=null;this.src=\'' + fb + '\'"></span>' +
+                    '<span class="mg-recent-name">' + esc(a.name.replace(/^MuGöl\s*/i, '')) + '</span></button>';
+            }).join('');
+        }
+
+        /* Tıklama (yakalama aşaması: mevcut dinleyicilerden önce çalışır) */
+        document.addEventListener('click', function (e) {
+            var el = e.target.closest && e.target.closest('.app-card[href], .tumuu-tile[href]');
+            if (!el) return;
+            var url = el.getAttribute('href');
+            if (!navigator.onLine) {
+                e.preventDefault(); e.stopImmediatePropagation();
+                toast('📡 İnternet yok. Bu uygulama çevrimdışı açılamaz.');
+                return;
+            }
+            var nm = (el.querySelector('.app-info h3, .tumuu-label') || {}).textContent;
+            var im = (el.querySelector('.app-icon-img, .tumuu-icon') || {}).src;
+            record((nm || '').trim(), url, im);
+        }, true);
+
+        /* Arama sonucu ve oyunlar openAppWithAd kullanıyor */
+        window.addEventListener('load', function () {
+            var orig = window.openAppWithAd;
+            if (typeof orig !== 'function') return;
+            window.openAppWithAd = function (url, name, logo) {
+                if (!navigator.onLine) { toast('📡 İnternet yok. Bu uygulama çevrimdışı açılamaz.'); return; }
+                record(name, url, logo);
+                return orig.apply(this, arguments);
+            };
+        });
+
+        /* Son kullanılanlardan aç */
+        var row = document.getElementById('mgRecentRow');
+        if (row) row.addEventListener('click', function (e) {
+            var b = e.target.closest('.mg-recent-item'); if (!b) return;
+            var a = load()[+b.getAttribute('data-i')]; if (!a) return;
+            if (!navigator.onLine) { toast('📡 İnternet yok. Bu uygulama çevrimdışı açılamaz.'); return; }
+            record(a.name, a.url, a.img);
+            if (typeof window._mgOpenUrl === 'function') window._mgOpenUrl(a.url, a.name, a.img);
+            else window.open(a.url, '_blank', 'noopener,noreferrer');
+        });
+        var clr = document.getElementById('mgRecentClear');
+        if (clr) clr.addEventListener('click', function () { save([]); render(); toast('Son kullanılanlar temizlendi'); });
+
+        /* Çevrimdışı / çevrimiçi şeridi */
+        var bar = document.getElementById('mgOfflineBar'), hideT;
+        function setBar(off) {
+            if (!bar) return;
+            clearTimeout(hideT);
+            document.documentElement.classList.toggle('mg-offline', off);
+            bar.className = off ? 'off' : 'on';
+            bar.textContent = off ? '📡 Çevrimdışısın · kayıtlı sayfalar açık' : '✅ Tekrar çevrimiçisin';
+            bar.hidden = false;
+            if (!off) hideT = setTimeout(function () { bar.hidden = true; }, 2500);
+        }
+        window.addEventListener('offline', function () { setBar(true); });
+        window.addEventListener('online', function () { setBar(false); });
+        if (!navigator.onLine) setBar(true);
+
+        render();
+    })();
+    </script>
+
 
     <!-- ═══════════════════════════════════════════════════════
          PORTAL İYİLEŞTİRMELERİ v2.0 — JS
@@ -3624,6 +4076,7 @@
     <div id="mgBnPanel" aria-hidden="true">
         <div id="mgBnPanelInner">
             <div class="mg-bn-panel-handle"></div>
+            <div class="mg-bn-panel-head"><b>Daha Fazla</b><small>Tüm bölümler ve araçlar</small></div>
             <div class="mg-bn-panel-grid">
                 <button class="mg-bn-panel-item" data-target="page-araclar" data-title="Araçlar">
                     <span class="mg-bn-pi-icon"><i class="fas fa-screwdriver-wrench"></i></span>

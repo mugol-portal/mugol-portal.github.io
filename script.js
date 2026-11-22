@@ -2093,65 +2093,201 @@ window.MG_NOTIFICATIONS = [
 })();
 
 
-/* ═════════════ GÜNÜN SORUSU (MuGöl Bilgi · mugol-bilgin/sorular) ═════════════ */
+/* ═════════════ GÜNÜN SORUSU (MuGöl Bilgin · mugol-bilgin/sorular) — mesaj kutusu + seri ═════════════ */
 (function () {
+    var card = document.getElementById('mgSoruCard');
     var textEl = document.getElementById('mgSoruText');
-    if (!textEl) return;
+    if (!card || !textEl) return;
     var catEl = document.getElementById('mgSoruCat');
-    var REPO = 'mugol-portal/mugol-bilgin';
-    var API = 'https://api.github.com/repos/' + REPO + '/contents/sorular';
+    var streakEl = document.getElementById('mgSoruStreak');
+    var API = 'https://api.github.com/repos/mugol-portal/mugol-bilgin/contents/sorular';
     var BASE = 'https://mugol-portal.github.io/mugol-bilgin/';
-    var CACHE = 'mg-soru-cache-v1';
+    var CACHE = 'mg-soru-cache-v2', STATE = 'mg-soru-state-v1';
+    var LETTERS = ['A', 'B', 'C', 'D', 'E'];
     var fallback = [
-        { text: 'Dünyanın en büyük okyanusu hangisidir?', cat: 'Genel Kültür' },
-        { text: 'Türkiye Cumhuriyeti hangi yıl ilan edilmiştir?', cat: 'Tarih' },
-        { text: 'Işığın boşluktaki hızı yaklaşık kaç km/sn\'dir?', cat: 'Fizik' }
+        { text: 'Dünyanın en büyük okyanusu hangisidir?', cat: 'Genel Kültür', opts: ['Atlas Okyanusu', 'Hint Okyanusu', 'Pasifik Okyanusu', 'Arktik Okyanusu'], ans: 2 },
+        { text: 'Türkiye Cumhuriyeti hangi yıl ilan edilmiştir?', cat: 'Tarih', opts: ['1920', '1923', '1919', '1938'], ans: 1 },
+        { text: 'Işığın boşluktaki hızı yaklaşık kaç km/sn\'dir?', cat: 'Fizik', opts: ['150.000', '300.000', '30.000', '3.000.000'], ans: 1 }
     ];
     var QKEYS = ['soru', 'question', 'soruMetni', 'soru_metni', 'q', 'sorusu', 'text', 'metin', 'baslik', 'title'];
     var CKEYS = ['kategori', 'category', 'konu', 'ders', 'topic'];
+    var OKEYS = ['secenekler', 'seçenekler', 'options', 'siklar', 'şıklar', 'choices', 'cevaplar', 'answers'];
+    var AKEYS = ['dogru', 'doğru', 'cevap', 'dogruCevap', 'dogru_cevap', 'dogruSecenek', 'dogru_secenek', 'dogruSik', 'dogru_sik', 'answer', 'correct', 'correctAnswer', 'correct_answer', 'dogruIndex', 'correctIndex'];
 
     function dayNum() { var d = new Date(); return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000); }
     function today() { var d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
-    function pick(o, keys) {
-        for (var i = 0; i < keys.length; i++) { var v = o[keys[i]]; if (typeof v === 'string' && v.trim()) return v.trim(); }
-        return '';
+    function pick(o, keys) { for (var i = 0; i < keys.length; i++) { var v = o[keys[i]]; if (typeof v === 'string' && v.trim()) return v.trim(); } return ''; }
+
+    /* ── şık / doğru cevap ayrıştırma ── */
+    function getOpts(o) {
+        var arr = null, list = [];
+        OKEYS.forEach(function (k) { if (!arr && o[k]) arr = o[k]; });
+        if (Array.isArray(arr)) {
+            list = arr.map(function (x) { return typeof x === 'string' || typeof x === 'number' ? String(x) : (x && (x.text || x.metin || x.secenek || x.label || x.value)) || ''; });
+        } else if (arr && typeof arr === 'object') {
+            Object.keys(arr).sort().forEach(function (k) { list.push(String(arr[k])); });
+        }
+        if (!list.length) ['a', 'b', 'c', 'd', 'e'].forEach(function (l) { var v = o[l] != null ? o[l] : o[l.toUpperCase()]; if (v != null && v !== '') list.push(String(v)); });
+        return list.filter(function (s) { return s.trim(); }).slice(0, 5);
+    }
+    function getAns(o, opts) {
+        var v, k = '';
+        for (var i = 0; i < AKEYS.length; i++) { var x = o[AKEYS[i]]; if (x !== undefined && x !== null && x !== '') { v = x; k = AKEYS[i]; break; } }
+        if (v === undefined || !opts.length) return -1;
+        if (typeof v === 'string' && /^\d+$/.test(v.trim())) v = parseInt(v, 10);
+        if (typeof v === 'number') {
+            if (/index|idx/i.test(k) || v === 0) return v < opts.length ? v : -1;
+            return v >= 1 && v <= opts.length ? v - 1 : -1;
+        }
+        var s = String(v).trim(), low = s.toLowerCase();
+        for (var j = 0; j < opts.length; j++) { if (opts[j].trim().toLowerCase() === low) return j; }
+        if (/^[a-e]$/i.test(s)) { var li = s.toUpperCase().charCodeAt(0) - 65; return li < opts.length ? li : -1; }
+        return -1;
     }
     function collect(node, out, depth, fileCat) {
         if (!node || depth > 5) return;
         if (Array.isArray(node)) { node.forEach(function (n) { collect(n, out, depth + 1, fileCat); }); return; }
         if (typeof node !== 'object') return;
         var q = pick(node, QKEYS);
-        if (q.length > 8) { out.push({ text: q, cat: pick(node, CKEYS) || fileCat || '' }); return; }
+        if (q.length > 8) { var opts = getOpts(node); out.push({ text: q, cat: pick(node, CKEYS) || fileCat || '', opts: opts, ans: getAns(node, opts) }); return; }
         Object.keys(node).forEach(function (k) { collect(node[k], out, depth + 1, fileCat); });
     }
+
+    /* ── cevap durumu + seri ── */
+    function load() { try { return JSON.parse(localStorage.getItem(STATE) || '{}') || {}; } catch (e) { return {}; } }
+    function save(s) { try { localStorage.setItem(STATE, JSON.stringify(s)); } catch (e) {} }
+    function liveStreak(s) { return s.last && dayNum() - s.lastDay <= 1 ? (s.count || 0) : 0; }
+    function streakText() {
+        var s = load(), n = liveStreak(s);
+        if (n > 0) return '🔥 ' + n + ' gün';
+        return s.best > 0 ? '🏆 Rekor ' + s.best : '';
+    }
+
+    var current = null, modal = null, els = {}, lastFocus = null;
+
+    function refreshCard() {
+        var st = load(), t = streakText();
+        if (streakEl) { streakEl.hidden = !t; streakEl.textContent = t; }
+        if (!catEl || !current) return;
+        var base = current.cat ? current.cat + ' · ' : '';
+        if (st.answeredDay === today() && current.ans > -1) catEl.textContent = base + (st.ok ? 'Doğru bildin ✓' : 'Cevaplandı');
+        else catEl.textContent = base + 'Cevaplamak için dokun';
+    }
+
+    /* ── mesaj kutusu ── */
+    function build() {
+        if (modal) return;
+        modal = document.createElement('div');
+        modal.id = 'mgSoruModal'; modal.className = 'mg-sq-modal'; modal.hidden = true;
+        modal.setAttribute('role', 'dialog'); modal.setAttribute('aria-modal', 'true'); modal.setAttribute('aria-labelledby', 'mgSqQ');
+        modal.innerHTML =
+            '<div class="mg-sq-backdrop"></div>' +
+            '<div class="mg-sq-sheet">' +
+              '<div class="mg-sq-head"><span class="mg-sq-badge"><i class="fas fa-circle-question" aria-hidden="true"></i> GÜNÜN SORUSU</span>' +
+              '<span class="mg-sq-streak" hidden></span><button type="button" class="mg-sq-close" aria-label="Kapat"><i class="fas fa-xmark" aria-hidden="true"></i></button></div>' +
+              '<div class="mg-sq-cat"></div>' +
+              '<h3 class="mg-sq-q" id="mgSqQ"></h3>' +
+              '<div class="mg-sq-opts"></div>' +
+              '<div class="mg-sq-res" aria-live="polite"></div>' +
+              '<a class="mg-sq-site" href="' + BASE + '" target="_blank" rel="noopener">MuGöl Bilgin\'de daha fazla soru <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
+            '</div>';
+        document.body.appendChild(modal);
+        els = {
+            cat: modal.querySelector('.mg-sq-cat'), q: modal.querySelector('.mg-sq-q'), opts: modal.querySelector('.mg-sq-opts'),
+            res: modal.querySelector('.mg-sq-res'), streak: modal.querySelector('.mg-sq-streak')
+        };
+        modal.querySelector('.mg-sq-backdrop').addEventListener('click', close);
+        modal.querySelector('.mg-sq-close').addEventListener('click', close);
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) close(); });
+    }
+    function paintStreak() {
+        var t = streakText();
+        els.streak.hidden = !t; els.streak.textContent = t;
+    }
+    function lockOptions(chosen) {
+        var q = current, known = q.ans > -1, ok = known && chosen === q.ans;
+        els.opts.querySelectorAll('.mg-sq-opt').forEach(function (b, i) {
+            b.disabled = true;
+            if (known && i === q.ans) b.classList.add('is-correct');
+            else if (i === chosen) b.classList.add(known ? 'is-wrong' : 'is-picked');
+        });
+        return { known: known, ok: ok };
+    }
+    function resultMessage(r, chosen, fresh) {
+        var q = current, n = liveStreak(load());
+        els.res.className = 'mg-sq-res show ' + (r.known ? (r.ok ? 'ok' : 'bad') : 'neutral');
+        if (!r.known) { els.res.textContent = 'Seçimin kaydedildi. Doğru cevabı MuGöl Bilgin\'de görebilirsin.'; return; }
+        if (r.ok) els.res.textContent = '🎉 Doğru bildin!' + (n > 1 ? ' ' + n + ' günlük serin devam ediyor.' : ' Serin başladı, yarın da gel!');
+        else els.res.textContent = 'Olmadı. Doğru cevap: ' + LETTERS[q.ans] + ') ' + q.opts[q.ans] + '. Yarın yeni soruyla serini yeniden başlat.';
+    }
+    function answer(chosen) {
+        var r = lockOptions(chosen), s = load();
+        if (r.known && s.answeredDay !== today()) {
+            if (r.ok) {
+                s.count = (s.last && dayNum() - s.lastDay === 1) ? (s.count || 0) + 1 : 1;
+                s.lastDay = dayNum(); s.last = today(); s.best = Math.max(s.best || 0, s.count);
+            } else { s.count = 0; }
+            s.answeredDay = today(); s.chosen = chosen; s.ok = r.ok;
+            save(s);
+        }
+        paintStreak(); refreshCard(); resultMessage(r, chosen, true);
+    }
+    function open() {
+        if (!current) return;
+        build();
+        lastFocus = document.activeElement;
+        els.cat.textContent = current.cat || 'MuGöl Bilgin';
+        els.q.textContent = current.text;
+        els.opts.innerHTML = ''; els.res.className = 'mg-sq-res'; els.res.textContent = '';
+        (current.opts || []).forEach(function (t, i) {
+            var b = document.createElement('button');
+            b.type = 'button'; b.className = 'mg-sq-opt';
+            var l = document.createElement('b'); l.textContent = LETTERS[i];
+            var s = document.createElement('span'); s.textContent = t;
+            b.appendChild(l); b.appendChild(s);
+            b.addEventListener('click', function () { answer(i); });
+            els.opts.appendChild(b);
+        });
+        if (!current.opts || current.opts.length < 2) {
+            els.res.className = 'mg-sq-res show neutral';
+            els.res.textContent = 'Bu soru için şıklar yüklenemedi. Cevaplamak için MuGöl Bilgin\'e göz at.';
+        }
+        paintStreak();
+        var st = load();
+        if (st.answeredDay === today() && typeof st.chosen === 'number' && st.chosen < (current.opts || []).length) {
+            var r = lockOptions(st.chosen); resultMessage(r, st.chosen, false);
+        }
+        modal.hidden = false;
+        document.documentElement.classList.add('mg-sq-lock');
+        requestAnimationFrame(function () { modal.classList.add('open'); });
+        var cb = modal.querySelector('.mg-sq-close'); if (cb) cb.focus({ preventScroll: true });
+    }
+    function close() {
+        if (!modal || modal.hidden) return;
+        modal.classList.remove('open');
+        document.documentElement.classList.remove('mg-sq-lock');
+        setTimeout(function () { modal.hidden = true; }, 220);
+        if (lastFocus && lastFocus.focus) { try { lastFocus.focus({ preventScroll: true }); } catch (e) {} }
+    }
+    card.addEventListener('click', open);
+    card.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+
     function show(q) {
         if (!q || !q.text) return false;
-        textEl.textContent = q.text;
-        if (catEl) catEl.textContent = q.cat ? q.cat + ' · Cevaplamak için dokun' : 'Cevaplamak için dokun';
-        return true;
+        current = q; textEl.textContent = q.text; refreshCard(); return true;
     }
-    function fetchJson(url) {
-        return fetch(url, { cache: 'no-cache' }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
-    }
+    function fetchJson(url) { return fetch(url, { cache: 'no-cache' }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); }
     function loadAll() {
         return fetchJson(API).then(function (files) {
             var urls = [];
             if (Array.isArray(files)) {
                 files.filter(function (f) { return f.type === 'file' && /\.json$/i.test(f.name); })
-                     .sort(function (a, b) { return a.name < b.name ? -1 : 1; })
-                     .slice(0, 15)
+                     .sort(function (a, b) { return a.name < b.name ? -1 : 1; }).slice(0, 15)
                      .forEach(function (f) { urls.push({ url: f.download_url, cat: f.name.replace(/\.json$/i, '').replace(/[-_]+/g, ' ') }); });
             }
-            if (!urls.length) {
-                ['sorular/sorular.json', 'sorular/index.json', 'sorular/data.json', 'sorular.json'].forEach(function (p) { urls.push({ url: BASE + p, cat: '' }); });
-            }
-            return Promise.all(urls.map(function (u) {
-                return fetchJson(u.url).then(function (d) { var o = []; collect(d, o, 0, u.cat); return o; });
-            }));
-        }).then(function (parts) {
-            var all = [].concat.apply([], parts || []);
-            return all.length ? all : null;
-        });
+            if (!urls.length) ['sorular/sorular.json', 'sorular/index.json', 'sorular/data.json', 'sorular.json'].forEach(function (p) { urls.push({ url: BASE + p, cat: '' }); });
+            return Promise.all(urls.map(function (u) { return fetchJson(u.url).then(function (d) { var o = []; collect(d, o, 0, u.cat); return o; }); }));
+        }).then(function (parts) { var all = [].concat.apply([], parts || []); return all.length ? all : null; });
     }
 
     var cached = null;
