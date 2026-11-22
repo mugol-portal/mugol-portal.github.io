@@ -21,8 +21,36 @@
     <!-- ===== GOOGLE ADMOB ===== -->
     <meta name="admob-app-id" content="ca-app-pub-1880946354382681~7565307045">
     <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1880946354382681"
-         crossorigin="anonymous"></script>
+    <script>
+    (function(){try{
+      var mem=navigator.deviceMemory||4, cores=navigator.hardwareConcurrency||4;
+      var oldAndroid=/Android [2-8]\./.test(navigator.userAgent);
+      var saved=null; try{saved=localStorage.getItem('mg-lite');}catch(e){}
+      var lite=saved?saved==='1':(mem<=3||cores<=4||oldAndroid);
+      if(lite) document.documentElement.classList.add('mg-lite');
+    }catch(e){}})();
+    </script>
+    <!-- AdSense: splash kapanıp tarayıcı boşa çıkınca yüklenir (donmayı önler) -->
+    <script>
+    (function(){
+      var loaded=false;
+      function load(){
+        if(loaded) return; loaded=true;
+        var s=document.createElement('script'); s.async=true; s.crossOrigin='anonymous';
+        s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1880946354382681';
+        document.head.appendChild(s);
+      }
+      function idle(){ (window.requestIdleCallback||function(f){setTimeout(f,1500)})(load,{timeout:6000}); }
+      function start(){
+        var sp=document.getElementById('splash-screen');
+        if(!sp||sp.classList.contains('hidden')){ idle(); return; }
+        var mo=new MutationObserver(function(){ if(sp.classList.contains('hidden')){ mo.disconnect(); setTimeout(idle,800); } });
+        mo.observe(sp,{attributes:true,attributeFilter:['class']});
+        setTimeout(function(){ mo.disconnect(); idle(); },10000);
+      }
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
+    })();
+    </script>
     <title>MuGöl PORTAL | Dijital Dünyan Tek Bir Portalda</title>
 
     <!-- ===== TEMEL SEO ===== -->
@@ -614,11 +642,10 @@
                     <div class="mg-admob-wrap" aria-label="Reklam">
                         <span class="mg-admob-label">Reklam</span>
                         <ins class="adsbygoogle"
-                             style="display:block;width:100%;min-height:50px;"
+                             style="display:block;width:100%;height:100px;max-height:100px;overflow:hidden;"
                              data-ad-client="ca-pub-1880946354382681"
                              data-ad-slot="1435965312"
-                             data-ad-format="banner"
-                             data-full-width-responsive="true"></ins>
+                             data-ad-format="banner"></ins>
                     </div>
 
                     <a href="https://mugol-portal.github.io/mugol.-edebiyat" class="tumuu-tile" data-cat="egitim" style="animation-delay:0.3s;">
@@ -765,11 +792,10 @@
                     <div class="mg-admob-wrap" aria-label="Reklam">
                         <span class="mg-admob-label">Reklam</span>
                         <ins class="adsbygoogle"
-                             style="display:block;width:100%;min-height:50px;"
+                             style="display:block;width:100%;height:100px;max-height:100px;overflow:hidden;"
                              data-ad-client="ca-pub-1880946354382681"
                              data-ad-slot="1435965312"
-                             data-ad-format="banner"
-                             data-full-width-responsive="true"></ins>
+                             data-ad-format="banner"></ins>
                     </div>
 
                     <a href="https://mugol-portal.github.io/Mugol.games/" class="tumuu-tile" data-cat="eglence" style="animation-delay:0.9s;">
@@ -855,11 +881,10 @@
                     <div class="mg-admob-wrap" aria-label="Reklam">
                         <span class="mg-admob-label">Reklam</span>
                         <ins class="adsbygoogle"
-                             style="display:block;width:100%;min-height:50px;"
+                             style="display:block;width:100%;height:100px;max-height:100px;overflow:hidden;"
                              data-ad-client="ca-pub-1880946354382681"
                              data-ad-slot="1435965312"
-                             data-ad-format="banner"
-                             data-full-width-responsive="true"></ins>
+                             data-ad-format="banner"></ins>
                     </div>
 
                     <a href="https://mugol-portal.github.io/mugol.saglik/" class="app-card" style="animation-delay: 0.4s;">
@@ -959,11 +984,10 @@
                     <div class="mg-admob-wrap" aria-label="Reklam">
                         <span class="mg-admob-label">Reklam</span>
                         <ins class="adsbygoogle"
-                             style="display:block;width:100%;min-height:50px;"
+                             style="display:block;width:100%;height:100px;max-height:100px;overflow:hidden;"
                              data-ad-client="ca-pub-1880946354382681"
                              data-ad-slot="1435965312"
-                             data-ad-format="banner"
-                             data-full-width-responsive="true"></ins>
+                             data-ad-format="banner"></ins>
                     </div>
 
                     <a href="https://mugol-portal.github.io/mugol.-edebiyat" class="app-card" style="animation-delay: 0.4s;">
@@ -1099,11 +1123,10 @@
                     <div class="mg-admob-wrap" aria-label="Reklam">
                         <span class="mg-admob-label">Reklam</span>
                         <ins class="adsbygoogle"
-                             style="display:block;width:100%;min-height:50px;"
+                             style="display:block;width:100%;height:100px;max-height:100px;overflow:hidden;"
                              data-ad-client="ca-pub-1880946354382681"
                              data-ad-slot="1435965312"
-                             data-ad-format="banner"
-                             data-full-width-responsive="true"></ins>
+                             data-ad-format="banner"></ins>
                     </div>
 
                     <a href="https://mugol-portal.github.io/ozgecmis/" class="app-card" style="animation-delay: 0.3s;">
@@ -1989,8 +2012,7 @@
                         <ins class="adsbygoogle" style="display:block"
                              data-ad-client="ca-pub-1880946354382681"
                              data-ad-slot="2331344971"
-                             data-ad-format="auto"
-                             data-full-width-responsive="true"></ins>
+                             data-ad-format="auto"></ins>
                     </div>
                 </div>
                 <div class="content-card mg-destek-note">
@@ -2579,7 +2601,7 @@
                 requestAnimationFrame(function () {
                     _pgTick = false;
                     var sh = mc.scrollHeight - mc.clientHeight;
-                    pgBar.style.width = (sh > 0 ? (mc.scrollTop / sh) * 100 : 0) + '%';
+                    pgBar.style.transform = 'scaleX(' + (sh > 0 ? Math.min(1, mc.scrollTop / sh) : 0) + ')';
                 });
             }, { passive: true });
         }

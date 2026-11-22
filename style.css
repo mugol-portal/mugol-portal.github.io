@@ -10434,3 +10434,19 @@ html body #mgBottomNav .mg-bn-item.mg-bn-more .mg-bn-pi-icon.mg-bn-more-circle,
     width: 100%; margin-top: 8px; padding: 11px; border: 0; background: transparent;
     cursor: pointer; font-family: inherit; font-size: .88rem; font-weight: 700; color: var(--text-muted);
 }
+
+/* ===== PERFORMANS: reklam alanları + eski telefon (lite) modu ===== */
+.mg-admob-wrap{contain:layout paint style;min-height:140px}
+.mg-admob-wrap ins.adsbygoogle{height:100px;max-height:100px;overflow:hidden}
+.mg-destek-adbox{contain:layout paint;min-height:280px}
+html.mg-lite *,html.mg-lite *::before,html.mg-lite *::after{
+  animation:none!important;transition:none!important;
+  box-shadow:none!important;text-shadow:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html.mg-lite body,html.mg-lite body *{background-attachment:scroll!important}
+html.mg-lite body::before,html.mg-lite body::after{display:none!important}
+html.mg-lite .main-content{scroll-behavior:auto!important;will-change:auto!important}
+html.mg-lite #mgScrollProgress{display:none!important}
+
+/* Scroll ilerleme çubuğu: width yerine transform (layout tetiklemez) */
+#mgScrollProgress{width:100%!important;transform:scaleX(0);transform-origin:left center;transition:none!important;will-change:transform}

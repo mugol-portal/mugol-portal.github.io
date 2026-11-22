@@ -1924,36 +1924,6 @@ window.MG_NOTIFICATIONS = [
         });
     }
 
-    /* ── Giriş sorusu: yalnızca tarayıcıda, seçim yapılmamışsa ── */
-    function askView() {
-        if (isApp() || stored() || document.getElementById('mgViewAsk')) return;
-        if (/bot|crawl|spider|lighthouse|slurp|facebookexternalhit/i.test(navigator.userAgent || '')) return;
-        var small = window.innerWidth <= 700;
-        var box = document.createElement('div');
-        box.id = 'mgViewAsk';
-        box.setAttribute('role', 'dialog');
-        box.setAttribute('aria-modal', 'true');
-        box.setAttribute('aria-labelledby', 'mgViewAskTitle');
-        box.innerHTML =
-            '<div class="mg-va-card">' +
-              '<div class="mg-va-title" id="mgViewAskTitle">MuGöl PORTAL\'a hoş geldiniz</div>' +
-              '<div class="mg-va-sub">Hangi görünümle devam etmek istersiniz?</div>' +
-              '<button type="button" class="mg-va-btn' + (small ? ' rec' : '') + '" data-mode="mobile">' +
-                '<span class="mg-va-ico">&#128241;</span><span><b>Mobil</b><small>Alt menülü, uygulama gibi görünüm</small></span></button>' +
-              '<button type="button" class="mg-va-btn' + (small ? '' : ' rec') + '" data-mode="desktop">' +
-                '<span class="mg-va-ico">&#128421;&#65039;</span><span><b>Tarayıcı</b><small>Sol menülü, geniş ekran görünümü</small></span></button>' +
-              '<div class="mg-va-note">Seçiminizi daha sonra Ayarlar &rsaquo; Görünüm Modu bölümünden değiştirebilirsiniz.</div>' +
-            '</div>';
-        box.addEventListener('click', function (e) {
-            var b = e.target.closest ? e.target.closest('.mg-va-btn') : null;
-            if (!b) return;
-            apply(b.getAttribute('data-mode'), true);
-            box.classList.add('closing');
-            setTimeout(function () { if (box.parentNode) box.parentNode.removeChild(box); }, 250);
-        });
-        (document.body || document.documentElement).appendChild(box);
-    }
-
     function init() {
         apply(stored() || auto(), false);
         document.querySelectorAll('.mg-mode-btn').forEach(function (b) {
@@ -1961,7 +1931,6 @@ window.MG_NOTIFICATIONS = [
         });
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
-    askView();   /* açılış ekranının da üstünde, hemen göster */
 })();
 
 
