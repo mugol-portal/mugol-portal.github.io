@@ -397,7 +397,11 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     // Açılış süresini VİDEO belirler (mugol_acilis.mp4 = 15 sn). Müzik (mugol_acilis.mp3) da 15 sn'dir
     // ve video başlayınca birlikte başlar → ikisi aynı anda biter. Birini değiştirirsen ikisini AYNI uzunlukta hazırla.
     // Videoyu tekrar uzatıp kısaltırsan kodda hiçbir şey değiştirmen gerekmez.
-    const SPLASH_VIDEO_RATE   = 2;     // oynatma hızı: 1 = 15 sn, 2 = ~7.5 sn, 3 = ~5 sn (yalnızca VİDEO hızlanır; müzik normal hızda çalar ve splash kapanırken kısılarak durur)
+    // VİDEO ve MÜZİK birlikte SPLASH_TARGET_SEC saniyede biter. Hız, dosya süresinden otomatik hesaplanır
+    // (15 sn → 1.5x). Müzik tonu bozulmadan (preservesPitch) hızlandırılır.
+    const SPLASH_TARGET_SEC   = 10;
+    let   SPLASH_VIDEO_RATE   = 15 / SPLASH_TARGET_SEC;   // metadata gelince gerçek süreye göre yeniden hesaplanır
+    let   SPLASH_AUDIO_RATE   = 15 / SPLASH_TARGET_SEC;
     const SPLASH_END_HOLD_MS  = 150;   // video bitince son karede bekleme
     const SPLASH_SAFETY_PAD_MS = 2000; // 'ended' hiç gelmezse güvenlik süresi
     const FALLBACK_MS         = 7500;  // video hiç oynamazsa kullanılacak süre
@@ -523,11 +527,13 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     if (splashVideo) {
         splashVideo.playbackRate = SPLASH_VIDEO_RATE;
         splashVideo.addEventListener('loadedmetadata', function () {
+            if (isFinite(splashVideo.duration) && splashVideo.duration > 0) SPLASH_VIDEO_RATE = splashVideo.duration / SPLASH_TARGET_SEC;
             splashVideo.playbackRate = SPLASH_VIDEO_RATE;
             if (!videoFailed) startVideoProgress();
         });
         // Metadata script çalışmadan önce yüklendiyse olay kaçmış olabilir
         if (splashVideo.readyState >= 1 && !videoFailed) {
+            if (isFinite(splashVideo.duration) && splashVideo.duration > 0) SPLASH_VIDEO_RATE = splashVideo.duration / SPLASH_TARGET_SEC;
             splashVideo.playbackRate = SPLASH_VIDEO_RATE;
             startVideoProgress();
         }
@@ -555,12 +561,26 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     splashAudio.preload = 'auto';
     if (!musicEnabled) { splashAudio.volume = 0; }
     splashAudioRef = splashAudio;
-    splashAudio.playbackRate = 1; // müzik normal hızda çalar (yalnızca video hızlanır)
+    splashAudio.preservesPitch = true; splashAudio.webkitPreservesPitch = true; splashAudio.mozPreservesPitch = true;
+    splashAudio.defaultPlaybackRate = SPLASH_AUDIO_RATE;
+    splashAudio.playbackRate = SPLASH_AUDIO_RATE; // müzik de videoyla aynı sürede (10 sn) biter
+
+    // Müzik bitince açılış da biter
+    splashAudio.addEventListener('ended', function () {
+        if (closed) return;
+        setProgress(100);
+        closeSplash();
+    });
 
     // Video çalışmıyorsa (fallback) süreyi müzik uzunluğundan al
     splashAudio.addEventListener('loadedmetadata', function () {
+        if (isFinite(splashAudio.duration) && splashAudio.duration > 0) {
+            SPLASH_AUDIO_RATE = splashAudio.duration / SPLASH_TARGET_SEC;
+            splashAudio.defaultPlaybackRate = SPLASH_AUDIO_RATE;
+            splashAudio.playbackRate = SPLASH_AUDIO_RATE;
+        }
         if (videoFailed && !closed && isFinite(splashAudio.duration)) {
-            startFallbackProgress((splashAudio.duration / SPLASH_VIDEO_RATE) * 1000);
+            startFallbackProgress(SPLASH_TARGET_SEC * 1000);
         }
     });
 
@@ -568,8 +588,9 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     function startAudio() {
         if (audioStarted || closed) return;
         audioStarted = true;
-        // Müzik hep baştan, normal hızda başlar (video hızlı oynadığı için senkron aranmaz)
+        // Müzik baştan başlar; video ile aynı hızda (10 sn'de biter)
         try { splashAudio.currentTime = 0; } catch (e) {}
+        splashAudio.playbackRate = SPLASH_AUDIO_RATE;
         const playPromise = splashAudio.play();
         // Tarayıcı müziği engellerse sessiz devam et — video yine akışı yönetir
         if (playPromise !== undefined) playPromise.catch(function () {});
@@ -2544,4 +2565,97 @@ window.MG_NOTIFICATIONS = [
     }
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
+
+
+/* Destek Ol: reklamı sekme ilk açıldığında yükle (gizli sayfada genişlik 0 hatası olmasın) */
+(function () {
+    var done = false;
+    function pushAd() {
+        if (done) return;
+        var ins = document.querySelector('#page-destek ins.adsbygoogle');
+        if (!ins) return;
+        done = true;
+        setTimeout(function () {
+            try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
+        }, 150);
+    }
+    document.addEventListener('click', function (e) {
+        if (e.target.closest && e.target.closest('[data-target="page-destek"]')) pushAd();
+    });
+    document.addEventListener('keydown', function (e) {
+        if ((e.key === 'Enter' || e.key === ' ') && e.target.closest && e.target.closest('[data-target="page-destek"]')) pushAd();
+    });
+})();
+
+
+/* Destek Ol: Google IMA SDK ile video reklam */
+(function () {
+    var TAG = 'https://pubads.g.doubleclick.net/gampad/ads?iu=/23397545762/destekol_video&description_url=https%3A%2F%2Fmugol-portal.github.io%2F&tfcd=0&npa=0&sz=640x480&gdfp_req=1&unviewed_position_start=1&output=vast&env=vp&impl=s&correlator=';
+    var btn, msg, wrap, content, adBox, loader, adsLoader, adsManager, adDisplay, sdkLoading = false;
+
+    function say(t) { if (msg) msg.textContent = t || ''; }
+    function reset() {
+        if (adsManager) { try { adsManager.destroy(); } catch (e) {} adsManager = null; }
+        if (btn) { btn.style.display = ''; btn.disabled = false; }
+    }
+    function fail(t) { reset(); say(t || 'Şu an gösterilecek reklam yok, biraz sonra tekrar dene.'); }
+
+    function loadSdk(cb) {
+        if (window.google && google.ima) return cb();
+        if (sdkLoading) return;
+        sdkLoading = true;
+        var sc = document.createElement('script');
+        sc.src = 'https://imasdk.googleapis.com/js/sdkloader/ima3.js';
+        sc.onload = function () { sdkLoading = false; cb(); };
+        sc.onerror = function () { sdkLoading = false; fail('Reklam yüklenemedi. Reklam engelleyiciyi kapatıp tekrar dene.'); };
+        document.head.appendChild(sc);
+    }
+
+    function start() {
+        say('Reklam yükleniyor…');
+        btn.disabled = true;
+        loadSdk(function () {
+            try {
+                content.load();
+                adDisplay = new google.ima.AdDisplayContainer(adBox, content);
+                adDisplay.initialize();
+                adsLoader = new google.ima.AdsLoader(adDisplay);
+                adsLoader.addEventListener(google.ima.AdsManagerLoadedEvent.Type.ADS_MANAGER_LOADED, onLoaded, false);
+                adsLoader.addEventListener(google.ima.AdErrorEvent.Type.AD_ERROR, function () { fail(); }, false);
+                var req = new google.ima.AdsRequest();
+                req.adTagUrl = TAG + Date.now();
+                req.linearAdSlotWidth = wrap.clientWidth;
+                req.linearAdSlotHeight = wrap.clientHeight;
+                adsLoader.requestAds(req);
+            } catch (e) { fail(); }
+        });
+    }
+
+    function onLoaded(ev) {
+        try {
+            adsManager = ev.getAdsManager(content);
+            adsManager.addEventListener(google.ima.AdErrorEvent.Type.AD_ERROR, function () { fail(); });
+            adsManager.addEventListener(google.ima.AdEvent.Type.STARTED, function () { btn.style.display = 'none'; say(''); });
+            adsManager.addEventListener(google.ima.AdEvent.Type.ALL_ADS_COMPLETED, function () { reset(); say('Teşekkürler, destek olduğun için sağ ol! 💙'); });
+            adsManager.addEventListener(google.ima.AdEvent.Type.SKIPPED, function () { reset(); say('Reklam atlandı. İstersen tekrar izleyebilirsin.'); });
+            adsManager.init(wrap.clientWidth, wrap.clientHeight, google.ima.ViewMode.NORMAL);
+            adsManager.start();
+        } catch (e) { fail(); }
+    }
+
+    function init() {
+        btn = document.getElementById('mgDvBtn');
+        if (!btn || btn.dataset.ready) return;
+        btn.dataset.ready = '1';
+        msg = document.getElementById('mgDvMsg');
+        wrap = document.getElementById('mgDvWrap');
+        content = document.getElementById('mgDvContent');
+        adBox = document.getElementById('mgDvAd');
+        btn.addEventListener('click', start);
+        window.addEventListener('resize', function () {
+            if (adsManager && wrap) { try { adsManager.resize(wrap.clientWidth, wrap.clientHeight, google.ima.ViewMode.NORMAL); } catch (e) {} }
+        });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

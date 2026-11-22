@@ -319,6 +319,9 @@
                 <li class="nav-item nav-item--indir" role="menuitem" tabindex="0" data-target="page-indir" data-title="İndir">
                     <i class="fas fa-download" aria-hidden="true"></i> <span class="nav-text">İndir</span>
                 </li>
+                <li class="nav-item nav-item--destek" role="menuitem" tabindex="0" data-target="page-destek" data-title="Destek Ol">
+                    <i class="fas fa-heart" aria-hidden="true"></i> <span class="nav-text">Destek Ol</span>
+                </li>
 
                 <li class="nav-divider" role="separator" aria-hidden="true"></li>
                 <li class="nav-item nav-item--profil" role="menuitem" tabindex="0" data-target="page-profil" data-title="Profilim">
@@ -2008,6 +2011,44 @@
 
             </div>
             <!-- / SAYFA: İNDİR -->
+
+            <!-- SAYFA: DESTEK OL -->
+            <div id="page-destek" class="page-section" role="region" aria-label="Destek Ol">
+                <div class="content-card premium-card mg-destek-hero">
+                    <div class="mg-destek-icon"><i class="fas fa-heart" aria-hidden="true"></i></div>
+                    <h2>Destek Ol</h2>
+                    <p>MuGöl PORTAL ücretsiz ve herkese açık. Aşağıdaki reklamı izleyerek siteyi yaşatmamıza katkıda bulunabilirsin. Teşekkürler! 💙</p>
+                </div>
+                <div class="content-card mg-destek-adcard mg-destek-videocard">
+                    <span class="mg-destek-adlabel">Video Reklam</span>
+                    <div id="mgDvWrap" class="mg-dv-wrap">
+                        <video id="mgDvContent" playsinline muted preload="none"></video>
+                        <div id="mgDvAd" class="mg-dv-ad"></div>
+                        <button type="button" id="mgDvBtn" class="mg-dv-btn"><i class="fas fa-play" aria-hidden="true"></i> Reklamı İzle &amp; Destek Ol</button>
+                    </div>
+                    <p id="mgDvMsg" class="mg-dv-msg" role="status" aria-live="polite"></p>
+                </div>
+                <div class="content-card mg-destek-adcard">
+                    <span class="mg-destek-adlabel">Reklam</span>
+                    <div class="mg-destek-adbox">
+                        <!-- AdSense: kendi video destekli reklam birimi kimliğini data-ad-slot alanına yaz -->
+                        <ins class="adsbygoogle" style="display:block"
+                             data-ad-client="ca-pub-1880946354382681"
+                             data-ad-slot="2331344971"
+                             data-ad-format="auto"
+                             data-full-width-responsive="true"></ins>
+                    </div>
+                </div>
+                <div class="content-card mg-destek-note">
+                    <h3><i class="fas fa-circle-info" aria-hidden="true"></i> Nasıl destek olabilirsin?</h3>
+                    <ul>
+                        <li>Bu sayfada reklamın yüklenmesine izin ver.</li>
+                        <li>Siteyi arkadaşlarınla paylaş.</li>
+                        <li>Uygulamayı Play Store'da puanla.</li>
+                    </ul>
+                </div>
+            </div>
+            <!-- / SAYFA: DESTEK OL -->
 
         </main>
     </div>
@@ -4109,6 +4150,10 @@
                 <button class="mg-bn-panel-item mg-bn-pi--profil" data-target="page-profil" data-title="Profilim">
                     <span class="mg-bn-pi-icon"><i class="fas fa-circle-user"></i></span>
                     <span>Profil</span>
+                </button>
+                <button class="mg-bn-panel-item" data-target="page-destek" data-title="Destek Ol">
+                    <span class="mg-bn-pi-icon"><i class="fas fa-heart"></i></span>
+                    <span>Destek Ol</span>
                 </button>
             </div>
         </div>

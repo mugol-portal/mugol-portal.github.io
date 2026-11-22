@@ -12154,3 +12154,26 @@ html body .mgb-pw[hidden] { display: none !important; }
 html body .mgb-btn-sm { width: auto; margin-top: 0; padding: 0 22px; flex: none !important; }
 html body .mgb-pw .mgb-row { align-items: stretch; }
 html body .mgb-err { min-height: 1.1em; margin-top: 6px; font-size: .78rem; font-weight: 700; color: #ef4444; }
+
+
+/* ===== DESTEK OL ===== */
+html body #mgBnPanel .mg-bn-panel-grid .mg-bn-panel-item:nth-child(9) { --pc1: #ec4899; --pc2: #f43f5e; }
+html body #mgBnPanel.bn-visible .mg-bn-panel-grid .mg-bn-panel-item:nth-child(9) { animation-delay: 375ms; }
+.mg-destek-hero { text-align: center; }
+.mg-destek-icon { width: 64px; height: 64px; margin: 0 auto 12px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #fff; background: linear-gradient(135deg,#ec4899,#f43f5e); box-shadow: 0 10px 24px -8px rgba(244,63,94,.6); }
+.mg-destek-hero h2 { margin: 0 0 8px; color: var(--text-main); }
+.mg-destek-hero p { margin: 0; color: var(--text-muted); line-height: 1.6; }
+.mg-destek-adcard { position: relative; padding: 28px 16px 16px; }
+.mg-destek-adlabel { position: absolute; top: 8px; left: 14px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); }
+.mg-destek-adbox { min-height: 280px; width: 100%; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--border-color); border-radius: 14px; overflow: hidden; }
+.mg-destek-adbox .adsbygoogle { width: 100%; }
+.mg-destek-note h3 { margin: 0 0 10px; color: var(--text-main); font-size: 16px; }
+.mg-destek-note ul { margin: 0; padding-left: 20px; color: var(--text-muted); line-height: 1.8; }
+@media (max-width: 600px) { .mg-destek-adbox { min-height: 250px; } }
+
+/* Destek Ol - video oynatıcı */
+.mg-dv-wrap { position: relative; width: 100%; max-width: 640px; margin: 0 auto; aspect-ratio: 16/9; background: #0f172a; border-radius: 14px; overflow: hidden; }
+.mg-dv-wrap video, .mg-dv-ad { position: absolute; inset: 0; width: 100%; height: 100%; }
+.mg-dv-btn { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); z-index: 3; border: 0; cursor: pointer; padding: 14px 22px; border-radius: 999px; font: 800 15px 'Nunito', sans-serif; color: #fff; background: linear-gradient(135deg,#ec4899,#f43f5e); box-shadow: 0 10px 24px -8px rgba(244,63,94,.7); }
+.mg-dv-btn:disabled { opacity: .6; cursor: default; }
+.mg-dv-msg { text-align: center; margin: 10px 0 0; color: var(--text-muted); font-size: 14px; min-height: 20px; }
