@@ -10450,3 +10450,101 @@ html.mg-lite #mgScrollProgress{display:none!important}
 
 /* Scroll ilerleme çubuğu: width yerine transform (layout tetiklemez) */
 #mgScrollProgress{width:100%!important;transform:scaleX(0);transform-origin:left center;transition:none!important;will-change:transform}
+
+/* =========================================================
+   🛠 SCROLL FIX — TEK KAYDIRICI (en sonda kalmalı)
+   Sorun: html { overflow-x:hidden } html'i de kaydırıcı yapıyordu,
+   .layout margin-top + yükseklik uyuşmazlığı yüzünden birkaç px taşma
+   oluşup 2. bir kaydırma çubuğu çıkıyor ve dokunmayı karıştırıyordu.
+   Çözüm: sayfa (html/body) hiç kaymaz, .layout ekrana sabitlenir,
+   yalnızca .main-content kayar.
+   ========================================================= */
+html, body {
+    height: 100% !important;
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+}
+.layout {
+    position: fixed !important;
+    top: var(--header-height) !important;
+    left: 0 !important; right: 0 !important; bottom: 0 !important;
+    margin-top: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+}
+@media (max-width: 900px) {
+  .layout { top: calc(64px + var(--safe-top, 0px)) !important; }
+}
+.main-content {
+    height: 100% !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    touch-action: pan-y !important;
+    overscroll-behavior-y: contain !important;
+    scroll-behavior: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+}
+/* Mobilde çift çubuk görüntüsü olmasın */
+@media (max-width: 992px) {
+  .main-content { scrollbar-width: none !important; }
+  .main-content::-webkit-scrollbar { display: none !important; width: 0 !important; }
+}
+/* Günün sözü kaydırıcısı: yatay VE dikey kaydırmaya izin ver
+   (pan-y yatay kaydırmayı engelliyordu) */
+html body .mg-quote-grid { touch-action: pan-x pan-y !important; overflow-y: hidden !important; }
+
+/* =========================================================
+   🛠 SCROLL FIX 2 — sayfa bölümleri kaydırıcı olmasın
+   Sorun: "#page-anasayfa.active { overflow-x: hidden }" (ID'li kural)
+   overflow-y'yi otomatik "auto" yapıyor; ana sayfa bölümü kendi içinde
+   ikinci bir kaydırıcıya dönüşüyor ve dokunmayı o yakalıyor.
+   Çözüm: bütün sayfa bölümlerini ID özgüllüğüyle kaydırıcı olmaktan çıkar.
+   (overflow-x: clip, kaydırıcı oluşturmadan taşmayı keser)
+   ========================================================= */
+html body #page-anasayfa, html body #page-anasayfa.active,
+html body #page-araclar, html body #page-araclar.active,
+html body #page-ayarlar, html body #page-ayarlar.active,
+html body #page-destek, html body #page-destek.active,
+html body #page-egitim, html body #page-egitim.active,
+html body #page-eglence, html body #page-eglence.active,
+html body #page-gizlilik, html body #page-gizlilik.active,
+html body #page-gunluk, html body #page-gunluk.active,
+html body #page-hakkinda, html body #page-hakkinda.active,
+html body #page-iletisim, html body #page-iletisim.active,
+html body #page-indir, html body #page-indir.active,
+html body #page-profil, html body #page-profil.active,
+html body #page-tumuu, html body #page-tumuu.active {
+    overflow: visible !important;
+    overflow-x: clip !important;
+    overflow-y: visible !important;
+    height: auto !important;
+    max-height: none !important;
+}
+/* Ana sayfadaki iç kapsayıcılar da kaydırıcı olmasın */
+html body .mg-quote-carousel,
+html body #page-anasayfa .category-grid,
+html body #page-anasayfa .mg-clock-widget {
+    overflow-y: visible !important;
+}
+
+/* =========================================================
+   🛠 SCROLL FIX 3 — diğer sekmelerdeki iç içe kaydırıcılar
+   "overflow-x: hidden" tek başına overflow-y'yi "auto" yapar ve öğe
+   kendi içinde kaydırıcı olur. clip bunu yapmaz.
+   ========================================================= */
+html body .content-card,
+html body .app-grid,
+html body .tumuu-grid,
+html body .category-grid,
+html body .about-stats,
+html body .contact-split-layout,
+html body .profil-hero-inner,
+html body .profil-hero-info,
+html body .profil-info-list,
+html body .profil-info-detail,
+html body .main-content > *,
+html body .page-section > * {
+    overflow-x: clip !important;
+    overflow-y: visible !important;
+}

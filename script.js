@@ -2613,3 +2613,42 @@ window.MG_NOTIFICATIONS = [
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();
+
+
+/* =========================================================
+   SCROLL FIX — ana içerikteki gizli (istenmeyen) iç kaydırıcıları kapat
+   Yüksekliği sınırlanmamış (max-height yok) ve dikeyde "auto/scroll" olan
+   öğeler kaydırıcı olmasın; böylece tek kaydırıcı .main-content kalır.
+   ========================================================= */
+(function () {
+    'use strict';
+    var KEEP = '.mgb-body, .mg-shortcut-panel, #mgDrop, textarea, select, pre, code, table, [data-allow-scroll]';
+    function fix() {
+        var mc = document.querySelector('.main-content');
+        if (!mc) return;
+        var nodes = mc.querySelectorAll('*');
+        for (var i = 0; i < nodes.length; i++) {
+            var el = nodes[i];
+            if (el.matches(KEEP) || el.closest(KEEP)) continue;
+            var cs = getComputedStyle(el);
+            var oy = cs.overflowY, ox = cs.overflowX;
+            if (oy !== 'auto' && oy !== 'scroll') continue;
+            if (cs.maxHeight !== 'none') continue;           // bilinçli sınırlı liste
+            if (ox === 'auto' || ox === 'scroll') {           // yatay şerit: dikey kapalı
+                el.style.setProperty('overflow-y', 'hidden', 'important');
+            } else {
+                el.style.setProperty('overflow-y', 'visible', 'important');
+                if (ox === 'hidden') el.style.setProperty('overflow-x', 'clip', 'important');
+            }
+        }
+    }
+    var t;
+    function later() { clearTimeout(t); t = setTimeout(fix, 250); }
+    window.addEventListener('load', later);
+    document.addEventListener('click', later, true);
+    var mc = document.querySelector('.main-content');
+    if (mc && window.MutationObserver) {
+        new MutationObserver(later).observe(mc, { subtree: true, attributes: true, attributeFilter: ['class'] });
+    }
+    later();
+})();
