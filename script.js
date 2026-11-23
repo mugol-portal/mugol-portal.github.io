@@ -1,3 +1,4 @@
+window.mgEsc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
 
 // =========================================================
 // DEĞİŞKENLER VE DOM ELEMENTLERİ
@@ -506,14 +507,15 @@ function renderNotifications() {
     if (dot) dot.style.display = unread.length > 0 ? 'block' : 'none';
     list.innerHTML = NOTIFICATIONS.map(n => {
         const isRead = readNotifs.includes(n.id);
-        return `<div onclick="markNotifRead('${n.id}')" style="padding:16px; border-bottom:1px solid var(--border-color); cursor:pointer; background:${isRead ? 'transparent' : 'rgba(67,24,255,0.03)'}; display:flex; gap:14px;">
-            <div style="font-size:1.5rem;">${n.icon}</div>
+        return `<div data-nid="${mgEsc(n.id)}" style="padding:16px; border-bottom:1px solid var(--border-color); cursor:pointer; background:${isRead ? 'transparent' : 'rgba(67,24,255,0.03)'}; display:flex; gap:14px;">
+            <div style="font-size:1.5rem;">${mgEsc(n.icon)}</div>
             <div style="flex:1;">
-                <div style="font-weight:900; color:var(--text-main);">${n.title}</div>
-                <div style="font-size:0.9rem; color:var(--text-muted);">${n.body}</div>
+                <div style="font-weight:900; color:var(--text-main);">${mgEsc(n.title)}</div>
+                <div style="font-size:0.9rem; color:var(--text-muted);">${mgEsc(n.body)}</div>
             </div>
         </div>`;
     }).join('');
+    list.querySelectorAll('[data-nid]').forEach(el => el.addEventListener('click', () => window.markNotifRead(el.dataset.nid)));
 }
 
 window.markNotifRead = function(id) {
@@ -591,13 +593,21 @@ function renderSearchResults(q) {
         return;
     }
     resultsEl.innerHTML = list.map(item => `
-        <div onclick="closeSearch();typeof openAppWithAd==='function'?openAppWithAd('${item.url}','${item.name.replace(/'/g,"\\'")}','${item.img}'):window.open('${item.url}','_blank','noopener,noreferrer')"
-             style="display:flex;align-items:center;gap:14px;padding:12px 10px;border-radius:14px;cursor:pointer;transition:background .15s;"
-             onmouseover="this.style.background='var(--bg-body)'" onmouseout="this.style.background='transparent'">
-            ${item.img ? `<img src="${item.img}" alt="" style="width:36px;height:36px;border-radius:10px;object-fit:cover;border:1px solid var(--border-color);">` : `<div style="width:36px;height:36px;border-radius:10px;background:var(--bg-body);display:flex;align-items:center;justify-content:center;"><i class="fas fa-th-large" style="color:var(--primary-color);font-size:1rem;"></i></div>`}
-            <span style="font-weight:800;color:var(--text-main);font-size:.95rem;">${item.name}</span>
+        <div class="mg-search-item" data-url="${mgEsc(item.url)}" data-name="${mgEsc(item.name)}" data-img="${mgEsc(item.img)}"
+             style="display:flex;align-items:center;gap:14px;padding:12px 10px;border-radius:14px;cursor:pointer;transition:background .15s;">
+            ${item.img ? `<img src="${mgEsc(item.img)}" alt="" style="width:36px;height:36px;border-radius:10px;object-fit:cover;border:1px solid var(--border-color);">` : `<div style="width:36px;height:36px;border-radius:10px;background:var(--bg-body);display:flex;align-items:center;justify-content:center;"><i class="fas fa-th-large" style="color:var(--primary-color);font-size:1rem;"></i></div>`}
+            <span style="font-weight:800;color:var(--text-main);font-size:.95rem;">${mgEsc(item.name)}</span>
             <i class="fas fa-arrow-right" style="margin-left:auto;color:var(--text-muted);font-size:.8rem;"></i>
         </div>`).join('');
+    resultsEl.querySelectorAll('.mg-search-item').forEach(function (el) {
+        el.addEventListener('click', function () {
+            var u = el.dataset.url || '', n = el.dataset.name || '', i = el.dataset.img || '';
+            if (/^\s*(javascript|data|vbscript):/i.test(u)) return;
+            closeSearch();
+            if (typeof openAppWithAd === 'function') openAppWithAd(u, n, i);
+            else window.open(u, '_blank', 'noopener,noreferrer');
+        });
+    });
 }
 
 if (searchInput) {
@@ -606,7 +616,7 @@ if (searchInput) {
     });
     searchInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
-            var first = document.querySelector('#searchResults [onclick]');
+            var first = document.querySelector('#searchResults .mg-search-item');
             if (first) first.click();
         }
     });
@@ -991,7 +1001,7 @@ window.closeAdblockWarning = function() {
 
         /* Logo resimse göster */
         if (logoSrc && logoEl) {
-            logoEl.innerHTML = '<img src="' + logoSrc + '" style="width:32px;height:32px;border-radius:8px;object-fit:cover;" onerror="this.parentNode.textContent=\'🚀\'">';
+            logoEl.innerHTML = '<img src="' + mgEsc(logoSrc) + '" style="width:32px;height:32px;border-radius:8px;object-fit:cover;" onerror="this.parentNode.textContent=\'🚀\'">';
         }
 
         /* Geç butonunu sıfırla */
@@ -1545,22 +1555,23 @@ window.MG_NOTIFICATIONS = [
             var isRead = readArr.includes(n.id);
             var c = typeColor(n.type);
             return (
-                '<div onclick="window.MG_markRead(\'' + n.id + '\')" ' +
+                '<div data-nid="' + mgEsc(n.id) + '" ' +
                 'style="padding:14px 16px;border-bottom:1px solid var(--border-color);cursor:pointer;' +
                 'background:' + (isRead ? 'transparent' : c.bg) + ';' +
                 'display:flex;gap:13px;align-items:flex-start;' +
                 'border-left:3px solid ' + (isRead ? 'transparent' : c.border) + ';' +
                 'transition:background .15s;">' +
-                    '<div style="font-size:1.4rem;line-height:1.2;flex-shrink:0;">' + n.icon + '</div>' +
+                    '<div style="font-size:1.4rem;line-height:1.2;flex-shrink:0;">' + mgEsc(n.icon) + '</div>' +
                     '<div style="flex:1;min-width:0;">' +
-                        '<div style="font-weight:900;color:var(--text-main);font-size:.9rem;margin-bottom:3px;">' + n.title + '</div>' +
-                        '<div style="font-size:.83rem;color:var(--text-muted);line-height:1.5;font-weight:600;">' + n.body + '</div>' +
-                        '<div style="font-size:.75rem;color:var(--text-muted);margin-top:5px;opacity:.7;font-weight:700;">' + n.time + '</div>' +
+                        '<div style="font-weight:900;color:var(--text-main);font-size:.9rem;margin-bottom:3px;">' + mgEsc(n.title) + '</div>' +
+                        '<div style="font-size:.83rem;color:var(--text-muted);line-height:1.5;font-weight:600;">' + mgEsc(n.body) + '</div>' +
+                        '<div style="font-size:.75rem;color:var(--text-muted);margin-top:5px;opacity:.7;font-weight:700;">' + mgEsc(n.time) + '</div>' +
                     '</div>' +
                     (!isRead ? '<div style="width:8px;height:8px;border-radius:50%;background:' + c.icon + ';flex-shrink:0;margin-top:5px;"></div>' : '') +
                 '</div>'
             );
         }).join('');
+        list.querySelectorAll('[data-nid]').forEach(function(el) { el.addEventListener('click', function() { window.MG_markRead(el.getAttribute('data-nid')); }); });
     }
     window.MG_renderNotifications = renderNotifications;
 
@@ -1632,14 +1643,14 @@ window.MG_NOTIFICATIONS = [
                     '<div style="width:48px;height:48px;border-radius:15px;',
                     'background:' + c.bg + ';border:1.5px solid ' + c.border + '33;',
                     'display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;">',
-                    notif.icon,
+                    mgEsc(notif.icon),
                     '</div>',
                     '<div>',
                         '<div style="font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.6px;',
                         'color:' + c.icon + ';margin-bottom:3px;">',
                         (notif.type === 'success' ? '✓ Başarı' : notif.type === 'warning' ? '⚠ Uyarı' : notif.type === 'error' ? '✕ Hata' : 'ℹ Bildirim'),
                         '</div>',
-                        '<div style="font-size:.75rem;color:var(--text-muted,#94a3b8);font-weight:700;">' + notif.time + '</div>',
+                        '<div style="font-size:.75rem;color:var(--text-muted,#94a3b8);font-weight:700;">' + mgEsc(notif.time) + '</div>',
                     '</div>',
                 '</div>',
                 '<button id="mg-popup-close" aria-label="Kapat" style="',
@@ -1651,15 +1662,15 @@ window.MG_NOTIFICATIONS = [
             '</div>',
             /* Başlık + metin */
             '<h2 style="font-size:1.1rem;font-weight:900;color:var(--text-main,#0f172a);margin:0 0 8px;line-height:1.35;">',
-            notif.title,
+            mgEsc(notif.title),
             '</h2>',
             '<p style="font-size:.9rem;color:var(--text-muted,#64748b);font-weight:600;line-height:1.6;margin:0 0 20px;">',
-            notif.body,
+            mgEsc(notif.body),
             '</p>',
             /* Butonlar */
             '<div style="display:flex;gap:10px;">',
                 (notif.link
-                    ? '<a href="' + notif.link + '" target="_blank" rel="noopener" id="mg-popup-cta" style="' +
+                    ? '<a href="' + mgEsc(notif.link) + '" target="_blank" rel="noopener" id="mg-popup-cta" style="' +
                       'flex:1;padding:12px 0;border-radius:14px;border:none;text-align:center;' +
                       'background:linear-gradient(135deg,' + c.border + ',#00d2ff);' +
                       'color:#fff;font-size:.9rem;font-weight:800;cursor:pointer;text-decoration:none;' +
@@ -2165,7 +2176,7 @@ window.MG_NOTIFICATIONS = [
     }
     function startAuto() {
         stopAuto();
-        autoTimer = setInterval(function () { if (!interacting) goTo((activeIdx + 1) % cards.length); }, 6000);
+        autoTimer = setInterval(function () { if (!interacting && !document.hidden) goTo((activeIdx + 1) % cards.length); }, 6000);
     }
     function stopAuto() { if (autoTimer) clearInterval(autoTimer); autoTimer = null; }
     track.addEventListener('scroll', function () {
@@ -2203,7 +2214,8 @@ window.MG_NOTIFICATIONS = [
 
 /* =========================================================
    ÖNEMLİ GÜNLERDE AÇILIŞ KUTLAMA / TEBRİK EKRANI
-   - Splash bittikten sonra, o güne ait tebrik tam ekran açılır (günde bir kez, her gün için ayrı).
+   - Splash bittikten sonra, o güne ait tebrik RESMİ (mesaj/<kimlik>.png) tam ekran açılır (günde bir kez, her gün için ayrı).
+   - Resim klasörde yoksa o gün için hiçbir şey gösterilmez.
    - Önizleme: adresin sonuna ?kutlama=ogretmenler gibi bir kimlik ekleyin (kimlikler OCC listesinde).
    - Dini günler (Diyanet) her yıl aşağıdaki DINI listesine eklenir. Listede olmayan yıllarda
      bayramlar Hicri takvimden tahmini hesaplanır (Diyanet ile ±1 gün fark olabilir).
@@ -2211,28 +2223,30 @@ window.MG_NOTIFICATIONS = [
 (function () {
     'use strict';
 
-    // mode: 'party' = konfeti + renkli, 'solemn' = sade, anma günü (konfeti yok)
+    // Her kutlama kimliği için resim: mesaj/<kimlik>.png (veya .jpg / .jpeg / .webp)
+    // solemn: true → anma günü, konfeti yok
+    var IMG_DIR = 'mesaj/', EXT = ['.png', '.jpg', '.jpeg', '.webp'];
     var OCC = {
-        yilbasi:    { e: '🎆', t: 'Mutlu Yıllar!', m: 'Yeni yılın sağlık, huzur ve başarı getirmesini dileriz.', g: ['#0ea5e9', '#6366f1'] },
-        kadinlar:   { e: '💜', t: '8 Mart Dünya Kadınlar Günü Kutlu Olsun', m: 'Hayatı güzelleştiren tüm kadınların emeğine ve gücüne saygıyla.', g: ['#db2777', '#9333ea'] },
-        canakkale:  { e: '🕊️', t: '18 Mart Çanakkale Zaferi ve Şehitleri Anma Günü', m: 'Vatan için canlarını feda eden aziz şehitlerimizi rahmet ve minnetle anıyoruz.', g: ['#1f2937', '#7f1d1d'], mode: 'solemn' },
-        '23nisan':  { e: '🎈', t: '23 Nisan Ulusal Egemenlik ve Çocuk Bayramı Kutlu Olsun', m: 'Geleceğimizin teminatı çocuklarımızın bayramı kutlu olsun!', g: ['#e11d48', '#f97316'] },
-        '1mayis':   { e: '🤝', t: '1 Mayıs Emek ve Dayanışma Günü Kutlu Olsun', m: 'Alın teriyle üretenlerin emeğine saygıyla.', g: ['#dc2626', '#b91c1c'] },
-        '19mayis':  { e: '🇹🇷', t: '19 Mayıs Atatürk\'ü Anma, Gençlik ve Spor Bayramı Kutlu Olsun', m: 'Bu ülkenin geleceği olan tüm gençlerin bayramı kutlu olsun!', g: ['#dc2626', '#9f1239'] },
-        anneler:    { e: '🌷', t: 'Anneler Günü Kutlu Olsun', m: 'Karşılıksız sevginin en güzel hâli olan tüm annelerin günü kutlu olsun.', g: ['#ec4899', '#f472b6'] },
-        babalar:    { e: '👔', t: 'Babalar Günü Kutlu Olsun', m: 'Emeğiyle yolumuzu aydınlatan tüm babaların günü kutlu olsun.', g: ['#2563eb', '#0ea5e9'] },
-        '15temmuz': { e: '🇹🇷', t: '15 Temmuz Demokrasi ve Milli Birlik Günü', m: 'Demokrasimize sahip çıkan şehitlerimizi ve gazilerimizi rahmet ve minnetle anıyoruz.', g: ['#7f1d1d', '#111827'], mode: 'solemn' },
-        '30agustos':{ e: '🇹🇷', t: '30 Ağustos Zafer Bayramı Kutlu Olsun', m: 'Zaferin bin bir emekle kazanıldığını unutmadan, bayramımız kutlu olsun!', g: ['#dc2626', '#7f1d1d'] },
-        '29ekim':   { e: '🇹🇷', t: '29 Ekim Cumhuriyet Bayramı Kutlu Olsun', m: 'Cumhuriyetimizin kuruluşunun yıl dönümü kutlu olsun!', g: ['#e30a17', '#9f0712'] },
-        '10kasim':  { e: '🖤', t: 'Saygı ve Özlemle', m: 'Cumhuriyetimizin kurucusu Gazi Mustafa Kemal Atatürk\'ü ölümünün yıl dönümünde saygı, minnet ve özlemle anıyoruz.', g: ['#0f172a', '#334155'], mode: 'solemn' },
-        ogretmenler:{ e: '📚', t: 'Öğretmenler Günü Kutlu Olsun', m: 'Geleceği emekle şekillendiren tüm öğretmenlerimizin günü kutlu olsun.', g: ['#2563eb', '#7c3aed'] },
-        ramazan:    { e: '🌙', t: 'Hayırlı Ramazanlar', m: 'Rahmet, bereket ve mağfiret ayı Ramazan-ı şerif hepimize hayırlı olsun.', g: ['#4338ca', '#0e7490'] },
-        'arefe-r':  { e: '🌙', t: 'Arefe Gününüz Hayırlı Olsun', m: 'Yarın bayram! Sevdiklerinizle huzurlu bir bayram geçirmenizi dileriz.', g: ['#0f766e', '#065f46'] },
-        'bayram-r': { e: '🌙', t: 'Ramazan Bayramınız Mübarek Olsun', m: 'Sevdiklerinizle sağlık, huzur ve bereket dolu bir bayram geçirmenizi dileriz.', g: ['#4318ff', '#7c3aed'] },
-        'arefe-k':  { e: '🕌', t: 'Arefe Gününüz Hayırlı Olsun', m: 'Yarın bayram! Huzur ve bereket dolu bir bayram dileriz.', g: ['#059669', '#0e7490'] },
-        'bayram-k': { e: '🕌', t: 'Kurban Bayramınız Mübarek Olsun', m: 'Paylaşmanın ve dayanışmanın en güzel hâlini yaşayacağınız, huzur dolu bir bayram dileriz.', g: ['#059669', '#0e7490'] },
-        mirac:      { e: '✨', t: 'Miraç Kandiliniz Mübarek Olsun', m: 'Bu mübarek gecenin rahmet ve bereketi üzerinize olsun.', g: ['#1e1b4b', '#4c1d95'] },
-        berat:      { e: '✨', t: 'Berat Kandiliniz Mübarek Olsun', m: 'Dualarınızın kabul olduğu, gönüllerin aydınlandığı bir gece geçirmenizi dileriz.', g: ['#1e1b4b', '#4c1d95'] }
+        'yilbasi': {},
+        'kadinlar': {},
+        'canakkale': { solemn: true },
+        '23nisan': {},
+        '1mayis': {},
+        '19mayis': {},
+        'anneler': {},
+        'babalar': {},
+        '15temmuz': { solemn: true },
+        '30agustos': {},
+        '29ekim': {},
+        '10kasim': { solemn: true },
+        'ogretmenler': {},
+        'ramazan': {},
+        'arefe-r': {},
+        'bayram-r': {},
+        'arefe-k': {},
+        'bayram-k': {},
+        'mirac': {},
+        'berat': {}
     };
 
     var FIXED = { '1-1': 'yilbasi', '3-8': 'kadinlar', '3-18': 'canakkale', '4-23': '23nisan', '5-1': '1mayis', '5-19': '19mayis',
@@ -2306,49 +2320,73 @@ window.MG_NOTIFICATIONS = [
         })();
     }
 
+    // Resmi sırayla .png/.jpg/.jpeg/.webp uzantılarıyla dener; bulamazsa cb(null)
+    function loadImg(id, cb) {
+        var i = 0;
+        (function tryNext() {
+            if (i >= EXT.length) { cb(null); return; }
+            var im = new Image(), src = IMG_DIR + id + EXT[i++];
+            im.onload = function () { cb(im); };
+            im.onerror = tryNext;
+            im.src = src;
+        })();
+    }
+
     function show(id, key, done) {
         var o = OCC[id]; if (!o) { done(); return; }
-        mark(key);
-        var solemn = o.mode === 'solemn';
-        var el = document.createElement('div');
-        el.className = 'mg-kut'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
-        el.setAttribute('aria-label', o.t);
-        el.style.setProperty('--k1', o.g[0]); el.style.setProperty('--k2', o.g[1]);
-        if (solemn) el.setAttribute('data-mode', 'solemn');
-        el.innerHTML =
-            (solemn ? '' : '<canvas class="mg-kut-fx" aria-hidden="true"></canvas>') +
-            '<div class="mg-kut-card">' +
-                '<div class="mg-kut-emoji" aria-hidden="true">' + o.e + '</div>' +
-                '<h2 class="mg-kut-title"></h2><p class="mg-kut-msg"></p>' +
-                '<div class="mg-kut-sign">MuGöl PORTAL ailesi</div>' +
-                '<div class="mg-kut-actions">' +
-                    '<button type="button" class="mg-kut-btn mg-kut-share"><i class="fas fa-share-nodes" aria-hidden="true"></i> Paylaş</button>' +
-                    '<button type="button" class="mg-kut-btn mg-kut-ok">' + (solemn ? 'Kapat' : 'Teşekkürler') + '</button>' +
-                '</div>' +
-            '</div>';
-        el.querySelector('.mg-kut-title').textContent = o.t;
-        el.querySelector('.mg-kut-msg').textContent = o.m;
-        document.body.appendChild(el);
-        requestAnimationFrame(function () { el.classList.add('mg-kut-in'); });
-        try { if (!solemn && navigator.vibrate) navigator.vibrate(25); } catch (e) {}
-        var cv = el.querySelector('.mg-kut-fx'); if (cv) confetti(cv);
-
-        function close() {
-            document.removeEventListener('keydown', onKey);
-            el.classList.remove('mg-kut-in');
-            setTimeout(function () { el.remove(); done(); }, 320);
-        }
-        function onKey(e) { if (e.key === 'Escape') close(); }
-        document.addEventListener('keydown', onKey);
-        el.querySelector('.mg-kut-ok').addEventListener('click', close);
-        el.querySelector('.mg-kut-share').addEventListener('click', function () {
-            var text = o.t + '\n' + o.m + '\n— MuGöl PORTAL';
-            if (navigator.share) { navigator.share({ title: o.t, text: text, url: location.origin + location.pathname }).catch(function () {}); }
-            else if (navigator.clipboard) {
-                navigator.clipboard.writeText(text).then(function () { if (window.mgToast) window.mgToast('Tebrik metni kopyalandı', 'success'); }).catch(function () {});
+        var label = NAMES[id] || id;
+        loadImg(id, function (im) {
+            if (!im) {                       // resim klasörde yoksa sessizce atla
+                if (window.mgToast && key === 'mg-kutlama:preview') window.mgToast(IMG_DIR + id + '.png bulunamadı', 'info');
+                done(); return;
             }
+            mark(key);
+            var solemn = !!o.solemn;
+            var el = document.createElement('div');
+            el.className = 'mg-kut'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
+            el.setAttribute('aria-label', label);
+            if (solemn) el.setAttribute('data-mode', 'solemn');
+            el.innerHTML =
+                (solemn ? '' : '<canvas class="mg-kut-fx" aria-hidden="true"></canvas>') +
+                '<div class="mg-kut-card">' +
+                    '<img class="mg-kut-img" alt="">' +
+                    '<div class="mg-kut-actions">' +
+                        '<button type="button" class="mg-kut-btn mg-kut-share"><i class="fas fa-share-nodes" aria-hidden="true"></i> Paylaş</button>' +
+                        '<button type="button" class="mg-kut-btn mg-kut-ok">' + (solemn ? 'Kapat' : 'Teşekkürler') + '</button>' +
+                    '</div>' +
+                '</div>';
+            var img = el.querySelector('.mg-kut-img'); img.src = im.src; img.alt = label;
+            document.body.appendChild(el);
+            requestAnimationFrame(function () { el.classList.add('mg-kut-in'); });
+            try { if (!solemn && navigator.vibrate) navigator.vibrate(25); } catch (e) {}
+            var cv = el.querySelector('.mg-kut-fx'); if (cv) confetti(cv);
+
+            function close() {
+                document.removeEventListener('keydown', onKey);
+                el.classList.remove('mg-kut-in');
+                setTimeout(function () { el.remove(); done(); }, 320);
+            }
+            function onKey(e) { if (e.key === 'Escape') close(); }
+            document.addEventListener('keydown', onKey);
+            el.querySelector('.mg-kut-ok').addEventListener('click', close);
+            el.addEventListener('click', function (e) { if (e.target === el) close(); });
+            el.querySelector('.mg-kut-share').addEventListener('click', function () {
+                function fallback() {
+                    var text = label + '\n— MuGöl PORTAL';
+                    if (navigator.share) { navigator.share({ title: label, text: text, url: location.origin + location.pathname }).catch(function () {}); }
+                    else if (navigator.clipboard) {
+                        navigator.clipboard.writeText(text).then(function () { if (window.mgToast) window.mgToast('Tebrik metni kopyalandı', 'success'); }).catch(function () {});
+                    }
+                }
+                // Önce resmin kendisini paylaşmayı dene
+                fetch(im.src).then(function (r) { return r.blob(); }).then(function (b) {
+                    var f = new File([b], id + (b.type === 'image/jpeg' ? '.jpg' : b.type === 'image/webp' ? '.webp' : '.png'), { type: b.type });
+                    if (navigator.canShare && navigator.canShare({ files: [f] })) return navigator.share({ files: [f], title: label });
+                    fallback();
+                }).catch(function (e) { if (!e || e.name !== 'AbortError') fallback(); });
+            });
+            var ok = el.querySelector('.mg-kut-ok'); if (ok.focus) ok.focus({ preventScroll: true });
         });
-        var ok = el.querySelector('.mg-kut-ok'); if (ok.focus) ok.focus({ preventScroll: true });
     }
 
     function run() {

@@ -3,8 +3,11 @@
 <head>
     <script>
         (function() {
-            var t = localStorage.getItem('mugol-theme');
-            if (t) document.documentElement.setAttribute('data-theme', t);
+            try {
+                var t = localStorage.getItem('mugol-theme');
+                if (t) document.documentElement.setAttribute('data-theme', t);
+                localStorage.removeItem('mugol-store-theme'); /* eski tema mağazası verisini temizle */
+            } catch (e) {}
         })();
     </script>
     <script>
@@ -17,7 +20,7 @@
         })();
     </script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- ===== GOOGLE ADMOB ===== -->
     <meta name="admob-app-id" content="ca-app-pub-1880946354382681~7565307045">
     <!-- Google AdSense -->
@@ -55,11 +58,8 @@
 
     <!-- ===== TEMEL SEO ===== -->
     <meta name="description" content="MuGöl PORTAL – Takvim, hava durumu, ekonomi, eğitim, sağlık, deprem takibi, not defteri ve daha fazlası. Tüm dijital uygulamalarınız tek platformda.">
-    <meta name="keywords" content="mugöl portal, mugol, dijital portal, uygulama portalı, takvim, hava durumu, ekonomi, döviz, eğitim, sağlık, deprem, not defteri, alışveriş listesi, namaz vakitleri, Muhammet Gölpınar">
     <meta name="author" content="Muhammet Gölpınar">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <meta name="language" content="Turkish">
-    <meta name="revisit-after" content="7 days">
     <link rel="canonical" href="https://mugol-portal.github.io/">
 
     <!-- ===== OPEN GRAPH ===== -->
@@ -75,7 +75,7 @@
     <meta property="og:locale" content="tr_TR">
 
     <!-- ===== TWITTER CARD ===== -->
-    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:card" content="summary">
     <meta name="twitter:url" content="https://mugol-portal.github.io/">
     <meta name="twitter:title" content="MuGöl PORTAL | Dijital Dünyan Tek Bir Portalda">
     <meta name="twitter:description" content="Takvim, hava durumu, ekonomi, eğitim, sağlık ve daha fazlası. Tüm dijital araçlarınıza tek yerden ulaşın.">
@@ -94,7 +94,6 @@
     <link rel="apple-touch-icon" sizes="167x167" href="icon-192.png">
 
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon.ico">
     <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
     <!-- Preconnect for Performance -->
@@ -104,11 +103,9 @@
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Font Awesome — çoklu CDN yedekli yükleme -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.0/css/all.css" crossorigin="anonymous">
     <script>
     (function(){
         /* Font Awesome yüklendi mi kontrol et — yüklenmediyse jsDelivr ile dene */
@@ -378,7 +375,7 @@
                         <span class="mg-quote-author" id="mgQuoteAuthor">Sabahattin Ali</span>
                         <span class="mg-quote-book" id="mgQuoteBook">Kürk Mantolu Madonna</span>
                     </span>
-                        <img class="mg-quote-logo" src="images/edebiyat.png" alt="" aria-hidden="true" onerror="this.src='https://ui-avatars.com/api/?name=Edebiyat&background=8B5CF6&color=fff&rounded=true&bold=true'">
+                        <img loading="lazy" class="mg-quote-logo" src="images/edebiyat.png" alt="" aria-hidden="true" onerror="this.src='https://ui-avatars.com/api/?name=Edebiyat&background=8B5CF6&color=fff&rounded=true&bold=true'">
                     </span>
                 </a>
                 <a class="mg-quote-card mg-quote-hadith" id="mgHadithCard" href="https://mugol-portal.github.io/mugol.imsak-vakti/" aria-label="Günün hadisi — MuGöl İmsak Vakti">
@@ -390,7 +387,7 @@
                         <span class="mg-quote-author">Hadis-i Şerif</span>
                         <span class="mg-quote-book" id="mgHadithSource">Buhari</span>
                     </span>
-                        <img class="mg-quote-logo" src="images/imsak.png" alt="" aria-hidden="true" onerror="this.src='https://ui-avatars.com/api/?name=İmsak&background=36B37E&color=fff&rounded=true&bold=true'">
+                        <img loading="lazy" class="mg-quote-logo" src="images/imsak.png" alt="" aria-hidden="true" onerror="this.src='https://ui-avatars.com/api/?name=İmsak&background=36B37E&color=fff&rounded=true&bold=true'">
                     </span>
                 </a>
                 <div class="mg-quote-card mg-quote-soru" id="mgSoruCard" role="button" tabindex="0" aria-haspopup="dialog" aria-label="Günün sorusu — cevaplamak için aç">
@@ -403,7 +400,7 @@
                             <span class="mg-quote-author">MuGöl Bilgin</span>
                             <span class="mg-quote-book" id="mgSoruCat">Cevaplamak için dokun</span>
                         </span>
-                        <img class="mg-quote-logo" src="https://mugol-portal.github.io/mugol-bilgin/logo.png" alt="" aria-hidden="true" onerror="this.src='https://ui-avatars.com/api/?name=Bilgi&background=F59E0B&color=fff&rounded=true&bold=true'">
+                        <img loading="lazy" class="mg-quote-logo" src="https://mugol-portal.github.io/mugol-bilgin/logo.png" alt="" aria-hidden="true" onerror="this.src='https://ui-avatars.com/api/?name=Bilgi&background=F59E0B&color=fff&rounded=true&bold=true'">
                     </span>
                 </div>
                 </div>
@@ -483,9 +480,8 @@
                     }
 
                     update();
-                    // Saniyede bir yerine dakikada bir kontrol yeterli (saat gösterimi
-                    // zaten saat:dakika, saniye göstermiyor) — ana thread'i daha az meşgul eder.
-                    setInterval(update, 15000);
+                    // 15 sn'de bir kontrol yeterli; sekme gizliyken çalışmaz (pil/CPU tasarrufu)
+                    setInterval(function () { if (!document.hidden) update(); }, 15000);
                 })();
                 </script>
 
@@ -570,56 +566,56 @@
 
                     <a href="https://mugol-portal.github.io/mugol.havadurumu/" class="tumuu-tile" data-cat="gunluk" style="animation-delay:0s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/hava.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Hava&background=FFAB00&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/hava.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Hava&background=FFAB00&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl Hava Durumu</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/mugol.-ai/" class="tumuu-tile" data-cat="araclar" style="animation-delay:0.05s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/ai.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=AI&background=4318ff&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/ai.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=AI&background=4318ff&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl AI</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/MuGol.bugun/" class="tumuu-tile" data-cat="gunluk" style="animation-delay:0.05s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/takvim.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Takvim&background=4318ff&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/takvim.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Takvim&background=4318ff&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl Takvim</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/mugol.-os/" class="tumuu-tile" data-cat="araclar" style="animation-delay:0.05s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/os.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=OS&background=6554C0&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/os.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=OS&background=6554C0&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl OS</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/mugol.imsak-vakti/" class="tumuu-tile" data-cat="gunluk" style="animation-delay:0.1s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/imsak.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=İmsak&background=36B37E&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/imsak.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=İmsak&background=36B37E&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl İmsak Vakti</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/mugol.haber/" class="tumuu-tile" data-cat="gunluk" style="animation-delay:0.15s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/haber.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Haber&background=FF5630&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/haber.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Haber&background=FF5630&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl Haber</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/mugol.saglik/" class="tumuu-tile" data-cat="gunluk" style="animation-delay:0.2s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/saglik.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Sağlık&background=36B37E&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/saglik.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Sağlık&background=36B37E&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl Sağlık</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/deprem/" class="tumuu-tile" data-cat="gunluk" style="animation-delay:0.25s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/deprem-logo.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Sismik&background=E31A1A&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/deprem-logo.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Sismik&background=E31A1A&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">Sismik Radar</span>
                     </a>
@@ -636,140 +632,140 @@
 
                     <a href="https://mugol-portal.github.io/mugol.-edebiyat" class="tumuu-tile" data-cat="egitim" style="animation-delay:0.3s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/edebiyat.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Edebiyat&background=8B5CF6&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/edebiyat.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Edebiyat&background=8B5CF6&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl Edebiyat</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/duygularin.sokagi/" class="tumuu-tile" data-cat="egitim" style="animation-delay:0.35s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/sokak.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Duygu&background=FF8B00&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/sokak.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Duygu&background=FF8B00&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">Duyguların Sokağı</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/zumriban/" class="tumuu-tile" data-cat="egitim" style="animation-delay:0.4s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/zumriban.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Zümri&background=0052CC&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/zumriban.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Zümri&background=0052CC&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">Zümriban</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/education/" class="tumuu-tile" data-cat="egitim" style="animation-delay:0.45s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/education.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Eğitim&background=4318ff&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/education.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Eğitim&background=4318ff&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl EDUCATION</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/mugol-english/" class="tumuu-tile" data-cat="egitim" style="animation-delay:0.5s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/english.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=English&background=00d2ff&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/english.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=English&background=00d2ff&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl English</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/alisverislistesi/" class="tumuu-tile" data-cat="gunluk" style="animation-delay:0.55s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/shopping.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Liste&background=00B8D9&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/shopping.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Liste&background=00B8D9&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">Alışveriş Listem</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/karne-not-hesaplama/" class="tumuu-tile" data-cat="egitim" style="animation-delay:0.6s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/karne.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Karne&background=10b981&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/karne.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Karne&background=10b981&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">Karne Not Hesaplama</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/mugol-matematik/" class="tumuu-tile" data-cat="egitim" style="animation-delay:0.625s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/matematik.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Matematik&background=f59e0b&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/matematik.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Matematik&background=f59e0b&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl Math</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/mugol-.iq/" class="tumuu-tile" data-cat="eglence" style="animation-delay:0.638s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/iq.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=IQ&background=FF5630&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/iq.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=IQ&background=FF5630&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl IQ</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/mugol.-hikayeler/" class="tumuu-tile" data-cat="egitim" style="animation-delay:0.644s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/hikayeler.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Hikaye&background=7C3AED&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/hikayeler.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Hikaye&background=7C3AED&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl Hikayeler</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/mugol.ekonomi/" class="tumuu-tile" data-cat="araclar" style="animation-delay:0.65s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/ekonomi.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Eko&background=00B8D9&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/ekonomi.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Eko&background=00B8D9&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl Ekonomi</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/hesapmakinesi/" class="tumuu-tile" data-cat="araclar" style="animation-delay:0.7s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/hesap.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Hesap&background=6554C0&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/hesap.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Hesap&background=6554C0&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl Hesap</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/mugol.notdefteri/" class="tumuu-tile" data-cat="araclar" style="animation-delay:0.75s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/notdefteri.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Not&background=FFAB00&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/notdefteri.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Not&background=FFAB00&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">Not Defterim</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/ozgecmis/" class="tumuu-tile" data-cat="araclar" style="animation-delay:0.8s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/ozgecmis.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Özgeçmiş&background=00B8D9&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/ozgecmis.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Özgeçmiş&background=00B8D9&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl Özgeçmiş</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/mugol-qr-kodokuyucu/" class="tumuu-tile" data-cat="araclar" style="animation-delay:0.85s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/qr.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=QR&background=4318ff&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/qr.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=QR&background=4318ff&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">QR Kod Okuyucu</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/mugol-.pdf/" class="tumuu-tile" data-cat="araclar" style="animation-delay:0.875s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/pdf.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=PDF&background=E31A1A&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/pdf.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=PDF&background=E31A1A&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl PDF</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/mugol-.word/" class="tumuu-tile" data-cat="araclar" style="animation-delay:0.9s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/word.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=WORD&background=2979ff&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/word.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=WORD&background=2979ff&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl WORD</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/mugol-.renk.paleti/" class="tumuu-tile" data-cat="araclar" style="animation-delay:0.913s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/renk.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Renk&background=8B5CF6&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/renk.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Renk&background=8B5CF6&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl Renk Paleti</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/mugol-.sayac/" class="tumuu-tile" data-cat="araclar" style="animation-delay:0.925s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/sayac.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Sayaç&background=10b981&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/sayac.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Sayaç&background=10b981&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl Sayaç</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/mugol.-dijital.pano/" class="tumuu-tile" data-cat="araclar" style="animation-delay:0.975s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/dijitalpano.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Pano&background=4318ff&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/dijitalpano.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Pano&background=4318ff&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl Dijital Pano</span>
                     </a>
@@ -786,21 +782,21 @@
 
                     <a href="https://mugol-portal.github.io/Mugol.games/" class="tumuu-tile" data-cat="eglence" style="animation-delay:0.9s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/games.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Oyun&background=FF5630&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/games.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Oyun&background=FF5630&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl GAMES</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/mugol-turkce/" class="tumuu-tile" data-cat="egitim" style="animation-delay:1.025s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/turkce.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Türkçe&background=ef4444&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/turkce.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Türkçe&background=ef4444&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl Türkçe</span>
                     </a>
 
                     <a href="https://mugol-portal.github.io/mugol-kart.atolyesi/" class="tumuu-tile" data-cat="eglence" style="animation-delay:1.05s;">
                         <div class="tumuu-icon-wrap">
-                            <img src="images/kart-atolyesi.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Kart&background=FF5630&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/kart-atolyesi.png" alt="" class="tumuu-icon" onerror="this.src='https://ui-avatars.com/api/?name=Kart&background=FF5630&color=fff&rounded=true&bold=true'">
                         </div>
                         <span class="tumuu-label">MuGöl Kart Atölyesi</span>
                     </a>
@@ -817,7 +813,7 @@
                 <div class="app-grid" id="gunlukGrid">
                     <a href="https://mugol-portal.github.io/MuGol.bugun/" class="app-card" style="animation-delay: 0s;">
                         <div class="app-card-header">
-                            <img src="images/takvim.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Takvim&background=4318ff&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/takvim.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Takvim&background=4318ff&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl Takvim</h3></div>
                         </div>
                         <p class="app-desc">Günlük planlarınızı ve etkinliklerinizi buradan takip edin.</p>
@@ -829,7 +825,7 @@
 
                     <a href="https://mugol-portal.github.io/mugol.havadurumu/" class="app-card" style="animation-delay: 0.1s;">
                         <div class="app-card-header">
-                            <img src="images/hava.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Hava&background=FFAB00&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/hava.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Hava&background=FFAB00&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl Hava Durumu</h3></div>
                         </div>
                         <p class="app-desc">Bölgesel ve günlük meteorolojik hava tahminleri.</p>
@@ -841,7 +837,7 @@
 
                     <a href="https://mugol-portal.github.io/mugol.imsak-vakti/" class="app-card" style="animation-delay: 0.2s;">
                         <div class="app-card-header">
-                            <img src="images/imsak.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=İmsak&background=36B37E&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/imsak.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=İmsak&background=36B37E&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl İmsak Vakti</h3></div>
                         </div>
                         <p class="app-desc">Konumunuza özel güncel namaz ve iftar vakitleri.</p>
@@ -853,7 +849,7 @@
 
                     <a href="https://mugol-portal.github.io/mugol.haber/" class="app-card" style="animation-delay: 0.3s;">
                         <div class="app-card-header">
-                            <img src="images/haber.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Haber&background=FF5630&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/haber.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Haber&background=FF5630&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl Haber</h3></div>
                         </div>
                         <p class="app-desc">Güncel haberler ve önemli gelişmeler.</p>
@@ -875,7 +871,7 @@
 
                     <a href="https://mugol-portal.github.io/mugol.saglik/" class="app-card" style="animation-delay: 0.4s;">
                         <div class="app-card-header">
-                            <img src="images/saglik.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Sağlık&background=36B37E&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/saglik.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Sağlık&background=36B37E&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl Sağlık</h3></div>
                         </div>
                         <p class="app-desc">Sağlık verileri, ölçümleri ve takip araçları.</p>
@@ -887,7 +883,7 @@
 
                     <a href="https://mugol-portal.github.io/deprem/" class="app-card" style="animation-delay: 0.5s;">
                         <div class="app-card-header">
-                            <img src="images/deprem-logo.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Sismik&background=E31A1A&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/deprem-logo.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Sismik&background=E31A1A&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl Sismik Radar</h3></div>
                         </div>
                         <p class="app-desc">Anlık deprem verileri ve sismik hareket takibi.</p>
@@ -899,7 +895,7 @@
 
                     <a href="https://mugol-portal.github.io/alisverislistesi/" class="app-card" style="animation-delay: 0.6s;">
                         <div class="app-card-header">
-                            <img src="images/shopping.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Liste&background=00B8D9&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/shopping.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Liste&background=00B8D9&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>Alışveriş Listem</h3></div>
                         </div>
                         <p class="app-desc">Günlük ihtiyaçlarınızı ve alışveriş listenizi yönetin.</p>
@@ -920,7 +916,7 @@
                 <div class="app-grid" id="egitimGrid">
                     <a href="https://mugol-portal.github.io/duygularin.sokagi/" class="app-card" style="animation-delay: 0s;">
                         <div class="app-card-header">
-                            <img src="images/sokak.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Duygu&background=FF8B00&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/sokak.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Duygu&background=FF8B00&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>Duyguların Sokağı</h3></div>
                         </div>
                         <p class="app-desc">Edebi yazılar, makaleler ve duygu dolu bir şiir sokağı.</p>
@@ -932,7 +928,7 @@
 
                     <a href="https://mugol-portal.github.io/zumriban/" class="app-card" style="animation-delay: 0.1s;">
                         <div class="app-card-header">
-                            <img src="images/zumriban.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Zümri&background=0052CC&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/zumriban.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Zümri&background=0052CC&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>Zümriban</h3></div>
                         </div>
                         <p class="app-desc">Özel eğitim içerikleri, dijital kütüphane ve dökümanlar.</p>
@@ -944,7 +940,7 @@
 
                     <a href="https://mugol-portal.github.io/education/" class="app-card" style="animation-delay: 0.2s;">
                         <div class="app-card-header">
-                            <img src="images/education.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Eğitim&background=4318ff&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/education.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Eğitim&background=4318ff&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl EDUCATION</h3></div>
                         </div>
                         <p class="app-desc">Modern ve kapsamlı dijital eğitim portalı erişimi.</p>
@@ -956,7 +952,7 @@
 
                     <a href="https://mugol-portal.github.io/mugol-english/" class="app-card" style="animation-delay: 0.3s;">
                         <div class="app-card-header">
-                            <img src="images/english.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=English&background=00d2ff&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/english.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=English&background=00d2ff&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl English</h3></div>
                         </div>
                         <p class="app-desc">İngilizce öğrenmek, pratik yapmak ve kelime dağarcığınızı geliştirmek için interaktif eğitim platformu.</p>
@@ -978,7 +974,7 @@
 
                     <a href="https://mugol-portal.github.io/mugol.-edebiyat" class="app-card" style="animation-delay: 0.4s;">
                         <div class="app-card-header">
-                            <img src="images/edebiyat.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Edebiyat&background=8B5CF6&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/edebiyat.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Edebiyat&background=8B5CF6&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl Edebiyat</h3></div>
                         </div>
                         <p class="app-desc">Türk ve dünya edebiyatına dair yazılar, şiirler ve edebi içerikler.</p>
@@ -990,7 +986,7 @@
 
                     <a href="https://mugol-portal.github.io/karne-not-hesaplama/" class="app-card" style="animation-delay: 0.5s;">
                         <div class="app-card-header">
-                            <img src="images/karne.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Karne&background=10b981&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/karne.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Karne&background=10b981&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl Karne Not Hesaplama</h3></div>
                         </div>
                         <p class="app-desc">Ders notlarınızı girin, ağırlıklı ortalamanızı hesaplayın ve karne durumunuzu anında öğrenin.</p>
@@ -1002,7 +998,7 @@
 
                     <a href="https://mugol-portal.github.io/mugol-matematik/" class="app-card" style="animation-delay: 0.6s;">
                         <div class="app-card-header">
-                            <img src="images/matematik.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Matematik&background=f59e0b&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/matematik.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Matematik&background=f59e0b&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl Math</h3></div>
                         </div>
                         <p class="app-desc">Matematiği eğlenceli ve anlaşılır kılan interaktif sorular, alıştırmalar ve öğretici içerikler.</p>
@@ -1014,7 +1010,7 @@
 
                     <a href="https://mugol-portal.github.io/mugol-turkce/" class="app-card" style="animation-delay: 0.7s;">
                         <div class="app-card-header">
-                            <img src="images/turkce.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Türkçe&background=ef4444&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/turkce.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Türkçe&background=ef4444&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl Türkçe</h3></div>
                         </div>
                         <p class="app-desc">Türkçe dil becerilerini geliştiren alıştırmalar, yazım kuralları ve zengin dil eğitim içerikleri.</p>
@@ -1026,7 +1022,7 @@
 
                     <a href="https://mugol-portal.github.io/mugol.-hikayeler/" class="app-card" style="animation-delay: 0.8s;">
                         <div class="app-card-header">
-                            <img src="images/hikayeler.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Hikaye&background=7C3AED&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/hikayeler.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Hikaye&background=7C3AED&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl Hikayeler</h3></div>
                         </div>
                         <p class="app-desc">Sesli kitaplık ve hikaye platformu. Dinle, oku, favorile ve kendi hikaye yolculuğunu keşfet.</p>
@@ -1047,7 +1043,7 @@
                 <div class="app-grid" id="araclarGrid">
                     <a href="https://mugol-portal.github.io/mugol.-os/" class="app-card" style="animation-delay: 0s;">
                         <div class="app-card-header">
-                            <img src="images/os.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=OS&background=6554C0&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/os.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=OS&background=6554C0&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl OS</h3></div>
                         </div>
                         <p class="app-desc">Tarayıcınızda çalışan masaüstü deneyimi, MuGöl'ün kendi işletim sistemi arayüzü.</p>
@@ -1059,7 +1055,7 @@
 
                     <a href="https://mugol-portal.github.io/mugol.-ai/" class="app-card" style="animation-delay: 0.1s;">
                         <div class="app-card-header">
-                            <img src="images/ai.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=AI&background=4318ff&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/ai.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=AI&background=4318ff&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl AI</h3></div>
                         </div>
                         <p class="app-desc">Yapay zeka destekli akıllı asistanınız, sorularınıza anında yanıt versin.</p>
@@ -1071,7 +1067,7 @@
 
                     <a href="https://mugol-portal.github.io/mugol.ekonomi/" class="app-card" style="animation-delay: 0.1s;">
                         <div class="app-card-header">
-                            <img src="images/ekonomi.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Eko&background=00B8D9&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/ekonomi.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Eko&background=00B8D9&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl Ekonomi</h3></div>
                         </div>
                         <p class="app-desc">Güncel döviz kurları ve piyasa ekonomi verileri.</p>
@@ -1083,7 +1079,7 @@
 
                     <a href="https://mugol-portal.github.io/hesapmakinesi/" class="app-card" style="animation-delay: 0.1s;">
                         <div class="app-card-header">
-                            <img src="images/hesap.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Hesap&background=6554C0&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/hesap.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Hesap&background=6554C0&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl Hesap</h3></div>
                         </div>
                         <p class="app-desc">Hızlı, pratik ve fonksiyonel dijital hesap makinesi.</p>
@@ -1095,7 +1091,7 @@
 
                     <a href="https://mugol-portal.github.io/mugol.notdefteri/" class="app-card" style="animation-delay: 0.2s;">
                         <div class="app-card-header">
-                            <img src="images/notdefteri.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Not&background=FFAB00&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/notdefteri.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Not&background=FFAB00&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl Not Defterim</h3></div>
                         </div>
                         <p class="app-desc">Önemli notlarınızı hızlıca yazın ve güvenle saklayın.</p>
@@ -1117,7 +1113,7 @@
 
                     <a href="https://mugol-portal.github.io/ozgecmis/" class="app-card" style="animation-delay: 0.3s;">
                         <div class="app-card-header">
-                            <img src="images/ozgecmis.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Özgeçmiş&background=00B8D9&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/ozgecmis.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Özgeçmiş&background=00B8D9&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl Özgeçmiş</h3></div>
                         </div>
                         <p class="app-desc">Profesyonel özgeçmiş oluşturma ve düzenleme aracı.</p>
@@ -1129,7 +1125,7 @@
 
                     <a href="https://mugol-portal.github.io/mugol-qr-kodokuyucu/" class="app-card" style="animation-delay: 0.4s;">
                         <div class="app-card-header">
-                            <img src="images/qr.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=QR&background=4318ff&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/qr.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=QR&background=4318ff&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl QR Kod Okuyucu</h3></div>
                         </div>
                         <p class="app-desc">QR kodlarını hızlıca okuyun ve içeriklerine anında ulaşın.</p>
@@ -1141,7 +1137,7 @@
 
                     <a href="https://mugol-portal.github.io/mugol-.pdf/" class="app-card" style="animation-delay: 0.5s;">
                         <div class="app-card-header">
-                            <img src="images/pdf.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=PDF&background=E31A1A&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/pdf.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=PDF&background=E31A1A&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl PDF</h3></div>
                         </div>
                         <p class="app-desc">PDF dosyaları oluşturun, düzenleyin ve kolayca yönetin.</p>
@@ -1153,7 +1149,7 @@
 
                     <a href="https://mugol-portal.github.io/mugol-.word/" class="app-card" style="animation-delay: 0.6s;">
                         <div class="app-card-header">
-                            <img src="images/word.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=WORD&background=2979ff&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/word.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=WORD&background=2979ff&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl WORD</h3></div>
                         </div>
                         <p class="app-desc">Word belgelerini tarayıcıda açın, düzenleyin ve kaydedin.</p>
@@ -1165,7 +1161,7 @@
 
                     <a href="https://mugol-portal.github.io/mugol-.renk.paleti/" class="app-card" style="animation-delay: 0.7s;">
                         <div class="app-card-header">
-                            <img src="images/renk.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Renk&background=8B5CF6&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/renk.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Renk&background=8B5CF6&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl Renk Paleti</h3></div>
                         </div>
                         <p class="app-desc">Renkler oluşturun, hex/rgb kodlarını keşfedin ve paleti kaydedin.</p>
@@ -1177,7 +1173,7 @@
 
                     <a href="https://mugol-portal.github.io/mugol-.sayac/" class="app-card" style="animation-delay: 0.8s;">
                         <div class="app-card-header">
-                            <img src="images/sayac.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Sayaç&background=10b981&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/sayac.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Sayaç&background=10b981&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl Sayaç</h3></div>
                         </div>
                         <p class="app-desc">Geri sayım, kronometre ve çok amaçlı dijital sayaç aracı.</p>
@@ -1189,7 +1185,7 @@
 
                     <a href="https://mugol-portal.github.io/mugol.-dijital.pano/" class="app-card" style="animation-delay: 0.9s;">
                         <div class="app-card-header">
-                            <img src="images/dijitalpano.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Pano&background=4318ff&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/dijitalpano.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Pano&background=4318ff&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl Dijital Pano</h3></div>
                         </div>
                         <p class="app-desc">Kişisel dijital panonuzu oluşturun, widget'larla özelleştirin.</p>
@@ -1210,7 +1206,7 @@
                 <div class="app-grid" id="eglenceGrid">
                     <a href="https://mugol-portal.github.io/Mugol.games/" class="app-card" style="animation-delay: 0s;">
                         <div class="app-card-header">
-                            <img src="images/games.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Oyun&background=FF5630&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/games.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Oyun&background=FF5630&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl GAMES</h3></div>
                         </div>
                         <p class="app-desc">Boş vakitlerinizi değerlendirebileceğiniz eğlenceli oyunlar.</p>
@@ -1222,7 +1218,7 @@
 
                     <a href="https://mugol-portal.github.io/mugol-.iq/" class="app-card" style="animation-delay: 0.3s;">
                         <div class="app-card-header">
-                            <img src="images/iq.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=IQ&background=FF5630&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/iq.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=IQ&background=FF5630&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl IQ</h3></div>
                         </div>
                         <p class="app-desc">IQ testleri ve zeka geliştirici eğlenceli sorularla kendinizi ölçün.</p>
@@ -1234,7 +1230,7 @@
 
                     <a href="https://mugol-portal.github.io/mugol-kart.atolyesi/" class="app-card" style="animation-delay: 0.4s;">
                         <div class="app-card-header">
-                            <img src="images/kart-atolyesi.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Kart&background=FF5630&color=fff&rounded=true&bold=true'">
+                            <img loading="lazy" src="images/kart-atolyesi.png" alt="" class="app-icon-img" onerror="this.src='https://ui-avatars.com/api/?name=Kart&background=FF5630&color=fff&rounded=true&bold=true'">
                             <div class="app-info"><h3>MuGöl Kart Atölyesi</h3></div>
                         </div>
                         <p class="app-desc">Kendi kartlarınızı kolayca tasarlayın ve özelleştirin.</p>
@@ -1616,7 +1612,7 @@
                     <div class="about-container">
                         <div class="about-founder-card">
                             <div class="founder-photo-wrap">
-                                <img id="founderPhoto" src="kurucu.png" alt="Kurucu Fotoğrafı - Muhammet Gölpınar" class="founder-photo" onerror="this.style.display='none'; document.getElementById('founderInitials').style.display='flex';">
+                                <img loading="lazy" id="founderPhoto" src="kurucu.png" alt="Kurucu Fotoğrafı - Muhammet Gölpınar" class="founder-photo" onerror="this.style.display='none'; document.getElementById('founderInitials').style.display='flex';">
                                 <div class="founder-initials" id="founderInitials" style="display:none;" aria-hidden="true">MG</div>
                             </div>
                             <div class="founder-info">
@@ -2211,7 +2207,7 @@
             }, true);
             /* Günün sorusu cevaplanınca seri değişir */
             window.addEventListener('storage', check);
-            setInterval(check, 20000);
+            setInterval(function () { if (!document.hidden) check(); }, 20000);
             check();
         })();
 
@@ -2792,7 +2788,6 @@
         ──────────────────────────────────── */
         /* script.js zaten Ctrl+K dinliyor; bu sadece FAB için ek destek */
 
-        console.log('[MuGöl Portal İyileştirmeleri v2.0] ✓ Yüklendi');
     })();
     </script>
 
@@ -2873,7 +2868,6 @@
                     }
                 }
             });
-            console.log('[MuGöl] İkon emoji fallback aktif');
         }
 
         /* FA yüklü mü kontrol et — 1s sonra */
@@ -3225,7 +3219,6 @@
         });
         setTimeout(function() { staggerCards(document.getElementById('page-anasayfa')); }, 350);
 
-        console.log('[MuGöl v1.1] ✓ Tema | Grid/Liste | Bağlam Menüsü | Filtre | Kısayol Paneli');
     })();
     </script>
 
@@ -3867,7 +3860,6 @@
             });
         }
 
-        console.log('[MuGöl] ✓ Paylaş & Puan modülleri yüklendi');
     })();
     </script>
 
@@ -3974,7 +3966,6 @@
             }
         }, 1800);
 
-        console.log('[MuGöl] ✓ PWA İndir sayfası yüklendi');
     })();
     </script>
 
@@ -4211,7 +4202,6 @@
         var initActive = document.querySelector('.nav-item.active');
         if (initActive) syncBottomNav(initActive.getAttribute('data-target'));
 
-        console.log('[MuGöl] ✓ Alt menü (Bottom Nav) yüklendi');
     })();
     </script>
 
@@ -4487,8 +4477,8 @@
     function showWelcomeHint() {
         /* Splash ekranı kapandıktan 1sn sonra küçük bir ipucu göster */
         setTimeout(function() {
-            var splash = document.getElementById('splash');
-            if (splash && (splash.style.display === 'none' || splash.style.opacity === '0')) {
+            var splash = document.getElementById('splash-screen');
+            if (!splash || splash.classList.contains('hidden') || splash.style.display === 'none' || splash.style.opacity === '0') {
                 /* Kullanıcı daha önce gördüyse gösterme */
                 if (localStorage.getItem('mg-welcome-hint')) return;
                 localStorage.setItem('mg-welcome-hint', '1');
@@ -4538,7 +4528,6 @@
             }, { passive: true });
         });
 
-        console.log('[MuGöl] ✓ Mobil geliştirmeler v2.0 yüklendi');
 
     }
 
