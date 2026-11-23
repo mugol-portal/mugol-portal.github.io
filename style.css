@@ -9316,7 +9316,16 @@ html body .app-card:has(.mg-badge) .app-info h3 { padding-right: 0 !important;
 @media (prefers-reduced-motion: reduce) {
   .mg-kut, .mg-kut-card { transition: none; }
 }
-/* ═════════ AYARLAR · KUTLAMA TESTİ ═════════ */
+/* ═════════ TEST SEKMESİ (Ayarlar > Sürüm'e 5 kez dokun) ═════════ */
+.mg-test-off { display: none !important; }
+html body .sidebar .nav-item.mg-test-off,
+html body #mgBnPanel #mgBnPanelInner .mg-bn-panel-grid .mg-bn-panel-item.mg-test-off { display: none !important; }
+#mgVersionBadge { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.mgt-cert-box { width: 100%; max-width: 420px; }
+.mgt-cert-box .mgb-lbl:first-child { margin-top: 0; }
+html body #mgBnPanel .mg-bn-panel-grid .mg-bn-panel-item#mgTestBn { --pc1: #7c3aed; --pc2: #db2777; }
+html body #mgBnPanel.bn-visible .mg-bn-panel-grid .mg-bn-panel-item#mgTestBn { animation-delay: 410ms; }
+/* ═════════ TEST SEKMESİ · KUTLAMA TESTİ ═════════ */
 .mg-kut-test { display: flex; gap: 10px; width: 100%; max-width: 420px;
 }
 .mg-kut-select {
@@ -10268,10 +10277,6 @@ html body .mgb-bar i { transition: none;
   }
 }
 /* Teşekkür belgesi: şifreli önizleme */
-html body .mgb-cert.locked .mgb-cert-top { cursor: pointer; -webkit-tap-highlight-color: transparent;
-}
-html body .mgb-key { margin-left: auto; color: var(--text-muted, #94a3b8); font-size: .9rem; opacity: .7;
-}
 html body .mgb-pw[hidden] { display: none !important;
 }
 html body .mgb-btn-sm { width: auto; margin-top: 0; padding: 0 22px; flex: none !important;
@@ -10870,3 +10875,11 @@ html.mg-mode-mobile:root body .main-content.main-content {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
 }
+
+/* ═════════ ÖNEMLİ GÜN RESMİ (saat kutusunun yerine) ═════════ */
+html body .mg-clock-widget.mg-occ-hidden { display: none !important; }
+html body .mg-occ-hero {
+    display: block; margin: 0 0 1rem; border-radius: 28px; overflow: hidden; cursor: pointer;
+    -webkit-tap-highlight-color: transparent; box-shadow: 0 14px 28px -16px rgba(12,15,46,.45);
+}
+html body .mg-occ-hero img { display: block; width: 100%; height: auto; }

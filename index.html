@@ -314,6 +314,9 @@
                 <li class="nav-item nav-item--destek" role="menuitem" tabindex="0" data-target="page-destek" data-title="Destek Ol">
                     <i class="fas fa-heart" aria-hidden="true"></i> <span class="nav-text">Destek Ol</span>
                 </li>
+                <li class="nav-item nav-item--test mg-test-off" id="mgTestNav" role="menuitem" tabindex="0" data-target="page-test" data-title="Test">
+                    <i class="fas fa-flask" aria-hidden="true"></i> <span class="nav-text">Test</span>
+                </li>
 
                 <li class="nav-divider" role="separator" aria-hidden="true"></li>
                 <li class="nav-item nav-item--profil" role="menuitem" tabindex="0" data-target="page-profil" data-title="Profilim">
@@ -1289,21 +1292,6 @@
                         </div>
                     </div>
 
-                    <!-- ── KUTLAMA EKRANI TEST ── -->
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <i class="fas fa-gift" aria-hidden="true"></i>
-                            <div>
-                                <h4>Kutlama Ekranını Test Et</h4>
-                                <p>Önemli günlerde açılışta çıkan tebrik ekranını şimdi önizleyin.</p>
-                            </div>
-                        </div>
-                        <div class="mg-kut-test">
-                            <select id="mgKutSelect" class="mg-kut-select" aria-label="Önizlenecek kutlamayı seçin"></select>
-                            <button type="button" id="mgKutTestBtn" class="mg-kut-test-btn"><i class="fas fa-play" aria-hidden="true"></i> Test Et</button>
-                        </div>
-                    </div>
-
                     <div class="setting-item">
                         <div class="setting-info">
                             <i class="fas fa-text-height" aria-hidden="true"></i>
@@ -1329,7 +1317,7 @@
                                 <p>MuGöl PORTAL'ın mevcut lisanslı ve güncel sürüm bilgisi.</p>
                             </div>
                         </div>
-                        <span class="version-badge" aria-label="Uygulama Sürümü 9.0.0">Sürüm 9.0.0</span>
+                        <span class="version-badge" id="mgVersionBadge" aria-label="Uygulama Sürümü 9.0.0">Sürüm 9.0.0</span>
                     </div>
 
                     <div class="setting-item" style="flex-direction:column; align-items:flex-start; gap:14px;">
@@ -1994,6 +1982,53 @@
             </div>
             <!-- / SAYFA: DESTEK OL -->
 
+            <!-- SAYFA: TEST (Ayarlar > Sürüm'e 5 kez basınca açılır) -->
+            <div id="page-test" class="page-section" role="region" aria-label="Test">
+                <div class="content-card">
+
+                    <!-- ── ÖZEL GÜNLER · KUTLAMA EKRANI TEST ── -->
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <i class="fas fa-gift" aria-hidden="true"></i>
+                            <div>
+                                <h4>Özel Günler · Kutlama Ekranı</h4>
+                                <p>Önemli günlerde açılışta çıkan tebrik ekranını şimdi önizleyin.</p>
+                            </div>
+                        </div>
+                        <div class="mg-kut-test">
+                            <select id="mgKutSelect" class="mg-kut-select" aria-label="Önizlenecek kutlamayı seçin"></select>
+                            <button type="button" id="mgKutTestBtn" class="mg-kut-test-btn"><i class="fas fa-play" aria-hidden="true"></i> Test Et</button>
+                        </div>
+                    </div>
+
+                    <!-- ── TEŞEKKÜR BELGESİ · ŞİFRE İLE ── -->
+                    <div class="setting-item" style="flex-direction:column; align-items:flex-start; gap:14px;">
+                        <div class="setting-info">
+                            <i class="fas fa-award" aria-hidden="true"></i>
+                            <div>
+                                <h4>Teşekkür Belgesi</h4>
+                                <p>20 gün şartı olmadan belgeyi hemen oluşturun.</p>
+                            </div>
+                        </div>
+                        <div id="mgtCertBox" class="mgt-cert-box"></div>
+                    </div>
+
+                    <!-- ── TEST SEKMESİNİ GİZLE ── -->
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <i class="fas fa-eye-slash" aria-hidden="true"></i>
+                            <div>
+                                <h4>Test Sekmesini Gizle</h4>
+                                <p>Sekme menüden kalkar. Açmak için Ayarlar'da sürüme 5 kez basın.</p>
+                            </div>
+                        </div>
+                        <button type="button" id="mgTestHideBtn" class="mg-kut-test-btn"><i class="fas fa-eye-slash" aria-hidden="true"></i> Gizle</button>
+                    </div>
+
+                </div>
+            </div>
+            <!-- / SAYFA: TEST -->
+
         </main>
     </div>
 
@@ -2080,6 +2115,47 @@
     })();
     </script>
     <script src="script.js"></script>
+
+    <!-- ═══ TEST SEKMESİ — Ayarlar > Sürüm rozetine 5 kez dokun ═══ -->
+    <script>
+    (function () {
+        'use strict';
+        var KEY = 'mg-test-tab', NEED = 5, GAP = 2000;
+        var badge = document.getElementById('mgVersionBadge');
+        var navItem = document.getElementById('mgTestNav');
+        var bnItem = document.getElementById('mgTestBn');
+        var hideBtn = document.getElementById('mgTestHideBtn');
+        var count = 0, lastTap = 0;
+
+        function toast(m) { if (typeof window._mgToast === 'function') window._mgToast(m, 2600); }
+        function isOn() { try { return localStorage.getItem(KEY) === '1'; } catch (e) { return false; } }
+        function setOn(on) {
+            try { if (on) localStorage.setItem(KEY, '1'); else localStorage.removeItem(KEY); } catch (e) {}
+            if (navItem) navItem.classList.toggle('mg-test-off', !on);
+            if (bnItem) bnItem.classList.toggle('mg-test-off', !on);
+        }
+
+        setOn(isOn());
+
+        if (badge) badge.addEventListener('click', function () {
+            var now = Date.now();
+            count = (now - lastTap > GAP) ? 1 : count + 1;
+            lastTap = now;
+            if (count < NEED) return;
+            count = 0;
+            if (isOn()) { toast('🧪 Test sekmesi zaten açık'); return; }
+            setOn(true);
+            toast('🧪 Test sekmesi açıldı');
+        });
+
+        if (hideBtn) hideBtn.addEventListener('click', function () {
+            setOn(false);
+            var st = document.querySelector('.nav-item[data-target="page-ayarlar"]');
+            if (st) st.click();
+            toast('Test sekmesi gizlendi');
+        });
+    })();
+    </script>
 
     <script>
     /* Banner reklamlar: gizli sayfalarda (genişlik 0) yüklenmesin; ilgili sayfa açılıp
@@ -2212,7 +2288,7 @@
         })();
 
         /* ═════════ ARAYÜZ ═════════ */
-        var modal, unlocked = false;
+        var modal, blobs = {};
         function build() {
             modal = document.createElement('div');
             modal.id = 'mgBadgeModal'; modal.hidden = true;
@@ -2223,14 +2299,10 @@
             document.body.appendChild(modal);
             modal.addEventListener('click', function (e) {
                 if (e.target.closest('[data-close]')) close();
-                var b = e.target.closest('#mgbCertBtn'); if (b) makeCert();
-                var d = e.target.closest('#mgbDl'); if (d) download();
-                var sh = e.target.closest('#mgbShare'); if (sh) share();
-                var lk = e.target.closest('.mgb-cert.locked .mgb-cert-top');
-                if (lk) { var pw = document.getElementById('mgbPwBox'); if (pw) { pw.hidden = !pw.hidden; if (!pw.hidden) { var i = document.getElementById('mgbPw'); if (i) setTimeout(function () { i.focus(); }, 50); } } }
-                if (e.target.closest('#mgbPwBtn')) tryPw();
+                if (e.target.closest('#mgbCertBtn')) makeCert('mgb');
+                if (e.target.closest('#mgbDl')) download('mgb');
+                if (e.target.closest('#mgbShare')) share('mgb');
             });
-            modal.addEventListener('keydown', function (e) { if (e.key === 'Enter' && e.target.id === 'mgbPw') { e.preventDefault(); tryPw(); } });
             modal.addEventListener('input', function (e) {
                 if (e.target.id === 'mgbName') {
                     var s = load(); s.name = e.target.value.slice(0, 40); save(s);
@@ -2258,9 +2330,9 @@
         function render(s) {
             var got = BADGES.filter(function (b) { return s.earned[b.id]; }).length;
             document.getElementById('mgbCount').textContent = got + ' / ' + BADGES.length;
-            var days = Math.min(s.days.length, GOAL), pct = Math.round(days / GOAL * 100), real = s.days.length >= GOAL, ok = real || unlocked;
-            var cert = '<div class="mgb-cert' + (ok ? ' ok' : ' locked') + '">' +
-                '<div class="mgb-cert-top"><i class="fas fa-award"></i><div><b>Teşekkür Belgesi</b><span>' + (real ? '20 günü tamamladın, tebrikler!' : unlocked ? 'Önizleme modu açık' : GOAL + ' gün kullan, belgeni kazan') + '</span></div>' + (ok ? '' : '<i class="fas fa-key mgb-key" aria-hidden="true"></i>') + '</div>' +
+            var days = Math.min(s.days.length, GOAL), pct = Math.round(days / GOAL * 100), real = s.days.length >= GOAL, ok = real;
+            var cert = '<div class="mgb-cert' + (ok ? ' ok' : '') + '">' +
+                '<div class="mgb-cert-top"><i class="fas fa-award"></i><div><b>Teşekkür Belgesi</b><span>' + (real ? '20 günü tamamladın, tebrikler!' : GOAL + ' gün kullan, belgeni kazan') + '</span></div></div>' +
                 '<div class="mgb-bar"><i style="width:' + pct + '%"></i></div>' +
                 '<div class="mgb-days">' + days + ' / ' + GOAL + ' gün</div>';
             if (ok) {
@@ -2269,10 +2341,7 @@
                     '<button type="button" id="mgbCertBtn" class="mgb-btn"' + (s.name.trim().length < 2 ? ' disabled' : '') + '><i class="fas fa-wand-magic-sparkles"></i> Belgemi oluştur</button>' +
                     '<div id="mgbCertOut"></div>';
             } else {
-                cert += '<p class="mgb-hint">Her farklı gün portalı açtığında sayaç bir artar. Peş peşe olması gerekmez.</p>' +
-                    '<div id="mgbPwBox" class="mgb-pw" hidden><label class="mgb-lbl" for="mgbPw">Şifre</label>' +
-                    '<div class="mgb-row"><input id="mgbPw" class="mgb-input" type="password" autocomplete="off" placeholder="Şifreyi yaz">' +
-                    '<button type="button" id="mgbPwBtn" class="mgb-btn mgb-btn-sm">Aç</button></div><div id="mgbPwErr" class="mgb-err"></div></div>';
+                cert += '<p class="mgb-hint">Her farklı gün portalı açtığında sayaç bir artar. Peş peşe olması gerekmez.</p>';
             }
             cert += '</div>';
             var grid = '<div class="mgb-grid">' + BADGES.map(function (b) {
@@ -2285,7 +2354,6 @@
         }
 
         /* ═════════ BELGE (PNG) ═════════ */
-        var lastBlob = null;
         function trDate(ts) { try { return new Date(ts).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }); } catch (e) { return ymd(new Date(ts)); } }
         function hash6(str) { var h = 5381, i; for (i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) >>> 0; return ('000000' + h.toString(36).toUpperCase()).slice(-6); }
         function loadLogo() {
@@ -2395,50 +2463,68 @@
             c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath();
         }
 
-        function tryPw() {
-            var inp = document.getElementById('mgbPw'), err = document.getElementById('mgbPwErr');
-            if (!inp) return;
-            if (inp.value.trim().toLowerCase() === 'furkan') {
-                unlocked = true;
-                render(load());
-                toast('🔓 Önizleme modu açıldı');
-                var b = document.getElementById('mgbCertBtn');
-                if (b && !b.disabled) makeCert();
-                else { var n = document.getElementById('mgbName'); if (n) setTimeout(function () { n.focus(); }, 80); }
-            } else {
-                if (err) err.textContent = 'Şifre yanlış.';
-                inp.value = ''; inp.focus();
+        /* Test sekmesindeki şifreli belge kutusu (ön ek: mgt) */
+        var tbox = document.getElementById('mgtCertBox');
+        function renderTest() {
+            if (!tbox) return;
+            var s = load();
+            {
+                tbox.innerHTML = '<label class="mgb-lbl" for="mgtName">Belgede görünecek ad</label>' +
+                    '<input id="mgtName" class="mgb-input" type="text" maxlength="40" autocomplete="name" placeholder="Adın Soyadın" value="' + esc(s.name) + '">' +
+                    '<button type="button" id="mgtCertBtn" class="mgb-btn"' + (s.name.trim().length < 2 ? ' disabled' : '') + '><i class="fas fa-wand-magic-sparkles"></i> Belgemi oluştur</button>' +
+                    '<div id="mgtCertOut"></div>';
             }
         }
-        function makeCert() {
+        if (tbox) {
+            renderTest();
+            tbox.addEventListener('click', function (e) {
+                if (e.target.closest('#mgtCertBtn')) makeCert('mgt');
+                if (e.target.closest('#mgtDl')) download('mgt');
+                if (e.target.closest('#mgtShare')) share('mgt');
+            });
+            tbox.addEventListener('input', function (e) {
+                if (e.target.id === 'mgtName') {
+                    var s = load(); s.name = e.target.value.slice(0, 40); save(s);
+                    var btn = document.getElementById('mgtCertBtn'); if (btn) btn.disabled = s.name.trim().length < 2;
+                }
+            });
+        }
+
+        /* p: 'mgb' (rozet penceresi, 20 gün şartı) veya 'mgt' (test sekmesi, şifre ile) */
+        function makeCert(p) {
+            var test = p === 'mgt';
             var s = load(), name = (s.name || '').trim();
-            if (name.length < 2 || (s.days.length < GOAL && !unlocked)) return;
-            var out = document.getElementById('mgbCertOut'), btn = document.getElementById('mgbCertBtn');
+            if (name.length < 2) return;
+            if (!test && s.days.length < GOAL) return;
+            var out = document.getElementById(p + 'CertOut'), btn = document.getElementById(p + 'CertBtn');
+            if (!out || !btn) return;
             btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Hazırlanıyor…';
             var at = (s.earned.d20 && s.days.length >= GOAL) ? s.earned.d20.at : Date.now();
             var fonts = (document.fonts && document.fonts.load) ? Promise.all([document.fonts.load('800 60px Nunito'), document.fonts.load('700 30px Nunito'), document.fonts.load('600 30px Nunito')]).catch(function () {}) : Promise.resolve();
             Promise.all([fonts, loadLogo()]).then(function (r) {
                 var cv = draw(name, trDate(at), 'MG-' + hash6(name.toLowerCase() + ymd(new Date(at))), r[1]);
                 cv.toBlob(function (blob) {
-                    lastBlob = blob;
+                    blobs[p] = blob;
                     var url = URL.createObjectURL(blob);
                     out.innerHTML = '<img class="mgb-cert-img" alt="Teşekkür belgesi önizleme" src="' + url + '">' +
-                        '<div class="mgb-row"><button type="button" id="mgbDl" class="mgb-btn"><i class="fas fa-download"></i> PNG indir</button>' +
-                        (navigator.canShare && navigator.canShare({ files: [new File([blob], 'a.png', { type: 'image/png' })] }) ? '<button type="button" id="mgbShare" class="mgb-btn alt"><i class="fas fa-share-nodes"></i> Paylaş</button>' : '') + '</div>';
+                        '<div class="mgb-row"><button type="button" id="' + p + 'Dl" class="mgb-btn"><i class="fas fa-download"></i> PNG indir</button>' +
+                        (navigator.canShare && navigator.canShare({ files: [new File([blob], 'a.png', { type: 'image/png' })] }) ? '<button type="button" id="' + p + 'Share" class="mgb-btn alt"><i class="fas fa-share-nodes"></i> Paylaş</button>' : '') + '</div>';
                     btn.disabled = false; btn.innerHTML = '<i class="fas fa-rotate"></i> Yeniden oluştur';
                 }, 'image/png');
             });
         }
         function fileName() { var s = load(); return 'MuGol-Portal-Tesekkur-Belgesi' + (s.name ? '-' + s.name.trim().replace(/[^\wÇçĞğİıÖöŞşÜü]+/g, '_') : '') + '.png'; }
-        function download() {
-            if (!lastBlob) return;
-            var a = document.createElement('a'); a.href = URL.createObjectURL(lastBlob); a.download = fileName();
+        function download(p) {
+            var blob = blobs[p];
+            if (!blob) return;
+            var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fileName();
             document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
             toast('📥 Belge indiriliyor…');
         }
-        function share() {
-            if (!lastBlob) return;
-            var f = new File([lastBlob], fileName(), { type: 'image/png' });
+        function share(p) {
+            var blob = blobs[p];
+            if (!blob) return;
+            var f = new File([blob], fileName(), { type: 'image/png' });
             navigator.share({ files: [f], title: 'MuGöl PORTAL Teşekkür Belgesi' }).catch(function () {});
         }
 
@@ -3441,7 +3527,7 @@
             _doUpdateAnimation(function() {
                 /* Önce temaları koru */
                 var keep = {};
-                var keepKeys = ['mugol-theme', 'mugol-view-mode', 'mugol-layout-mode'];
+                var keepKeys = ['mugol-theme', 'mugol-view-mode', 'mugol-layout-mode', 'mg-test-tab'];
                 keepKeys.forEach(function(k) {
                     var v = localStorage.getItem(k);
                     if (v !== null) keep[k] = v;
@@ -4085,6 +4171,10 @@
                 <button class="mg-bn-panel-item" data-target="page-destek" data-title="Destek Ol">
                     <span class="mg-bn-pi-icon"><i class="fas fa-heart"></i></span>
                     <span>Destek Ol</span>
+                </button>
+                <button class="mg-bn-panel-item mg-test-off" id="mgTestBn" data-target="page-test" data-title="Test">
+                    <span class="mg-bn-pi-icon"><i class="fas fa-flask"></i></span>
+                    <span>Test</span>
                 </button>
             </div>
         </div>
