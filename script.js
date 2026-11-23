@@ -341,11 +341,11 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     // Videoyu tekrar uzatıp kısaltırsan kodda hiçbir şey değiştirmen gerekmez.
     // VİDEO ve MÜZİK birlikte SPLASH_TARGET_SEC saniyede biter. Hız, dosya süresinden otomatik hesaplanır
     // (15 sn → 1.5x). Müzik tonu bozulmadan (preservesPitch) hızlandırılır.
-    const SPLASH_TARGET_SEC   = 10;
+    const SPLASH_TARGET_SEC   = 7;
     let   SPLASH_VIDEO_RATE   = 15 / SPLASH_TARGET_SEC;   // metadata gelince gerçek süreye göre yeniden hesaplanır
     const SPLASH_END_HOLD_MS  = 150;   // video bitince son karede bekleme
     const SPLASH_SAFETY_PAD_MS = 2000; // 'ended' hiç gelmezse güvenlik süresi
-    const FALLBACK_MS         = 7500;  // video hiç oynamazsa kullanılacak süre
+    const FALLBACK_MS         = 7000;  // video hiç oynamazsa kullanılacak süre
 
     const labels = ['Sistem Başlatılıyor...', 'Uygulamalar Hazırlanıyor...', 'Son Ayarlar...', 'Hoş Geldiniz!'];
 
@@ -2409,7 +2409,11 @@ window.MG_NOTIFICATIONS = [
         ramazan: 'Ramazan Başlangıcı', 'arefe-r': 'Ramazan Bayramı Arefesi', 'bayram-r': 'Ramazan Bayramı', 'arefe-k': 'Kurban Bayramı Arefesi',
         'bayram-k': 'Kurban Bayramı', mirac: 'Miraç Kandili', berat: 'Berat Kandili'
     };
-    window.mgKutlamaTest = function (id) { if (OCC[id]) show(id, 'mg-kutlama:preview', function () {}); };
+    window.mgKutlamaTest = function (id) {
+        if (!OCC[id]) return;
+        show(id, 'mg-kutlama:preview', function () {});
+        showHero([id]);   // ana sayfada saat kutusunun yerine de göster
+    };
     function setupTest() {
         var sel = document.getElementById('mgKutSelect'), btn = document.getElementById('mgKutTestBtn');
         if (!sel || !btn) return;
@@ -2419,6 +2423,42 @@ window.MG_NOTIFICATIONS = [
         btn.addEventListener('click', function () { window.mgKutlamaTest(sel.value); });
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setupTest); else setupTest();
+
+    // ── Ana sayfada: önemli günde, üstteki saat kutusunun yerine o günün resmi (tam, kırpmadan) ──
+    function showHero(forceIds) {
+        var clock = document.getElementById('mgClockWidget');
+        if (!clock) return;
+        var p = new URLSearchParams(location.search).get('kutlama');
+        var ids = forceIds || ((p && OCC[p]) ? [p] : daysOf(new Date())), i = 0;
+        (function next() {
+            if (i < ids.length) {
+                var id = ids[i++];
+                loadImg(id, function (im) { if (im) place(id, im.src); else next(); });
+                return;
+            }
+            place(null);
+        })();
+        function place(id, src) {
+            var old = document.getElementById('mgOccHero'); if (old) old.remove();
+            clock.classList.remove('mg-occ-hidden'); clock.style.removeProperty('display');
+            if (!id) return;
+            var label = NAMES[id] || id;
+            var h = document.createElement('div');
+            h.id = 'mgOccHero'; h.className = 'mg-occ-hero'; h.setAttribute('role', 'button'); h.tabIndex = 0;
+            h.setAttribute('aria-label', label + ' — büyütmek için dokun');
+            /* Stiller satır içi: style.css önbellekte eski kalsa bile çalışsın */
+            h.style.cssText = 'display:block;margin:0 0 1rem;border-radius:28px;overflow:hidden;cursor:pointer;box-shadow:0 14px 28px -16px rgba(12,15,46,.45);-webkit-tap-highlight-color:transparent;';
+            var img = document.createElement('img'); img.src = src; img.alt = label; img.decoding = 'async';
+            img.style.cssText = 'display:block;width:100%;height:auto;';
+            h.appendChild(img);
+            function open() { show(id, 'mg-kutlama:preview', function () {}); }
+            h.addEventListener('click', open);
+            h.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+            clock.insertAdjacentElement('afterend', h);
+            clock.classList.add('mg-occ-hidden'); clock.style.setProperty('display', 'none', 'important');
+        }
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { showHero(); }); else showHero();
 
     function start() {
         var splash = document.getElementById('splash-screen');
@@ -2563,6 +2603,7 @@ window.MG_NOTIFICATIONS = [
         el.querySelector('.mg-dp-later').addEventListener('click', function () { close(el); });
         el.addEventListener('click', function (e) { if (e.target === el) close(el); });
     }
+
     function start() {
         var splash = document.getElementById('splash-screen');
         function go() { setTimeout(show, 1500); }

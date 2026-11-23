@@ -10883,3 +10883,347 @@ html body .mg-occ-hero {
     -webkit-tap-highlight-color: transparent; box-shadow: 0 14px 28px -16px rgba(12,15,46,.45);
 }
 html body .mg-occ-hero img { display: block; width: 100%; height: auto; }
+
+/* ═════════ BUTON TASARIMI v2 — ★ ikonu kapatmasın, modern cam efekti ═════════ */
+
+/* ★ Favori butonu: küçük, yarı saydam cam rozet */
+html body .mg-fav-btn {
+    width: 24px !important; height: 24px !important; top: 7px !important; right: 7px !important;
+    font-size: .62rem !important; border-radius: 50% !important;
+    background: rgba(255,255,255,.22) !important;
+    -webkit-backdrop-filter: blur(8px) saturate(160%); backdrop-filter: blur(8px) saturate(160%);
+    color: rgba(255,255,255,.95) !important;
+    border: 1px solid rgba(255,255,255,.45) !important;
+    box-shadow: 0 2px 8px -2px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.4) !important;
+}
+html body .mg-fav-btn:hover { background: rgba(255,255,255,.38) !important; color: #ffd24a !important; }
+html body .mg-fav-btn.on {
+    background: linear-gradient(145deg, #ffd24a, #ff9f1a) !important;
+    color: #fff !important; border-color: rgba(255,255,255,.7) !important;
+    box-shadow: 0 4px 12px -3px rgba(255,159,26,.75), inset 0 1px 0 rgba(255,255,255,.55) !important;
+}
+html[data-theme="dark"] body .mg-fav-btn { background: rgba(255,255,255,.12) !important; color: #e2e8f0 !important; border-color: rgba(255,255,255,.28) !important; }
+html[data-theme="dark"] body .mg-fav-btn.on { background: linear-gradient(145deg, #ffd24a, #ff9f1a) !important; color: #fff !important; }
+
+/* Küçük kutucuklar: ikon aşağı alınır, ★ ile çakışmaz */
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile:not(:nth-of-type(8n+1)):not(:nth-of-type(8n+4)):not(:nth-of-type(8n+6)) {
+    justify-content: flex-end !important; padding: 28px .35rem .7rem !important; gap: 6px !important;
+}
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile:not(:nth-of-type(8n+1)):not(:nth-of-type(8n+4)):not(:nth-of-type(8n+6)) .tumuu-icon-wrap {
+    width: 46px !important; height: 46px !important;
+}
+/* Geniş kutular: ★ sağ üst köşede, ikon/yazıdan uzakta */
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile:is(:nth-of-type(8n+4), :nth-of-type(8n+6)) { padding-right: 38px !important; }
+/* Liste görünümü */
+html body .tumuu-grid.list-view .mg-fav-btn { top: 50% !important; right: 12px !important; width: 30px !important; height: 30px !important; font-size: .75rem !important;
+    background: rgba(67,24,255,.08) !important; color: #64748b !important; border-color: rgba(67,24,255,.18) !important; }
+html body .tumuu-grid.list-view .mg-fav-btn.on { color: #fff !important; }
+
+/* Kart / Liste seçici: hap şeklinde segment kontrol */
+html body .mg-view-toggle {
+    display: inline-flex; gap: 4px; padding: 4px; border-radius: 999px;
+    background: color-mix(in srgb, var(--primary-color) 8%, var(--bg-card));
+    border: 1px solid color-mix(in srgb, var(--primary-color) 14%, var(--border-color));
+    box-shadow: inset 0 1px 3px rgba(15,23,42,.08);
+}
+html body .mg-vt-btn {
+    display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px; border: 0 !important;
+    border-radius: 999px !important; background: transparent !important; color: var(--text-muted) !important;
+    font-weight: 700; box-shadow: none !important; transition: all .25s cubic-bezier(.4,0,.2,1) !important;
+}
+html body .mg-vt-btn.mg-vt-active, html body .mg-vt-btn.active {
+    background: linear-gradient(135deg, #4318ff, #3b82f6) !important; color: #fff !important;
+    box-shadow: 0 8px 18px -8px rgba(67,24,255,.8), inset 0 1px 0 rgba(255,255,255,.35) !important;
+}
+html body .mg-vt-btn:active { transform: scale(.95); }
+
+/* Üst bar butonları: yumuşak "squircle" + iç ışık */
+html body .header-right > .hamburger-btn {
+    border-radius: 16px !important;
+    box-shadow: 0 8px 16px -8px rgba(15,23,42,.45), inset 0 1px 0 rgba(255,255,255,.4), inset 0 -2px 0 rgba(0,0,0,.08) !important;
+}
+html body #mgAvatar { border-radius: 16px !important; box-shadow: 0 8px 16px -8px rgba(67,24,255,.6), inset 0 1px 0 rgba(255,255,255,.4) !important; }
+
+/* ═════════ UYGULAMA KUTULARI v3 — beyaz çerçevesiz ikon, cam efektli kart ═════════ */
+html body :is(#page-tumuu,#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .tumuu-grid:not(.list-view) .tumuu-tile {
+    border: 1px solid rgba(255,255,255,.38) !important;
+    border-radius: 28px !important;
+    box-shadow:
+        0 16px 28px -14px rgba(15,23,42,.55),
+        inset 0 1.5px 0 rgba(255,255,255,.55),
+        inset 0 -14px 24px -14px rgba(0,0,0,.28) !important;
+    overflow: hidden;
+    transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease !important;
+}
+html body :is(#page-tumuu,#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .tumuu-grid:not(.list-view) .tumuu-tile:hover {
+    transform: translateY(-4px) scale(1.015);
+    box-shadow: 0 22px 34px -14px rgba(15,23,42,.6), inset 0 1.5px 0 rgba(255,255,255,.6), inset 0 -14px 24px -14px rgba(0,0,0,.28) !important;
+}
+html body :is(#page-tumuu,#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .tumuu-grid:not(.list-view) .tumuu-tile:active { transform: scale(.95) !important; }
+
+/* İkon: beyaz arka plan ve boşluk YOK, yuvarlak kesim + ince cam halka */
+html body :is(#page-tumuu,#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .tumuu-grid .tumuu-icon-wrap {
+    background: transparent !important; padding: 0 !important; border-radius: 50% !important; overflow: hidden !important;
+    box-shadow: 0 0 0 2.5px rgba(255,255,255,.55), 0 10px 18px -8px rgba(0,0,0,.5) !important;
+}
+html body :is(#page-tumuu,#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .tumuu-grid .tumuu-icon {
+    width: 100% !important; height: 100% !important; border-radius: 50% !important;
+    object-fit: cover !important; background: transparent !important;
+    transform: scale(1.14); /* görsellerin kendi beyaz kenarlarını dışarıda bırakır */
+}
+/* Beyaz köşeli/kenarlı görseller için daha fazla kırpma */
+html body .tumuu-tile[href*="havadurumu"] .tumuu-icon { transform: scale(1.32); }
+html body .tumuu-tile:hover .tumuu-icon { transform: scale(1.2) !important; }
+html body .tumuu-tile[href*="havadurumu"]:hover .tumuu-icon { transform: scale(1.38) !important; }
+
+/* Büyük öne çıkan kutu: kare köşeli beyaz zemin yerine yuvarlak ikon */
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile:nth-of-type(8n+1) .tumuu-icon-wrap {
+    width: 104px !important; height: 104px !important; border-radius: 50% !important;
+}
+
+/* Yazılar: daha okunaklı */
+html body .tumuu-grid:not(.list-view) .tumuu-label { text-shadow: 0 1px 6px rgba(0,0,0,.35); letter-spacing: .1px; }
+
+/* Liste görünümü: aynı beyazsız ikon */
+html body .tumuu-grid.list-view .tumuu-tile { border-radius: 22px !important; }
+
+/* ═════════ SEKME UYGULAMA KARTLARI v4 (Eğitim · Günlük · Araçlar · Eğlence) ═════════ */
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card {
+    padding: 16px !important; border-radius: 28px !important; gap: 12px !important;
+    border: 1px solid rgba(255,255,255,.35) !important;
+    box-shadow:
+        0 18px 30px -16px var(--pg1),
+        inset 0 1.5px 0 rgba(255,255,255,.5),
+        inset 0 -16px 26px -16px rgba(0,0,0,.3) !important;
+    transition: transform .28s cubic-bezier(.34,1.56,.64,1), box-shadow .28s ease !important;
+}
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 24px 38px -16px var(--pg1), inset 0 1.5px 0 rgba(255,255,255,.55), inset 0 -16px 26px -16px rgba(0,0,0,.3) !important;
+}
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card:active { transform: scale(.97) !important; }
+
+/* Çapraz cam parlaması */
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card::before {
+    display: block !important; content: "" !important; position: absolute; inset: 0; width: auto !important; height: auto !important;
+    left: 0; top: 0; bottom: 0; border-radius: inherit !important; opacity: 1 !important; transform: none !important; pointer-events: none;
+    background: linear-gradient(115deg, rgba(255,255,255,.26) 0%, rgba(255,255,255,.06) 38%, rgba(255,255,255,0) 55%) !important;
+}
+
+/* İkon: beyaz zemin YOK, cam halkalı yuvarlak */
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card .app-icon-img {
+    width: 60px !important; height: 60px !important; padding: 0 !important; border-radius: 50% !important;
+    background: transparent !important; object-fit: cover !important; overflow: hidden;
+    border: 0 !important; transform: scale(1);
+    box-shadow: 0 0 0 3px rgba(255,255,255,.55), 0 12px 20px -8px rgba(0,0,0,.5) !important;
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1) !important;
+}
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card:hover .app-icon-img { transform: scale(1.08) rotate(-3deg) !important; }
+
+/* Başlık ve açıklama */
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card .app-info h3 { font-size: 1.08rem !important; font-weight: 800 !important; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card .app-desc { font-size: .84rem !important; line-height: 1.45 !important; }
+
+/* Alt çizgi ve etiket: cam hap */
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card .app-card-footer { border-top: 1px solid rgba(255,255,255,.22) !important; padding-top: 12px !important; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card .app-tag {
+    background: rgba(255,255,255,.2) !important; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,.4) !important; border-radius: 999px !important; padding: 5px 12px !important; font-weight: 700 !important;
+}
+
+/* "Aç" düğmesi: hap biçiminde, ok hover'da kayar */
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card .launch-btn {
+    width: auto !important; min-width: 44px; height: 40px !important; padding: 0 14px !important; gap: 8px; border-radius: 999px !important;
+    display: inline-flex !important; align-items: center; justify-content: center;
+    background: linear-gradient(180deg, #ffffff, #eef2ff) !important; color: var(--pg1) !important;
+    box-shadow: 0 10px 18px -8px rgba(0,0,0,.5), inset 0 -2px 0 rgba(0,0,0,.06) !important;
+}
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card .launch-btn .btn-label { display: inline !important; font-weight: 800; font-size: .82rem; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card .launch-btn i { transition: transform .25s ease; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card:hover .launch-btn i { transform: translateX(4px); }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card:active .launch-btn { transform: scale(.92); }
+
+/* ═════════ HER BUTON FARKLI RENK (12 renkli döngü) ═════════ */
+html body #page-tumuu .tumuu-grid .tumuu-tile[data-cat]:nth-of-type(12n+1) { --tc1:#4318ff; --tc2:#00b4ff; --f1:#4318ff; --f2:#00b4ff; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(12n+1) { --pg1:#4318ff; --pg2:#00b4ff; }
+html body #page-tumuu .tumuu-grid .tumuu-tile[data-cat]:nth-of-type(12n+2) { --tc1:#e11d74; --tc2:#f97316; --f1:#e11d74; --f2:#f97316; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(12n+2) { --pg1:#e11d74; --pg2:#f97316; }
+html body #page-tumuu .tumuu-grid .tumuu-tile[data-cat]:nth-of-type(12n+3) { --tc1:#0d9488; --tc2:#22c55e; --f1:#0d9488; --f2:#22c55e; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(12n+3) { --pg1:#0d9488; --pg2:#22c55e; }
+html body #page-tumuu .tumuu-grid .tumuu-tile[data-cat]:nth-of-type(12n+4) { --tc1:#7c3aed; --tc2:#ec4899; --f1:#7c3aed; --f2:#ec4899; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(12n+4) { --pg1:#7c3aed; --pg2:#ec4899; }
+html body #page-tumuu .tumuu-grid .tumuu-tile[data-cat]:nth-of-type(12n+5) { --tc1:#ea580c; --tc2:#f59e0b; --f1:#ea580c; --f2:#f59e0b; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(12n+5) { --pg1:#ea580c; --pg2:#f59e0b; }
+html body #page-tumuu .tumuu-grid .tumuu-tile[data-cat]:nth-of-type(12n+6) { --tc1:#0284c7; --tc2:#06b6d4; --f1:#0284c7; --f2:#06b6d4; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(12n+6) { --pg1:#0284c7; --pg2:#06b6d4; }
+html body #page-tumuu .tumuu-grid .tumuu-tile[data-cat]:nth-of-type(12n+7) { --tc1:#dc2626; --tc2:#fb7185; --f1:#dc2626; --f2:#fb7185; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(12n+7) { --pg1:#dc2626; --pg2:#fb7185; }
+html body #page-tumuu .tumuu-grid .tumuu-tile[data-cat]:nth-of-type(12n+8) { --tc1:#15803d; --tc2:#65a30d; --f1:#15803d; --f2:#65a30d; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(12n+8) { --pg1:#15803d; --pg2:#65a30d; }
+html body #page-tumuu .tumuu-grid .tumuu-tile[data-cat]:nth-of-type(12n+9) { --tc1:#4f46e5; --tc2:#8b5cf6; --f1:#4f46e5; --f2:#8b5cf6; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(12n+9) { --pg1:#4f46e5; --pg2:#8b5cf6; }
+html body #page-tumuu .tumuu-grid .tumuu-tile[data-cat]:nth-of-type(12n+10) { --tc1:#0f766e; --tc2:#0ea5e9; --f1:#0f766e; --f2:#0ea5e9; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(12n+10) { --pg1:#0f766e; --pg2:#0ea5e9; }
+html body #page-tumuu .tumuu-grid .tumuu-tile[data-cat]:nth-of-type(12n+11) { --tc1:#be185d; --tc2:#7c3aed; --f1:#be185d; --f2:#7c3aed; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(12n+11) { --pg1:#be185d; --pg2:#7c3aed; }
+html body #page-tumuu .tumuu-grid .tumuu-tile[data-cat]:nth-of-type(12n) { --tc1:#c2410c; --tc2:#e11d48; --f1:#c2410c; --f2:#e11d48; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(12n) { --pg1:#c2410c; --pg2:#e11d48; }
+
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile[data-cat]:nth-of-type(n) {
+    background: linear-gradient(150deg, var(--tc1), var(--tc2)) !important;
+    border: 1px solid rgba(255,255,255,.38) !important;
+    box-shadow: 0 16px 26px -14px var(--tc1), inset 0 1.5px 0 rgba(255,255,255,.5), inset 0 -14px 24px -14px rgba(0,0,0,.28) !important;
+}
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile[data-cat]:nth-of-type(n):hover {
+    box-shadow: 0 22px 34px -14px var(--tc1), inset 0 1.5px 0 rgba(255,255,255,.55), inset 0 -14px 24px -14px rgba(0,0,0,.28) !important;
+}
+html body #page-tumuu .tumuu-grid.list-view .tumuu-tile[data-cat]:nth-of-type(n) {
+    background: linear-gradient(150deg, var(--tc1), var(--tc2)) !important;
+}
+/* Sekme kartlarında "Aç" yazısı ve ok kendi rengini alsın */
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card .launch-btn,
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card .launch-btn i,
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card .launch-btn .btn-label { color: var(--pg1) !important; }
+
+/* ═════════ GÖLGELER KALDIRILDI (kutular, kartlar, ikonlar, yazılar) ═════════ */
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile[data-cat]:nth-of-type(n),
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile[data-cat]:nth-of-type(n):hover,
+html body #page-tumuu .tumuu-grid:not(.list-view) .tumuu-tile[data-cat]:nth-of-type(n):active,
+html body #page-tumuu .tumuu-grid.list-view .tumuu-tile[data-cat]:nth-of-type(n),
+html body #page-tumuu .tumuu-grid.list-view .tumuu-tile[data-cat]:nth-of-type(n):hover,
+html body :is(#page-tumuu,#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .tumuu-tile,
+html body :is(#page-tumuu,#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .tumuu-tile:hover,
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(n),
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(n):hover,
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card,
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card:hover,
+html[data-theme="dark"] body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card,
+html[data-theme="dark"] body #page-tumuu .tumuu-tile {
+    box-shadow: none !important;
+    filter: none !important;
+}
+/* İkonlar: sadece ince halka, gölge yok */
+html body :is(#page-tumuu,#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .tumuu-grid .tumuu-icon-wrap,
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card .app-icon-img {
+    box-shadow: 0 0 0 2.5px rgba(255,255,255,.55) !important;
+}
+/* Yazı gölgeleri */
+html body .tumuu-grid .tumuu-label,
+html body .tumuu-grid .tumuu-tile[data-cat] .tumuu-label,
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card .app-info h3 { text-shadow: none !important; }
+/* ★ ve "Aç" butonları */
+html body .mg-fav-btn, html body .mg-fav-btn.on,
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-card .launch-btn { box-shadow: none !important; }
+
+/* ═════════ Ortadaki (MG) düğmesinin paneli: "Daha Fazla" başlığı kaldırıldı ═════════ */
+html body .mg-bn-panel-head,
+html body #mgBnPanel .mg-bn-panel-head { display: none !important; }
+
+/* Ortadaki MG butonunun altında hiçbir durumda yazı olmasın (basınca da) */
+html body #mgBottomNav #mgBnMore > span:not(.mg-bn-pi-icon),
+html body #mgBottomNav #mgBnMore.panel-open > span:not(.mg-bn-pi-icon),
+html body #mgBottomNav #mgBnMore:active > span:not(.mg-bn-pi-icon),
+html body #mgBottomNav #mgBnMore:focus > span:not(.mg-bn-pi-icon),
+html body #mgBottomNav #mgBnMore::after { display: none !important; content: none !important; }
+
+/* ═════════ DİĞER SEKMELER · POSTER KART STİLİ (Günlük / Eğitim / Araçlar / Eğlence) ═════════
+   Tümü sekmesi bento kalır. Bu sekmelerde liste görünümü yok; yalnızca Tümü sekmesinde Kart/Liste seçimi var. */
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 14px !important; padding-top: 6px !important; }
+html body #page-gunluk  .app-grid > a.app-card:nth-of-type(n) { --pc1: #2563eb; --pc2: #06b6d4; }
+html body #page-egitim  .app-grid > a.app-card:nth-of-type(n) { --pc1: #f97316; --pc2: #fbbf24; }
+html body #page-araclar .app-grid > a.app-card:nth-of-type(n) { --pc1: #7c3aed; --pc2: #4f46e5; }
+html body #page-eglence .app-grid > a.app-card:nth-of-type(n) { --pc1: #e11d74; --pc2: #f97316; }
+
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(n) {
+    display: flex !important; flex-direction: column !important; align-items: stretch !important; gap: 8px !important;
+    min-height: 0 !important; padding: 0 0 .9rem !important; border-radius: 26px !important; overflow: hidden !important;
+    background: var(--bg-card) !important; border: 1px solid var(--border-color) !important; box-shadow: none !important;
+}
+/* Üstte renkli kapak bandı */
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(n)::before {
+    display: block !important; content: "" !important; position: absolute !important; left: 0 !important; right: 0 !important; top: 0 !important; bottom: auto !important;
+    width: auto !important; height: 92px !important; border-radius: 0 !important; opacity: 1 !important; transform: none !important; z-index: 0 !important;
+    background: linear-gradient(135deg, var(--pc1), var(--pc2)) !important; pointer-events: none;
+}
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(n)::after {
+    display: block !important; content: "" !important; position: absolute !important; right: -26px !important; top: -30px !important; left: auto !important; bottom: auto !important;
+    width: 100px !important; height: 100px !important; border-radius: 50% !important; background: rgba(255,255,255,.18) !important; opacity: 1 !important; z-index: 0 !important; pointer-events: none;
+}
+/* İkon: tam yuvarlak, bandın üzerine taşar */
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(n) .app-card-header {
+    display: flex !important; flex-direction: column !important; align-items: center !important; gap: 8px !important;
+    position: relative; z-index: 1; width: 100% !important; padding: 34px 10px 0 !important; border: 0 !important;
+}
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(n) .app-icon-img {
+    grid-area: auto !important; flex: 0 0 auto !important; align-self: center !important;
+    width: 88px !important; height: 88px !important; min-width: 88px; min-height: 88px; aspect-ratio: 1 / 1;
+    border-radius: 50% !important; object-fit: cover !important; background: #fff !important;
+    border: 4px solid var(--bg-card) !important; box-shadow: none !important;
+}
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(n) .app-info { grid-area: auto !important; display: block !important; width: 100% !important; text-align: center !important; padding: 0 !important; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(n) .app-info h3 {
+    font-size: .98rem !important; text-align: center !important; color: var(--text-main) !important;
+    -webkit-line-clamp: 2 !important; min-height: 0 !important;
+}
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(n) .app-desc {
+    grid-area: auto !important; position: relative; z-index: 1; padding: 0 12px !important; text-align: center !important;
+    font-size: .76rem !important; line-height: 1.4 !important; color: var(--text-muted) !important;
+    display: -webkit-box !important; -webkit-line-clamp: 3 !important; -webkit-box-orient: vertical; overflow: hidden;
+}
+/* Alt kısım: etiket + tam genişlik buton */
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(n) .app-card-footer {
+    display: flex !important; flex-direction: column !important; align-items: stretch !important; gap: 8px !important;
+    position: relative; z-index: 1; padding: 0 12px !important; margin-top: auto !important; border: 0 !important;
+}
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(n) .app-tag {
+    grid-area: auto !important; align-self: center !important; margin: 0 !important;
+    background: color-mix(in srgb, var(--pc1) 14%, transparent) !important; color: var(--pc1) !important;
+    border: 0 !important; -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(n) .launch-btn {
+    grid-area: auto !important; align-self: stretch !important; justify-self: auto !important;
+    width: 100% !important; height: 38px !important; border-radius: 999px !important; justify-content: center !important;
+    background: linear-gradient(135deg, var(--pc1), var(--pc2)) !important; border: 0 !important; box-shadow: none !important;
+}
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(n) .launch-btn, html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(n) .launch-btn i, html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(n) .launch-btn .btn-label { color: #fff !important; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(n) .launch-btn .btn-label { display: inline !important; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(n):hover { transform: translateY(-3px); }
+@media (min-width: 700px) {
+  html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)) !important; gap: 18px !important; }
+}
+
+/* Kart/Liste seçici sadece Tümü sekmesinde kalır; arama kutusu tam genişlik olur */
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) > .mg-view-toggle { display: none !important; }
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence).active > .mg-filter-bar { flex: 1 1 100% !important; }
+/* Kartlarda kategori etiketi gösterilmesin */
+html body :is(#page-gunluk, #page-egitim, #page-araclar, #page-eglence) .app-grid > a.app-card:nth-of-type(n) .app-tag { display: none !important; }
+
+/* Her kart (bant + buton) farklı renk: 8 renkli döngü */
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(8n+1) { --pc1: #4318ff; --pc2: #00b4ff; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(8n+2) { --pc1: #e11d74; --pc2: #f97316; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(8n+3) { --pc1: #0d9488; --pc2: #22c55e; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(8n+4) { --pc1: #7c3aed; --pc2: #ec4899; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(8n+5) { --pc1: #ea580c; --pc2: #f59e0b; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(8n+6) { --pc1: #0284c7; --pc2: #06b6d4; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(8n+7) { --pc1: #dc2626; --pc2: #fb7185; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(8n+8) { --pc1: #15803d; --pc2: #65a30d; }
+
+/* ★ Favori butonu: dolgun beyaz, tam görünür */
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(n) > .mg-fav-btn {
+    top: 10px !important; right: 10px !important; width: 32px !important; height: 32px !important; font-size: .85rem !important;
+    background: #fff !important; color: var(--pc1) !important; border: 0 !important; opacity: 1 !important; z-index: 30 !important;
+    -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+    box-shadow: 0 4px 10px -3px rgba(0,0,0,.4) !important;
+}
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(n) > .mg-fav-btn.on {
+    background: linear-gradient(145deg, #ffd24a, #ff9f1a) !important; color: #fff !important;
+}
+
+/* ★ Kesilme düzeltmesi: eski liste kuralındaki translateY(-50%) bu kartlarda iptal */
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(n) > .mg-fav-btn {
+    position: absolute !important; top: 10px !important; right: 10px !important; bottom: auto !important; left: auto !important;
+    width: 30px !important; height: 30px !important; min-width: 30px; min-height: 30px; aspect-ratio: 1 / 1; margin: 0 !important; padding: 0 !important;
+    border-radius: 50% !important; transform: none !important; display: grid !important; place-items: center;
+}
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(n) > .mg-fav-btn:hover { transform: scale(1.08) !important; }
+html body :is(#page-gunluk,#page-egitim,#page-araclar,#page-eglence) .app-grid > a.app-card:nth-of-type(n) > .mg-fav-btn:active { transform: scale(.9) !important; }
