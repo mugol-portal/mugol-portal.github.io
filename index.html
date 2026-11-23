@@ -2122,8 +2122,6 @@
         'use strict';
         var KEY = 'mg-test-tab', NEED = 5, GAP = 2000;
         var badge = document.getElementById('mgVersionBadge');
-        var navItem = document.getElementById('mgTestNav');
-        var bnItem = document.getElementById('mgTestBn');
         var hideBtn = document.getElementById('mgTestHideBtn');
         var count = 0, lastTap = 0;
 
@@ -2131,11 +2129,15 @@
         function isOn() { try { return localStorage.getItem(KEY) === '1'; } catch (e) { return false; } }
         function setOn(on) {
             try { if (on) localStorage.setItem(KEY, '1'); else localStorage.removeItem(KEY); } catch (e) {}
-            if (navItem) navItem.classList.toggle('mg-test-off', !on);
-            if (bnItem) bnItem.classList.toggle('mg-test-off', !on);
+            /* Alt menü paneli sonradan yeniden kurulabildiği için öğeler her seferinde yeniden bulunur */
+            ['mgTestNav', 'mgTestBn'].forEach(function (id) {
+                var el = document.getElementById(id);
+                if (el) el.classList.toggle('mg-test-off', !on);
+            });
         }
 
         setOn(isOn());
+        window.addEventListener('load', function () { setOn(isOn()); });
 
         if (badge) badge.addEventListener('click', function () {
             var now = Date.now();
