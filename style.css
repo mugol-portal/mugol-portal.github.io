@@ -10879,10 +10879,13 @@ html.mg-mode-mobile:root body .main-content.main-content {
 /* ═════════ ÖNEMLİ GÜN RESMİ (saat kutusunun yerine) ═════════ */
 html body .mg-clock-widget.mg-occ-hidden { display: none !important; }
 html body .mg-occ-hero {
-    display: block; margin: 0 0 1rem; border-radius: 28px; overflow: hidden; cursor: pointer;
-    -webkit-tap-highlight-color: transparent; box-shadow: 0 14px 28px -16px rgba(12,15,46,.45);
+    display: block; margin: 0 0 1rem; padding: 4px; border-radius: 32px; cursor: pointer;
+    background: linear-gradient(135deg, #4318ff 0%, #00d2ff 50%, #8b5cf6 100%);
+    box-shadow: none;
+    -webkit-tap-highlight-color: transparent;
 }
-html body .mg-occ-hero img { display: block; width: 100%; height: auto; }
+html body .mg-occ-hero > div { padding: 6px; border-radius: 28px; background: var(--bg-card, #fff); }
+html body .mg-occ-hero img { display: block; width: 100%; height: auto; border-radius: 20px; }
 
 /* ═════════ BUTON TASARIMI v2 — ★ ikonu kapatmasın, modern cam efekti ═════════ */
 

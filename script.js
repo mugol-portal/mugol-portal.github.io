@@ -2447,10 +2447,14 @@ window.MG_NOTIFICATIONS = [
             h.id = 'mgOccHero'; h.className = 'mg-occ-hero'; h.setAttribute('role', 'button'); h.tabIndex = 0;
             h.setAttribute('aria-label', label + ' — büyütmek için dokun');
             /* Stiller satır içi: style.css önbellekte eski kalsa bile çalışsın */
-            h.style.cssText = 'display:block;margin:0 0 1rem;border-radius:28px;overflow:hidden;cursor:pointer;box-shadow:0 14px 28px -16px rgba(12,15,46,.45);-webkit-tap-highlight-color:transparent;';
+            h.style.cssText = 'display:block;margin:0 0 1rem;padding:4px;border-radius:32px;cursor:pointer;background:linear-gradient(135deg,#4318ff 0%,#00d2ff 50%,#8b5cf6 100%);box-shadow:none;-webkit-tap-highlight-color:transparent;';
             var img = document.createElement('img'); img.src = src; img.alt = label; img.decoding = 'async';
-            img.style.cssText = 'display:block;width:100%;height:auto;';
-            h.appendChild(img);
+            img.style.cssText = 'display:block;width:100%;height:auto;border-radius:20px;';
+            /* İç pasparto: gradyan çerçeve ile resim arasında ince beyaz/kart rengi şerit */
+            var mat = document.createElement('div');
+            mat.style.cssText = 'padding:6px;border-radius:28px;background:var(--bg-card,#fff);';
+            mat.appendChild(img);
+            h.appendChild(mat);
             function open() { show(id, 'mg-kutlama:preview', function () {}); }
             h.addEventListener('click', open);
             h.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
