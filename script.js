@@ -341,11 +341,11 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     // Videoyu tekrar uzatıp kısaltırsan kodda hiçbir şey değiştirmen gerekmez.
     // VİDEO ve MÜZİK birlikte SPLASH_TARGET_SEC saniyede biter. Hız, dosya süresinden otomatik hesaplanır
     // (15 sn → 1.5x). Müzik tonu bozulmadan (preservesPitch) hızlandırılır.
-    const SPLASH_TARGET_SEC   = 7;
+    const SPLASH_TARGET_SEC   = 5;
     let   SPLASH_VIDEO_RATE   = 15 / SPLASH_TARGET_SEC;   // metadata gelince gerçek süreye göre yeniden hesaplanır
     const SPLASH_END_HOLD_MS  = 150;   // video bitince son karede bekleme
     const SPLASH_SAFETY_PAD_MS = 2000; // 'ended' hiç gelmezse güvenlik süresi
-    const FALLBACK_MS         = 7000;  // video hiç oynamazsa kullanılacak süre
+    const FALLBACK_MS         = 5000;  // video hiç oynamazsa kullanılacak süre
 
     const labels = ['Sistem Başlatılıyor...', 'Uygulamalar Hazırlanıyor...', 'Son Ayarlar...', 'Hoş Geldiniz!'];
 
