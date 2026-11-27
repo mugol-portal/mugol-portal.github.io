@@ -340,14 +340,14 @@ document.querySelectorAll('.category-card').forEach(catCard => {
     // Açılış süresini VİDEO belirler (mugol_acilis.mp4 = 15 sn).
     // Videoyu tekrar uzatıp kısaltırsan kodda hiçbir şey değiştirmen gerekmez.
     // VİDEO ve MÜZİK birlikte SPLASH_TARGET_SEC saniyede biter. Hız, dosya süresinden otomatik hesaplanır
-    // (15 sn → 1.5x). Müzik tonu bozulmadan (preservesPitch) hızlandırılır.
-    const SPLASH_TARGET_SEC   = 5;
+    // (15 sn → 3.75x). Müzik tonu bozulmadan (preservesPitch) hızlandırılır.
+    const SPLASH_TARGET_SEC   = 6;   // açılış animasyonu süresi (saniye)
     let   SPLASH_VIDEO_RATE   = 15 / SPLASH_TARGET_SEC;   // metadata gelince gerçek süreye göre yeniden hesaplanır
-    const SPLASH_END_HOLD_MS  = 150;   // video bitince son karede bekleme
+    const SPLASH_END_HOLD_MS  = 100;   // video bitince son karede bekleme
     const SPLASH_SAFETY_PAD_MS = 2000; // 'ended' hiç gelmezse güvenlik süresi
-    const FALLBACK_MS         = 5000;  // video hiç oynamazsa kullanılacak süre
+    const FALLBACK_MS         = SPLASH_TARGET_SEC * 1000;  // video hiç oynamazsa kullanılacak süre
 
-    const labels = ['Sistem Başlatılıyor...', 'Uygulamalar Hazırlanıyor...', 'Son Ayarlar...', 'Hoş Geldiniz!'];
+    const labels = ['Başlatılıyor', 'Uygulamalar hazırlanıyor', 'Son ayarlar yapılıyor', 'Hoş geldiniz'];
 
     let closed = false;
     let videoFailed = false;
@@ -379,16 +379,16 @@ document.querySelectorAll('.category-card').forEach(catCard => {
         if (progressTimer) clearInterval(progressTimer);
         if (safetyTimer) clearTimeout(safetyTimer);
         if (bar) bar.style.width = '100%';
-        if (label) label.textContent = 'Hoş Geldiniz!';
+        if (label) label.textContent = labels[labels.length - 1];
         setTimeout(() => {
             if (splash) {
                 splash.style.opacity = '0';
                 setTimeout(() => {
                     splash.classList.add('hidden');
                     releaseSplashVideo();
-                }, 400);
+                }, 450);
             }
-        }, 200);
+        }, 100);
     }
 
     // ── Video ana saat: ilerleme = currentTime / duration ──

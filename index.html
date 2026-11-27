@@ -155,6 +155,7 @@
 
     <div id="splash-screen" role="presentation">
         <div class="splash-particles" id="splashParticles"></div>
+        <div class="splash-rain" id="splashRain" aria-hidden="true"></div>
         <div class="splash-video-wrap">
             <video id="splashVideo" class="splash-video" src="media/mugol_acilis.mp4" autoplay muted playsinline webkit-playsinline preload="auto" aria-label="MuGöl Portal açılış animasyonu"></video>
             <div class="splash-logo-wrap" id="splashLogoFallback" style="display:none;">
@@ -4657,7 +4658,7 @@
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (box && !reduce) {
         var colors = ['rgba(255,255,255,0.18)', 'rgba(0,210,255,0.35)', 'rgba(124,58,237,0.40)'];
-        for (var i = 0; i < 22; i++) {
+        for (var i = 0; i < 12; i++) {
             var s = document.createElement('span');
             var size = 3 + Math.random() * 6;
             s.className = 'splash-particle';
@@ -4697,6 +4698,36 @@
     function upd() { t = false; h.classList.toggle('mg-scrolled', (window.scrollY || document.documentElement.scrollTop) > 6); }
     window.addEventListener('scroll', function () { if (!t) { t = true; requestAnimationFrame(upd); } }, { passive: true });
     upd();
+})();
+</script>
+
+<script>
+/* Açılış: arka planda yağmur gibi yağan logolar */
+(function () {
+    var box = document.getElementById('splashRain'), sp = document.getElementById('splash-screen');
+    if (!box || !sp) return;
+    var rm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (rm) { box.remove(); return; }
+    var lite = document.documentElement.classList.contains('mg-lite');
+    var n = lite ? 12 : 30, apps = ['takvim','hava','ai','haber','saglik','ekonomi','notdefteri','games','imsak','hesap'];
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < n; i++) {
+        var far = Math.random(), size = 18 + (1 - far) * 30, t = 2.4 + far * 3.6;
+        var d = document.createElement('span'), im = new Image();
+        d.className = 'rd' + (far > .62 && !lite ? ' rd-far' : '');
+        im.src = (i % 5 < 3) ? 'logo.png' : 'images/' + apps[i % apps.length] + '.png';
+        im.alt = ''; im.decoding = 'async';
+        im.onerror = function () { this.parentNode && this.parentNode.remove(); };
+        d.style.cssText = '--x:' + (Math.random() * 96).toFixed(1) + '%;--s:' + size.toFixed(0) + 'px;--t:' + t.toFixed(2) + 's;' +
+            '--d:-' + (Math.random() * t).toFixed(2) + 's;--o:' + (0.2 + (1 - far) * 0.65).toFixed(2) + ';' +
+            '--dx:' + ((Math.random() - .5) * 50).toFixed(0) + 'px;--r0:' + ((Math.random() - .5) * 40).toFixed(0) + 'deg;--r1:' + ((Math.random() - .5) * 120).toFixed(0) + 'deg';
+        d.appendChild(im); frag.appendChild(d);
+    }
+    box.appendChild(frag);
+    var mo = new MutationObserver(function () {
+        if (sp.classList.contains('hidden') || sp.style.display === 'none') { box.remove(); mo.disconnect(); }
+    });
+    mo.observe(sp, { attributes: true, attributeFilter: ['class', 'style'] });
 })();
 </script>
 </body>
