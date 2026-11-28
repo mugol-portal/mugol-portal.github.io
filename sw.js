@@ -8,7 +8,7 @@
 'use strict';
 
 var CACHE_PREFIX = 'mugol-mobil-';
-var CACHE_NAME   = CACHE_PREFIX + 'v9';   /* Değişiklik yayınlarken sürümü artır: v2, v3 … */
+var CACHE_NAME   = CACHE_PREFIX + 'v10';   /* Değişiklik yayınlarken sürümü artır: v2, v3 … */
 var NAV_TIMEOUT  = 4000;                  /* Ağ bu sürede yanıt vermezse önbellekten aç */
 
 /* Konumlar sw.js'e göre çözülür */
@@ -19,6 +19,8 @@ var SHELL = [
     'favicon.ico',
     'style.css',
     'script.js',
+    'notifications.js',
+    'bildirim/bildirim.png',   /* açılış bildirimi resmi — dosya adı notifications.js ile aynı olmalı */
     'logo.png',
     'icon-192.png',
     'icon-512.png'
@@ -41,14 +43,12 @@ var FA_FONTS = [
     'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/webfonts/fa-regular-400.woff2',
     'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/webfonts/fa-brands-400.woff2'
 ];
-var GOOGLE_FONTS_CSS = 'https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap';
-var GOOGLE_FONTS_CSS_2 = 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap';
+var GOOGLE_FONTS_CSS = 'https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap';
 
 /* Bu sunucuların istekleri de önbelleğe alınır (stale-while-revalidate) */
 var CACHEABLE_HOSTS = [
     'cdnjs.cloudflare.com',
     'cdn.jsdelivr.net',
-    'use.fontawesome.com',
     'fonts.googleapis.com',
     'fonts.gstatic.com'
 ];
@@ -82,7 +82,7 @@ self.addEventListener('install', function (event) {
             });
 
             /* Google Fonts: önce CSS, sonra içindeki font dosyaları */
-            [GOOGLE_FONTS_CSS, GOOGLE_FONTS_CSS_2].forEach(function (fontCssUrl) {
+            [GOOGLE_FONTS_CSS].forEach(function (fontCssUrl) {
                 jobs.push(
                     fetch(fontCssUrl, { mode: 'cors', credentials: 'omit' })
                         .then(function (res) {
